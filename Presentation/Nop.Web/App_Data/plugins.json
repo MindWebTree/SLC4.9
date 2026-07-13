@@ -1,0 +1,151 @@
+﻿{
+  "InstalledPluginNames": [
+    "Obsolete field, using only for compatibility"
+  ],
+  "InstalledPlugins": [
+    {
+      "SystemName": "Payments.PayPalCommerce",
+      "Version": "4.90.20"
+    },
+    {
+      "SystemName": "Payments.PayPalStandard",
+      "Version": "1.66"
+    },
+    {
+      "SystemName": "CurrencyExchange.ECB",
+      "Version": "4.90.1"
+    },
+    {
+      "SystemName": "Misc.Sendinblue",
+      "Version": "3.32"
+    },
+    {
+      "SystemName": "MultiFactorAuth.GoogleAuthenticator",
+      "Version": "4.90.3"
+    },
+    {
+      "SystemName": "Pickup.PickupInStore",
+      "Version": "4.90.2"
+    },
+    {
+      "SystemName": "Shipping.FixedByWeightByTotal",
+      "Version": "4.90.5"
+    },
+    {
+      "SystemName": "Shipping.ShipStation",
+      "Version": "1.16"
+    },
+    {
+      "SystemName": "Shipping.UPS",
+      "Version": "4.90.3"
+    },
+    {
+      "SystemName": "Tax.Avalara",
+      "Version": "4.90.7"
+    },
+    {
+      "SystemName": "Widgets.AccessiBe",
+      "Version": "1.12"
+    },
+    {
+      "SystemName": "Widgets.FacebookPixel",
+      "Version": "4.90.2"
+    },
+    {
+      "SystemName": "Widgets.GoogleAnalytics",
+      "Version": "4.90.2"
+    },
+    {
+      "SystemName": "ExternalAuth.Facebook",
+      "Version": "4.90.3"
+    },
+    {
+      "SystemName": "MWT.Nop.Plugin.MegaMenu",
+      "Version": "4.4"
+    },
+    {
+      "SystemName": "MWT.Nop.Plugin.Widgets.Catalog",
+      "Version": "4.4"
+    },
+    {
+      "SystemName": "Tax.FixedOrByCountryStateZip",
+      "Version": "4.90.4"
+    },
+    {
+      "SystemName": "Payments.CashOnDelivery",
+      "Version": "1.44"
+    },
+    {
+      "SystemName": "Payments.AuthorizeNet",
+      "Version": "2.36"
+    },
+    {
+      "SystemName": "MWT.Shipping.FixedByWeightByTotal",
+      "Version": "2.28"
+    },
+    {
+      "SystemName": "Misc.MailChimp",
+      "Version": "2.27"
+    },
+    {
+      "SystemName": "Widgets.NivoSlider",
+      "Version": "1.41"
+    },
+    {
+      "SystemName": "MWT.Tax.FixedOrByCountryStateZip",
+      "Version": "1.38"
+    },
+    {
+      "SystemName": "Payments.Affirm",
+      "Version": "1.00"
+    },
+    {
+      "SystemName": "NopAdvance.DiscountRules.CartSubTotal",
+      "Version": "1.2"
+    },
+    {
+      "SystemName": "MWT.Redirect",
+      "Version": "1.0"
+    },
+    {
+      "SystemName": "DiscountRequirement.MustBeAssignedToCustomerRole",
+      "Version": "4.90.2"
+    },
+    {
+      "SystemName": "DiscountRequirement.ItemsBelowPrice",
+      "Version": "1.00"
+    },
+    {
+      "SystemName": "ExternalAuth.Google",
+      "Version": "1.68"
+    },
+    {
+      "SystemName": "ExternalAuth.Apple",
+      "Version": "1.68"
+    },
+    {
+      "SystemName": "MWT.Nop.Plugin.Misc.ProductBundle",
+      "Version": "4.40"
+    },
+    {
+      "SystemName": "Custom.TagPages",
+      "Version": "1.0.0"
+    },
+    {
+      "SystemName": "Payments.AuthorizeNetHostedPayment",
+      "Version": "2.00"
+    }
+  ],
+  "PluginNamesToUninstall": [],
+  "PluginNamesToDelete": [],
+  "PluginNamesToInstall": [
+    {
+      "Item1": "NopAdvance.Core",
+      "Item2": "8d071561-3c02-4e75-9306-12edee011699"
+    },
+    {
+      "Item1": "NopAdvance.Plugin.PermanentRedirect",
+      "Item2": "8d071561-3c02-4e75-9306-12edee011699"
+    }
+  ]
+}
