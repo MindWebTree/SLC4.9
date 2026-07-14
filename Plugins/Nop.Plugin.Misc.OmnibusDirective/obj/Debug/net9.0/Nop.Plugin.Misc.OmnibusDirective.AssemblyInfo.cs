@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyCopyrightAttribute("Copyright © Nop Solutions, Ltd")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+317398f15c33759acadca51e2ea087d47b01214b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e7e93c259528dc51d67f843e5a8c560c43d37de1")]
 [assembly: System.Reflection.AssemblyProductAttribute("Nop.Plugin.Misc.OmnibusDirective")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Nop.Plugin.Misc.OmnibusDirective")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
