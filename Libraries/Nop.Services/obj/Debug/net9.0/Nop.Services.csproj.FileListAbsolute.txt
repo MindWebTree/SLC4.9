@@ -636,3 +636,4 @@ D:\SierraProject\SLC4.9\Libraries\Nop.Services\obj\Debug\net9.0\Nop.Services.dll
 D:\SierraProject\SLC4.9\Libraries\Nop.Services\obj\Debug\net9.0\refint\Nop.Services.dll
 D:\SierraProject\SLC4.9\Libraries\Nop.Services\obj\Debug\net9.0\Nop.Services.pdb
 D:\SierraProject\SLC4.9\Libraries\Nop.Services\obj\Debug\net9.0\ref\Nop.Services.dll
+D:\SierraProject\SLC4.9\Libraries\Nop.Services\obj\Debug\net9.0\Nop.Services.sourcelink.json

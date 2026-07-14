@@ -2488,3 +2488,4 @@ D:\SierraProject\SLC4.9\Presentation\Nop.Web\obj\Debug\net9.0\refint\Nop.Web.dll
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\obj\Debug\net9.0\Nop.Web.pdb
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\obj\Debug\net9.0\Nop.Web.genruntimeconfig.cache
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\obj\Debug\net9.0\ref\Nop.Web.dll
+D:\SierraProject\SLC4.9\Presentation\Nop.Web\obj\Debug\net9.0\Nop.Web.sourcelink.json

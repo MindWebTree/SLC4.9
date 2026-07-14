@@ -104,10 +104,6 @@
       "Version": "1.2"
     },
     {
-      "SystemName": "MWT.Redirect",
-      "Version": "1.0"
-    },
-    {
       "SystemName": "DiscountRequirement.MustBeAssignedToCustomerRole",
       "Version": "4.90.2"
     },
@@ -134,6 +130,10 @@
     {
       "SystemName": "Payments.AuthorizeNetHostedPayment",
       "Version": "2.00"
+    },
+    {
+      "SystemName": "MWT.Redirect",
+      "Version": "1.0"
     }
   ],
   "PluginNamesToUninstall": [],

@@ -626,3 +626,4 @@ D:\SierraProject\SLC4.9\Libraries\Nop.Core\obj\Debug\net9.0\Nop.Core.dll
 D:\SierraProject\SLC4.9\Libraries\Nop.Core\obj\Debug\net9.0\refint\Nop.Core.dll
 D:\SierraProject\SLC4.9\Libraries\Nop.Core\obj\Debug\net9.0\Nop.Core.pdb
 D:\SierraProject\SLC4.9\Libraries\Nop.Core\obj\Debug\net9.0\ref\Nop.Core.dll
+D:\SierraProject\SLC4.9\Libraries\Nop.Core\obj\Debug\net9.0\Nop.Core.sourcelink.json

@@ -1036,6 +1036,7 @@ wwwroot\images\thumbs\0372496_bar-cabinets.jpeg
 wwwroot\images\thumbs\0372498_bar-sets.jpeg
 wwwroot\images\thumbs\0372499_bar-tables.jpeg
 wwwroot\images\thumbs\0413049_rustic-solid-wood-long-tv-media-stand-console.jpeg
+wwwroot\images\thumbs\0416512_logo.png
 wwwroot\images\thumbs\default-image_415.png
 wwwroot\images\thumbs\default-image_450.png
 wwwroot\images\thumbs\placeholder.txt
