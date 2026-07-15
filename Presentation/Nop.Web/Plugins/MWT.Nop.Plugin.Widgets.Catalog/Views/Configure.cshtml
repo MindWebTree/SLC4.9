@@ -1,0 +1,18 @@
+﻿@model MWT.Nop.Plugin.Widgets.Catalog.Models.ConfigurationModel
+@using Nop.Web.Framework.Models.AdminAreaTour
+@using Nop.Web.Framework.UI
+@{
+    NopHtml.AddCssFileParts("~/Plugins/MWT.Nop.Plugin.Widgets.Catalog/Content/css/style.css");
+}
+@{
+Layout = "_ConfigurePlugin";
+
+    //tour step
+    ViewBag.TourStep = TourStep.ShippingManual;
+}
+
+@await Html.PartialAsync("_AdminTour")
+
+
+@await Html.PartialAsync("~/Plugins/MWT.Nop.Plugin.Widgets.Catalog/Views/_Banners.cshtml", Model)
+

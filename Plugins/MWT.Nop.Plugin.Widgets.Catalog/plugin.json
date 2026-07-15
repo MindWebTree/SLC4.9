@@ -1,0 +1,11 @@
+﻿{
+  "Group": "MWT",
+  "FriendlyName": "Nop Catalog Page Widgets",
+  "SystemName": "MWT.Nop.Plugin.Widgets.Catalog",
+  "Version": "4.90",
+  "SupportedVersions": [ "4.90" ],
+  "Author": "Mind Web Tree",
+  "DisplayOrder": 1,
+  "FileName": "MWT.Nop.Plugin.Widgets.Catalog.dll",
+  "Description": "Nop Catalog Page Widgets On Top/Middle/Bottom and Listing Third Place."
+}

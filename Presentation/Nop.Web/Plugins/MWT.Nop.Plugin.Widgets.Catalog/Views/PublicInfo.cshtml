@@ -1,0 +1,173 @@
+﻿@model MWT.Nop.Plugin.Widgets.Catalog.Models.MWTEntityBannerModel
+@using Nop.Core
+@using Nop.Services.Helpers
+@inject IUserAgentHelper _userAgentHelper
+@if (Model.WidgetZone == "categorydetails_top_video")
+{//   LY VIDEO
+    @if (_userAgentHelper.IsMobileDevice())
+    {
+        if (!string.IsNullOrEmpty(Model.MobileVideoUrl))
+        {
+            <div class="top-video">
+                <div class="row mx-0">
+                    <div class="pl-0 ms-0 ps-0 pe-0">
+                        <video controls="controls" width="100%" height="auto" autoplay="autoplay" muted="muted" loop="loop">
+                            <source src="@Model.MobileVideoUrl" type="video/mp4" />
+                        </video>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        if (!string.IsNullOrEmpty(Model.VideoUrl))
+        {
+            <div class="top-video">
+                <div class="row mx-0">
+                    <div class="pl-0 ms-0 ps-0 pe-0">
+                        <video controls="controls" width="100%" height="auto" autoplay="autoplay" muted="muted" loop="loop">
+                            <source src="@Model.VideoUrl" type="video/mp4" />
+                        </video>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+}
+else if (Model.WidgetZone == "categorydetails_top")
+{
+    //   ONLY BANNER AND HTML
+    @if (_userAgentHelper.IsMobileDevice())
+    {
+        if (!string.IsNullOrEmpty(Model.MobilebannerImage))
+        {
+            <div class="@Model.WidgetZone mwt-mobile-widget-bannerimage" alt="@Model.Title">
+                @if (!string.IsNullOrEmpty(Model.MobileActionLink))
+                {
+                    <a href="@Model.MobileActionLink" title="@Model.Title">
+                        <img src="@Model.MobilebannerImage" alt="@Model.Title" />
+                    </a>
+                }
+                else
+                {
+                    <img src="@Model.MobilebannerImage" alt="@Model.Title" />
+                }
+
+
+            </div>
+
+
+        }
+        else if (!string.IsNullOrEmpty(Model.MobileHtml))
+        {   
+            <div class="@Model.WidgetZone mwt-mobile-widget-html" alt="@Model.Title">
+                @Html.Raw(Model.MobileHtml)
+            </div>
+        }
+    }
+    else
+    {
+
+        if (!string.IsNullOrEmpty(Model.bannerImage))
+        {
+            <div class="@Model.WidgetZone mwt-desktop-widget-bannerimage" alt="@Model.Title">
+                @if (!string.IsNullOrEmpty(Model.ActionLink))
+                {
+                    <a href="@Model.ActionLink" title="@Model.Title">
+                        <img src="@Model.bannerImage" alt="@Model.Title" />
+                    </a>
+                }
+                else
+                {
+                    <img src="@Model.bannerImage" alt="@Model.Title" />
+                }
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(Model.Html))
+        {
+            <div class="@Model.WidgetZone mwt-desktop-widget-html" alt="@Model.Title">
+
+                @Html.Raw(Model.Html)
+            </div>
+
+        }
+    }
+}
+else
+{
+    if (_userAgentHelper.IsMobileDevice())
+    {
+        if (!string.IsNullOrEmpty(Model.MobilebannerImage))
+        {
+            <div class="@Model.WidgetZone mwt-mobile-widget-bannerimage" alt="@Model.Title">
+                @if (!string.IsNullOrEmpty(Model.MobileActionLink))
+                {
+                    <a href="@Model.MobileActionLink" title="@Model.Title">
+                        <img src="@Model.MobilebannerImage" alt="@Model.Title" />
+                    </a>
+                }
+                else
+                {
+                    <img src="@Model.MobilebannerImage" alt="@Model.Title" />
+                }
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(Model.MobileHtml))
+        {
+            <div class="@Model.WidgetZone mwt-mobile-widget-html" alt="@Model.Title">
+                @Html.Raw(Model.MobileHtml)
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(Model.MobileVideoUrl))
+        {
+            <div class="top-video">
+                <div class="row mx-0">
+                    <div class="pl-0 ms-0 ps-0 pe-0">
+                        <video controls="controls" width="100%" height="auto" autoplay="autoplay" muted="muted" loop="loop">
+                            <source src="@Model.MobileVideoUrl" type="video/mp4" />
+                        </video>
+                    </div>
+                </div>
+            </div>
+        }
+
+    }
+    else
+    {
+        if (!string.IsNullOrEmpty(Model.bannerImage))
+        {
+            <div class="@Model.WidgetZone mwt-mobile-widget-bannerimage" alt="@Model.Title">
+                @if (!string.IsNullOrEmpty(Model.MobileActionLink))
+                {
+                    <a href="@Model.MobileActionLink" title="@Model.Title">
+                        <img src="@Model.bannerImage" alt="@Model.Title" />
+                    </a>
+                }
+                else
+                {
+                    <img src="@Model.bannerImage" alt="@Model.Title" />
+                }
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(Model.Html))
+        {
+            <div class="@Model.WidgetZone mwt-mobile-widget-html" alt="@Model.Title">
+                @Html.Raw(Model.Html)
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(Model.VideoUrl))
+        {
+            <div class="top-video">
+                <div class="row mx-0">
+                    <div class="pl-0 ms-0 ps-0 pe-0">
+                        <video controls="controls" width="100%" height="auto" autoplay="autoplay" muted="muted" loop="loop">
+                            <source src="@Model.VideoUrl" type="video/mp4" />
+                        </video>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+}

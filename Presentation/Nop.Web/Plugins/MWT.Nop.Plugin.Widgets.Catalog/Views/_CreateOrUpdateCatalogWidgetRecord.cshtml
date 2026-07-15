@@ -1,0 +1,564 @@
+﻿@model MWT.Nop.Plugin.Widgets.Catalog.Models.MWTEntityBannerModel
+<div asp-validation-summary="All"></div>
+<input asp-for="Id" type="hidden" />
+@if (ViewBag.RefreshPage == true)
+{
+    <script>
+        try {window.opener.document.forms['@(Context.Request.Query["formId"])'].@(Context.Request.Query["btnId"]).click();}
+        catch (e){}
+        window.close();
+    </script>
+}
+
+<div class="cards-group">
+    <div class="card card-default card-popup">
+        <div class="card-body">
+
+            <div class="col-12 notes">
+                @T("MWT.Plugins.Widgets.Catalog.Note")
+            </div>
+            <input name="EntityId" type="hidden" value="1" />
+
+            <div class="form-group row">
+                <div class="col-sm-3">
+                    <nop-label asp-for="EntityType" />
+                </div>
+                <div class="col-sm-9">
+                    @if (Model.Id > 0)
+                    {
+                        <nop-select asp-for="EntityType" asp-items="Model.EntityTypes" />
+                    }
+                    else
+                    {
+                        <nop-select asp-for="EntityType" asp-items="Model.EntityTypes" />
+                    }
+
+                </div>
+            </div>
+            <div class="form-group row categorysection" style="display:@(Model.EntityType == "Category" || string.IsNullOrEmpty(Model.EntityType) ? "" : "none")">
+                <div class="col-sm-3">
+                    <nop-label asp-for="EntityIds" />
+                </div>
+                <div class="col-sm-9">
+                    <select name="@(Model.EntityType == "Category" || string.IsNullOrEmpty(Model.EntityType) ? "EntityIds" : "category_EntityId")" class="form-control select2" multiple="true">
+                        @foreach (var category in Model.AvailableCategories)
+                        {
+                            if (!string.IsNullOrEmpty(category.Value) && Model.EntityIds.Contains(Convert.ToInt32(category.Value)))
+                            {
+                                <option value="@category.Value" selected>@category.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@category.Value">@category.Text</option>
+                            }
+                        }
+                    </select>
+
+                    <span asp-validation-for="EntityIds" class="text-danger"></span>
+                    @*         <script>
+                        $(document).ready(function () {
+                            var $select = $('.categorysection select');
+                            if (!$select.data("kendoMultiSelect")) {
+                                $select.kendoMultiSelect();
+                            }
+
+                            // var categoryIdsInput = $('.kwtermsection select').data("kendoMultiSelect");
+                            // categoryIdsInput.setOptions({
+                            //     autoClose: false,
+                            //     filter: "contains",
+                            //     placeholder: "Please select Entity"
+                            // });
+                        });
+                    </script> *@
+                </div>
+            </div>
+
+            @*      <div class="form-group row kwtermsection" style="display:@(Model.EntityType == "KwTerm" ? "" : "none")">
+                <div class="col-sm-3">
+                    <nop-label asp-for="EntityIds" />
+                </div>
+                <div class="col-sm-9">
+
+                    <select name="@(Model.EntityType == "KwTerm" ? "EntityIds" : "kwterm_EntityId")" multiple="multiple">
+                        @foreach (var kwTerm in Model.AvailableKwTerms)
+                        {
+                            if (!string.IsNullOrEmpty(kwTerm.Value) && Model.EntityIds.Contains(Convert.ToInt32(kwTerm.Value)))
+                            {
+                                <option value="@kwTerm.Value" selected>@kwTerm.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@kwTerm.Value">@kwTerm.Text</option>
+                            }
+                        }
+
+                    </select>
+
+
+                    <script>
+                        $(document).ready(function () {
+                            var $select = $('.kwtermsection select');
+                            if (!$select.data("kendoMultiSelect")) {
+                                $select.kendoMultiSelect();
+                            }
+
+                            var categoryIdsInput = $('.kwtermsection select').data("kendoMultiSelect");
+                            categoryIdsInput.setOptions({
+                                autoClose: false,
+                                filter: "contains",
+                                placeholder: "Please select Entity"
+                            });
+                        });
+                    </script>
+                </div>
+            </div> *@
+            <div class="form-group row">
+                <div class="col-sm-3">
+                    <nop-label asp-for="WidgetZone" />
+                </div>
+                <div class="col-sm-9">
+                    <nop-select asp-for="WidgetZone" asp-items="Model.AvailableWidgetZones" onselect="" />
+                    <span asp-validation-for="WidgetZone"></span>
+                </div>
+            </div>
+            <fieldset>
+                <legend>@T("MWT.Plugins.Widgets.Catalog.Heading.DesktopSection")</legend>
+                <div class="form-group row">
+                    <div class="col-sm-3">
+                        <nop-label asp-for="ActionLink" />
+                    </div>
+                    <div class="col-sm-9">
+                        <nop-editor asp-for="ActionLink" />
+                        <span asp-validation-for="ActionLink"></span>
+                    </div>
+                </div>
+                <br />
+
+                <div id="desktopRadio" class="col-sm-10 row offset-3">
+                    <div class="col-2">
+                        <input type="radio" id="Banner" name="BannerType" value="DesktopBanner" @((Model.BannerId != 0 || (Model.Html == null && Model.VideoUrl == null)) ? "checked" : "")>
+                        <label for="Banner">Banner</label>
+                    </div>
+                    <div class="col-2">
+                        <input type="radio" id="HTML" name="BannerType" value="DesktopHtml" @(Model.Html != null ? "checked" : "")>
+                        <label for="HTML">HTML</label>
+                    </div>
+                    <div id="DesktopVideoRadio" class="col-2">
+                        <input type="radio" id="Video" name="BannerType" value="DesktopVideo" @(Model.VideoUrl != null ? "checked" : "")>
+                        <label for="Video">Video</label>
+
+                    </div>
+                </div>
+
+                <div id="DesktopBanner" class="form-group row desktop" style="@((Model.BannerId != 0 || (Model.Html == null && Model.VideoUrl == null)) ? " display:flex" : "display:none")">
+                    <div class="col-sm-3">
+                        <nop-label asp-for="BannerId" />
+                    </div>
+                    <div class="col-sm-8">
+                        <nop-editor asp-for="BannerId" />
+                        <span asp-validation-for="BannerId"></span>
+                    </div>
+                </div>
+                <div id="DesktopHtml" class="form-group row desktop" style="@((Model.Html == "" || Model.Html == null) ? "display:none" : "display:flex")">
+                    <div class="col-sm-3">
+                        <nop-label asp-for="Html" />
+                    </div>
+                    <div class="col-sm-9">
+                        <nop-editor asp-for="Html" asp-template="RichEditor" />
+
+                        <span asp-validation-for="Html"></span>
+                    </div>
+                </div>
+                <div id="DesktopVideo" class="form-group row desktop" style="@((Model.VideoUrl == "" || Model.VideoUrl == null) ? "display:none" : "display:flex")">
+                    <div class="col-sm-3">
+                        <nop-label asp-for="VideoUrl" />
+                    </div>
+                    <div class="col-sm-9">
+                        @*          <div id="DesktopVideovalue">
+                            <input type="hidden" data-val="true" data-val-required="The Picture field is required." id="VideoFilePath" name="VideoUrl"
+                                   value="@Model.VideoUrl">
+                        </div> *@
+                        <div class="upload-picture-block">
+                            <div class="picture-container">
+                                <div id="DesktopVideoImage" class="uploaded-image">
+                                    @if (string.IsNullOrEmpty(Model.VideoUrl))
+                                    {
+                                        <img src="/images/thumbs/default-image_100.png">
+                                    }
+                                    else
+                                    {
+                                        <video playsinline="playsinline" width="100" class="img-thumbnail" autoplay="autoplay" muted="muted" loop="loop">
+                                            <source src="@Model.VideoUrl" type="video/mp4">
+                                        </video>
+                                    }
+                                </div>
+                            </div>
+                            <div class="upload-button-container">
+                                <div id="VideoDesktop" class="upload-image-button float-left px-md-1">
+                                    <nop-editor asp-for="VideoUrl" />
+                                </div>
+                                <div class="remove-image-button float-left px-md-1">
+                                    <span id="DesktopVideoremove" class="btn btn-danger" style="@(string.IsNullOrEmpty(Model.VideoUrl) ? "display:none" : "")">Remove Video</span>
+                                </div>
+                            </div>
+                        </div>
+                        @*               <script type="text/template" id="Video-qq-template">
+                            <div clas   s="qq-uploader-selector qq-uploader">
+                                <div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
+                                    <span>Drop files here to upload</span>
+                                </div>
+                                <div class="qq-upload-button-selector btn bg-gradient-green">
+                                    <div>Upload a file</div>
+                                </div>
+                                <span class="qq-drop-processing-selector qq-drop-processing">
+                                    <span>Processing dropped files...</span>
+                                    <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
+                                </span>
+                                <ul class="qq-upload-list-selector qq-upload-list">
+                                    <li>
+                                        <div class="qq-progress-bar-container-selector">
+                                            <div class="qq-progress-bar-selector qq-progress-bar"></div>
+                                        </div>
+                                        <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
+                                        <span class="qq-edit-filename-icon-selector qq-edit-filename-icon"></span>
+                                        <span class="qq-upload-file-selector qq-upload-file"></span>
+                                        <input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text">
+                                        <span class="qq-upload-size-selector qq-upload-size"></span>
+                                        <a class="qq-upload-cancel-selector qq-upload-cancel" href="#">Cancel</a>
+                                        <a class="qq-upload-retry-selector qq-upload-retry" href="#">Retry</a>
+                                        <a class="qq-upload-delete-selector qq-upload-delete" href="#">Delete</a>
+                                        <span class="qq-upload-status-text-selector qq-upload-status-text"></span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </script> *@
+
+                        <script>
+                            // $(document).ready(function () {
+                            //     $("#VideoDesktop").fineUploader({
+                            //         request: {
+                            //             endpoint: '/Admin/Video/AsyncUpload'
+                            //         },
+                            //         template: "Video-qq-template",
+                            //         multiple: false,
+                            //         validation: {
+                            //             allowedExtensions: ["mp4", "mov", "wmv", "avi", "avchd", "flv", "f4v", "swf", "mkv", "webm"]
+                            //         }
+                            //     }).on("complete", function (event, id, name, responseJSON, xhr) {
+                            //         if (responseJSON.success) {
+                            //             console.log($("#DesktopVideoImage"));
+                            //             $("#DesktopVideoImage").html('<video playsinline = "playsinline"  width="100px"  autoplay="autoplay" muted = "muted" loop = "loop"><source src="' + responseJSON.videoUrl + '" type="video/mp4" ></video>');
+                            //             console.log($("#DesktopVideoImage").html());
+                            //             $("#DesktopVideovalue input").val(responseJSON.videoUrl);
+                            //             $("#DesktopVideoremove").show();
+                            //         }
+                            //     });
+                            //     $("#DesktopVideoremove").click(function (e) {
+                            //         $("#DesktopVideoImage").html("<img src='/images/thumbs/default-image_100.png'/>");
+                            //         $("#DesktopVideovalue input").val("");
+                            //         $("#VideoDesktop .qq-upload-list-selector").empty();
+                            //         $(this).hide();
+
+                            //     });
+
+                            //});
+                                                        $(function () {
+
+                                $('#VideoUrl').on('input', function () {
+
+                                    var url = $(this).val();
+
+                                    if (url) {
+                                        $('#DesktopVideoImage').html(
+                                            '<video playsinline width="100" class="img-thumbnail" controls muted>' +
+                                            '<source src="' + url + '" type="video/mp4">' +
+                                            '</video>'
+                                        );
+
+                                        $('#DesktopVideoremove').show();
+                                    } else {
+                                        $('#DesktopVideoImage').html(
+                                            "<img src='/images/thumbs/default-image_100.png' class='img-thumbnail' />"
+                                        );
+
+                                        $('#DesktopVideoremove').hide();
+                                    }
+                                });
+
+                                $('#DesktopVideoremove').click(function () {
+
+                                    $('#VideoUrl').val('');
+
+                                    $('#DesktopVideoImage').html(
+                                        "<img src='/images/thumbs/default-image_100.png' class='img-thumbnail' />"
+                                    );
+
+                                    $(this).hide();
+                                });
+
+                            });
+                        </script>
+                        @*  // <span class="field-validation-valid" data-valmsg-for="VideoFilePath" data-valmsg-replace="true"></span> *@
+                        <span asp-validation-for="VideoUrl"></span>
+                    </div>
+
+
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>@T("MWT.Plugins.Widgets.Catalog.heading.MobileSection")</legend>
+                <div class="form-group row">
+                    <div class="col-sm-3">
+                        <nop-label asp-for="MobileActionLink" />
+                    </div>
+                    <div class="col-sm-9">
+                        <nop-editor asp-for="MobileActionLink" />
+                        <span asp-validation-for="MobileActionLink"></span>
+                    </div>
+                </div>
+                <br />
+                <div class="col-sm-9 row offset-3" id="mobileRadio">
+                    <div class="col-2">
+                        <input type="radio" id="MobBanner" name="MobileBannerType" value="MobileBanner" @((Model.MobileBannerId != 0 || (Model.MobileHtml == null && Model.MobileVideoUrl == null)) ? "checked" : "")>
+                        <label for="MobBanner">Banner</label>
+                    </div>
+                    <div class="col-2">
+                        <input type="radio" id="MobHTML" name="MobileBannerType" value="MobileHTML" @(Model.MobileHtml != null ? "checked" : "")>
+                        <label for="MobHTML">HTML</label>
+                    </div>
+                    <div id="MobileVideoRadio" class="col-2">
+                        <input type="radio" id="MobVideo" name="MobileBannerType" value="MobileVideo" @(Model.MobileVideoUrl != null ? "checked" : "")>
+                        <label for="MobVideo">Video</label>
+                    </div>
+                </div>
+
+                <div id="MobileBanner" class="form-group row mobile" style="@((Model.MobileBannerId != 0 || (Model.MobileHtml == null && Model.MobileVideoUrl == null)) ? "display:flex" : "display:none")">
+                    <div class="col-sm-3">
+                        <nop-label asp-for="MobileBannerId" />
+                    </div>
+                    <div class="col-sm-9">
+                        <nop-editor asp-for="MobileBannerId" />
+                        <span asp-validation-for="MobileBannerId"></span>
+                    </div>
+                </div>
+                <div id="MobileHTML" class="form-group row mobile" style="@(Model.MobileHtml == "" || Model.MobileHtml == null ? "display:none;" : "display:flex;")">
+                    <div class="col-sm-3">
+                        <nop-label asp-for="MobileHtml" />
+                    </div>
+                    <div class="col-sm-9">
+                        <nop-editor asp-for="MobileHtml" asp-template="RichEditor" />
+                        <span asp-validation-for="MobileHtml"></span>
+                    </div>
+                </div>
+                <div id="MobileVideo" class="form-group row mobile" style="@(Model.MobileVideoUrl == "" || Model.MobileVideoUrl == null ? "display:none;" : "display:flex;")">
+                    <div class="col-sm-3">
+                        <nop-label asp-for="MobileVideoUrl" />
+                    </div>
+                    <div class="col-sm-9">
+
+                        @*     <div id="MobileVideoValue">
+                            <input type="hidden" data-val="true" data-val-required="The Picture field is required." id="MobileVideoFilePath" name="MobileVideoUrl"
+                                   value="@Model.MobileVideoUrl">
+                        </div> *@
+                        <div class="upload-picture-block">
+                            <div class="picture-container">
+                                <div id="MobileVideoImage" class="uploaded-image">
+                                    @if (string.IsNullOrEmpty(Model.MobileVideoUrl))
+                                    {
+                                        <img src="/images/thumbs/default-image_100.png">
+                                    }
+                                    else
+                                    {
+                                        <video playsinline="playsinline" width="100" class="img-thumbnail" autoplay="autoplay" muted="muted" loop="loop">
+                                            <source src="@Model.MobileVideoUrl" type="video/mp4">
+                                        </video>
+                                    }
+                                </div>
+                            </div>
+                            <div class="upload-button-container">
+                                <div id="Mobile-Video" class="upload-image-button float-left px-md-1">
+                                    <nop-editor asp-for="MobileVideoUrl" />
+                                </div>
+                                <div class="remove-image-button float-left px-md-1">
+                                    <span id="MobileVideoremove" class="btn btn-danger" style="@(string.IsNullOrEmpty(Model.MobileVideoUrl) ? "display:none" : "")">Remove Video</span>
+                                </div>
+                            </div>
+                        </div>
+                        @*              <script type="text/template" id="Mobile-Video-qq-template">
+                            <div class="qq-uploader-selector qq-uploader">
+                                <div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
+                                    <span>Drop files here to upload</span>
+                                </div>
+                                <div class="qq-upload-button-selector btn bg-gradient-green">
+                                    <div>Upload a file</div>
+                                </div>
+                                <span class="qq-drop-processing-selector qq-drop-processing">
+                                    <span>Processing dropped files...</span>
+                                    <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
+                                </span>
+                                <ul class="qq-upload-list-selector qq-upload-list">
+                                    <li>
+                                        <div class="qq-progress-bar-container-selector">
+                                            <div class="qq-progress-bar-selector qq-progress-bar"></div>
+                                        </div>
+                                        <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
+                                        <span class="qq-edit-filename-icon-selector qq-edit-filename-icon"></span>
+                                        <span class="qq-upload-file-selector qq-upload-file"></span>
+                                        <input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text">
+                                        <span class="qq-upload-size-selector qq-upload-size"></span>
+                                        <a class="qq-upload-cancel-selector qq-upload-cancel" href="#">Cancel</a>
+                                        <a class="qq-upload-retry-selector qq-upload-retry" href="#">Retry</a>
+                                        <a class="qq-upload-delete-selector qq-upload-delete" href="#">Delete</a>
+                                        <span class="qq-upload-status-text-selector qq-upload-status-text"></span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </script> *@
+                        <script>
+                            // $(document).ready(function () {
+                            //     $("#Mobile-Video").fineUploader({
+                            //         request: {
+                            //             endpoint: '/Admin/Video/AsyncUpload'
+                            //         },
+                            //         template: "Mobile-Video-qq-template",
+                            //         multiple: false,
+                            //         validation: {
+                            //             allowedExtensions: ["mp4", "mov", "wmv", "avi", "avchd", "flv", "f4v", "swf", "mkv", "webm"]
+                            //         }
+                            //     }).on("complete", function (event, id, name, responseJSON, xhr) {
+                            //         if (responseJSON.success) {
+
+                            //             $("#MobileVideoImage").html('<video playsinline = "playsinline"  width="100px"  autoplay="autoplay" muted = "muted" loop = "loop"><source src="' + responseJSON.videoUrl + '" type="video/mp4" ></video>');
+                            //             $("#MobileVideoValue input").val(responseJSON.videoUrl);
+                            //             $("#MobileVideoremove").show();
+                            //         }
+                            //     });
+                            //     $("#MobileVideoremove").click(function (e) {
+                            //         $("#MobileVideoImage").html("<img src='/images/thumbs/default-image_100.png'/>");
+                            //         $("#MobileVideoValue input").val("");
+                            //         $("#MobileVideo .qq-upload-list-selector").empty();
+                            //         $(this).hide();
+
+                            //     });
+                            // });
+                            //
+                            //
+
+                            $(function () {
+
+                                $('#MobileVideoUrl').on('input', function () {
+
+                                    var url = $(this).val();
+
+                                    if (url) {
+                                        $('#MobileVideoImage').html(
+                                            '<video playsinline width="100" class="img-thumbnail" controls muted>' +
+                                            '<source src="' + url + '" type="video/mp4">' +
+                                            '</video>'
+                                        );
+
+                                        $('#MobileVideoremove').show();
+                                    } else {
+                                        $('#MobileVideoImage').html(
+                                            "<img src='/images/thumbs/default-image_100.png' class='img-thumbnail' />"
+                                        );
+
+                                        $('#MobileVideoremove').hide();
+                                    }
+                                });
+
+                                $('#MobileVideoremove').on('click', function () {
+
+                                    $('#MobileVideoUrl').val('');
+                                    $('#MobileVideoImage').html(
+                                        "<img src='/images/thumbs/default-image_100.png' class='img-thumbnail' />"
+                                    );
+
+                                    $(this).hide();
+                                });
+
+                            });
+                        </script>
+                        @*           <span class="field-validation-valid" data-valmsg-for="MobileVideoFilePath" data-valmsg-replace="true"></span> *@
+                        <span asp-validation-for="MobileVideoUrl"></span>
+                    </div>
+
+                </div>
+
+            </fieldset>
+            <script>
+                $(document).ready(function () {
+
+                              function manageEntityId() {
+                    if ($("#EntityType").val() == "Category" || $("#EntityType").val() == "" || $("#EntityType").val() == null) {
+                        $(".categorysection select").attr("name", "EntityIds");
+                    }
+                    else {
+                        $(".categorysection select").attr("name", "category_EntityId");
+                    }
+                }
+                    manageEntityId();
+                    $("#EntityType").change(function () {
+                        if ($(this).val() == "Category") {
+                            $(".categorysection").show();
+                         //   $(".kwtermsection").hide();
+                        }
+                        else {
+                            $(".categorysection").hide();
+                    //        $(".kwtermsection").show();
+                        }
+                        manageEntityId();
+                    })
+                    // Initially hide all div groups
+                    var selectedValue = $('#WidgetZone').val();
+                    if (selectedValue === 'categorydetails_middle_product_list' || selectedValue === 'categorydetails_third_product_list') {
+                        $('#DesktopVideoRadio').hide();
+                        $('#MobileVideoRadio').hide();
+                        $('#DesktopVideo').hide();
+                        $('#MobileVideo').hide();
+                    }
+
+                    // Show the selected div group based on the radio button selection
+                    $('input[type=radio][name=BannerType]').change(function () {
+                        $('.desktop').hide();
+                        $('#' + $(this).val()).show();
+                    });
+                    $('input[type=radio][name=MobileBannerType]').change(function () {
+                        $('.mobile').hide();
+                        $('#' + $(this).val()).show();
+                    });
+
+                    $('#WidgetZone').change(function () {
+
+                        var selectedValue = $(this).val();
+                        if (selectedValue === 'categorydetails_middle_product_list' || selectedValue === 'categorydetails_third_product_list') {
+                            $('#DesktopVideoRadio').hide();
+                            $('#MobileVideoRadio').hide();
+                            $('#DesktopVideo').hide();
+                            $('#MobileVideo').hide();
+
+                            if ($('#desktopRadio input:checked').val() == 'DesktopVideo') {
+                                $('#desktopRadio input[value="DesktopBanner"]').prop('checked', true).trigger('change');
+                            }
+                            if ($('#mobileRadio input:checked').val() == 'MobileVideo') {
+                                $('#mobileRadio input[value="MobileBanner"]').prop('checked', true).trigger('change');
+                            }
+
+
+
+                        } else {
+                            $('#DesktopVideoRadio').show();
+                            $('#MobileVideoRadio').show();
+
+                        }
+                    });
+
+
+
+
+                });
+            </script>
+
+        </div>
+    </div>
+</div>

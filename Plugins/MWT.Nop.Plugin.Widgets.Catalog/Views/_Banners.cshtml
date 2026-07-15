@@ -1,0 +1,94 @@
+﻿@model MWT.Nop.Plugin.Widgets.Catalog.Models.ConfigurationModel
+@using Nop.Core
+@using MWT.Nop.Plugin.Widgets.Catalog.Models
+@using Nop.Web.Framework.Models.DataTables
+@inject IWorkContext workContext
+<form asp-controller="MWTWidgetsCatalog" asp-action="Configure" method="post" id="shipping-banners-form">
+   <section class="content">
+      <div class="container-fluid">
+      <div class="row">
+         <div class="col-12">
+            <div class="card">
+               <div class="card-body">
+                  @await Html.PartialAsync("Table", new DataTablesModel
+                  {
+                  Name = "shipping-banners-grid",
+                  UrlRead = new DataUrl("AllBanners", "MWTWidgetsCatalog", null),
+                  UrlDelete = new DataUrl("Delete", "MWTWidgetsCatalog", null),
+                  SearchButtonId = "search-banners-records",
+                  Length = Model.PageSize,
+                  LengthMenu = Model.AvailablePageSizes,
+                  Filters = new List<FilterParameter>
+                  {
+                  new FilterParameter(nameof(Model.SearchCategoryId))
+                  },
+                  ColumnCollection = new List
+                  <ColumnProperty>
+                  {
+                  new ColumnProperty(nameof(MWTEntityBannerModel.EntityName))
+                  {
+                  Title = T("MWT.Nop.Plugin.Widgets.Catalog.Fields.EntityName").Text,
+                  Width = "200",
+                  },
+                  new ColumnProperty(nameof(MWTEntityBannerModel.WidgetZone))
+                  {
+                  Title = T("MWT.Nop.Plugin.Widgets.Catalog.Fields.WidgetZone").Text,
+                  Width = "200"
+                  },
+                  new ColumnProperty(nameof(MWTEntityBannerModel.ActionLink))
+                  {
+                  Title = T("MWT.Nop.Plugin.Widgets.Catalog.Fields.ActionLink").Text,
+                  Width = "200"
+                  },
+                  new ColumnProperty(nameof(MWTEntityBannerModel.MobileActionLink))
+                  {
+                  Title = T("MWT.Nop.Plugin.Widgets.Catalog.Fields.MobileActionLink").Text,
+                  Width = "200"
+                  },
+                  new ColumnProperty(nameof(MWTEntityBannerModel.Id))
+                  {
+                  Title = T("Admin.Common.Edit").Text,
+                  ClassName = NopColumnClassDefaults.Button,
+                  Width = "100",
+                  Render = new RenderCustom("renderColumnEdit")
+                  },
+                  new ColumnProperty(nameof(MWTEntityBannerModel.Id))
+                  {
+                  Title = T("Admin.Common.Delete").Text,
+                  ClassName = NopColumnClassDefaults.Button,
+                  Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+                  Width = "100"
+                  }
+                  }
+                  })
+               </div>
+               <div class="card-footer">
+                  <button type="submit" id="btnAddNewRecord" class="btn btn-primary"
+                  onclick="javascript: OpenWindow('@(Url.Action("AddBannerPopup", "MWTWidgetsCatalog", new {btnId = "btnRefresh", formId = "shipping-banners-form"}))',
+                  800, 800, true); return false;">
+                  @T("MWT.Nop.Plugin.Widgets.Catalog.AddRecord")
+                  </button>
+                  <button type="submit" name="save" id="btnRefresh" class="btn btn-default" style="display: none"></button>
+               </div>
+            </div>
+         </div>
+      </div>
+   </section>
+</form>
+<script type="text/javascript">
+   function renderColumnEdit(data, type, row, meta) {
+       return '<button onclick=\"javascript:OpenWindow(\'@Url.Action("EditBannerPopup", "MWTWidgetsCatalog")?id=' + data + '&btnId=btnRefresh&formId=shipping-banners-form\', 800, 800, true); return false;\" class="btn btn-default"><i class="fas fa-pencil-alt"></i>@T("Admin.Common.Edit").Text</button>';
+                           }
+                                   $(document)
+                                       .ready(function () {
+                                           $('#btnRefresh')
+                                               .click(function () {
+                                                   //refresh grid
+                                                   updateTable('#shipping-banners-grid');
+   
+                                                   //return false to don't reload a page
+                                                   return false;
+                                               });
+                                       });
+   
+</script>

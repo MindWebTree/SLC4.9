@@ -64,10 +64,6 @@
       "Version": "4.4"
     },
     {
-      "SystemName": "MWT.Nop.Plugin.Widgets.Catalog",
-      "Version": "4.4"
-    },
-    {
       "SystemName": "Tax.FixedOrByCountryStateZip",
       "Version": "4.90.4"
     },
@@ -134,6 +130,14 @@
     {
       "SystemName": "DiscountRequirement.ItemsBelowPrice",
       "Version": "1.00"
+    },
+    {
+      "SystemName": "MWT.Nop.Plugin.Widgets.Catalog",
+      "Version": "4.90"
+    },
+    {
+      "SystemName": "Misc.Omnisend",
+      "Version": "4.90.7"
     }
   ],
   "PluginNamesToUninstall": [],

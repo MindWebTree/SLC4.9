@@ -73,7 +73,7 @@ public partial record ProductModel : BaseNopEntityModel,
 
     #endregion
 
-    #region Properties
+    #region Properties 
 
     //picture thumbnail
     [NopResourceDisplayName("Admin.Catalog.Products.Fields.PictureThumbnailUrl")]
