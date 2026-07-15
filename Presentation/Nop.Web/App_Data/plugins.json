@@ -88,10 +88,6 @@
       "Version": "1.41"
     },
     {
-      "SystemName": "MWT.Tax.FixedOrByCountryStateZip",
-      "Version": "1.38"
-    },
-    {
       "SystemName": "Payments.Affirm",
       "Version": "1.00"
     },
@@ -138,6 +134,10 @@
     {
       "SystemName": "Misc.Omnisend",
       "Version": "4.90.7"
+    },
+    {
+      "SystemName": "MWT.Tax.FixedOrByCountryStateZip",
+      "Version": "1.38"
     }
   ],
   "PluginNamesToUninstall": [],

@@ -1058,6 +1058,7 @@ wwwroot\images\thumbs\0414330_download.jpeg
 wwwroot\images\thumbs\0414346_0413175_dining-set.png
 wwwroot\images\thumbs\0414354_download.jpeg
 wwwroot\images\thumbs\0414355_Capture ajax error on sierra.png
+wwwroot\images\thumbs\0415495_nottingham-solid-wood-large-rustic-dining-room-table-chair-set.jpeg
 wwwroot\images\thumbs\0416512_logo.png
 wwwroot\images\thumbs\default-image_1.png
 wwwroot\images\thumbs\default-image_100.png

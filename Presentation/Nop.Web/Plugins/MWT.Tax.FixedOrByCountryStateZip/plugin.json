@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Tax providers",
+  "FriendlyName": "MWT Tax Manual (Fixed or By Country/State/Zip)",
+  "SystemName": "MWT.Tax.FixedOrByCountryStateZip",
+  "Version": "1.38",
+  "SupportedVersions": [ "4.90" ],
+  "Author": "Mind Web Tree team",
+  "DisplayOrder": 1,
+  "FileName": "MWT.Tax.FixedOrByCountryStateZip.dll",
+  "Description": "This plugin allow to configure fix tax rates or tax rates by countries, states and zip codes"
+}
