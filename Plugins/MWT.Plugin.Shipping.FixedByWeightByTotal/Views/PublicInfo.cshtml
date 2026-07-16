@@ -1,0 +1,85 @@
+﻿@model MWT.Plugin.Shipping.FixedByWeightByTotal.Models.EstimatedShippingDateRequestModel
+<div class="deliveryMsg">
+</div>
+<div class="form-zip-text-wrap" id="estimatedeliverySection">
+    <input type="hidden" name="estimated_productid" id="estimated_productid" value="@Model.ProductId" />
+    <input type="hidden" name="estimated_productid" id="estimated_zipcode" value="@Model.Zipcode" />
+    <input type="text" placeholder="Enter Zip Code" class="zip-input input-lg" maxlength="5" aria-label="Enter delivery ZIP Code" title="Enter delivery ZIP Code">
+    <div class="form-zip-button-wrap"><button type="button" class="zip-submit-button button button-secondary button-lg" name="Enter Zip Code"><i class="fas fa-chevron-right"></i></button></div>
+</div>
+
+<script>
+    function processRequest() {
+        if ($(".zip-input").val().trim() == "") {
+            $(".zip-input").focus();
+        }
+        else {
+            getEstimateShippingDate($(".zip-input").val());
+        }
+    }
+    window.addEventListener("load", function () {
+        $(".zip-submit-button").click(function () {
+            processRequest();
+        });
+        $('.zip-input').on("keypress", function (e) {
+            if (e.keyCode == 13) {
+                processRequest();
+                return false; // prevent the button click from happening
+            }
+        });
+        $("body").on("click", ".deliveryMsg a", function (e) {
+            $(".form-zip-text-wrap").show();
+            $(".deliveryMsg").html("").hide();
+        });
+        $(document).ready(function () {
+            var zipCode = getCookie("zipcode");
+            if (zipCode != null) {
+                getEstimateShippingDate(zipCode);
+            }
+            else if ($("#estimated_zipcode").val() != "") {
+                getEstimateShippingDate($("#estimated_zipcode").val());
+            }
+        });
+    });
+
+    function getEstimateShippingDate(zipCode) {
+        var postData = {
+            productId: $("#estimated_productid").val(),
+            postalCode: zipCode
+        };
+        addAntiForgeryToken(postData);
+        setCookie("zipcode", zipCode, 3);
+        $.ajax({
+            cache: false,
+            type: "POST",
+            url: "@Url.Action("GetEstimateDeliverydate", "MWTShippingEstimate")",
+            data: postData,
+
+            success: function (message) {
+                $(".form-zip-text-wrap").hide();
+                $(".deliveryMsg").html(message).show();
+            }
+        });
+    }
+
+    function setCookie(name, value, days) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+</script>

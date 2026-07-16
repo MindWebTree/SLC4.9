@@ -64,20 +64,12 @@
       "Version": "4.4"
     },
     {
-      "SystemName": "Tax.FixedOrByCountryStateZip",
-      "Version": "4.90.4"
-    },
-    {
       "SystemName": "Payments.CashOnDelivery",
       "Version": "1.44"
     },
     {
       "SystemName": "Payments.AuthorizeNet",
       "Version": "2.36"
-    },
-    {
-      "SystemName": "MWT.Shipping.FixedByWeightByTotal",
-      "Version": "2.28"
     },
     {
       "SystemName": "Misc.MailChimp",
@@ -138,9 +130,15 @@
     {
       "SystemName": "MWT.Tax.FixedOrByCountryStateZip",
       "Version": "1.38"
+    },
+    {
+      "SystemName": "MWT.Shipping.FixedByWeightByTotal",
+      "Version": "2.28"
     }
   ],
-  "PluginNamesToUninstall": [],
+  "PluginNamesToUninstall": [
+    "MWT.Shipping.FixedByWeightByTotal"
+  ],
   "PluginNamesToDelete": [],
   "PluginNamesToInstall": [
     {

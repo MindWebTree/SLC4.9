@@ -40,7 +40,7 @@
                     <nop-label asp-for="EntityIds" />
                 </div>
                 <div class="col-sm-9">
-                    <select name="@(Model.EntityType == "Category" || string.IsNullOrEmpty(Model.EntityType) ? "EntityIds" : "category_EntityId")" class="form-control select2" multiple="true">
+                    <select name="@(Model.EntityType == "Category" || string.IsNullOrEmpty(Model.EntityType) ? "EntityIds" : "category_EntityId")" class="form-control select2" multiple="mutiple">
                         @foreach (var category in Model.AvailableCategories)
                         {
                             if (!string.IsNullOrEmpty(category.Value) && Model.EntityIds.Contains(Convert.ToInt32(category.Value)))
@@ -55,21 +55,29 @@
                     </select>
 
                     <span asp-validation-for="EntityIds" class="text-danger"></span>
-                    @*         <script>
+                    <script>
                         $(document).ready(function () {
-                            var $select = $('.categorysection select');
-                            if (!$select.data("kendoMultiSelect")) {
-                                $select.kendoMultiSelect();
-                            }
+                            // var $select = $('.categorysection select');
+                            // if (!$select.data("kendoMultiSelect")) {
+                            //     $select.kendoMultiSelect();
+                            // }
 
-                            // var categoryIdsInput = $('.kwtermsection select').data("kendoMultiSelect");
-                            // categoryIdsInput.setOptions({
-                            //     autoClose: false,
-                            //     filter: "contains",
-                            //     placeholder: "Please select Entity"
-                            // });
+                            // // var categoryIdsInput = $('.kwtermsection select').data("kendoMultiSelect");
+                            // // categoryIdsInput.setOptions({
+                            // //     autoClose: false,
+                            // //     filter: "contains",
+                            // //     placeholder: "Please select Entity"
+                            // // });
+                                        var $multiSelect = $('#catalog-category-multiselect');
+                        if (typeof $.fn.select2 !== 'undefined') {
+                            $multiSelect.select2({
+                                placeholder: "Please select Entity",
+                                allowClear: true,
+                                closeOnSelect: false
+                            });
+                        }
                         });
-                    </script> *@
+                    </script>
                 </div>
             </div>
 

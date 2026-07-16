@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyCopyrightAttribute("Copyright © Nop Solutions, Ltd")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+26e4d0eb4f866ad480067e00da2e22498db6b405")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8176a8c37e32e3f810821b6b8504bda83d95102e")]
 [assembly: System.Reflection.AssemblyProductAttribute("Nop.Plugin.Misc.NopMobileApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Nop.Plugin.Misc.NopMobileApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
