@@ -1,0 +1,33 @@
+﻿
+.main-partial-customer-login .btn-apple-login {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 246px;
+    height: 42px;
+    background: #000000;
+    border-radius: 4px;
+    gap: 5px;
+    font-size: 16px;
+    color: #FFFFFF;
+}
+
+
+.external-authentication .btn-apple-login {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    height: 23px;
+    background: #000000;
+    border-radius: 4px;
+    gap: 5px;
+    font-size: 8px;
+    color: #FFFFFF;
+    margin: 0 auto;
+}
+
+
+

@@ -1,0 +1,49 @@
+﻿@{
+    Layout = "";
+    NopHtml.AddCssFileParts("~/Plugins/ExternalAuth.Google/Content/googlestyles.css");
+}
+
+<div class="external-authentication-login">
+    <a id="google-login"
+       class="btn-google-login" onclick="googleLogin(event)">
+        <svg width="23" height="24" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M19.708 12.1947C19.708 11.5884 19.6536 11.0054 19.5525 10.4458H11.5V13.7531H16.1015C15.9032 14.8218 15.3009 15.7274 14.3953 16.3336V18.4789H17.1585C18.7753 16.9904 19.708 14.7985 19.708 12.1947Z" fill="#4285F4" />
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 20.55C13.8085 20.55 15.7439 19.7844 17.1585 18.4786L14.3953 16.3333C13.6297 16.8463 12.6503 17.1494 11.5 17.1494C9.27308 17.1494 7.38819 15.6454 6.71585 13.6245H3.85938V15.8397C5.26624 18.634 8.15769 20.55 11.5 20.55Z" fill="#34A853" />
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M6.71511 13.6244C6.54411 13.1114 6.44695 12.5634 6.44695 11.9999C6.44695 11.4364 6.54411 10.8884 6.71511 10.3754V8.16016H3.85863C3.27956 9.31441 2.94922 10.6202 2.94922 11.9999C2.94922 13.3795 3.27956 14.6854 3.85863 15.8396L6.71511 13.6244Z" fill="#FBBC05" />
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 6.85076C12.7553 6.85076 13.8823 7.28215 14.7684 8.12938L17.2207 5.67708C15.74 4.29742 13.8046 3.4502 11.5 3.4502C8.15769 3.4502 5.26624 5.36617 3.85938 8.16047L6.71585 10.3757C7.38819 8.35479 9.27308 6.85076 11.5 6.85076Z" fill="#EA4335" />
+        </svg>
+        Sign in with Google
+    </a>
+</div>
+
+<script>
+if (typeof googleLogin !== "function") {
+    function googleLogin(e) {
+            e.preventDefault();
+
+
+        // Take the current page URL as returnUrl
+        var currentUrl = window.location.pathname + window.location.search;
+        var returnUrl = "";
+
+        // Only add returnUrl if not on login page
+      if (!currentUrl.toLowerCase().startsWith("/login")) {
+            returnUrl = `&returnUrl=${encodeURIComponent(currentUrl)}&isCheckout=true`;
+        }
+        else {
+            returnUrl = '&returnUrl=@Context.Request.Query["ReturnUrl"]&isCheckout=false';
+        }
+
+
+        var loginUrl = '@Url.Action("Login", "GoogleAuthentication", new { provider = "Google" })' + returnUrl;
+
+        var width = 400;
+        var height = 500;
+        var left = (window.screen.width / 2) - (width / 2);
+        var top = (window.screen.height / 2) - (height / 2);
+
+        window.open(loginUrl, "google-login",
+            "width=" + width + ",height=" + height + ",top=" + top + ",left=" + left + ",scrollbars=yes,resizable=yes");
+    }
+	}
+</script>

@@ -1,0 +1,16 @@
+﻿{
+  "Group": "ExternalAuth methods",
+  "FriendlyName": "Google authentication",
+  "SupportedVersions": [
+    "4.90"
+  ],
+  "Author": "nopCommerce team",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.ExternalAuth.Google.dll",
+  "Description": "This plugin enables Google authentication (login using Google account)",
+  "LimitedToStores": [],
+  "LimitedToCustomerRoles": [],
+  "DependsOnSystemNames": [],
+  "SystemName": "ExternalAuth.Google",
+  "Version": "4.90"
+}

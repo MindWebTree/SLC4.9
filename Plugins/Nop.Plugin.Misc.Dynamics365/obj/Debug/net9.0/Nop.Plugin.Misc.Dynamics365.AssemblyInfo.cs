@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyCopyrightAttribute("Copyright © Nop Solutions, Ltd")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e456938f4a74a3f938d81d038b094870381fd2c1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+287f2d05902aed0eee18494a120c1388cfd786d3")]
 [assembly: System.Reflection.AssemblyProductAttribute("Nop.Plugin.Misc.Dynamics365")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Nop.Plugin.Misc.Dynamics365")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

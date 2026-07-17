@@ -89,11 +89,11 @@
     },
     {
       "SystemName": "ExternalAuth.Google",
-      "Version": "1.68"
+      "Version": "4.90"
     },
     {
       "SystemName": "ExternalAuth.Apple",
-      "Version": "1.68"
+      "Version": "4.90"
     },
     {
       "SystemName": "MWT.Nop.Plugin.Misc.ProductBundle",
