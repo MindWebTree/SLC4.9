@@ -1,0 +1,87 @@
+﻿@using MWT.Nop.Plugin.MegaMenu.MVCExtensions
+@using MWT.Nop.Plugin.MegaMenu.Models
+
+@model MenuItemCategoryModel
+
+@{
+    var areCategoriesInASingleItem = Model.Item.EntityId == 0;
+    var hasSubCategories = Model.Categories.Count > 0;
+    var hasSublistClass = hasSubCategories ? "has-sublist" : string.Empty;
+    var withSubcategoriesClass = hasSubCategories ? "with-subcategories" : string.Empty;
+}
+
+<li class="@hasSublistClass with-dropdown-in-grid @Model.Item.CssClass">
+    @if (areCategoriesInASingleItem)
+    {
+        <span class="@withSubcategoriesClass single-item-categories labelfornextplusbutton">@Model.Item.Title</span>
+    }
+    else
+    {
+        <a class="@withSubcategoriesClass" href="@Model.Item.Url"><span>@Model.Item.Title</span></a>
+    }
+
+    @if (hasSubCategories)
+    {
+<div class="dropdown categories fullWidth boxes-@Model.Item.NumberOfBoxesPerRow">
+    <div class="mega-menu-container">
+        <div class="row-wrapper">
+            @(await Html.DataTableAsync<MegaMenuCategoryModel>(Model.Categories, Model.Item.NumberOfBoxesPerRow, "row", "box",
+                @<text>
+                @*<div class="picture-title-wrap">
+                    <div class="title">
+                        <a href="@Url.RouteUrl("Category", new {item.CategoryModel.SeName})" title="@item.CategoryModel.Name"><span>@item.CategoryModel.Name</span></a>
+                    </div>
+                    <div class="picture">
+                        <a href="@Url.RouteUrl("Category", new {item.CategoryModel.SeName})" title="@item.CategoryModel.PictureModel.Title">
+                            <img class="lazy" alt="@item.CategoryModel.PictureModel.AlternateText" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-original="@item.CategoryModel.PictureModel.ImageUrl" />
+                        </a>
+                    </div>
+                </div>*@
+                 <ul class="subcategories">
+                                <li>
+                                    <a href="@Url.RouteUrl("Category", new {SeName=item.CategoryModel.SeName,item=item.CategoryModel.Id})" title="@item.CategoryModel.Name"><span> @item.CategoryModel.Name</span></a>
+                                </li>
+                            </ul>
+                @*@if (item.SubCategories.Count > 0)
+                {
+                    <ul class="subcategories">
+                        @foreach (var subCategory in item.SubCategories)
+                        {
+                            <li class="subcategory-item">
+                                <a href="@Url.RouteUrl("Category", new {subCategory.CategoryModel.SeName})" title="@subCategory.CategoryModel.Name"><span>@subCategory.CategoryModel.Name</span></a>
+                            </li>
+                        }
+
+                        @if (item.ShouldShowViewAllLink)
+                        {
+                            <li class="subcategory-item all">
+                                <a class="view-all" href="@Url.RouteUrl("Category", new {item.CategoryModel.SeName})" title="@T("MWT.MegaMenu.ViewAllCategories")">
+                                    <span>@T("MWT.MegaMenu.ViewAllCategories")</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                }*@
+                </text>
+                ))
+        </div>
+        <div class="category-image-container">
+            <a href="#">
+                <img class="lazy category-image" alt="@Model.Item.Title" style="width:70%" src="@Model.Item.CssClass" data-original="@Model.Item.CssClass" />
+            </a>
+        </div>
+    </div>
+        
+
+        
+        @if (areCategoriesInASingleItem)
+        {
+            @await Component.InvokeAsync("Widget", new { widgetZone = "mega_menu_categories_before_dropdown_end" })
+        }
+        else
+        {
+            @await Component.InvokeAsync("Widget", new { widgetZone = $"mega_menu_categories_before_dropdown_end_{Model.CategoryMenuItemIndex}" })
+        }
+    </div>
+    }
+</li>

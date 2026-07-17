@@ -1,0 +1,92 @@
+﻿@** Copyright 2017 Seven Spikes Ltd. All rights reserved. (http://www.nop-templates.com)
+    * http://www.nop-templates.com/t/licensinginfo
+*@
+@inject Nop.Core.IWorkContext _workContext;
+@model MWT.Nop.Plugin.MegaMenu.Areas.Admin.Models.MenuItemModel
+
+@{
+    var hasSublist = Model.SubItems.Count > 0;
+    var hasSublistClass = hasSublist ? "has-sublist" : string.Empty;
+    var withSubcategoriesClass = hasSublist ? "with-subcategories" : string.Empty;
+    var itemUrl = Plugin.PredefinedPageTypes.Contains(Model.Type) ? Url.RouteUrl(Model.Type.ToString()) : Model.Url;
+}
+
+@functions {
+    async Task CategoryLine(MWT.Nop.Plugin.MegaMenu.Areas.Admin.Models.MenuItemModel model, int id, int level)
+    {
+        level++;
+        <div id="cat@(id)" class="card-body collapse @(level>1?"sub-menu-cat":"")">
+            @foreach (var subItem in model.SubItems)
+            {
+                @if (subItem.SubItems.Count == 0)
+                {
+                    <a href="@(Plugin.PredefinedPageTypes.Contains(subItem.Type) ? Url.RouteUrl(subItem.Type.ToString()) : subItem.Url)"
+                       class="cat-@(subItem.Id) @subItem.CssClass"
+                       title="@subItem.Title" @if (subItem.OpenInNewWindow) { <text> target="_blank" </text> }>
+                        @subItem.Title
+                    </a>
+                }
+                else
+                {
+
+                    <div class="card-header collapsed" data-toggle="collapse" href="#cat@(subItem.Id)">
+                        <a href="@(Plugin.PredefinedPageTypes.Contains(subItem.Type) ? Url.RouteUrl(subItem.Type.ToString()) : subItem.Url)"
+                           class="cat-@(subItem.Id) @subItem.CssClass"
+                           title="@subItem.Title" @if (subItem.OpenInNewWindow) { <text> target="_blank" </text> }>
+                            @subItem.Title
+                        </a>
+                    </div>
+                    await CategoryLine(subItem, subItem.Id, level);
+                }
+            }
+        </div>
+    }
+}
+
+@if (_userAgentHelper.IsMobileDevice())
+{
+    @if (!hasSublist)
+    {
+        <a href="@itemUrl" class="cat-@(Model.Id) @Model.CssClass"
+           title="@Model.Title" @if (Model.OpenInNewWindow) { <text> target="_blank" </text> }>
+            @Model.Title
+        </a>
+    }
+    else
+    {
+        <div class="card-header collapsed" data-toggle="collapse" href="#cat@(Model.Id)">
+            <a href="@itemUrl" class="card-title cat-@(Model.Id) @Model.CssClass">
+                title="@Model.Title" @if (Model.OpenInNewWindow)
+                {<text> target="_blank" </text>}> @Model.Title
+            </a>
+        </div>
+
+        await CategoryLine(Model, Model.Id, 0);
+
+    }
+}
+else
+{
+    <li class="@Model.CssClass @hasSublistClass">
+
+        <a href="@itemUrl" class="@withSubcategoriesClass" title="@Model.Title" @if (Model.OpenInNewWindow) { <text> target="_blank" </text> }><span> @Model.Title</span></a>
+
+        @if (hasSublist)
+        {
+            <div class="plus-button">
+                <svg focusable="false" viewBox="2 2 24 24" class="pl-BaseIcon BaseIcon pl-BaseIcon--scalable DepartmentMenuCard-icon" aria-hidden="true" data-hb-id="pl-icon"><path d="M21.46 14.19a.5.5 0 000-.38.36.36 0 00-.11-.16l-6-6a.49.49 0 00-.7.7l5.14 5.15H7a.5.5 0 000 1h12.79l-5.14 5.15a.48.48 0 000 .7.48.48 0 00.7 0l6-6a.36.36 0 00.11-.16z"></path></svg>
+            </div> <div class="sublist-wrap">
+                <ul class="sublist">
+                    <li class="back-button">
+
+                        <span>@T("MWT.MegaMenu.ResponsiveBackButton")</span>
+                    </li>
+                    @foreach (var subItem in Model.SubItems)
+                    {
+                        @await Component.InvokeAsync("MegaMenuMenuItem", new { menuItem = subItem })
+                    }
+                </ul>
+            </div>
+        }
+    </li>
+}

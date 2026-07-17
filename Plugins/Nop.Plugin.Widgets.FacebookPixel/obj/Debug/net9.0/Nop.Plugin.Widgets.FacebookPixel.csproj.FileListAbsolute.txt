@@ -327,3 +327,7 @@ D:\SierraProject\SLC4.9\Plugins\Nop.Plugin.Widgets.FacebookPixel\obj\Debug\net9.
 D:\SierraProject\SLC4.9\Plugins\Nop.Plugin.Widgets.FacebookPixel\obj\Debug\net9.0\refint\Nop.Plugin.Widgets.FacebookPixel.dll
 D:\SierraProject\SLC4.9\Plugins\Nop.Plugin.Widgets.FacebookPixel\obj\Debug\net9.0\Nop.Plugin.Widgets.FacebookPixel.pdb
 D:\SierraProject\SLC4.9\Plugins\Nop.Plugin.Widgets.FacebookPixel\obj\Debug\net9.0\ref\Nop.Plugin.Widgets.FacebookPixel.dll
+D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\Widgets.FacebookPixel\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\images\menu-icon.png
+D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\Widgets.FacebookPixel\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\images\toggle-black.png
+D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\Widgets.FacebookPixel\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\MegaMenu.css
+D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\Widgets.FacebookPixel\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\MegaMenu.rtl.css

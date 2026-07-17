@@ -1,0 +1,313 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Copyright>Copyright © MindWebTree</Copyright>
+    <Company>MindWebTree</Company>
+    <Authors>MindWebTree</Authors>
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <PackageProjectUrl>https://www.mindwebtree.com/</PackageProjectUrl>
+    <RepositoryUrl>https://www.mindwebtree.com/</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <OutputPath>..\..\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.MegaMenu</OutputPath>
+    <OutDir>$(OutputPath)</OutDir>
+    <!--Set this parameter to true to get the dlls copied from the NuGet cache to the output of your project.
+    You need to set this parameter to true if your plugin has a nuget package 
+    to ensure that the dlls copied from the NuGet cache to the output of your project-->
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Areas\Admin\Content\Scripts\admin.core.min.js" />
+    <None Remove="Areas\Admin\Content\Scripts\MegaMenuAdmin.min.js" />
+    <None Remove="Areas\Admin\Content\Scripts\MenuItemsScript.min.js" />
+    <None Remove="Areas\Admin\Content\Styles\adminStyles.css" />
+    <None Remove="Areas\Admin\Content\Styles\admin_styles.css" />
+    <None Remove="Areas\Admin\Content\Styles\menuItemsStyles.css" />
+    <None Remove="Areas\Admin\Content\Styles\menuItemsStyles.rtl.css" />
+    <None Remove="Areas\Admin\Views\MegaMenuAdmin\ManageMenus.cshtml" />
+    <None Remove="Areas\Admin\Views\MegaMenuAdmin\MegaMenu.cshtml" />
+    <None Remove="Areas\Admin\Views\MegaMenuAdmin\MegaMenuItem.cshtml" />
+    <None Remove="Areas\Admin\Views\MegaMenuAdmin\Settings.cshtml" />
+    <None Remove="Areas\Admin\Views\MegaMenuAdmin\_MegaMenu.MenuItems.cshtml" />
+    <None Remove="Areas\Admin\Views\MegaMenuAdmin\_MegaMenu.Settings.cshtml" />
+    <None Remove="Areas\Admin\Views\MegaMenuItemAdmin\Templates\Categories.cshtml" />
+    <None Remove="Areas\Admin\Views\MegaMenuItemAdmin\Templates\Column.cshtml" />
+    <None Remove="Areas\Admin\Views\MegaMenuItemAdmin\Templates\ColumnsLayout.cshtml" />
+    <None Remove="Areas\Admin\Views\MegaMenuItemAdmin\Templates\CustomLink.cshtml" />
+    <None Remove="Areas\Admin\Views\MegaMenuItemAdmin\Templates\Manufacturers.cshtml" />
+    <None Remove="Areas\Admin\Views\MegaMenuItemAdmin\Templates\Picture.cshtml" />
+    <None Remove="Areas\Admin\Views\MegaMenuItemAdmin\Templates\PredefinedPages.cshtml" />
+    <None Remove="Areas\Admin\Views\MegaMenuItemAdmin\Templates\ProductTags.cshtml" />
+    <None Remove="Areas\Admin\Views\MegaMenuItemAdmin\Templates\Row.cshtml" />
+    <None Remove="Areas\Admin\Views\MegaMenuItemAdmin\Templates\RowsLayout.cshtml" />
+    <None Remove="Areas\Admin\Views\MegaMenuItemAdmin\Templates\Topics.cshtml" />
+    <None Remove="Areas\Admin\Views\MegaMenuItemAdmin\Templates\Vendors.cshtml" />
+    <None Remove="Areas\Admin\Views\MegaMenuItemAdmin\Templates\_CustomerRolesKendoMultiSelect.cshtml" />
+    <None Remove="Areas\Admin\Views\Shared\_AdminLayout.cshtml" />
+    <None Remove="Areas\Admin\Views\_ViewImports.cshtml" />
+    <None Remove="plugin.json" />
+    <None Remove="Resources\Resources.en-us.xml" />
+    <None Remove="Scripts\lib\kendo\2020.1.406\js\kendo.all.min.js" />
+    <None Remove="Scripts\MegaMenu.min.js" />
+    <None Remove="Scripts\MWT.core.min.js" />
+    <None Remove="Scripts\perfect-scrollbar.min.js" />
+    <None Remove="Settings.xml" />
+    <None Remove="Themes\BlackWhiteTheme\Content\MegaMenu.rtl.css" />
+    <None Remove="Themes\BlackWhiteTheme\Content\MegaMenuDesktop.css" />
+    <None Remove="Themes\BlackWhiteTheme\SupportedWidgetZones.xml" />
+    <None Remove="Themes\BlackWhiteTheme\Views\Components\MegaMenuCategory\CategoryMenuTemplate.List.cshtml" />
+    <None Remove="Themes\BlackWhiteTheme\Views\Components\MegaMenuListSubCategories\CategoryMenuTemplate.List.SubCategories.cshtml" />
+    <None Remove="Themes\BlackWhiteTheme\Views\Components\MegaMenuManufacturer\ManufacturerMenuTemplate.List.cshtml" />
+    <None Remove="Themes\BlackWhiteTheme\Views\Components\MegaMenuMenuItem\MegaMenuMenuItem.cshtml" />
+    <None Remove="Themes\BlackWhiteTheme\Views\Components\MegaMenuProductTags\ProductTagsTemplate.cshtml" />
+    <None Remove="Themes\BlackWhiteTheme\Views\Components\MegaMenuTopic\TopicTemplate.cshtml" />
+    <None Remove="Themes\BlackWhiteTheme\Views\Components\MegaMenuVendor\VendorMenuTemplate.List.cshtml" />
+    <None Remove="Themes\BlackWhiteTheme\Views\_ViewImports.cshtml" />
+    <None Remove="Themes\DefaultClean\Content\images\menu-icon.png" />
+    <None Remove="Themes\DefaultClean\Content\images\toggle-black.png" />
+    <None Remove="Themes\DefaultClean\Content\MegaMenu.css" />
+    <None Remove="Themes\DefaultClean\Content\MegaMenu.rtl.css" />
+    <None Remove="Views\Components\MegaMenuCategory\CategoryMenuTemplate.List.cshtml" />
+    <None Remove="Views\Components\MegaMenuCategory\CategoryMenuTemplate.WithPictures.cshtml" />
+    <None Remove="Views\Components\MegaMenuListSubCategories\CategoryMenuTemplate.List.SubCategories.cshtml" />
+    <None Remove="Views\Components\MegaMenuManufacturer\ManufacturerMenuTemplate.List.cshtml" />
+    <None Remove="Views\Components\MegaMenuManufacturer\ManufacturerMenuTemplate.WithPictures.cshtml" />
+    <None Remove="Views\Components\MegaMenuMenuItem\MegaMenuMenuItem.cshtml" />
+    <None Remove="Views\Components\MegaMenuProductTags\ProductTagsTemplate.cshtml" />
+    <None Remove="Views\Components\MegaMenuTopic\TopicTemplate.cshtml" />
+    <None Remove="Views\Components\MegaMenuVendor\VendorMenuTemplate.List.cshtml" />
+    <None Remove="Views\Components\MegaMenuVendor\VendorMenuTemplate.WithPictures.cshtml" />
+    <None Remove="Views\Components\MegaMenu\MegaMenu - Copy (2).cshtml" />
+    <None Remove="Views\Components\MegaMenu\MegaMenu.cshtml" />
+    <None Remove="Views\_ViewImports.cshtml" />
+  </ItemGroup>
+
+  
+
+  
+
+  <ItemGroup>
+    <ClearPluginAssemblies Include="$(MSBuildProjectDirectory)\..\..\Build\ClearPluginAssemblies.proj" />
+  </ItemGroup>
+
+  
+
+  
+
+  <ItemGroup>
+    <Content Include="Areas\Admin\Content\Scripts\admin.core.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Content\Styles\admin_styles.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\Shared\_AdminLayout.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugin.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Resources.en-us.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\lib\kendo\2020.1.406\js\kendo.all.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\MegaMenu.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\MWT.core.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\perfect-scrollbar.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Settings.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\BlackWhiteTheme\Content\MegaMenu.rtl.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  
+
+  
+
+  <ItemGroup>
+    <Content Include="Areas\Admin\Content\Scripts\MegaMenuAdmin.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Content\Scripts\MenuItemsScript.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Content\Styles\adminStyles.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Content\Styles\menuItemsStyles.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Content\Styles\menuItemsStyles.rtl.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\MegaMenuAdmin\ManageMenus.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\MegaMenuAdmin\MegaMenu.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\MegaMenuAdmin\MegaMenuItem.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\MegaMenuAdmin\Settings.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\MegaMenuAdmin\_MegaMenu.MenuItems.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\MegaMenuAdmin\_MegaMenu.Settings.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\MegaMenuItemAdmin\Templates\Categories.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\MegaMenuItemAdmin\Templates\Column.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\MegaMenuItemAdmin\Templates\ColumnsLayout.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\MegaMenuItemAdmin\Templates\CustomLink.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\MegaMenuItemAdmin\Templates\Manufacturers.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\MegaMenuItemAdmin\Templates\Picture.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\MegaMenuItemAdmin\Templates\PredefinedPages.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\MegaMenuItemAdmin\Templates\ProductTags.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\MegaMenuItemAdmin\Templates\Row.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\MegaMenuItemAdmin\Templates\RowsLayout.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\MegaMenuItemAdmin\Templates\Topics.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\MegaMenuItemAdmin\Templates\Vendors.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\MegaMenuItemAdmin\Templates\_CustomerRolesKendoMultiSelect.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\_ViewImports.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\BlackWhiteTheme\Content\MegaMenuDesktop.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\BlackWhiteTheme\SupportedWidgetZones.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\BlackWhiteTheme\Views\Components\MegaMenuCategory\CategoryMenuTemplate.List.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\BlackWhiteTheme\Views\Components\MegaMenuListSubCategories\CategoryMenuTemplate.List.SubCategories.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\BlackWhiteTheme\Views\Components\MegaMenuManufacturer\ManufacturerMenuTemplate.List.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\BlackWhiteTheme\Views\Components\MegaMenuMenuItem\MegaMenuMenuItem.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\BlackWhiteTheme\Views\Components\MegaMenuProductTags\ProductTagsTemplate.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\BlackWhiteTheme\Views\Components\MegaMenuTopic\TopicTemplate.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\BlackWhiteTheme\Views\Components\MegaMenuVendor\VendorMenuTemplate.List.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\BlackWhiteTheme\Views\_ViewImports.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\DefaultClean\Content\images\menu-icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\DefaultClean\Content\images\toggle-black.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\DefaultClean\Content\MegaMenu.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\DefaultClean\Content\MegaMenu.rtl.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Components\MegaMenuCategory\CategoryMenuTemplate.List.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Components\MegaMenuCategory\CategoryMenuTemplate.WithPictures.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Components\MegaMenuListSubCategories\CategoryMenuTemplate.List.SubCategories.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Components\MegaMenuManufacturer\ManufacturerMenuTemplate.List.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Components\MegaMenuManufacturer\ManufacturerMenuTemplate.WithPictures.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Components\MegaMenuMenuItem\MegaMenuMenuItem.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Components\MegaMenuProductTags\ProductTagsTemplate.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Components\MegaMenuTopic\TopicTemplate.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Components\MegaMenuVendor\VendorMenuTemplate.List.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Components\MegaMenuVendor\VendorMenuTemplate.WithPictures.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Components\MegaMenu\MegaMenu - Copy (2).cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Components\MegaMenu\MegaMenu.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\_ViewImports.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  
+
+  
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Presentation\Nop.Web.Framework\Nop.Web.Framework.csproj" />
+    <ProjectReference Include="..\..\Presentation\Nop.Web\Nop.Web.csproj" />
+      <ClearPluginAssemblies Include="$(MSBuildProjectDirectory)\..\..\Build\ClearPluginAssemblies.proj" />
+  </ItemGroup>
+
+  <!-- This target execute after "Build" target -->
+  <Target Name="NopTarget" AfterTargets="Build">
+    <!-- Delete unnecessary libraries from plugins path -->
+    <MSBuild Projects="@(ClearPluginAssemblies)" Properties="PluginPath=$(MSBuildProjectDirectory)\$(OutDir)" Targets="NopClear" />
+  </Target>
+
+</Project>

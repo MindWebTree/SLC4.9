@@ -43,7 +43,23 @@
 
     <!-- We copy the \Logs directory -->
     <Content Include="Logs\**" CopyToPublishDirectory="PreserveNewest" />
+    <None Remove="Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\images\menu-icon.png" />
+    <None Remove="Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\images\toggle-black.png" />
+    <None Remove="Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\MegaMenu.css" />
+    <None Remove="Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\MegaMenu.rtl.css" />
     <None Remove="Plugins\Uploaded\placeholder.txt" />
+    <Content Include="Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\images\menu-icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\images\toggle-black.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\MegaMenu.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\MegaMenu.rtl.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Plugins\Uploaded\placeholder.txt">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

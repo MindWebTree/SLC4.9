@@ -1,0 +1,68 @@
+﻿@model MenuItemModel
+
+@* <p class="field-customer-roles description description-wide">
+    <label>
+        <span>@T("MWT.MegaMenu.Admin.MenuItem.CustomerRoles")</span>
+        @Html.ListBoxFor(model => model.SelectedCustomerRoleIds, Model.AvailableCustomerRoles, new { style = "width: 350px" })
+        <script>
+            $(document).ready(function () {
+                $('#menu-item-' + @Model.Id + ' #@Html.IdFor(model => model.SelectedCustomerRoleIds)').kendoMultiSelect({
+                    select: function (e) {
+                        var current = this.value();
+
+                        if (this.dataSource.view()[e.item.index()].value === "0") {
+                            this.value("");
+                        }
+                        else if (current.indexOf("0") !== -1) {
+                            current = $.grep(current, function (value) {
+                                return value !== "0";
+                            });
+
+                            this.value(current);
+                        }
+                    },
+                    change: function (e) {
+                        if (this.value().length === 0)
+                            this.value(["0"]);
+                    },
+                    placeholder: "@T("admin.common.all")"
+                });
+            });
+        </script>
+    </label>
+</p> *@
+
+
+<p class="field-customer-roles description description-wide">
+    <label>
+        <span>@T("MWT.MegaMenu.Admin.MenuItem.CustomerRoles")</span>
+    </label>
+     
+    <div style="width: 350px; display: inline-block;">
+        <nop-select asp-for="SelectedCustomerRoleIds" asp-items="Model.AvailableCustomerRoles" asp-multiple="true" />
+    </div>
+
+    <script>
+        $(document).ready(function () { 
+            var $select = $('#@Html.IdFor(model => model.SelectedCustomerRoleIds)');
+
+            $select.on('select2:select', function (e) {
+                var selectedValue = e.params.data.id;
+                var currentValues = $select.val() || [];
+
+                if (selectedValue === "0") { 
+                    $select.val(["0"]).trigger('change');
+                } else if (currentValues.includes("0")) { 
+                    var newValues = currentValues.filter(function(v) { return v !== "0"; });
+                    $select.val(newValues).trigger('change');
+                }
+            });
+
+            $select.on('select2:unselect', function (e) { 
+                if ($select.val() === null || $select.val().length === 0) {
+                    $select.val(["0"]).trigger('change');
+                }
+            });
+        });
+    </script>
+</p>

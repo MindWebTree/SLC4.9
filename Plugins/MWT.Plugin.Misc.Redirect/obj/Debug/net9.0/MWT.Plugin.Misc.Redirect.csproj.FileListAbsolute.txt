@@ -324,3 +324,7 @@ D:\SierraProject\SLC4.9\Plugins\MWT.Plugin.Misc.Redirect\obj\Debug\net9.0\MWT.Pl
 D:\SierraProject\SLC4.9\Plugins\MWT.Plugin.Misc.Redirect\obj\Debug\net9.0\refint\MWT.Plugin.Misc.Redirect.dll
 D:\SierraProject\SLC4.9\Plugins\MWT.Plugin.Misc.Redirect\obj\Debug\net9.0\MWT.Plugin.Misc.Redirect.pdb
 D:\SierraProject\SLC4.9\Plugins\MWT.Plugin.Misc.Redirect\obj\Debug\net9.0\ref\MWT.Plugin.Misc.Redirect.dll
+D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\MWT.Nop.Redirect\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\images\menu-icon.png
+D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\MWT.Nop.Redirect\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\images\toggle-black.png
+D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\MWT.Nop.Redirect\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\MegaMenu.css
+D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\MWT.Nop.Redirect\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\MegaMenu.rtl.css
