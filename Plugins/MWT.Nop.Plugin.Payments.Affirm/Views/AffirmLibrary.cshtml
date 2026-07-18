@@ -1,0 +1,45 @@
+﻿@*@model FoxNetSoft.Plugin.Payments.AffirmHostedCheckout.Models.PaymentLibraryModel
+@{
+    Layout = "";
+}
+<script asp-location="Footer">
+    _affirm_config = {
+        public_api_key: "@Model.PublicApiKey",
+        script: "@Model.LibraryAPIUrl"
+    };
+    (function (m, g, n, d, a, e, h, c) {
+        var b = m[n] || {}, k = document.createElement(e), p = document.getElementsByTagName(e)[0], l = function (a, b, c) { return function () { a[b]._.push([c, arguments]) } }; b[d] = l(b, d, "set"); var f = b[d]; b[a] = {}; b[a]._ = []; f._ = []; b._ = []; b[a][h] = l(b, a, h); b[c] = function () { b._.push([h, arguments]) }; a = 0; for (c = "set add save post open empty reset on off trigger ready setProduct".split(" "); a < c.length; a++)f[c[a]] = l(b, d, c[a]); a = 0; for (c = ["get", "token", "url", "items"]; a < c.length; a++)f[c[a]] = function () { }; k.async =
+            !0; k.src = g[e]; p.parentNode.insertBefore(k, p); delete g[e]; f(g); m[n] = b
+    })(window, _affirm_config, "affirm", "checkout", "ui", "script", "ready", "jsReady");
+
+    $(document).on("product_attributes_changed", function (event) {
+        /*
+        productId: 33668
+        price: $3, 854.00
+        */
+        var price = event.changedData.price.replace("$", "").replace(",", "").replace(".", "").replace(" ", "");
+        if (event.changedData.productId > 0) {
+            $(".affirm-as-low-as").filter("[data-productid=" + event.changedData.productId + "]").attr("data-amount", price);
+        } else {
+            //old nop 4.20-4.10 doesn't have productId
+            var countaffirmelement = 0;
+            var affirmelement;
+            $('.affirm-as-low-as').each(function () {
+                if ($(this).data('productid')) {
+                    countaffirmelement++;
+                    affirmelement = $(this);
+                };
+            });
+            if (countaffirmelement == 1) {
+                affirmelement.attr("data-amount", price);
+            }
+        }
+        affirm.ui.refresh();
+    });
+
+    if (typeof CatalogProducts != 'undefined') {
+        $(CatalogProducts).on("loaded", function () {
+            affirm.ui.refresh();
+        });
+    }
+</script>*@

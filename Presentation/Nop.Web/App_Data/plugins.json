@@ -61,7 +61,7 @@
     },
     {
       "SystemName": "Payments.CashOnDelivery",
-      "Version": "1.44"
+      "Version": "4.90.1"
     },
     {
       "SystemName": "Payments.AuthorizeNet",

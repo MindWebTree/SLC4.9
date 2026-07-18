@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyCopyrightAttribute("Copyright © MindWebTree")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+287f2d05902aed0eee18494a120c1388cfd786d3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6ba80e0ef52b5451f6a48fef237471b6c4ad17ed")]
 [assembly: System.Reflection.AssemblyProductAttribute("MWT.Plugin.Shipping.FixedByWeightByTotal")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MWT.Plugin.Shipping.FixedByWeightByTotal")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

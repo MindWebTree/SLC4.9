@@ -1065,6 +1065,7 @@ wwwroot\images\thumbs\default-image_100.png
 wwwroot\images\thumbs\default-image_415.png
 wwwroot\images\thumbs\default-image_450.png
 wwwroot\images\thumbs\default-image_75.png
+wwwroot\images\thumbs\default-image_840.png
 wwwroot\images\thumbs\placeholder.txt
 wwwroot\images\uploaded\placeholder.txt
 wwwroot\js\admin.common.js
