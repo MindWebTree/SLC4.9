@@ -15,78 +15,226 @@
     async Task CategoryLine(MWT.Nop.Plugin.MegaMenu.Areas.Admin.Models.MenuItemModel model, int id, int level)
     {
         level++;
-        <div id="cat@(id)" class="card-body collapse @(level>1?"sub-menu-cat":"")">
+        var parentMenuItem = new MWT.Nop.Plugin.MegaMenu.Areas.Admin.Models.MenuItemModel();
+        <div class="sub-menu-level-@level">
             @foreach (var subItem in model.SubItems)
             {
-                @if (subItem.SubItems.Count == 0)
-                {
-                    <a href="@(Plugin.PredefinedPageTypes.Contains(subItem.Type) ? Url.RouteUrl(subItem.Type.ToString()) : subItem.Url)"
-                       class="cat-@(subItem.Id) @subItem.CssClass"
-                       title="@subItem.Title" @if (subItem.OpenInNewWindow) { <text> target="_blank" </text> }>
-                        @subItem.Title
-                    </a>
-                }
-                else
+                if (subItem.SubItems.Count == 0)
                 {
 
-                    <div class="card-header collapsed" data-toggle="collapse" href="#cat@(subItem.Id)">
+                    <div class="sub-menu-content-@level">
                         <a href="@(Plugin.PredefinedPageTypes.Contains(subItem.Type) ? Url.RouteUrl(subItem.Type.ToString()) : subItem.Url)"
-                           class="cat-@(subItem.Id) @subItem.CssClass"
-                           title="@subItem.Title" @if (subItem.OpenInNewWindow) { <text> target="_blank" </text> }>
+                           class="cat-@(subItem.Id) @subItem.CssClass sub-menu-content-title"   @if (subItem.OpenInNewWindow) { <text> target="_blank" </text> }>
                             @subItem.Title
                         </a>
                     </div>
-                    await CategoryLine(subItem, subItem.Id, level);
+
+                }
+                else
+                {
+                    <div class="subitem-menu-content-title">
+                        @subItem.Title
+                    </div>
+                    <div class="subitem-menu-content">
+                        @{ await CategoryLine(subItem, subItem.Id, level); }
+                    </div>
                 }
             }
+
+
         </div>
     }
 }
 
-@if (_userAgentHelper.IsMobileDevice())
+@functions {
+    async Task CategoryLineDesktop(MWT.Nop.Plugin.MegaMenu.Areas.Admin.Models.MenuItemModel model, int id, int level)
+    {
+        level++;
+        if (level == 1)
+        {
+            @Html.Raw("<div class=\"primary-nav-categories-column\">")
+        }
+        else
+        {
+            @Html.Raw("<ul class=\"list-wrap nav-subcategory-list\">")
+        }
+
+        var pictureItems = new List<MWT.Nop.Plugin.MegaMenu.Areas.Admin.Models.MenuItemModel>();
+
+        @foreach (var subItem in model.SubItems)
+        {
+            if (subItem.PictureId != 0)
+            {
+                pictureItems.Add(subItem);
+                continue;
+            }
+            @if (subItem.SubItems.Count == 0)
+            {
+
+                if (level == 1)
+                {
+                    <div class="nav-subcategory-container">
+                        <h3>
+                            <a href="@(Plugin.PredefinedPageTypes.Contains(subItem.Type) ? Url.RouteUrl(subItem.Type.ToString()) : subItem.Url)"
+                               class="@subItem.CssClass" alt="@subItem.Title" @if (subItem.OpenInNewWindow) { <text> target="_blank" </text> }>
+                                @subItem.Title
+                            </a>
+                        </h3>
+                    </div>
+                }
+                else
+                {
+                    <li>
+                        <a href="@(Plugin.PredefinedPageTypes.Contains(subItem.Type) ? Url.RouteUrl(subItem.Type.ToString()) : subItem.Url)"
+                           class="@subItem.CssClass" alt="@subItem.Title" @if (subItem.OpenInNewWindow) { <text> target="_blank" </text> }>
+                            @subItem.Title
+                        </a>
+                    </li>
+                }
+            }
+            else
+            {
+                if (level == 1)
+                {
+                    <div class="nav-subcategory-container">
+                        <h3>
+                            <a href="@(Plugin.PredefinedPageTypes.Contains(subItem.Type) ? Url.RouteUrl(subItem.Type.ToString()) : subItem.Url)"
+                               class="@subItem.CssClass" alt="@subItem.Title" @if (subItem.OpenInNewWindow) { <text> target="_blank" </text> }>
+                                @subItem.Title
+                            </a>
+
+                        </h3>
+                        @{
+                            await CategoryLineDesktop(subItem, subItem.Id, level);
+                        }
+                    </div>
+                }
+                else
+                {
+                    <li class="nextlevel">
+                        <a href="@(Plugin.PredefinedPageTypes.Contains(subItem.Type) ? Url.RouteUrl(subItem.Type.ToString()) : subItem.Url)"
+                           class="@subItem.CssClass" alt="@subItem.Title" @if (subItem.OpenInNewWindow) { <text> target="_blank" </text> }>
+                            @subItem.Title
+                        </a>
+                        @{
+                            await CategoryLineDesktop(subItem, subItem.Id, level);
+                        }
+
+                    </li>
+                }
+
+
+
+            }
+        }
+        if (level == 1)
+        {
+            @Html.Raw("</div>")
+        }
+        else
+        {
+            @Html.Raw("</ul>")
+        }
+
+        if (pictureItems.Count > 0)
+        {
+            <div class="primary-nav-cms-column">
+                <div class="cms-content">
+                    @foreach (var pictureItem in pictureItems)
+                    {
+                        <div data-region="primary nav" data-component="content" data-name="Furniture Super: Storage">
+                            <a href="@(Plugin.PredefinedPageTypes.Contains(pictureItem.Type) ? Url.RouteUrl(pictureItem.Type.ToString()) : pictureItem.Url)"
+                               class="flyout-cms-link @pictureItem.CssClass" alt="@pictureItem.Title" @if (pictureItem.OpenInNewWindow) { <text> target="_blank" </text> }>
+                                <p class="flyout-cms-copy">@pictureItem.Title</p>                                                                                                        <img class="flyout-cms-super-img" alt="" src="@pictureItem.ImageUrl">
+                                @if (pictureItem.SubItems.Count > 0)
+                                {
+                                    await CategoryLineDesktop(pictureItem, pictureItem.Id, level);
+                                }
+
+
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+
+
+
+    }
+}
+
+@if (Model.IsMobile)
 {
     @if (!hasSublist)
     {
-        <a href="@itemUrl" class="cat-@(Model.Id) @Model.CssClass"
-           title="@Model.Title" @if (Model.OpenInNewWindow) { <text> target="_blank" </text> }>
-            @Model.Title
-        </a>
-    }
-    else
-    {
-        <div class="card-header collapsed" data-toggle="collapse" href="#cat@(Model.Id)">
-            <a href="@itemUrl" class="card-title cat-@(Model.Id) @Model.CssClass">
-                title="@Model.Title" @if (Model.OpenInNewWindow)
-                {<text> target="_blank" </text>}> @Model.Title
+        <div class="menu-item-simple">
+            <a href="@itemUrl" class="cat-@(Model.Id) @Model.CssClass" alt="@Model.Title" @if (Model.OpenInNewWindow) { <text> target="_blank" </text>  }>
+                @Model.Title
             </a>
         </div>
 
-        await CategoryLine(Model, Model.Id, 0);
+    }
+    else
+    {
+        <div onclick="toggleMenu('menu-@Model.Id')" role="button" 
+     tabindex="0"
+     aria-expanded="false"  class="mobile-parent-category">
+            <span class="mobile-parent-category-title">@Model.Title</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </div>
+        <div id="menu-@Model.Id" class="main-category-child" style="display:none;">
+            <div class="menu-panel">
+                <div class="menu-header back-to-main">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left"><path d="m15 18-6-6 6-6"></path></svg>
+                    <span>@T("MWT.MegaMenu.Shop.Back.Label")</span>
+                </div>
+                <div class="category-header">
+                    <h2 class="child-category-title">@Model.Title.Replace("Furniture", string.Empty).Replace("Entryway & Mudroom", "Entryway").Trim()</h2>
+                    <a href="@itemUrl" class="shop-all">
+                        @T("MWT.MegaMenu.Shop.All.Label")
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"></path></svg>
+                    </a>
 
+                </div>
+            </div>
+            <div class="category-body">
+                @{ await CategoryLine(Model, Model.Id, 0); }
+            </div>
+        </div>
     }
 }
 else
 {
-    <li class="@Model.CssClass @hasSublistClass">
+    @if (!hasSublist)
+    {
+        <li class="nav-item level1">
+            <a href="@itemUrl" class="nav-link @Model.CssClass"
+               alt="@Model.Title" @if (Model.OpenInNewWindow) { <text> target="_blank" </text> }>
+                @Model.Title
+            </a>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item level1">
+            <a href="@itemUrl" class="nav-link cat-@(Model.Id) @Model.CssClass"
+               alt="@Model.Title" @if (Model.OpenInNewWindow) { <text> target="_blank" </text> }>
+                @Model.Title
+            </a>
+            <div class="megamenu-panel">
+                <div class="megamenu-lists">
 
-        <a href="@itemUrl" class="@withSubcategoriesClass" title="@Model.Title" @if (Model.OpenInNewWindow) { <text> target="_blank" </text> }><span> @Model.Title</span></a>
-
-        @if (hasSublist)
-        {
-            <div class="plus-button">
-                <svg focusable="false" viewBox="2 2 24 24" class="pl-BaseIcon BaseIcon pl-BaseIcon--scalable DepartmentMenuCard-icon" aria-hidden="true" data-hb-id="pl-icon"><path d="M21.46 14.19a.5.5 0 000-.38.36.36 0 00-.11-.16l-6-6a.49.49 0 00-.7.7l5.14 5.15H7a.5.5 0 000 1h12.79l-5.14 5.15a.48.48 0 000 .7.48.48 0 00.7 0l6-6a.36.36 0 00.11-.16z"></path></svg>
-            </div> <div class="sublist-wrap">
-                <ul class="sublist">
-                    <li class="back-button">
-
-                        <span>@T("MWT.MegaMenu.ResponsiveBackButton")</span>
-                    </li>
-                    @foreach (var subItem in Model.SubItems)
-                    {
-                        @await Component.InvokeAsync("MegaMenuMenuItem", new { menuItem = subItem })
+                    @{
+                        await CategoryLineDesktop(Model, Model.Id, 0);
                     }
-                </ul>
+
+                </div>
             </div>
-        }
-    </li>
+        </li>
+
+    }
 }

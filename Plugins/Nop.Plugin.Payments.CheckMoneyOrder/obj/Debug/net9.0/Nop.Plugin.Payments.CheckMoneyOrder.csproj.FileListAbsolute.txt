@@ -325,7 +325,3 @@ D:\SierraProject\SLC4.9\Plugins\Nop.Plugin.Payments.CheckMoneyOrder\obj\Debug\ne
 D:\SierraProject\SLC4.9\Plugins\Nop.Plugin.Payments.CheckMoneyOrder\obj\Debug\net9.0\refint\Nop.Plugin.Payments.CheckMoneyOrder.dll
 D:\SierraProject\SLC4.9\Plugins\Nop.Plugin.Payments.CheckMoneyOrder\obj\Debug\net9.0\Nop.Plugin.Payments.CheckMoneyOrder.pdb
 D:\SierraProject\SLC4.9\Plugins\Nop.Plugin.Payments.CheckMoneyOrder\obj\Debug\net9.0\ref\Nop.Plugin.Payments.CheckMoneyOrder.dll
-D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\Payments.CheckMoneyOrder\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\images\menu-icon.png
-D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\Payments.CheckMoneyOrder\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\images\toggle-black.png
-D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\Payments.CheckMoneyOrder\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\MegaMenu.css
-D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\Payments.CheckMoneyOrder\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\MegaMenu.rtl.css

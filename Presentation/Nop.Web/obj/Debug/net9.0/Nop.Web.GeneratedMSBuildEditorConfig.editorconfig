@@ -3224,6 +3224,22 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/SierraProject/SLC4.9/Presentation/Nop.Web/Themes/BlackWhiteTheme/Views/Shared/Head.cshtml]
+build_metadata.AdditionalFiles.TargetPath = VGhlbWVzXEJsYWNrV2hpdGVUaGVtZVxWaWV3c1xTaGFyZWRcSGVhZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/SierraProject/SLC4.9/Presentation/Nop.Web/Themes/BlackWhiteTheme/Views/Shared/_Root.cshtml]
+build_metadata.AdditionalFiles.TargetPath = VGhlbWVzXEJsYWNrV2hpdGVUaGVtZVxWaWV3c1xTaGFyZWRcX1Jvb3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/SierraProject/SLC4.9/Presentation/Nop.Web/Themes/BlackWhiteTheme/Views/Shared/_Root.Head.cshtml]
+build_metadata.AdditionalFiles.TargetPath = VGhlbWVzXEJsYWNrV2hpdGVUaGVtZVxWaWV3c1xTaGFyZWRcX1Jvb3QuSGVhZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/SierraProject/SLC4.9/Presentation/Nop.Web/Themes/BlackWhiteTheme/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = VGhlbWVzXEJsYWNrV2hpdGVUaGVtZVxWaWV3c1xfVmlld0ltcG9ydHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/SierraProject/SLC4.9/Presentation/Nop.Web/Themes/DefaultClean/Views/Shared/Head.cshtml]
 build_metadata.AdditionalFiles.TargetPath = VGhlbWVzXERlZmF1bHRDbGVhblxWaWV3c1xTaGFyZWRcSGVhZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

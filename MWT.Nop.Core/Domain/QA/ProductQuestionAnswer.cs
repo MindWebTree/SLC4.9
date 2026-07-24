@@ -1,0 +1,33 @@
+﻿using Nop.Core;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MWT.Nop.Core.Domain.QA
+{
+    public partial class ProductQuestionAnswer : BaseEntity
+    {
+        // <summary>
+        /// Gets or sets the product identifier
+        /// </summary>
+        public int ProductId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the category identifier
+        /// </summary>
+        public int QuestionAnswerId { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets the display order
+        /// </summary>
+        public int DisplayOrder { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Mobile display order
+        /// </summary>
+        public int MobileDisplayOrder { get; set; }
+    }
+}

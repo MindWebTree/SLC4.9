@@ -1,0 +1,6 @@
+﻿@model CustomTopicModel
+@if (!Model.IsPasswordProtected)
+{
+ @Html.Raw(Model.Body)
+}
+

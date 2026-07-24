@@ -28,7 +28,7 @@
                 @foreach (var vendor in Model.Vendors)
                 {
                     <li>
-                        <a href="@Url.RouteUrl("Vendor", new { SeName = vendor.SeName })" title="@vendor.Name"><span>@vendor.Name</span></a>
+                        <a href="@Url.RouteUrl("Vendor", new { vendor.SeName })" title="@vendor.Name"><span>@vendor.Name</span></a>
                     </li>
                 }
 

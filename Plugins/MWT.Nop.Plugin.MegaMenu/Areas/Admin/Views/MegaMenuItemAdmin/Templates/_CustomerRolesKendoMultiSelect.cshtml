@@ -1,6 +1,6 @@
 ﻿@model MenuItemModel
 
-@* <p class="field-customer-roles description description-wide">
+<p class="field-customer-roles description description-wide">
     <label>
         <span>@T("MWT.MegaMenu.Admin.MenuItem.CustomerRoles")</span>
         @Html.ListBoxFor(model => model.SelectedCustomerRoleIds, Model.AvailableCustomerRoles, new { style = "width: 350px" })
@@ -30,9 +30,9 @@
             });
         </script>
     </label>
-</p> *@
+</p>
 
-
+@* 
 <p class="field-customer-roles description description-wide">
     <label>
         <span>@T("MWT.MegaMenu.Admin.MenuItem.CustomerRoles")</span>
@@ -65,4 +65,4 @@
             });
         });
     </script>
-</p>
+</p> *@

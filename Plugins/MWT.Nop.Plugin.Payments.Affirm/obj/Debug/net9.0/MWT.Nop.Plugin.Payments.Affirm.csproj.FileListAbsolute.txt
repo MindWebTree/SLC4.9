@@ -7,10 +7,6 @@ D:\SierraProject\SLC4.9\Plugins\MWT.Nop.Plugin.Payments.Affirm\obj\Debug\net9.0\
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.Payments.Affirm\Nop.Web.deps.json
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.Payments.Affirm\Nop.Web.runtimeconfig.json
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.Payments.Affirm\Nop.Web.runtimeconfig.dev.json
-D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.Payments.Affirm\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\images\menu-icon.png
-D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.Payments.Affirm\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\images\toggle-black.png
-D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.Payments.Affirm\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\MegaMenu.css
-D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.Payments.Affirm\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\MegaMenu.rtl.css
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.Payments.Affirm\Nop.Web.staticwebassets.runtime.json
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.Payments.Affirm\Nop.Web.staticwebassets.endpoints.json
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.Payments.Affirm\Nop.Web.exe

@@ -138,7 +138,7 @@ namespace MWT.Nop.Plugin.MegaMenu.Areas.Admin.Controllers
         {
             ((IStoreMappingSupported)(object)(TEntity)entity).LimitedToStores = model.SelectedStoreIds.Any<int>();
             IList<StoreMapping> existingStoreMappings = await StoreMappingService.GetStoreMappingsAsync<TEntity>(entity);
-            foreach (Store store1 in (IEnumerable<Store>)await _storeService.GetAllStoresAsync())
+            foreach (Store store1 in (IEnumerable<Store>)await StoreService.GetAllStoresAsync())
             {
                 Store store = store1;
                 if (model.SelectedStoreIds != null && model.SelectedStoreIds.Contains(((BaseEntity)store).Id))

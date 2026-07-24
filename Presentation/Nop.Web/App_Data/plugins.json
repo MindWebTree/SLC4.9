@@ -130,6 +130,10 @@
     {
       "SystemName": "MWT.Nop.Plugin.MegaMenu",
       "Version": "4.4"
+    },
+    {
+      "SystemName": "MWT.Plugin.Misc.MwtStorefront",
+      "Version": "1.0"
     }
   ],
   "PluginNamesToUninstall": [],

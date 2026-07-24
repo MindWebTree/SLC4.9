@@ -4668,6 +4668,21 @@
           }
         }
       },
+      "MWT.Nop.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "Nop.Core": "4.90.0",
+          "Nop.Data": "4.90.0",
+          "Nop.Services": "4.90.0"
+        },
+        "compile": {
+          "bin/placeholder/MWT.Nop.Core.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MWT.Nop.Core.dll": {}
+        }
+      },
       "Nop.Core/4.90.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v9.0",
@@ -4742,6 +4757,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v9.0",
         "dependencies": {
+          "MWT.Nop.Core": "1.0.0",
           "Nop.Core": "4.90.0",
           "Nop.Data": "4.90.0",
           "Nop.Services": "4.90.0",
@@ -12744,6 +12760,11 @@
         "webmarkupmin.nuglify.2.19.0.nupkg.sha512",
         "webmarkupmin.nuglify.nuspec"
       ]
+    },
+    "MWT.Nop.Core/1.0.0": {
+      "type": "project",
+      "path": "../../MWT.Nop.Core/MWT.Nop.Core.csproj",
+      "msbuildProject": "../../MWT.Nop.Core/MWT.Nop.Core.csproj"
     },
     "Nop.Core/4.90.0": {
       "type": "project",

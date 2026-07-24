@@ -1,6 +1,6 @@
 ﻿@model SocialModel
 <ul class="networks">
-	@if (!string.IsNullOrEmpty(Model.FacebookLink))
+@* 	@if (!string.IsNullOrEmpty(Model.FacebookLink))
 	{
 		<li class="facebook"><a href="@Model.FacebookLink" target="_blank" rel="noopener noreferrer">@T("Footer.FollowUs.Facebook")</a></li>
 	}
@@ -19,5 +19,47 @@
 	@if (!string.IsNullOrEmpty(Model.InstagramLink))
 	{
 		<li class="instagram"><a href="@Model.InstagramLink" target="_blank" rel="noopener noreferrer">@T("Footer.FollowUs.Instagram")</a></li>
-	}
+	} *@
+    <ul class="networks">
+        <li>
+
+            <a href="https://www.facebook.com/sierralivingconcepts/" title="Facebook" target="_blank">
+                <svg width="16" height="16" viewBox="0 0 14 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12.5122 13.5L13.2065 9.15656H8.86524V6.33797C8.86524 5.14969 9.47168 3.99141 11.416 3.99141H13.3896V0.293438C13.3896 0.293438 11.5986 0 9.88623 0C6.31104 0 3.97412 2.08031 3.97412 5.84625V9.15656H0V13.5H3.97412V24H8.86524V13.5H12.5122Z" fill="white"></path>
+                </svg>
+            </a>
+        </li>
+        <li>
+            <a href="https://www.instagram.com/sierralivingconcepts/" title="Instagram" target="_blank">
+                <svg width="16" height="16" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10.946 6.0375C7.84058 6.0375 5.33569 8.44219 5.33569 11.4234C5.33569 14.4047 7.84058 16.8094 10.946 16.8094C14.0515 16.8094 16.5564 14.4047 16.5564 11.4234C16.5564 8.44219 14.0515 6.0375 10.946 6.0375ZM10.946 14.925C8.93921 14.925 7.29858 13.3547 7.29858 11.4234C7.29858 9.49219 8.93433 7.92188 10.946 7.92188C12.9578 7.92188 14.5935 9.49219 14.5935 11.4234C14.5935 13.3547 12.9529 14.925 10.946 14.925ZM18.0945 5.81719C18.0945 6.51562 17.5085 7.07344 16.7859 7.07344C16.0584 7.07344 15.4773 6.51094 15.4773 5.81719C15.4773 5.12344 16.0632 4.56094 16.7859 4.56094C17.5085 4.56094 18.0945 5.12344 18.0945 5.81719ZM21.8103 7.09219C21.7273 5.40938 21.3269 3.91875 20.0427 2.69062C18.7634 1.4625 17.2107 1.07812 15.4578 0.99375C13.6511 0.895313 8.23608 0.895313 6.42944 0.99375C4.6814 1.07344 3.12866 1.45781 1.84448 2.68594C0.560303 3.91406 0.164795 5.40469 0.0769043 7.0875C-0.0256348 8.82187 -0.0256348 14.0203 0.0769043 15.7547C0.159912 17.4375 0.560303 18.9281 1.84448 20.1562C3.12866 21.3844 4.67651 21.7687 6.42944 21.8531C8.23608 21.9516 13.6511 21.9516 15.4578 21.8531C17.2107 21.7734 18.7634 21.3891 20.0427 20.1562C21.322 18.9281 21.7224 17.4375 21.8103 15.7547C21.9128 14.0203 21.9128 8.82656 21.8103 7.09219ZM19.4763 17.6156C19.0955 18.5344 18.3582 19.2422 17.3962 19.6125C15.9558 20.1609 12.5378 20.0344 10.946 20.0344C9.35425 20.0344 5.9314 20.1562 4.49585 19.6125C3.53882 19.2469 2.80151 18.5391 2.41577 17.6156C1.84448 16.2328 1.97632 12.9516 1.97632 11.4234C1.97632 9.89531 1.84937 6.60938 2.41577 5.23125C2.79663 4.3125 3.53394 3.60469 4.49585 3.23437C5.93628 2.68594 9.35425 2.8125 10.946 2.8125C12.5378 2.8125 15.9607 2.69062 17.3962 3.23437C18.3533 3.6 19.0906 4.30781 19.4763 5.23125C20.0476 6.61406 19.9158 9.89531 19.9158 11.4234C19.9158 12.9516 20.0476 16.2375 19.4763 17.6156Z" fill="white"></path>
+                </svg>
+            </a>
+        </li>
+        <li>
+            <a href="https://www.pinterest.com/slcfurniture/" title="Pinterest" target="_blank">
+                <svg width="16" height="16" viewBox="0 0 19 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.96094 0C4.95117 0 0 3.20623 0 8.39527C0 11.6952 1.93359 13.5702 3.10547 13.5702C3.58887 13.5702 3.86719 12.2765 3.86719 11.9109C3.86719 11.4749 2.70996 10.5468 2.70996 8.73277C2.70996 4.96404 5.69824 2.29218 9.56543 2.29218C12.8906 2.29218 15.3516 4.10623 15.3516 7.43902C15.3516 9.92807 14.3115 14.5968 10.9424 14.5968C9.72656 14.5968 8.68652 13.753 8.68652 12.5437C8.68652 10.7718 9.97559 9.0562 9.97559 7.22809C9.97559 4.12498 5.39062 4.68747 5.39062 8.43745C5.39062 9.22495 5.49316 10.0968 5.85938 10.814C5.18555 13.5984 3.80859 17.7468 3.80859 20.6155C3.80859 21.5014 3.94043 22.3733 4.02832 23.2592C4.19434 23.4374 4.11133 23.4186 4.36523 23.3296C6.82617 20.0952 6.73828 19.4624 7.85156 15.2296C8.45215 16.3265 10.0049 16.9171 11.2354 16.9171C16.4209 16.9171 18.75 12.0656 18.75 7.69215C18.75 3.03748 14.5605 0 9.96094 0Z" fill="white"></path>
+                </svg>
+            </a>
+        </li>
+        <li>
+            <a href="https://www.google.com/search?q=Sierra+Living+Concepts+Inc.&stick=H4sIAAAAAAAA_-NgU1I1qLAwsEhLNk9ONE8yMrRMMzS0MqiwTDNPtkw1SrM0tEy0NEtNXcQqHZyZWlSUqOCTWZaZl67gnJ-XnFpQUqzgmZesBwDGUiDWRwAAAA&hl=en&mat=CcOeLfuCYBlVElcBl7_Ll17kPYi1dl38ChrJFztm-RYomAA5lBpwrZmFJqmQFqnmd-dQs-00CHU4Qq-huPx6RDSN-xPO0UCdnabLdEJjs3O5tyHShUBI0WoiD7ZIvHxQl3I&authuser=1#" title="Google" target="_blank">
+
+                <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" width="16" height="16" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 640 640"><path d="M326.331 274.255v109.761h181.49c-7.37 47.115-54.886 138.002-181.49 138.002-109.242 0-198.369-90.485-198.369-202.006 0-111.509 89.127-201.995 198.369-201.995 62.127 0 103.761 26.516 127.525 49.359l86.883-83.635C484.99 31.512 412.741-.012 326.378-.012 149.494-.012 6.366 143.116 6.366 320c0 176.884 143.128 320.012 320.012 320.012 184.644 0 307.256-129.876 307.256-312.653 0-21-2.244-36.993-5.008-52.997l-302.248-.13-.047.024z" /></svg>
+            </a>
+
+        </li>
+
+        <li>
+            <a href="https://www.houzz.com/professionals/furniture-and-accessories/sierra-living-concepts-inc-pfvwus-pf~1577091348?" title="Houzz" target="_blank">
+
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 16 16" id="houzz"><path d="M3.001 8 8 5.333V0L3 2.666v10.668l5-2.668V16l5-2.667V8l-5 2.666z"></path><path d="M8 5.334 13 8V2.666z"></path></svg>
+            </a>
+        </li>
+
+
+
+
+    </ul>
 </ul>

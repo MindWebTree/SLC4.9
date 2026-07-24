@@ -6,7 +6,7 @@
     if (subCategory.SubCategories.Count > 0)
     {
 <li class="has-sublist">
-    <a href="@Url.RouteUrl("Category", new { SeName = subCategory.CategoryModel.SeName })" title="@subCategory.CategoryModel.Name" class="with-subcategories"><span>@subCategory.CategoryModel.Name</span></a>
+    <a href="@Url.RouteUrl("Category", new { SeName = subCategory.CategoryModel.SeName,id=subCategory.CategoryModel.Id })" title="@subCategory.CategoryModel.Name" class="with-subcategories"><span>@subCategory.CategoryModel.Name</span></a>
     <div class="plus-button">
         <svg focusable="false" viewBox="2 2 24 24" class="pl-BaseIcon BaseIcon pl-BaseIcon--scalable DepartmentMenuCard-icon" aria-hidden="true" data-hb-id="pl-icon"><path d="M21.46 14.19a.5.5 0 000-.38.36.36 0 00-.11-.16l-6-6a.49.49 0 00-.7.7l5.14 5.15H7a.5.5 0 000 1h12.79l-5.14 5.15a.48.48 0 000 .7.48.48 0 00.7 0l6-6a.36.36 0 00.11-.16z"></path></svg>
     </div>             <div class="sublist-wrap">
@@ -24,7 +24,7 @@
             @if (subCategory.ShouldShowViewAllLink)
             {
                 <li>
-                            <a class="view-all" href="@Url.RouteUrl("Category", new { SeName = subCategory.CategoryModel.SeName })" title="@T("MWT.MegaMenu.ViewAllCategories")">
+                            <a class="view-all" href="@Url.RouteUrl("Category", new {subCategory.CategoryModel.SeName,id=subCategory.CategoryModel.Id})" title="@T("MWT.MegaMenu.ViewAllCategories")">
                         <span>@T("MWT.MegaMenu.ViewAllCategories")</span>
                     </a>
                 </li>
@@ -36,7 +36,7 @@
     else
     {
         <li>
-            <a class="lastLevelCategory" href="@Url.RouteUrl("Category", new {SeName = subCategory.CategoryModel.SeName})" title="@subCategory.CategoryModel.Name"><span>@subCategory.CategoryModel.Name</span></a>
+            <a class="lastLevelCategory" href="@Url.RouteUrl("Category", new {SeName = subCategory.CategoryModel.SeName,id=subCategory.CategoryModel.Id})" title="@subCategory.CategoryModel.Name"><span>@subCategory.CategoryModel.Name</span></a>
         </li>
     }
 }

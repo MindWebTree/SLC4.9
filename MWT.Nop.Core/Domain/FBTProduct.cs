@@ -1,0 +1,27 @@
+﻿using Nop.Core;
+
+namespace MWT.Nop.Core.Domain
+{
+    /// <summary>
+    /// Represents a related product
+    /// </summary>
+    public partial class FBTProduct : BaseEntity
+    {
+        /// <summary>
+        /// Gets or sets the first product identifier
+        /// </summary>
+        public int ProductId1 { get; set; }
+
+        /// <summary>
+        /// Gets or sets the second product identifier
+        /// </summary>
+        public int ProductId2 { get; set; }
+
+        /// <summary>
+        /// Gets or sets the display order
+        /// </summary>
+        public int DisplayOrder { get; set; }
+
+        public int DefaultQuantity { get; set; }
+    }
+}

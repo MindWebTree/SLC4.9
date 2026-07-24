@@ -18,7 +18,7 @@ using System.Reflection;
     "ulations related with the data, if needed. Some people call it Business Access L" +
     "ayer (BAL).")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("4.90.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("4.90")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("4.90+9e83c5b6d06764dfebc3bfad2e59e9f1fd566e7f")]
 [assembly: System.Reflection.AssemblyProductAttribute("Nop.Services")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Nop.Services")]
 [assembly: System.Reflection.AssemblyVersionAttribute("4.90.0.0")]

@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyCopyrightAttribute("Copyright © Nop Solutions, Ltd")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9e83c5b6d06764dfebc3bfad2e59e9f1fd566e7f")]
 [assembly: System.Reflection.AssemblyProductAttribute("Nop.Plugin.Payments.PayPalCommerce")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Nop.Plugin.Payments.PayPalCommerce")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

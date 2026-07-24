@@ -1,6 +1,20 @@
-﻿@model MenuItemModel
-
-<div class="footer-menu__item @Model.CssClass" role="menuitem">
+﻿@model MenuItemModel 
+@inject Nop.Core.IWorkContext _workContext;
+@inject Nop.Services.Customers.ICustomerService _customerService;
+@inject Nop.Services.Orders.IOrderService _orderService
+@{
+    bool isAuthenticated = false;
+    var customer = await _workContext.GetCurrentCustomerAsync();
+    isAuthenticated = await _customerService.IsRegisteredAsync(customer);
+    string trackUrl = $"https://customer.sierralivingconcepts.com/default.aspx?oid=&email=";
+    if (isAuthenticated)
+    {
+        // var order = await _orderService.Getorder((await _workContext.GetCurrentCustomerAsync())?.Id ?? 0);
+        var order = 0;
+        trackUrl = $"https://customer.sierralivingconcepts.com/default.aspx?oid={order}&email={customer?.Email ?? ""}";
+    }
+}
+@* <div class="footer-menu__item @Model.CssClass" role="menuitem">
     @if (!string.IsNullOrEmpty(Model.Url))
     {
         <a href="@Model.Url" class="footer-menu__link">@Model.Title</a>
@@ -10,3 +24,23 @@
         @Model.Title
     }
 </div>
+
+@model MenuItemModel *@
+<li class="nav-item">
+    @if (!string.IsNullOrEmpty(Model.Url))
+    {
+        var url = (Model.Url.Contains("{0}") || Model.Url.Contains("{1}"))
+        ? string.Format(Model.Url, 0, customer?.Email ?? "")
+        : Model.Url;
+
+        <a href="@url" class="nav-link">
+            @Model.Title
+        </a>
+    }
+    else
+    {
+        <span class="nav-link">
+            @Model.Title
+        </span>
+    }
+</li>

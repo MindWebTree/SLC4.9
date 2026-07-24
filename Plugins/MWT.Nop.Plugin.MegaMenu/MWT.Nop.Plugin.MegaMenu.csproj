@@ -64,10 +64,6 @@
     <None Remove="Themes\BlackWhiteTheme\Views\Components\MegaMenuTopic\TopicTemplate.cshtml" />
     <None Remove="Themes\BlackWhiteTheme\Views\Components\MegaMenuVendor\VendorMenuTemplate.List.cshtml" />
     <None Remove="Themes\BlackWhiteTheme\Views\_ViewImports.cshtml" />
-    <None Remove="Themes\DefaultClean\Content\images\menu-icon.png" />
-    <None Remove="Themes\DefaultClean\Content\images\toggle-black.png" />
-    <None Remove="Themes\DefaultClean\Content\MegaMenu.css" />
-    <None Remove="Themes\DefaultClean\Content\MegaMenu.rtl.css" />
     <None Remove="Views\Components\MegaMenuCategory\CategoryMenuTemplate.List.cshtml" />
     <None Remove="Views\Components\MegaMenuCategory\CategoryMenuTemplate.WithPictures.cshtml" />
     <None Remove="Views\Components\MegaMenuListSubCategories\CategoryMenuTemplate.List.SubCategories.cshtml" />

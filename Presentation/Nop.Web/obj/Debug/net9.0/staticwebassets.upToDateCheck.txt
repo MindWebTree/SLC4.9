@@ -246,6 +246,7 @@ D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\lib_npm\moment\locale\en-gb
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\lib_npm\cldr-data\supplemental\numberingSystems.json
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\lib_npm\summernote\lang\summernote-zh-CN.js
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\lib_npm\summernote\lang\summernote-ja-JP.js.map
+D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\images\mobile-logo.svg
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\lib_npm\moment\locale\ku-kmr.js
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\lib_npm\moment\locale\es.js
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\lib_npm\admin-lte\css\alt\adminlte.pages.min.css
@@ -505,6 +506,7 @@ D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\lib_npm\moment\locale\me.js
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\lib\Roxy_Fileman\css\jquery-ui-1.10.4.custom.min.css
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\lib_npm\summernote\lang\summernote-gl-ES.js
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\lib_npm\jquery-migrate\jquery-migrate.min.map
+D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\images\hamburger.svg
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\lib_npm\jquery-ui-touch-punch\jquery.ui.touch-punch.min.js
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\js\public.common.js
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\lib_npm\summernote\lang\summernote-id-ID.min.js
@@ -616,6 +618,7 @@ D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\lib_npm\summernote\lang\sum
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\lib_npm\summernote\lang\summernote-es-ES.js
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\js\mdeditor\script.js
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\lib_npm\moment\locale\cv.js
+D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\images\logo.svg
 D:\SierraProject\SLC4.9\Presentation\Nop.Web\wwwroot\lib_npm\@fortawesome\fontawesome-free\css\regular.min.css
 wwwroot\.well-known\Index.htm
 wwwroot\bundles\'css'i5clelr-8m3ym7ncuqvosw.styles.css__vQBo4ZhQWzTpflqmc7VSm1beQpI.cache
@@ -939,6 +942,9 @@ wwwroot\images\flags\yt.png
 wwwroot\images\flags\za.png
 wwwroot\images\flags\zm.png
 wwwroot\images\flags\zw.png
+wwwroot\images\hamburger.svg
+wwwroot\images\logo.svg
+wwwroot\images\mobile-logo.svg
 wwwroot\images\samples\category_accessories.jpg
 wwwroot\images\samples\category_apparel.jpeg
 wwwroot\images\samples\category_apparel_accessories.jpg
@@ -1037,12 +1043,25 @@ wwwroot\images\thumbs\0268217_benches-and-sofas.jpeg
 wwwroot\images\thumbs\0268218_tv-stands-media-cabinets.jpeg
 wwwroot\images\thumbs\0289867_kitchen-island-carts.jpeg
 wwwroot\images\thumbs\0289876_Sierra living concepts.png
+wwwroot\images\thumbs\0289877_Dining-set.jpeg
+wwwroot\images\thumbs\0289878_bedroom.jpeg
+wwwroot\images\thumbs\0289879_living.jpeg
+wwwroot\images\thumbs\0289881_outdoor.jpeg
+wwwroot\images\thumbs\0289882_office.jpeg
+wwwroot\images\thumbs\0289883_entry-way.jpeg
 wwwroot\images\thumbs\0372494_dining-chairs.jpeg
 wwwroot\images\thumbs\0372495_buffets-with-hutch.jpeg
 wwwroot\images\thumbs\0372496_bar-cabinets.jpeg
 wwwroot\images\thumbs\0372498_bar-sets.jpeg
 wwwroot\images\thumbs\0372499_bar-tables.jpeg
+wwwroot\images\thumbs\0412591_peoria-solid-wood-square-dining-table-set.jpeg
+wwwroot\images\thumbs\0412687_dallas-classic-4-6-8-10-seater-solid-wood-rustic-dining-room-table-set.jpeg
+wwwroot\images\thumbs\0412759_hartsville-sleigh-back-solid-wood-platform-bed-frame.jpeg
 wwwroot\images\thumbs\0413049_rustic-solid-wood-long-tv-media-stand-console.jpeg
+wwwroot\images\thumbs\0413056_appalachian-distressed-solid-wood-3-drawer-blue-credenza.jpeg
+wwwroot\images\thumbs\0413070_appalachian-iron-flower-solid-wood-long-tv-media-console-cabinet.jpeg
+wwwroot\images\thumbs\0413096_appalachian-rustic-contemporary-dining-table-and-chair-set.jpeg
+wwwroot\images\thumbs\0413109_arcadian-modern-style-rustic-solid-wood-6-piece-dining-set-with-bench.jpeg
 wwwroot\images\thumbs\0413175_dining-set.png
 wwwroot\images\thumbs\0413178_dining-set.png
 wwwroot\images\thumbs\0413179_dining-set.jpeg
@@ -1050,6 +1069,8 @@ wwwroot\images\thumbs\0413180_dining-set.jpeg
 wwwroot\images\thumbs\0413181_dining-set.png
 wwwroot\images\thumbs\0413182_dining-set.jpeg
 wwwroot\images\thumbs\0413183_dining-set.jpeg
+wwwroot\images\thumbs\0413195_classic-handcrafted-rustic-solid-wood-entertainment-tv-media-cabinet.jpeg
+wwwroot\images\thumbs\0414236_delaware-solid-wood-platform-bed-frame.jpeg
 wwwroot\images\thumbs\0414260_0413175_dining-set.png
 wwwroot\images\thumbs\0414273_dining-set.jpeg
 wwwroot\images\thumbs\0414283_133677494091948275.jpeg
@@ -1058,12 +1079,16 @@ wwwroot\images\thumbs\0414330_download.jpeg
 wwwroot\images\thumbs\0414346_0413175_dining-set.png
 wwwroot\images\thumbs\0414354_download.jpeg
 wwwroot\images\thumbs\0414355_Capture ajax error on sierra.png
+wwwroot\images\thumbs\0414407_appalachian-wood-rustic-square-dining-table-set.png
 wwwroot\images\thumbs\0415495_nottingham-solid-wood-large-rustic-dining-room-table-chair-set.jpeg
+wwwroot\images\thumbs\0416508_aripeka-solid-wood-4-drawer-large-sideboard-with-glass-doors.png
 wwwroot\images\thumbs\0416512_logo.png
 wwwroot\images\thumbs\default-image_1.png
 wwwroot\images\thumbs\default-image_100.png
 wwwroot\images\thumbs\default-image_415.png
 wwwroot\images\thumbs\default-image_450.png
+wwwroot\images\thumbs\default-image_64.png
+wwwroot\images\thumbs\default-image_70.png
 wwwroot\images\thumbs\default-image_75.png
 wwwroot\images\thumbs\default-image_840.png
 wwwroot\images\thumbs\placeholder.txt

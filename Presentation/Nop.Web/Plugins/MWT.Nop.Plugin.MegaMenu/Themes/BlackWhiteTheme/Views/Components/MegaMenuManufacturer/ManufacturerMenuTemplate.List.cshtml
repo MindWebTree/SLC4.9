@@ -33,7 +33,7 @@
                 @foreach (ManufacturerModel manufacturer in Model.Manufacturers)
                 {
                     <li>
-                        <a href="@Url.RouteUrl("Manufacturer", new { SeName = manufacturer.SeName })" title="@manufacturer.Name"><span>@manufacturer.Name</span></a>
+                        <a href="@Url.RouteUrl("Manufacturer", new { manufacturer.SeName })" title="@manufacturer.Name"><span>@manufacturer.Name</span></a>
                     </li>
                 }
 

@@ -1,39 +1,95 @@
 ﻿@model NewsLetterBoxModel
-<div class="newsletter" role="form">
-    <h2 class="title">
-        @T("Newsletter.Title")
-    </h2>
-    <div class="newsletter-subscribe" id="newsletter-subscribe-block">
-        <div class="newsletter-email">
-            <input asp-for="NewsLetterEmail" id="newsletter-email" class="newsletter-subscribe-text" placeholder=@T("Newsletter.Email.Placeholder") aria-label="@T("Newsletter.Subscribe")" />
+<div class="newsletter-banner bg-primary" role="form">
+    <section class="newsletter-banner__container container-fluid">
+        <form class="newsletter-banner__form" action="">
+            <div class="newsletter-banner__row">
 
-            <button type="button" id="newsletter-subscribe-button" class="button-1 newsletter-subscribe-button">@T(Model.AllowToUnsubscribe ? "Newsletter.Options.Send" : "Newsletter.Options.Subscribe")</button>
+                <p class="newsletter-banner__heading">
+                    @T("Footer.NewsLetter.Heading")
+                </p>
 
-            @if (Model.AllowToUnsubscribe)
-            {
-                <div class="options">
-                    <span class="subscribe">
-                        <input id="newsletter_subscribe" type="radio" value="newsletter_subscribe" name="newsletter_block" checked="checked" />
-                        <label for="newsletter_subscribe">@T("Newsletter.Options.Subscribe")</label>
-                    </span>
-                    <span class="unsubscribe">
-                        <input id="newsletter_unsubscribe" type="radio" value="newsletter_unsubscribe" name="newsletter_block" />
-                        <label for="newsletter_unsubscribe">@T("Newsletter.Options.Unsubscribe")</label>
-                    </span>
+                @* 
+                  CRITICAL: 'newsletter-subscribe-block' must wrap all inputs and buttons 
+                  so the script can hide the entire form on a successful submission. 
+                *@
+                <div id="newsletter-subscribe-block" class="newsletter-subscribe-wrapper w-100">
+                    <div class="newsletter-field">
+                        <div class="newsletter-field__input-wrapper">
+                            <input asp-for="NewsLetterEmail"
+                                   id="newsletter-email"
+                                   class="newsletter-field__input form-control"
+                                   placeholder="@T("Newsletter.Email.Placeholder")"
+                                   aria-label="@T("Newsletter.Subscribe")" />
+
+                            <div class="newsletter-field__validation">
+                                <span id="subscribe-loading-progress" style="display: none;" class="newsletter-field__loader">
+                                    @T("Common.Wait")
+                                </span>
+                                <span asp-validation-for="NewsLetterEmail"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    @* Added Captcha Support from Latest Build *@
+                    @if (Model.DisplayCaptcha)
+                    {
+                        <div class="captcha-box mb-3 mt-2">
+                            <nop-captcha />
+                        </div>
+                    }
+
+                    <button type="button"
+                            id="newsletter-subscribe-button"
+                            class="btn btn-outline-light newsletter-banner__submit mt-2">
+                        @T(Model.AllowToUnsubscribe ? "Newsletter.Options.Send" : "Newsletter.Options.Subscribe")
+                    </button>
+
+                    @if (Model.AllowToUnsubscribe)
+                    {
+                        <div class="newsletter-options mt-3">
+                            <span class="newsletter-options__item">
+                                <div class="custom-control custom-radio">
+                                    <input type="radio"
+                                           id="newsletter_subscribe"
+                                           name="newsletter_block"
+                                           class="custom-control-input newsletter-options__input"
+                                           value="newsletter_subscribe"
+                                           checked="checked" />
+                                    <label class="custom-control-label newsletter-options__label" for="newsletter_subscribe">
+                                        @T("Newsletter.Options.Subscribe")
+                                    </label>
+                                </div>
+                            </span>
+                            <span class="newsletter-options__item ml-3">
+                                <div class="custom-control custom-radio">
+                                    <input type="radio"
+                                           id="newsletter_unsubscribe"
+                                           name="newsletter_block"
+                                           class="custom-control-input newsletter-options__input"
+                                           value="newsletter_unsubscribe" />
+                                    <label class="custom-control-label newsletter-options__label" for="newsletter_unsubscribe">
+                                        @T("Newsletter.Options.Unsubscribe")
+                                    </label>
+                                </div>
+                            </span>
+                        </div>
+                    }
                 </div>
-            }
-            @if (Model.DisplayCaptcha)
-            {
-                <nop-captcha />
-            }
-        </div>
-        <div class="newsletter-validation">
-            <span id="subscribe-loading-progress" style="display: none;" class="please-wait">@T("Common.Wait")</span>
-            <span asp-validation-for="NewsLetterEmail"></span>
-        </div>
-    </div>
-    <div class="newsletter-result" id="newsletter-result-block"></div>
-    <script asp-location="Footer">        
+
+                @* Result Block (Shows success/error message) *@
+                <div class="newsletter-field__result mt-3" id="newsletter-result-block"></div>
+
+                <div class="newsletter-banner__bottom-text mt-3">
+                    @T("footer.newsletter.bottom")
+                </div>
+
+            </div>
+        </form>
+    </section>
+
+    @* Latest AJAX and ReCaptcha Script *@
+    <script asp-location="Footer">
+
         async function getCaptchaToken(action, reCaptchaPublicKey, isReCaptchaV3) {
             var recaptchaToken = '';
             if (isReCaptchaV3) {
@@ -49,9 +105,9 @@
             } else {
                 recaptchaToken = $('#newsletter-subscribe-block .captcha-box textarea[name="g-recaptcha-response"').val();
             }
-            
+
             return recaptchaToken;
-        }       
+        }
 
         async function newsletter_subscribe(subscribe) {
             var subscribeProgress = $("#subscribe-loading-progress");
@@ -62,7 +118,7 @@
             }
             var postData = {
                 subscribe: subscribe,
-                email: $("#newsletter-email").val(),                
+                email: $("#newsletter-email").val(),
                 'g-recaptcha-response': captchaTok
             };
             addAntiForgeryToken(postData);
@@ -93,15 +149,15 @@
             $('#newsletter-subscribe-button').on('click', function () {
                 @if (Model.AllowToUnsubscribe)
                 {
-                    <text>if ($('#newsletter_subscribe').is(':checked')) {
-                    newsletter_subscribe('true');
-                } else {
-                    newsletter_subscribe('false');
-                }</text>
+                        <text>if ($('#newsletter_subscribe').is(':checked')) {
+                        newsletter_subscribe('true');
+                    } else {
+                        newsletter_subscribe('false');
+                    }</text>
                 }
                 else
                 {
-                    <text>newsletter_subscribe('true');</text>
+                        <text>newsletter_subscribe('true');</text>
                 }
             });
             $("#newsletter-email").on("keydown", function (event) {

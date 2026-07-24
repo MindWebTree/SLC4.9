@@ -24,7 +24,7 @@
 
                     <div class="sub-menu-content-@level">
                         <a href="@(Plugin.PredefinedPageTypes.Contains(subItem.Type) ? Url.RouteUrl(subItem.Type.ToString()) : subItem.Url)"
-                           class="cat-@(subItem.Id) @subItem.CssClass sub-menu-content-title" title="@subItem.Title" @if (subItem.OpenInNewWindow) { <text> target="_blank" </text> }>
+                           class="cat-@(subItem.Id) @subItem.CssClass sub-menu-content-title" @if (subItem.OpenInNewWindow) { <text> target="_blank" </text> }>
                             @subItem.Title
                         </a>
                     </div>
@@ -170,7 +170,7 @@
     @if (!hasSublist)
     {
         <div class="menu-item-simple">
-            <a href="@itemUrl" class="cat-@(Model.Id) @Model.CssClass" alt="@Model.Title" @if (Model.OpenInNewWindow) { <text> target="_blank" </text>  }>
+            <a href="@itemUrl" class="cat-@(Model.Id) @Model.CssClass" alt="@Model.Title" @if (Model.OpenInNewWindow) { <text> target="_blank" </text> }>
                 @Model.Title
             </a>
         </div>
@@ -178,7 +178,9 @@
     }
     else
     {
-        <div onclick="toggleMenu('menu-@Model.Id')" class="mobile-parent-category">
+        <div onclick="toggleMenu('menu-@Model.Id')" role="button"
+             tabindex="0"
+             aria-expanded="false" class="mobile-parent-category">
             <span class="mobile-parent-category-title">@Model.Title</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="9 18 15 12 9 6"></polyline>

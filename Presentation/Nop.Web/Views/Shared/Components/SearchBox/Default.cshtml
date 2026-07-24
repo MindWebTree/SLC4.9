@@ -21,7 +21,9 @@
                 });
             </script>
         }
-        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.SearchBoxBeforeSearchButton, additionalData = Model })
+        @await Component.InvokeAsync(typeof(WidgetViewComponent),
+        new { widgetZone = PublicWidgetZones.SearchBoxBeforeSearchButton, additionalData = Model })
+
         <button type="submit" class="button-1 search-box-button">@T("Search.Button")</button>
 
         <script asp-location="Footer">

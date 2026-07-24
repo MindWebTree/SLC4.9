@@ -28,9 +28,7 @@
                 @foreach (var topic in Model.Topics)
                 {
                     <li><a href="@Url.RouteUrl("Topic", new { topic.SeName })"><span>@topic.Title</span></a></li>
-               
                 }
-                <li><a href="@Url.RouteUrl("wishlit")" class="mobile-header-wishlist"></a></li>
             </ul>
         </div>
     }

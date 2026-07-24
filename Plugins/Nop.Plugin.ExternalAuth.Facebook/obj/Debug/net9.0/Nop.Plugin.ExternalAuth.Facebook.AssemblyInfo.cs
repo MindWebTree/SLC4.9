@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyCopyrightAttribute("Copyright © Nop Solutions, Ltd")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6ba80e0ef52b5451f6a48fef237471b6c4ad17ed")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9e83c5b6d06764dfebc3bfad2e59e9f1fd566e7f")]
 [assembly: System.Reflection.AssemblyProductAttribute("Nop.Plugin.ExternalAuth.Facebook")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Nop.Plugin.ExternalAuth.Facebook")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

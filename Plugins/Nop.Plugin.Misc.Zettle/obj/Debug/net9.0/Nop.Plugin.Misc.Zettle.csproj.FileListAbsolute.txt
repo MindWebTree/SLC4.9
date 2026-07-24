@@ -325,7 +325,3 @@ D:\SierraProject\SLC4.9\Plugins\Nop.Plugin.Misc.Zettle\obj\Debug\net9.0\Nop.Plug
 D:\SierraProject\SLC4.9\Plugins\Nop.Plugin.Misc.Zettle\obj\Debug\net9.0\refint\Nop.Plugin.Misc.Zettle.dll
 D:\SierraProject\SLC4.9\Plugins\Nop.Plugin.Misc.Zettle\obj\Debug\net9.0\Nop.Plugin.Misc.Zettle.pdb
 D:\SierraProject\SLC4.9\Plugins\Nop.Plugin.Misc.Zettle\obj\Debug\net9.0\ref\Nop.Plugin.Misc.Zettle.dll
-D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\Misc.Zettle\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\images\menu-icon.png
-D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\Misc.Zettle\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\images\toggle-black.png
-D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\Misc.Zettle\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\MegaMenu.css
-D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\Misc.Zettle\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\DefaultClean\Content\MegaMenu.rtl.css

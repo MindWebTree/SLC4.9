@@ -386,6 +386,24 @@ public partial class PluginModelFactory : IPluginModelFactory
     {
         var customer = await _workContext.GetCurrentCustomerAsync();
         var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(NopPluginDefaults.AdminNavigationPluginsCacheKey, customer);
+
+        foreach (var plugin in await _pluginService.GetPluginDescriptorsAsync<IPlugin>(
+          LoadPluginsMode.InstalledOnly, customer))
+        {
+            try
+            {
+                var instance = plugin.Instance<IPlugin>();
+
+                Console.WriteLine(plugin.SystemName);
+
+                var url = instance.GetConfigurationPageUrl();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Plugin failed: {plugin.SystemName}", ex);
+            }
+        }
+
         return await _staticCacheManager.GetAsync(cacheKey, async () =>
         {
             //get installed plugins
