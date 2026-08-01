@@ -13,7 +13,8 @@ namespace MWT.Nop.Core.Service.StoreWideDiscount
         #region StoreWideDiscount 
         
         Task<StoreWideProductDiscountInfo> GetStoreWideProductDiscountInfoByProductIdAsync(int productId);
- 
+        Task<MWT.Nop.Core.Domain.StoreWideDiscount.StoreWideDiscount> GetProductSaleInfo(int productId);
+
         #endregion
     }
 }

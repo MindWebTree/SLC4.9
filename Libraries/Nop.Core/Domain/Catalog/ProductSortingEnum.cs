@@ -34,4 +34,7 @@ public enum ProductSortingEnum
     /// Product creation date
     /// </summary>
     CreatedOn = 15,
+
+
+    BestSeller = 16,
 }

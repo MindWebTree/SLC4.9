@@ -1,4 +1,5 @@
-﻿@{
+﻿@using MWT.Nop.Core.Infrastructure
+@{
     Layout = "_Root.Head";
 }
 @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.BodyStartHtmlTagAfter })
@@ -10,10 +11,14 @@
         @await Html.PartialAsync("_Header")
     }
     <div class="header-menu">
-        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ThemeHeaderMenu })
-        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ThemeMobileHeaderMenu })
+        @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.ThemeHeaderMenu })
+        @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.ThemeMobileHeaderMenu })
 @*         @await Component.InvokeAsync(typeof(MainMenuViewComponent)) *@
     </div>
+    @if (!_userAgentContext.IsMobileDevice())
+    {
+        @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "Marketing.Bar.After.MainNavigation" })
+    }
     <main class="master-wrapper-content" id="main">
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ContentBefore })
 

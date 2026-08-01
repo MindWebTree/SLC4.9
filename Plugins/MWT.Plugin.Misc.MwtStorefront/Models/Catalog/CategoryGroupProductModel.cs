@@ -16,9 +16,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Models.Catalog
     {
         public GroupProduct()
         {
-            AssociatedProducts = new List<ProductOverviewModel>();
+            AssociatedProducts = new List<CustomProductOverviewModel>();
         }
-        public ProductOverviewModel Product { get; set; }
-        public List<ProductOverviewModel> AssociatedProducts { get; set; }
+        public CustomProductOverviewModel Product { get; set; }
+        public List<CustomProductOverviewModel> AssociatedProducts { get; set; }
     }
 }

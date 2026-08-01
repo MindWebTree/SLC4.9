@@ -1,0 +1,678 @@
+﻿@inject MWT.Nop.Core.Infrastructure.ICustomWorkContext _customWorkContext;
+@inject Nop.Services.Localization.ILocalizationService _localizationService;
+@{
+    Layout = "_Root";
+}
+<script>
+
+    var shadeAsShow = '@T("Product.selected.shades")';
+    var defaultSortOption = '@((await _localizationService.GetResourceAsync("Common.Select")).Replace(" ", "_"))';
+</script>
+@{
+
+
+
+
+
+
+    //current product ID
+    var currentProductId = 0;
+    if (Url.ActionContext.RouteData.Values["controller"].ToString().Equals("product", StringComparison.InvariantCultureIgnoreCase) &&
+        Url.ActionContext.RouteData.Values["action"].ToString().Equals("productdetails", StringComparison.InvariantCultureIgnoreCase))
+    {
+        currentProductId = Convert.ToInt32(Url.ActionContext.RouteData.Values["productId"].ToString());
+    }
+    var hidefilter = false;
+    var displayFilters = false;
+    bool.TryParse((string)ViewBag.hidefilter, out hidefilter);
+    bool.TryParse((string)ViewBag.displayFilters, out displayFilters);
+    var EnableInfiniteScroll = false;
+    bool.TryParse((string)ViewBag.EnableInfiniteScroll, out EnableInfiniteScroll);
+}
+<script>
+    var EnableInfiniteScroll = '@EnableInfiniteScroll';
+</script>
+<style>
+
+    #answer-list-page-page .master-wrapper-content.container {
+        max-width: 100%;
+        padding: 0;
+    }
+
+    #answer-list-page-page .page.topic-page {
+        max-width: 100%;
+    }
+
+    #answer-list-page-page .page-title,
+    #answer-list-page-page .breadcrumb {
+        display: none;
+    }
+
+    #answer-list-page-page .main-section-answer-list-page {
+        max-width: 1440px;
+        margin: 0 auto;
+    }
+
+    .main-section-answer-list-page .answer-list-content {
+        background-color: #f6f3eb;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        padding: 20PX;
+    }
+	
+	.answers-section .master-wrapper-content.container{
+	        padding: 0;
+	}
+
+    .main-section-answer-list-page h5.answer-list-heading {
+        letter-spacing: -.5px;
+        font-size: 24px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 1.4;
+        color: #000;
+    }
+	
+	
+	
+	.main-section-answer-list-page .answer-list-artist-associated p {
+   font-size: 16px;
+}
+
+    .main-section-answer-list-page p.answer-list-desc {
+        letter-spacing: 0;
+        font-size: 20px;
+        font-style: italic !important;
+        line-height: 1.4;
+        color: #000;
+    }
+
+    .main-section-answer-list-page .section-answer-list-content {
+        max-width: 1276px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 36px 0;
+    }
+
+    .main-section-answer-list-page .answer-list-associated {
+        background: #aabeb9;
+    }
+
+    .main-section-answer-list-page .answer-list-content-image {
+        background-color: white;
+        border-radius: 50%;
+        display: inline-block;
+        padding: 0px;
+        height: 300px;
+        width: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+		overflow:hidden;
+    }
+
+    .main-section-answer-list-page .answer-list-content-image img {
+         width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    }
+
+    .main-section-answer-list-page .list-associated-background {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        height: 350px;
+    }
+
+    .main-section-answer-list-page h1.list-associated-heading {
+        letter-spacing: -1px;
+        font-size: 50px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 1.4;
+        margin-bottom: 27px;
+		font-family: 'Bona Nova';
+    }
+
+    .main-section-answer-list-page p.list-associated-desc {
+        font-size: 16px;
+        font-weight: 300 !important;
+        margin-bottom: 18px;
+        color: #666;
+    }
+
+    .main-section-answer-list-page .list-associated-heading-content {
+            padding: 80px 40px 80px 40px;
+    }
+
+    .main-section-answer-list-page .answer-list-slc-logo {
+        
+        margin-right: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #fff;
+		
+    }
+	
+	.main-section-answer-list-page .answer-list-slc-logo img {
+        
+       width: 50px;
+    height: 50px;
+    border-radius: 50%;
+		
+    }
+
+    .main-section-answer-list-page .row.answer-list-artist-back {
+        margin-top: 36px !important;
+    }
+
+    .main-section-answer-list-page .answer-list-artist-associated {
+        background-color: #fafafa;
+        padding: 18px;
+        max-width: 720px;
+    }
+
+    .main-section-answer-list-page .answer-list-urban-desc {
+        color: #000;
+        margin: 0;
+        font-size: 16px;
+    }
+
+    .main-section-answer-list-page span.answer-list-expert {
+        display: block;
+        font-size: 16px;
+        color: #000;
+        margin-bottom: 3px;
+    }
+
+    .main-section-answer-list-page span.answer-list-expert-date {
+        font-size: 16px;
+        color: #000;
+    }
+
+    .main-section-answer-list-page .answer-list-related-questions {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .main-section-answer-list-page h5.content-related-questions {
+        letter-spacing: -.5px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 9px;
+        font-size: 24px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 1.4;
+    }
+
+    .main-section-answer-list-page ul.list-unstyled {
+        padding: 0;
+        list-style: none;
+    }
+
+    .main-section-answer-list-page ul.list-unstyled li a {
+        font-size: 16px;
+        font-weight: 300;
+        text-decoration: none !important;
+    }
+
+    .main-section-answer-list-page ul.list-unstyled li h2.related-span-question {
+        text-decoration: underline;
+        margin-right: 5px;
+        color: #444;
+		 font-size: 16px;
+		     font-weight: 400 !important;
+    }
+
+    .main-section-answer-list-page ul.list-unstyled li h2.related-span-question:hover {
+        opacity: .8;
+    }
+
+    .main-section-answer-list-page ul.list-unstyled li h2.related-span-answer {
+        color: #666;
+		 font-size: 16px;
+		     font-weight: 400 !important;
+    }
+
+    .main-section-answer-list-page a.question-button-view,
+    .main-section-answer-list-page a.question-button-shop {
+        display: inline-block;
+        text-align: center;
+        padding: 8px 15px;
+        border: 2px solid #222;
+        background-color: #fff;
+        color: #222 !important;
+        text-decoration: none !important;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 24px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+    }
+
+    .main-section-answer-list-page a.question-button-view:hover,
+    .main-section-answer-list-page a.question-button-shop:hover {
+        background-color: #000;
+        color: #fff !important;
+    }
+
+    .main-section-answer-list-page .question-button-view {
+        min-width: 196.56px;
+        height: 40px;
+		   
+    }
+
+    .main-section-answer-list-page .question-button-shop {
+        min-width: 111.47px;
+        height: 40px;
+       letter-spacing: 1px !important;
+    }
+
+    .main-section-answer-list-page .question-button-shop-back {
+        text-align: center;
+    }
+
+    .main-section-answer-list-page .answer-list-edward-hopper h5 {
+        letter-spacing: -.5px;
+        font-size: 24px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 1.4;
+        margin-top: 36px;
+		
+    }
+
+    .main-section-answer-list-page .answer-list-product-item {
+        height: 311px;
+        padding: 27px 0 18px 0;
+    }
+
+    .main-section-answer-list-page .answer-list-product-item-img {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .main-section-answer-list-page .answer-list-product-item a img {
+        width: 160px;
+        height: 160px;
+    }
+
+    .main-section-answer-list-page .answer-list-artist-name {
+        margin-top: 36px;
+    }
+
+    .main-section-answer-list-page .answer-list-artist-name a {
+        text-decoration: none !important;
+        font-size: 14px;
+        font-weight: 300 !important;
+        color: #000 !important;
+    }
+
+    .main-section-answer-list-page .answer-list-product-title a {
+        text-decoration: none !important;
+        font-size: 14px;
+        font-weight: 600 !important;
+        color: #000 !important;
+    }
+
+    .main-section-answer-list-page .answer-list-product-price {
+        padding-top: 5px;
+    }
+
+    .main-section-answer-list-page .answer-list-sale-price {
+        font-size: 14px;
+        font-weight: 300 !important;
+        color: #000 !important;
+    }
+
+    .main-section-answer-list-page .answer-list-discount {
+        font-size: 14px;
+        font-weight: 300 !important;
+        color: #950808 !important;
+    }
+
+    .main-section-answer-list-page .answer-list-edward-hopper {
+        margin-bottom: 27px;
+    }
+
+    .main-section-answer-list-page .answer-list-mobile-divider {
+        display: none;
+    }
+
+    .answer-list-edward-hopper-mobile {
+        display: none;
+    }
+
+    @@media (min-width: 768px) and (max-width: 1024px) {
+
+        .main-section-answer-list-page .answer-list-content {
+            display: block;
+            text-align: center;
+        }
+
+        .main-section-answer-list-page p.answer-list-desc {
+            text-align: center;
+        }
+
+        .main-section-answer-list-page .answer-list-content span {
+            display: none;
+        }
+
+        .main-section-answer-list-page h1.list-associated-heading {
+            font-size: 30px;
+        }
+
+        .main-section-answer-list-page .list-associated-heading-content {
+            padding: 30px;
+        }
+
+        .main-section-answer-list-page .list-associated-background {
+            height: 240px;
+        }
+
+        .main-section-answer-list-page .answer-list-content-image {
+            height: 200px;
+            width: 200px;
+        }
+
+
+        .main-section-answer-list-page .answer-list-artist-associated {
+            padding: 18px 0 18px 28px;
+        }
+
+        .main-section-answer-list-page ul.list-unstyled {
+            padding: 5px;
+        }
+
+        .main-section-answer-list-page ul.list-unstyled li h2.related-span-answer {
+            display: block;
+            margin-top: 10px;
+        }
+        .main-section-answer-list-page .answer-list-mobile-divider {
+            display: none;
+        }
+
+        .main-section-answer-list-page .answer-list-edward-hopper-mobile {
+            display: none;
+        }
+    }
+
+    @@media (max-width:767px) {
+        .main-section-answer-list-page .answer-list-content {
+            padding: 18PX;
+            display: block;
+        }
+
+        .main-section-answer-list-page h5.answer-list-heading {
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 10px !important;
+        }
+
+        .main-section-answer-list-page p.answer-list-desc {
+            font-size: 16px;
+            text-align: center;
+            margin: 0;
+        }
+
+        .main-section-answer-list-page .answer-list-content span {
+            display: none;
+        }
+
+        .main-section-answer-list-page .section-answer-list-content {
+            padding: 20px 0;
+        }
+
+        .main-section-answer-list-page .answer-list-associated {
+            background: none;
+        }
+
+        .main-section-answer-list-page .list-associated-row {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-section-answer-list-page .list-associated-row>.list-associated-background {
+            order: -1;
+        }
+
+        .main-section-answer-list-page .list-associated-background {
+            background: #aabeb9;
+        }
+         .answer-section .master-wrapper-content.container{
+	
+           padding:0;	
+	    }
+		
+		.answer-section .master-wrapper-content.container .home-content-left{
+	
+           padding-left:10px;	
+	    }
+
+        .main-section-answer-list-page .list-associated-background {
+            height: 304px;
+        }
+
+        .main-section-answer-list-page .answer-list-content-image {
+            padding: 0;
+            height: 250px;
+            width: 250px;
+        }
+
+        .main-section-answer-list-page .list-associated-heading-content {
+            padding: 18px 0;
+        }
+
+        .main-section-answer-list-page h1.list-associated-heading {
+            font-size: 24px;
+        }
+
+        .main-section-answer-list-page p.list-associated-desc {
+            margin: 18px 0;
+        }
+
+        .main-section-answer-list-page .row.answer-list-artist-back {
+            margin-top: 0 !important;
+        }
+
+        .main-section-answer-list-page .answer-list-artist-back .col-md-5 {
+            padding: 0 12px;
+        }
+
+        .main-section-answer-list-page .answer-list-artist-back .col-md-7 {
+            padding: 0 12px 12px 12px;
+        }
+
+        .main-section-answer-list-page .answer-list-mobile-divider {
+            display: block;
+            border-top: 9px solid #fafafa;
+        }
+
+        .answer-list-edward-hopper-mobile {
+            display: block;
+            padding: 0 28px 18px 28px;
+        }
+
+        .answer-list-edward-hopper-desktop {
+            display: none;
+        }
+		
+		.main-section-answer-list-page .question-button-view {
+          margin-top: 30px;
+		   
+    }
+	
+	.main-section-answer-list-page .question-button-shop {
+           margin-top: 30px;
+    }
+
+        .main-section-answer-list-page .answer-list-edward-hopper h5 {
+            margin-top: 0;
+        }
+
+        .main-section-answer-list-page .answer-list-product-item {
+            max-width: 198px;
+        }
+
+        .main-section-answer-list-page .answer-list-product-item a img {
+            width: 122px;
+            height: 122px;
+        }
+
+        .main-section-answer-list-page .answer-list-artist-back .col-md-5 {
+            text-align: center;
+        }
+
+        .main-section-answer-list-page ul.list-unstyled {
+            text-align: left;
+        }
+
+        .main-section-answer-list-page .answer-list-edward-hopper {
+            margin-bottom: 15px;
+        }
+
+        .main-section-answer-list-page .answer-list-product-item {
+            height: 260px;
+            padding: 18px 0 18px 0;
+        }
+
+        .main-section-answer-list-page .answer-list-artist-name {
+            margin-top: 30px;
+        }
+
+        .main-section-answer-list-page h5.content-related-questions {
+            text-align: left;
+        }
+
+        .main-section-answer-list-page h5.content-related-questions {
+            border-bottom: 0;
+        }
+
+        .main-section-answer-list-page ul.list-unstyled {
+            margin: 0 !important;
+        }
+
+        .main-section-answer-list-page ul li {
+            margin-bottom: 0 !important;
+            border-bottom: 1px solid #ddd;
+            padding: 20px 0;
+        }
+
+        .main-section-answer-list-page ul li.mb-3.last-list {
+            border-bottom: 0;
+        }
+
+        .main-section-answer-list-page ul.list-unstyled li h2.related-span-question {
+            text-decoration: none;
+            margin-right: 0;
+            
+        }
+
+        .main-section-answer-list-page ul.list-unstyled li h2.related-span-answer {
+            text-decoration: underline;
+            display: block;
+            margin-top: 10px;
+        }
+
+        .main-section-answer-list-page .section-answer-list-content {
+            padding: 20px 0 0;
+        }
+    }
+</style>
+
+@if (EnableInfiniteScroll)
+{
+    <text>
+        <style>
+            .pager {
+                display: none;
+            }
+        </style>
+    </text>
+}
+@await RenderSectionAsync("Breadcrumb", false)
+
+@*@if (IsSectionDefined("left"))
+    {
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnBefore })
+        @await RenderSectionAsync("left")
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnAfter })
+    }
+    else
+    {*@
+
+
+<div class="row mx-0">
+    <div class="main-section-answer-list-page">
+
+        @if (IsSectionDefined("SubHeading"))
+        {
+            @await RenderSectionAsync("SubHeading")
+
+        }
+        @if (IsSectionDefined("Heading"))
+        {
+            @await RenderSectionAsync("Heading")
+
+        }
+        <div class="row answer-list-artist-back" bis_skin_checked="1">
+
+            @if (IsSectionDefined("Description"))
+            {
+                <div class="col-md-7" bis_skin_checked="1">
+                    @await RenderSectionAsync("Description")
+                </div>
+
+            }
+            <div class="answer-list-mobile-divider" bis_skin_checked="1">&nbsp;</div>
+            <div class="col-md-5" bis_skin_checked="1">
+
+                @await RenderSectionAsync("RelatedQuestionAnswer")
+
+            </div>
+        </div>
+        <div class="answer-list-edward-hopper" bis_skin_checked="1">
+            <div class="answer-list-edward-hopper-desktop" bis_skin_checked="1">
+
+                @await RenderSectionAsync("ListingHeading")
+
+                
+
+
+            </div>
+        </div>
+
+        <div class="row kwterm">
+            @if (IsSectionDefined("CatalogFilters"))
+            {
+                <div class="filters  col-0">
+                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnBefore })
+                    @if (_customWorkContext.IsMobileDevice())
+                    {
+                        @await RenderSectionAsync("CatalogFilters", false)
+                    }
+
+                </div>
+            }
+            <div class="listinggrid  col-sm-12">
+                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.MainColumnBefore })
+                @RenderBody()
+                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.MainColumnAfter })
+            </div>
+
+        </div>
+        @await RenderSectionAsync("ListingPageLink")
+    </div>
+</div>
+@*}*@
+
+
+
+

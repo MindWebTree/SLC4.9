@@ -1,0 +1,90 @@
+﻿@model QuestionAnswerModel
+<div class="card-body">
+    <p>
+        @T("Admin.Catalog.RelatedQuestionAnswer.Hint")
+    </p>
+    @if (Model.Id > 0)
+    {
+        <div class="card card-default">
+            <div class="card-body">
+
+                @await Html.PartialAsync("Table", new DataTablesModel
+                {
+                    Name = "relatedquestionanswer-grid",
+                    UrlRead = new DataUrl("RelatedQuestionAnswerList", "QuestionAnswer", new RouteValueDictionary { [nameof(Model.RelatedQuestionAnswerSearchModel.QuestionAnswerId)] = Model.Id }),
+                    UrlDelete = new DataUrl("RelatedQuestionAnswerDelete", "QuestionAnswer", null),
+                    UrlUpdate = new DataUrl("RelatedQuestionAnswerUpdate", "QuestionAnswer", null),
+                    Length = Model.RelatedQuestionAnswerSearchModel.PageSize,
+                    LengthMenu = Model.RelatedQuestionAnswerSearchModel.AvailablePageSizes,
+                    ColumnCollection = new List<ColumnProperty>
+                        {
+                          new ColumnProperty(nameof(RelatedQuestionAnswerModel.QuestionAnswerId2))
+                    {
+                        Title = T("Admin.Catalog.QuestionAnswer.Fields.Id").Text,
+
+                    },
+                            new ColumnProperty(nameof(RelatedQuestionAnswerModel.QuestionAnswer2Name))
+                            {
+                                Title = T("Admin.Catalog.Products.RelatedQuestionAnswer.Fields.Name").Text
+                            },
+                            new ColumnProperty(nameof(RelatedQuestionAnswerModel.DisplayOrder))
+                            {
+                                Title = T("Admin.Catalog.Products.RelatedQuestionAnswerModel.Fields.DisplayOrder").Text,
+                                Width = "150",
+                                ClassName = NopColumnClassDefaults.CenterAll,
+                                Editable = true,
+                                EditType = EditType.Number
+                            },
+                            new ColumnProperty(nameof(RelatedQuestionAnswerModel.QuestionAnswerId2))
+                            {
+                                Title = T("Admin.Common.View").Text,
+                                Width = "150",
+                                ClassName = NopColumnClassDefaults.Button,
+                                Render = new RenderButtonView(new DataUrl("~/Admin/QuestionAnswer/Edit/", nameof(RelatedQuestionAnswerModel.QuestionAnswer2Name)))
+                            },
+                            new ColumnProperty(nameof(RelatedQuestionAnswerModel.Id))
+                            {
+                                Title = T("Admin.Common.Edit").Text,
+                                Width = "200",
+                                ClassName =  NopColumnClassDefaults.Button,
+                                Render = new RenderButtonsInlineEdit()
+                            },
+                            new ColumnProperty(nameof(RelatedQuestionAnswerModel.Id))
+                            {
+                                Title = T("Admin.Common.Delete").Text,
+                                Width = "100",
+                                Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+                                ClassName = NopColumnClassDefaults.Button
+                            }
+                        }
+                })
+            </div>
+            <div class="card-footer">
+                <button type="submit" id="btnAddNewRelatedQuestionAnswers" class="btn btn-primary" onclick="javascript:OpenWindow('@(Url.Action("RelatedQuestionAnswerAddPopup", "QuestionAnswer", new {questionAnswerId = Model.Id, btnId = "btnAddNewRelatedQuestionAnswers", formId = "questionanswer-form"}))', 800, 800, true); return false;">
+                    @T("Admin.Catalog.Products.RelatedQuestionAnswer.AddNew")
+                </button>
+                <button type="submit" id="btnRefreshRelatedProducts" style="display: none"></button>
+                <script>
+                    $(document).ready(function () {
+                        $('#btnAddNewRelatedQuestionAnswers').click(function () {
+                      
+                            //refresh grid
+                            updateTable('#relatedquestionanswer-grid');
+
+                            //return false to don't reload a page
+                            return false;
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card card-default">
+            <div class="card-body">
+                @T("Admin.Catalog.Products.RelatedQuestionAnswers.SaveBeforeEdit")
+            </div>
+        </div>
+    }
+</div>

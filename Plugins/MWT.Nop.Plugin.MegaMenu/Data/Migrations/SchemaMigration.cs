@@ -18,7 +18,26 @@ namespace MWT.Nop.Plugin.MegaMenu.Data.Migrations
             Create.TableFor<EntityWidgetMapping>();
             Create.TableFor<Menu>();
             Create.TableFor<MenuItem>();
-             
+
+            if (!Schema.Table(nameof(EntityMapping)).Exists())
+            {
+                Create.TableFor<EntityMapping>();
+            }
+            if (!Schema.Table(nameof(EntityWidgetMapping)).Exists())
+            {
+                Create.TableFor<EntityWidgetMapping>();
+            }
+            if (!Schema.Table(nameof(Menu)).Exists())
+            {
+                Create.TableFor<Menu>();
+            }
+            if (!Schema.Table(nameof(MenuItem)).Exists())
+            {
+                Create.TableFor<MenuItem>();
+            }
+
+
+
             Create.ForeignKey("FK_MWT_MM_MenuItem_MWT_MM_Menu_MenuId")
                 .FromTable("MWT_MM_MenuItem").ForeignColumn("MenuId")
                 .ToTable("MWT_MM_Menu").PrimaryColumn("Id")

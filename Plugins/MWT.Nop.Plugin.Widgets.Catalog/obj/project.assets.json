@@ -4655,6 +4655,21 @@
           }
         }
       },
+      "MWT.Nop.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "Nop.Core": "4.90.0",
+          "Nop.Data": "4.90.0",
+          "Nop.Services": "4.90.0"
+        },
+        "compile": {
+          "bin/placeholder/MWT.Nop.Core.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MWT.Nop.Core.dll": {}
+        }
+      },
       "Nop.Core/4.90.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v9.0",
@@ -12689,6 +12704,11 @@
         "webmarkupmin.nuglify.nuspec"
       ]
     },
+    "MWT.Nop.Core/1.0.0": {
+      "type": "project",
+      "path": "../../MWT.Nop.Core/MWT.Nop.Core.csproj",
+      "msbuildProject": "../../MWT.Nop.Core/MWT.Nop.Core.csproj"
+    },
     "Nop.Core/4.90.0": {
       "type": "project",
       "path": "../../Libraries/Nop.Core/Nop.Core.csproj",
@@ -12712,6 +12732,7 @@
   },
   "projectFileDependencyGroups": {
     "net9.0": [
+      "MWT.Nop.Core >= 1.0.0",
       "Nop.Web.Framework >= 4.90.0"
     ]
   },
@@ -12747,6 +12768,9 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
+            "D:\\SierraProject\\SLC4.9\\MWT.Nop.Core\\MWT.Nop.Core.csproj": {
+              "projectPath": "D:\\SierraProject\\SLC4.9\\MWT.Nop.Core\\MWT.Nop.Core.csproj"
+            },
             "D:\\SierraProject\\SLC4.9\\Presentation\\Nop.Web.Framework\\Nop.Web.Framework.csproj": {
               "projectPath": "D:\\SierraProject\\SLC4.9\\Presentation\\Nop.Web.Framework\\Nop.Web.Framework.csproj"
             }

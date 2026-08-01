@@ -1,4 +1,5 @@
-﻿using MWT.Nop.Plugin.Widgets.Catalog.Domain;
+﻿using MWT.Nop.Core.Services.KW;
+using MWT.Nop.Plugin.Widgets.Catalog.Domain;
 using Nop.Core;
 using Nop.Data;
 using Nop.Services.Catalog;
@@ -14,19 +15,19 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Services
         private readonly IRepository<MWTEntityBanner> _mwtEntityBannerRepository;
         private readonly IRepository<MWTEntityBannerEntityMapping> _mwtEntityBannerMappingRepository;
         private readonly ICategoryService _categoryService;
-       // private readonly IKwTermService _kwTermService;
+        private readonly IKwTermService _kwTermService;
 
         #endregion
 
         #region ctor
 
         public MWTEntityBannerService(IRepository<MWTEntityBanner> mwtEntityBannerRepository, IRepository<MWTEntityBannerEntityMapping> mwtEntityBannerMappingRepository,
-            ICategoryService categoryService/*, IKwTermService kwTermService*/)
+            ICategoryService categoryService , IKwTermService kwTermService )
         {
             _mwtEntityBannerRepository = mwtEntityBannerRepository;
             _mwtEntityBannerMappingRepository = mwtEntityBannerMappingRepository;
             _categoryService = categoryService;
-            //_kwTermService = kwTermService;
+            _kwTermService = kwTermService;
         }
 
         #endregion
@@ -101,10 +102,8 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Services
                            mwtEntityBannerMapping.BannerId != id
                            select mwtEntityBanner).AnyAsync())
                 {
-                    return (true, entityType == "Category" ? (await _categoryService.GetCategoryByIdAsync(entityId))?.Name ?? "" : "");
-                     //   :
-                     //   (await _kwTermService.GetKwTermByIdAsync(entityId))?.Name ?? "");
-
+                    return (true, entityType == "Category" ? (await _categoryService.GetCategoryByIdAsync(entityId))?.Name ?? "" :
+           (await _kwTermService.GetKwTermByIdAsync(entityId))?.Name ?? "");
                 }
 
             }
@@ -134,7 +133,7 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Services
             }
             else
             {
-               // entityNames = string.Join(",", (await _kwTermService.GetkwTermsByIdsAsync(ids.ToArray())).Select(c => c.Name).ToArray());
+                entityNames = string.Join(",", (await _kwTermService.GetkwTermsByIdsAsync(ids.ToArray())).Select(c => c.Name).ToArray());
             }
             return entityNames;
         }

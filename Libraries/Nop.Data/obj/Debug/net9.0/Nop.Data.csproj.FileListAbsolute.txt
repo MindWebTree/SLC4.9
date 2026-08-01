@@ -627,9 +627,9 @@ D:\SierraProject\SLC4.9\Libraries\Nop.Data\obj\Debug\net9.0\Nop.Data.GeneratedMS
 D:\SierraProject\SLC4.9\Libraries\Nop.Data\obj\Debug\net9.0\Nop.Data.AssemblyInfoInputs.cache
 D:\SierraProject\SLC4.9\Libraries\Nop.Data\obj\Debug\net9.0\Nop.Data.AssemblyInfo.cs
 D:\SierraProject\SLC4.9\Libraries\Nop.Data\obj\Debug\net9.0\Nop.Data.csproj.CoreCompileInputs.cache
+D:\SierraProject\SLC4.9\Libraries\Nop.Data\obj\Debug\net9.0\Nop.Data.sourcelink.json
 D:\SierraProject\SLC4.9\Libraries\Nop.Data\obj\Debug\net9.0\Nop.Data.csproj.Up2Date
 D:\SierraProject\SLC4.9\Libraries\Nop.Data\obj\Debug\net9.0\Nop.Data.dll
 D:\SierraProject\SLC4.9\Libraries\Nop.Data\obj\Debug\net9.0\refint\Nop.Data.dll
 D:\SierraProject\SLC4.9\Libraries\Nop.Data\obj\Debug\net9.0\Nop.Data.pdb
 D:\SierraProject\SLC4.9\Libraries\Nop.Data\obj\Debug\net9.0\ref\Nop.Data.dll
-D:\SierraProject\SLC4.9\Libraries\Nop.Data\obj\Debug\net9.0\Nop.Data.sourcelink.json

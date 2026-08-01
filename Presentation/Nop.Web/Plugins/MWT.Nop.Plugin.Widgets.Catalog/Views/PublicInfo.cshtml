@@ -1,10 +1,11 @@
 ﻿@model MWT.Nop.Plugin.Widgets.Catalog.Models.MWTEntityBannerModel
+@using MWT.Nop.Core.Infrastructure
 @using Nop.Core
 @using Nop.Services.Helpers
-@inject IUserAgentHelper _userAgentHelper
+@inject ICustomWorkContext  _workContext
 @if (Model.WidgetZone == "categorydetails_top_video")
 {//   LY VIDEO
-    @if (_userAgentHelper.IsMobileDevice())
+    @if (_workContext.IsMobileDevice())
     {
         if (!string.IsNullOrEmpty(Model.MobileVideoUrl))
         {
@@ -39,7 +40,7 @@
 else if (Model.WidgetZone == "categorydetails_top")
 {
     //   ONLY BANNER AND HTML
-    @if (_userAgentHelper.IsMobileDevice())
+    @if (_workContext.IsMobileDevice())
     {
         if (!string.IsNullOrEmpty(Model.MobilebannerImage))
         {
@@ -97,7 +98,7 @@ else if (Model.WidgetZone == "categorydetails_top")
 }
 else
 {
-    if (_userAgentHelper.IsMobileDevice())
+    if (_workContext.IsMobileDevice())
     {
         if (!string.IsNullOrEmpty(Model.MobilebannerImage))
         {

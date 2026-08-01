@@ -383,3 +383,9 @@ D:\SierraProject\SLC4.9\Plugins\MWT.Nop.Plugin.MegaMenu\obj\Debug\net9.0\MWT.Nop
 D:\SierraProject\SLC4.9\Plugins\MWT.Nop.Plugin.MegaMenu\obj\Debug\net9.0\refint\MWT.Nop.Plugin.MegaMenu.dll
 D:\SierraProject\SLC4.9\Plugins\MWT.Nop.Plugin.MegaMenu\obj\Debug\net9.0\MWT.Nop.Plugin.MegaMenu.pdb
 D:\SierraProject\SLC4.9\Plugins\MWT.Nop.Plugin.MegaMenu\obj\Debug\net9.0\ref\MWT.Nop.Plugin.MegaMenu.dll
+D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.MegaMenu\Areas\Admin\Content\Scripts\kendo.culture.en-US.min.js
+D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.MegaMenu\Areas\Admin\Content\Scripts\kendo.messages.en-US.min.js
+D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.MegaMenu\Areas\Admin\Content\Scripts\kendo.ui.core.min.js
+D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.MegaMenu\Areas\Admin\Content\Styles\kendo.common.min.css
+D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.MegaMenu\Areas\Admin\Content\Styles\kendo.default.min.css
+D:\SierraProject\SLC4.9\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.MegaMenu\Areas\Admin\Content\Styles\kendo.rtl.min.css

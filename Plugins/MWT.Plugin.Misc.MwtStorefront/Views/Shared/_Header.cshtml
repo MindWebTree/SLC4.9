@@ -1,7 +1,9 @@
 ﻿@using MWT.Plugin.Misc.MwtStorefront.Components
+@using Nop.Web.Components
+@using Nop.Web.Framework.Infrastructure
  
 
-@inject IUserAgentHelper _useragentContext;
+@inject MWT.Nop.Core.Infrastructure.ICustomWorkContext _customWorkContext ;
 
 @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HeaderBefore })
 
@@ -9,7 +11,7 @@
 <div class="container">
     <div class="header-lower logo-section">
         <div class="row align-items-center mx-0">
-            @if (!_useragentContext.IsMobileDevice())
+            @if (!_customWorkContext.IsMobileDevice())
             {
                 <div class="col-2 d-none d-lg-block desktop-device">
                     @await Component.InvokeAsync(typeof(MWT.Plugin.Misc.MwtStorefront.Components.SearchBoxViewComponent))

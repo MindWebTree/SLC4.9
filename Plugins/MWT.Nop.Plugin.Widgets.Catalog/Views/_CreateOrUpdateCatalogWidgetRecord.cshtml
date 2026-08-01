@@ -26,7 +26,7 @@
                 <div class="col-sm-9">
                     @if (Model.Id > 0)
                     {
-                        <nop-select asp-for="EntityType" asp-items="Model.EntityTypes" />
+                        <nop-select asp-for="EntityType" asp-items="Model.EntityTypes" readonly />
                     }
                     else
                     {
@@ -39,8 +39,9 @@
                 <div class="col-sm-3">
                     <nop-label asp-for="EntityIds" />
                 </div>
-                <div class="col-sm-9">
-                    <select name="@(Model.EntityType == "Category" || string.IsNullOrEmpty(Model.EntityType) ? "EntityIds" : "category_EntityId")" class="form-control select2" multiple="mutiple">
+                <div class="col-sm-9 select2-blue">
+                    <select data-dropdown-css-class="select2-blue" name="@(Model.EntityType == "Category" || string.IsNullOrEmpty(Model.EntityType) ? "EntityIds" : "category_EntityId")"
+                            multiple="mutiple">
                         @foreach (var category in Model.AvailableCategories)
                         {
                             if (!string.IsNullOrEmpty(category.Value) && Model.EntityIds.Contains(Convert.ToInt32(category.Value)))
@@ -57,37 +58,20 @@
                     <span asp-validation-for="EntityIds" class="text-danger"></span>
                     <script>
                         $(document).ready(function () {
-                            // var $select = $('.categorysection select');
-                            // if (!$select.data("kendoMultiSelect")) {
-                            //     $select.kendoMultiSelect();
-                            // }
-
-                            // // var categoryIdsInput = $('.kwtermsection select').data("kendoMultiSelect");
-                            // // categoryIdsInput.setOptions({
-                            // //     autoClose: false,
-                            // //     filter: "contains",
-                            // //     placeholder: "Please select Entity"
-                            // // });
-                                        var $multiSelect = $('#catalog-category-multiselect');
-                        if (typeof $.fn.select2 !== 'undefined') {
-                            $multiSelect.select2({
-                                placeholder: "Please select Entity",
-                                allowClear: true,
-                                closeOnSelect: false
-                            });
-                        }
+                            var $select = $('.categorysection select');
+                               $select.select2();
                         });
                     </script>
                 </div>
             </div>
 
-            @*      <div class="form-group row kwtermsection" style="display:@(Model.EntityType == "KwTerm" ? "" : "none")">
+            <div class="form-group row kwtermsection" style="display:@(Model.EntityType == "KwTerm" ? "" : "none")">
                 <div class="col-sm-3">
                     <nop-label asp-for="EntityIds" />
                 </div>
-                <div class="col-sm-9">
+                <div class="col-sm-9 select2-blue">
 
-                    <select name="@(Model.EntityType == "KwTerm" ? "EntityIds" : "kwterm_EntityId")" multiple="multiple">
+                    <select data-dropdown-css-class="select2-blue" name="@(Model.EntityType == "KwTerm" ? "EntityIds" : "kwterm_EntityId")" multiple="multiple">
                         @foreach (var kwTerm in Model.AvailableKwTerms)
                         {
                             if (!string.IsNullOrEmpty(kwTerm.Value) && Model.EntityIds.Contains(Convert.ToInt32(kwTerm.Value)))
@@ -106,20 +90,12 @@
                     <script>
                         $(document).ready(function () {
                             var $select = $('.kwtermsection select');
-                            if (!$select.data("kendoMultiSelect")) {
-                                $select.kendoMultiSelect();
-                            }
+                                $select.select2();
 
-                            var categoryIdsInput = $('.kwtermsection select').data("kendoMultiSelect");
-                            categoryIdsInput.setOptions({
-                                autoClose: false,
-                                filter: "contains",
-                                placeholder: "Please select Entity"
-                            });
                         });
                     </script>
                 </div>
-            </div> *@
+            </div>
             <div class="form-group row">
                 <div class="col-sm-3">
                     <nop-label asp-for="WidgetZone" />
@@ -500,20 +476,22 @@
                               function manageEntityId() {
                     if ($("#EntityType").val() == "Category" || $("#EntityType").val() == "" || $("#EntityType").val() == null) {
                         $(".categorysection select").attr("name", "EntityIds");
+                          $(".kwtermsection select").attr("name", "kwterm_EntityId");
                     }
                     else {
                         $(".categorysection select").attr("name", "category_EntityId");
+                            $(".kwtermsection select").attr("name", "EntityIds");
                     }
                 }
                     manageEntityId();
                     $("#EntityType").change(function () {
                         if ($(this).val() == "Category") {
                             $(".categorysection").show();
-                         //   $(".kwtermsection").hide();
+                          $(".kwtermsection").hide();
                         }
                         else {
                             $(".categorysection").hide();
-                    //        $(".kwtermsection").show();
+                         $(".kwtermsection").show();
                         }
                         manageEntityId();
                     })

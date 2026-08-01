@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using MWT.Nop.Core.Infrastructure;
+using MWT.Nop.Core.Services.KW;
 using MWT.Nop.Plugin.Widgets.Catalog.Models;
 using MWT.Nop.Plugin.Widgets.Catalog.Services;
-using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Services.Catalog;
 using Nop.Services.Configuration;
@@ -17,8 +18,7 @@ using Nop.Web.Framework.Mvc.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text; 
 
 namespace MWT.Nop.Plugin.Widgets.Catalog.Controllers
 {
@@ -32,22 +32,22 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IMWTEntityBannerService _imwtEntityBannerService;
         private readonly ISettingService _settingService; 
-        // private readonly IKwTermService _kwTermService;
+        private readonly IKwTermService _kwTermService;
 
         #endregion
 
         public MWTWidgetsCatalogController(IPermissionService permissionService,
             ICategoryService categoryService,
              IMWTEntityBannerService imwtEntityBannerService,
-             ISettingService settingService
-            //IKwTermService kwTermService
+             ISettingService settingService,
+            IKwTermService kwTermService
             )
         {
             _permissionService = permissionService; 
             _categoryService = categoryService;
             _imwtEntityBannerService = imwtEntityBannerService;
             _settingService = settingService; 
-            //kwTermService = kwTermService;
+            _kwTermService = kwTermService;
         }
 
         #region Methods
@@ -111,9 +111,9 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Controllers
             availableCategoryItems.Insert(0, new SelectListItem { Text = "Please select Entity", Value = "" });
             model.AvailableCategories = availableCategoryItems;
 
-            //var availableKwTerms = await GetKwTermListAsync();
-            //availableKwTerms.Insert(0, new SelectListItem { Text = "Please select Entity", Value = "" });
-            //model.AvailableKwTerms = availableKwTerms;
+            var availableKwTerms = await GetKwTermListAsync();
+            availableKwTerms.Insert(0, new SelectListItem { Text = "Please select Entity", Value = "" });
+            model.AvailableKwTerms = availableKwTerms;
 
 
             model.AvailableWidgetZones = GetPostions();
@@ -138,9 +138,9 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Controllers
                     availableCategoryItems.Insert(0, new SelectListItem { Text = "Please select Entity", Value = "" });
                     model.AvailableCategories = availableCategoryItems;
 
-                    //var availableKwTerms = await GetKwTermListAsync();
-                    //availableKwTerms.Insert(0, new SelectListItem { Text = "Please select Entity", Value = "" });
-                    //model.AvailableKwTerms = availableKwTerms;
+                    var availableKwTerms = await GetKwTermListAsync();
+                    availableKwTerms.Insert(0, new SelectListItem { Text = "Please select Entity", Value = "" });
+                    model.AvailableKwTerms = availableKwTerms;
 
                     model.AvailableWidgetZones = GetPostions();
                     return View("~/Plugins/MWT.Nop.Plugin.Widgets.Catalog/Views/AddBanner.cshtml", model);
@@ -196,9 +196,9 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Controllers
                 availableCategoryItems.Insert(0, new SelectListItem { Text = "Please select Entity", Value = "" });
                 model.AvailableCategories = availableCategoryItems;
 
-                //var availableKwTerms = await GetKwTermListAsync();
-                //availableKwTerms.Insert(0, new SelectListItem { Text = "Please select Entity", Value = "" });
-                //model.AvailableKwTerms = availableKwTerms;
+                var availableKwTerms = await GetKwTermListAsync();
+                availableKwTerms.Insert(0, new SelectListItem { Text = "Please select Entity", Value = "" });
+                model.AvailableKwTerms = availableKwTerms;
 
                 model.AvailableWidgetZones = GetPostions();
                 if (model.EntityIds.Count == 0)
@@ -239,9 +239,9 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Controllers
             var availableCategoryItems = await GetCategoryListAsync();
             availableCategoryItems.Insert(0, new SelectListItem { Text = "Please select Entity", Value = "" });
             model.AvailableCategories = availableCategoryItems;
-            //var availableKwTerms = await GetKwTermListAsync();
-            //availableKwTerms.Insert(0, new SelectListItem { Text = "Please select Entity", Value = "" });
-            //model.AvailableKwTerms = availableKwTerms;
+            var availableKwTerms = await GetKwTermListAsync();
+            availableKwTerms.Insert(0, new SelectListItem { Text = "Please select Entity", Value = "" });
+            model.AvailableKwTerms = availableKwTerms;
             model.AvailableWidgetZones = GetPostions();
             model.IsHtml = string.IsNullOrEmpty(sbw.Html) ? false : true;
             model.IsMobileHtml = string.IsNullOrEmpty(sbw.MobileHtml) ? false : true;
@@ -268,9 +268,9 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Controllers
                     availableCategoryItems.Insert(0, new SelectListItem { Text = "Please select Entity", Value = "" });
                     model.AvailableCategories = availableCategoryItems;
 
-                    //var availableKwTerms = await GetKwTermListAsync();
-                    //availableKwTerms.Insert(0, new SelectListItem { Text = "Please select Entity", Value = "" });
-                    //model.AvailableKwTerms = availableKwTerms;
+                    var availableKwTerms = await GetKwTermListAsync();
+                    availableKwTerms.Insert(0, new SelectListItem { Text = "Please select Entity", Value = "" });
+                    model.AvailableKwTerms = availableKwTerms;
 
                     model.AvailableWidgetZones = GetPostions();
                     return View("~/Plugins/MWT.Nop.Plugin.Widgets.Catalog/Views/EditBanner.cshtml", model);
@@ -372,9 +372,9 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Controllers
                 var availableCategoryItems = await GetCategoryListAsync();
                 availableCategoryItems.Insert(0, new SelectListItem { Text = "Please select Entity", Value = "" });
                 model.AvailableCategories = availableCategoryItems;
-                //var availableKwTerms = await GetKwTermListAsync();
-                //availableKwTerms.Insert(0, new SelectListItem { Text = "Please select Entity", Value = "" });
-                //model.AvailableKwTerms = availableKwTerms;
+                var availableKwTerms = await GetKwTermListAsync();
+                availableKwTerms.Insert(0, new SelectListItem { Text = "Please select Entity", Value = "" });
+                model.AvailableKwTerms = availableKwTerms;
                 model.AvailableWidgetZones = GetPostions();
                 if (model.EntityIds.Count == 0)
                 {
@@ -426,39 +426,39 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Controllers
 
             return result;
         }
-        //private async Task<List<SelectListItem>> GetKwTermListAsync(bool showHidden = true)
-        //{
+        private async Task<List<SelectListItem>> GetKwTermListAsync(bool showHidden = true)
+        {
 
-        //    var kwTerms = await _kwTermService.GetAllKwTermsAsync(showHidden: showHidden, pageIndex: 0, pageSize: int.MaxValue);
-        //    var listItems = await kwTerms.SelectAwait(async k => new SelectListItem
-        //    {
-        //        Text = await _kwTermService.GetFormattedBreadCrumbAsync(k, kwTerms),
-        //        Value = k.Id.ToString()
-        //    }).ToListAsync();
-        //    var result = new List<SelectListItem>();
-        //    //clone the list to ensure that "selected" property is not set
-        //    foreach (var item in listItems)
-        //    {
-        //        result.Add(new SelectListItem
-        //        {
-        //            Text = item.Text,
-        //            Value = item.Value
-        //        });
-        //    }
+            var kwTerms = await _kwTermService.GetAllKwTermsAsync(showHidden: showHidden, pageIndex: 0, pageSize: int.MaxValue);
+            var listItems = await kwTerms.SelectAwait(async k => new SelectListItem
+            {
+                Text = await _kwTermService.GetFormattedBreadCrumbAsync(k, kwTerms),
+                Value = k.Id.ToString()
+            }).ToListAsync();
+            var result = new List<SelectListItem>();
+            //clone the list to ensure that "selected" property is not set
+            foreach (var item in listItems)
+            {
+                result.Add(new SelectListItem
+                {
+                    Text = item.Text,
+                    Value = item.Value
+                });
+            }
 
-        //    return result;
-        //}
+            return result;
+        }
 
         protected List<SelectListItem> GetPostions()
         {
             var result = new List<SelectListItem>();
             result.Add(new SelectListItem { Text = PublicWidgetZones.CategoryDetailsTop.ToString(), Value = PublicWidgetZones.CategoryDetailsTop.ToString() });
             result.Add(new SelectListItem { Text = PublicWidgetZones.CategoryDetailsBottom.ToString(), Value = PublicWidgetZones.CategoryDetailsBottom.ToString() });
-            result.Add(new SelectListItem { Text = PublicWidgetZones.CategoryDetailsProductListThirdPosition.ToString(), Value = PublicWidgetZones.CategoryDetailsProductListThirdPosition.ToString() });
+            result.Add(new SelectListItem { Text = CustomPublicWidgetZones.CategoryDetailsProductListThirdPosition.ToString(), Value = CustomPublicWidgetZones.CategoryDetailsProductListThirdPosition.ToString() });
 
-            result.Add(new SelectListItem { Text = PublicWidgetZones.CategoryDetailsProductListNinthPosition.ToString(), Value = PublicWidgetZones.CategoryDetailsProductListNinthPosition.ToString() });
-            result.Add(new SelectListItem { Text = PublicWidgetZones.CategoryDetailsProductListSixthPosition.ToString(), Value = PublicWidgetZones.CategoryDetailsProductListSixthPosition.ToString() });
-            result.Add(new SelectListItem { Text = PublicWidgetZones.CategoryDetailsProductListMiddle.ToString(), Value = PublicWidgetZones.CategoryDetailsProductListMiddle.ToString() });
+            result.Add(new SelectListItem { Text = CustomPublicWidgetZones.CategoryDetailsProductListNinthPosition.ToString(), Value = CustomPublicWidgetZones.CategoryDetailsProductListNinthPosition.ToString() });
+            result.Add(new SelectListItem { Text = CustomPublicWidgetZones.CategoryDetailsProductListSixthPosition.ToString(), Value = CustomPublicWidgetZones.CategoryDetailsProductListSixthPosition.ToString() });
+            result.Add(new SelectListItem { Text = CustomPublicWidgetZones.CategoryDetailsProductListMiddle.ToString(), Value = CustomPublicWidgetZones.CategoryDetailsProductListMiddle.ToString() });
             return result;
         }
 

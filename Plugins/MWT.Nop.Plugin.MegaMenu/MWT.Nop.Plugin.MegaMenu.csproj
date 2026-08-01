@@ -20,8 +20,14 @@
   <ItemGroup>
     <None Remove="Areas\Admin\Content\Scripts\admin.core.min.js" />
     <None Remove="Areas\Admin\Content\Scripts\MegaMenuAdmin.min.js" />
+    <None Remove="Areas\Admin\Content\Scripts\kendo.culture.en-US.min.js" />
+    <None Remove="Areas\Admin\Content\Scripts\kendo.messages.en-US.min.js" />
+    <None Remove="Areas\Admin\Content\Scripts\kendo.ui.core.min.js" />
     <None Remove="Areas\Admin\Content\Scripts\MenuItemsScript.min.js" />
     <None Remove="Areas\Admin\Content\Styles\adminStyles.css" />
+    <None Remove="Areas\Admin\Content\Styles\kendo.common.min.css" />
+    <None Remove="Areas\Admin\Content\Styles\kendo.default.min.css" />
+    <None Remove="Areas\Admin\Content\Styles\kendo.rtl.min.css" />
     <None Remove="Areas\Admin\Content\Styles\admin_styles.css" />
     <None Remove="Areas\Admin\Content\Styles\menuItemsStyles.css" />
     <None Remove="Areas\Admin\Content\Styles\menuItemsStyles.rtl.css" />
@@ -135,10 +141,28 @@
     <Content Include="Areas\Admin\Content\Scripts\MegaMenuAdmin.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Areas\Admin\Content\Scripts\MenuItemsScript.min.js">
+	  <Content Include="Areas\Admin\Content\Scripts\kendo.culture.en-US.min.js">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Areas\Admin\Content\Scripts\kendo.messages.en-US.min.js">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Areas\Admin\Content\Scripts\kendo.ui.core.min.js">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Areas\Admin\Content\Scripts\MenuItemsScript.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Areas\Admin\Content\Styles\adminStyles.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Content\Styles\kendo.common.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Content\Styles\kendo.default.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Content\Styles\kendo.rtl.min.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Areas\Admin\Content\Styles\menuItemsStyles.css">

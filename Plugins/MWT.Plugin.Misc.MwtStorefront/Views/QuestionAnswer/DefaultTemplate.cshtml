@@ -1,0 +1,247 @@
+﻿@model QuestionAnswerModel
+@using MWT.Nop.Core.Domain
+@using Nop.Core.Domain.Seo
+@using System.Text.RegularExpressions
+@inject Nop.Core.IWebHelper webHelper
+@inject SeoSettings seoSettings
+@inject CommonSettings commonSettings
+@inject MWT.Nop.Core.Infrastructure.ICustomWorkContext _workcontext
+@inject Nop.Core.IStoreContext _storeContext
+
+@{
+    Layout = "_questionAnswerTemplate";
+
+    //title
+    NopHtml.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    //meta
+    NopHtml.AddMetaDescriptionParts(Model.MetaDescription);
+    NopHtml.AddMetaKeywordParts(Model.MetaKeywords);
+    //page class
+
+
+
+    NopHtml.AppendPageCssClassParts("html-category-page");
+
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        var categoryUrl = Url.RouteUrl("QuestionAnswer", new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
+        NopHtml.AddCanonicalUrlParts(categoryUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+    }
+
+    var breadcrumbDelimiter = commonSettings.BreadcrumbDelimiter;
+
+    #region filter display
+    var hidefilter = false;
+    var displayFilters = false;
+    if (!_workcontext.IsMobileDevice())
+    {
+        if (Model.CatalogProductsModel.SpecificationFilter.Attributes.Count == 0)
+            hidefilter = true;
+
+        if (Model.CatalogProductsModel.SpecificationFilter.Attributes.Where(m => m.Values.Where(m => m.Selected).Count() > 0).Any())
+            displayFilters = true;
+    }
+
+
+
+    ViewBag.hidefilter = hidefilter.ToString();
+    ViewBag.displayFilters = displayFilters.ToString();
+    ViewBag.EnableInfiniteScroll = Model.EnableInfiniteScroll.ToString();
+    #endregion
+}
+<script type="application/ld+json">
+    {
+      "@@context": "https://schema.org",
+      "@@type": "QAPage",
+      "mainEntity": {
+        "@@type": "Question",
+        "name": "@Model.Name",
+        "text": "@Regex.Replace(Model.Description, "<.*?>", string.Empty)",
+        "answerCount": 1,
+         "dateCreated": "@($"{Model.PublishedOn.ToString("yyyy-MM-dd'T'HH:mm:ss")}-08:00")",
+        "author": {
+          "@@type": "Person",
+          "name": "@Model.AuthorName",
+		   "url": "https://www.sierralivingconcepts.com/sierralivingconcepts"
+        },
+        "suggestedAnswer": [
+          {
+            "@@type": "Answer",
+            "text": "@Regex.Replace(Model.Description, "<.*?>", string.Empty)",
+            "dateCreated":  "@($"{Model.PublishedOn.ToString("yyyy-MM-dd'T'HH:mm:ss")}-08:00")",
+            "url": " @($"{(await _storeContext.GetCurrentStoreAsync()).Url.TrimEnd('/')}{Url.RouteUrl("QuestionAnswer", new { SeName = Model.SeName })}")",
+            "author": {
+              "@@type": "Person",
+              "name": "@Model.AuthorName",
+			    "url": "https://www.sierralivingconcepts.com/sierralivingconcepts"
+            }
+          }
+        ]
+      }
+    }
+</script>
+
+
+
+
+
+
+<script>
+    var pageSize = '@Model.CatalogProductsModel.PageSize';
+</script>
+@*category breadcrumb*@
+@section Breadcrumb
+{
+    @if (Model.DisplayCategoryBreadcrumb)
+    {
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" itemscope itemtype="http://schema.org/BreadcrumbList">
+                @{
+                    int position = 1;
+                }
+                <li class="breadcrumb-item">
+                    <span itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                        <a href="@Url.RouteUrl("Homepage")" itemprop="item">
+                            <span class="home-content-left" itemprop="name">@T("Categories.Breadcrumb.Top")</span>
+
+                        </a>
+                        <meta itemprop="position" content="@position" />
+                    </span>
+                </li>
+                @{
+                    position++;
+                }
+                <li class="breadcrumb-item">
+                    <span itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                        <a href="/answers" itemprop="item"> <span class="current-item" itemprop="name">Question & Answer</span></a>
+                        <meta itemprop="position" content="@position" />
+                    </span>
+                </li>
+
+
+
+                @{
+                    position++;
+                }
+
+                @foreach (var cat in Model.QuestionAnswerBreadcrumb)
+                {
+                    var isLastCategory = cat.Id == Model.Id;
+                    <li itemprop="itemListElement" class="breadcrumb-item active" itemscope itemtype="http://schema.org/ListItem">
+                        @if (isLastCategory)
+                        {
+                            <strong class="current-item" itemprop="name">@cat.Name</strong>
+                            <span itemprop="item" itemscope itemtype="http://schema.org/Thing"
+                                  id="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })">
+                            </span>
+                        }
+                        else
+                        {
+                            <a href="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })" title="@cat.Name" itemprop="item">
+                                <span itemprop="name">@cat.Name</span>
+                            </a>
+                        }
+                        <meta itemprop="position" content="@position" />
+                        @{
+                            position++;
+                        }
+                    </li>
+
+                }
+
+            </ol>
+        </nav>
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsAfterBreadcrumb, additionalData = Model })
+    }
+}
+
+
+
+<div class="page category-page">
+
+    @section SubHeading {
+
+    }
+
+    @section Heading {
+        <div class="answer-list-associated" style="background-color:@Model.BackgroundColor;">
+            <div class="row list-associated-row" bis_skin_checked="1">
+                <div class="@(Model.PictureId==0?"col-md-12":"col-md-8")" bis_skin_checked="1">
+                    <div class="list-associated-heading-content" bis_skin_checked="1">
+                        <h1 class="list-associated-heading">@(Model.Name)</h1>
+                    </div>
+                </div>
+                @if (Model.PictureId != 0)
+                {
+                    <div class="col-md-4 list-associated-background" bis_skin_checked="1">
+                        <div class="answer-list-content-image" bis_skin_checked="1"><img src="@Model.PictureModel.ImageUrl" alt="Artwork"></div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+
+
+    <div class="page-body">
+
+
+
+
+
+        @{
+            var catalogProductsViewData = new ViewDataDictionary(ViewData);
+
+            catalogProductsViewData["fetchUrl"] = Html.Raw(Url.Action("GetQuestionAnswerProducts", "QuestionAnswer", new { QuestionAnswerid = Model.Id }));
+            catalogProductsViewData["entityId"] = Model.Id;
+        }
+        @await Html.PartialAsync("_CatalogProducts-FilterOnTop-3x3", Model.CatalogProductsModel, catalogProductsViewData)
+
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBeforeFeaturedProducts, additionalData = Model })
+
+
+
+
+
+
+
+
+
+        @section Description {
+            @if (!string.IsNullOrWhiteSpace(Model.Description))
+            {
+
+                <div class="answer-list-artist-associated" bis_skin_checked="1">
+                    <p class="answer-list-urban-desc">
+                        @Html.Raw(Model.Description)
+                    </p>
+                    <div class="d-flex align-items-center mt-3">
+                        <div class="answer-list-slc-logo"><img src="@Model.AuthorPictureUrl" alt="@Model.Name" />"</div>
+                        <div><span class="answer-list-expert">@Model.AuthorName</span> <span class="answer-list-expert-date">@Model.PublishedOn.ToString("MMMM dd, yyyy")</span></div>
+                    </div>
+                </div>
+
+            }
+        }
+        @section ListingHeading {
+            @if (!string.IsNullOrWhiteSpace(Model.ListingTitle))
+            {
+                <h5>@Model.ListingTitle</h5>
+            }
+        }
+
+        @section ListingPageLink {
+            @if (!string.IsNullOrWhiteSpace(Model.ListingLink))
+            {
+                <div class="question-button-shop-back"><a class="question-button-shop" href="@Model.ListingLink">SHOP ALL</a></div>
+            }
+        }
+        @section RelatedQuestionAnswer {
+            @await Component.InvokeAsync("Custom_RelatedQuestionAnswersBlock", new { questionAnswerId = Model.Id })
+        }
+
+
+
+    </div>
+</div>
+

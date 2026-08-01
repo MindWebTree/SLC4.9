@@ -658,7 +658,7 @@ public static class AsyncIQueryableExtensions
         //min allowed page size is 1
         pageSize = Math.Max(pageSize, 1);
 
-        var count = await source.CountAsync();
+            var count = await source.CountAsync();
 
         var data = new List<T>();
 

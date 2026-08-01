@@ -65,9 +65,7 @@ namespace Nop.Core.Domain.Catalog
         public string EstimatedDeliveryDate { get; set; }
 
         public bool DisplayDimensionOfVariant { get; set; }
-        public int RelatedProductId { get; set; }
-        public string VideoUrl { get; set; }
-        public int VideoThumnailDisplayOrder { get; set; }
+        public int RelatedProductId { get; set; } 
         public bool EnableConditionalAttributes { get; set; }
         public bool IsBundleProduct { get; set; }
         public bool EnableNewATCLayout { get; set; }

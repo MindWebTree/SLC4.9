@@ -15,7 +15,7 @@ public abstract partial class NopRazorPage<TModel> : Microsoft.AspNetCore.Mvc.Ra
 
     /// <summary>
     /// Get a localized resources
-    /// </summary>
+    /// </summary>s
     public Localizer T
     {
         get

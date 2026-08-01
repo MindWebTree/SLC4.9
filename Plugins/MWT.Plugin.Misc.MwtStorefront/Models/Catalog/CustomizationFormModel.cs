@@ -35,7 +35,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Models.Catalog
 
         public List<string> LstInteresedIn { get; set; }
 
-        public IList<ProductDetailsModel.ProductAttributeModel> ProductAttributes { get; set; }
+        public IList<CustomProductDetailsModel.ProductAttributeModel> ProductAttributes { get; set; }
 
         public ProductSpecificationModel ProductSpecificationModel { get; set; }
 

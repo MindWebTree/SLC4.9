@@ -635,9 +635,9 @@ D:\SierraProject\SLC4.9\Presentation\Nop.Web.Framework\obj\Debug\net9.0\Nop.Web.
 D:\SierraProject\SLC4.9\Presentation\Nop.Web.Framework\obj\Debug\net9.0\Nop.Web.Framework.AssemblyInfoInputs.cache
 D:\SierraProject\SLC4.9\Presentation\Nop.Web.Framework\obj\Debug\net9.0\Nop.Web.Framework.AssemblyInfo.cs
 D:\SierraProject\SLC4.9\Presentation\Nop.Web.Framework\obj\Debug\net9.0\Nop.Web.Framework.csproj.CoreCompileInputs.cache
+D:\SierraProject\SLC4.9\Presentation\Nop.Web.Framework\obj\Debug\net9.0\Nop.Web.Framework.sourcelink.json
 D:\SierraProject\SLC4.9\Presentation\Nop.Web.Framework\obj\Debug\net9.0\Nop.Web..29202B8B.Up2Date
 D:\SierraProject\SLC4.9\Presentation\Nop.Web.Framework\obj\Debug\net9.0\Nop.Web.Framework.dll
 D:\SierraProject\SLC4.9\Presentation\Nop.Web.Framework\obj\Debug\net9.0\refint\Nop.Web.Framework.dll
 D:\SierraProject\SLC4.9\Presentation\Nop.Web.Framework\obj\Debug\net9.0\Nop.Web.Framework.pdb
 D:\SierraProject\SLC4.9\Presentation\Nop.Web.Framework\obj\Debug\net9.0\ref\Nop.Web.Framework.dll
-D:\SierraProject\SLC4.9\Presentation\Nop.Web.Framework\obj\Debug\net9.0\Nop.Web.Framework.sourcelink.json

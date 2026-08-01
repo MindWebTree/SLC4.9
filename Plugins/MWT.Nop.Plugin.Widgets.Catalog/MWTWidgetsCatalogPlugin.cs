@@ -1,4 +1,5 @@
-﻿using MWT.Nop.Plugin.Widgets.Catalog.Components;
+﻿using MWT.Nop.Core.Infrastructure;
+using MWT.Nop.Plugin.Widgets.Catalog.Components;
 using Nop.Core;
 using Nop.Services.Cms;
 using Nop.Services.Configuration;
@@ -35,9 +36,9 @@ namespace MWT.Nop.Plugin.Widgets.Catalog
         /// </returns>
         public Task<IList<string>> GetWidgetZonesAsync()
         {
-            return Task.FromResult<IList<string>>(new List<string> { PublicWidgetZones.CategoryDetailsTop,PublicWidgetZones.CategoryDetailsTopVideo ,
-                PublicWidgetZones.CategoryDetailsBottom, PublicWidgetZones.CategoryDetailsProductListMiddle
-                , PublicWidgetZones.CategoryDetailsProductListThirdPosition , PublicWidgetZones.CategoryDetailsProductListNinthPosition, PublicWidgetZones.CategoryDetailsProductListSixthPosition
+            return Task.FromResult<IList<string>>(new List<string> { PublicWidgetZones.CategoryDetailsTop,CustomPublicWidgetZones.CategoryDetailsTopVideo ,
+                PublicWidgetZones.CategoryDetailsBottom, CustomPublicWidgetZones.CategoryDetailsProductListMiddle
+                , CustomPublicWidgetZones.CategoryDetailsProductListThirdPosition , CustomPublicWidgetZones.CategoryDetailsProductListNinthPosition, CustomPublicWidgetZones.CategoryDetailsProductListSixthPosition
             }
                 );
         }

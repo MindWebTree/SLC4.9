@@ -1,4 +1,5 @@
-﻿using MWT.Plugin.Shipping.FixedByWeightByTotal.Components;
+﻿using MWT.Nop.Core.Infrastructure;
+using MWT.Plugin.Shipping.FixedByWeightByTotal.Components;
 using MWT.Plugin.Shipping.FixedByWeightByTotal.Domain;
 using MWT.Plugin.Shipping.FixedByWeightByTotal.Services;
 using Nop.Core;
@@ -380,21 +381,30 @@ namespace MWT.Plugin.Shipping.FixedByWeightByTotal
             await _settingService.DeleteSettingAsync<FixedByWeightByTotalSettings>();
 
             //fixed rates
+            try
+            {
+
             var fixedRates = await (await _shippingMethodsService.GetAllShippingMethodsAsync())
                 .SelectAwait(async shippingMethod => await _settingService.GetSettingAsync(
                     string.Format(FixedByWeightByTotalDefaults.FixedRateSettingsKey, shippingMethod.Id)))
                 .Where(setting => setting != null).ToListAsync();
             await _settingService.DeleteSettingsAsync(fixedRates);
+            await _localizationService.DeleteLocaleResourcesAsync("MWT.Plugins.Shipping.FixedByWeightByTotal");
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
 
             //locales
-            await _localizationService.DeleteLocaleResourcesAsync("MWT.Plugins.Shipping.FixedByWeightByTotal");
 
             await base.UninstallAsync();
         }
 
         public Task<IList<string>> GetWidgetZonesAsync()
         {
-            return Task.FromResult<IList<string>>(new List<string> { PublicWidgetZones.ProductExpectedDeliveryDates });
+            return Task.FromResult<IList<string>>(new List<string> { CustomPublicWidgetZones.ProductExpectedDeliveryDates });
         }
 
         

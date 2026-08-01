@@ -14,5 +14,6 @@ namespace Nop.Core.Domain.Catalog
         public bool? DisplayOnListingModules { get; set; }
         public bool? DisplayOnCategoryPage { get; set; }
         public bool? HideOnProductPage { get; set; }
+        public bool IsDimensionImage { get; set; }
     }
 }

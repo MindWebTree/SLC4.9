@@ -19,6 +19,7 @@ namespace MWT.Nop.Core.Service.StoreWideDiscount
     {
         #region Fields 
         private readonly IRepository<StoreWideDiscountSetting> _storeWideDiscountSettingRepository;
+        private readonly IRepository<MWT.Nop.Core.Domain.StoreWideDiscount.StoreWideDiscount> _storeWideDiscountRepository;
         private readonly IRepository<StoreWideProductDiscountInfo> _storeWideProductDiscountInfoRepository;
         private readonly IRepository<StoreWideProductDiscountHistory> _storeWideProductDiscountHistoryRepository;
         protected readonly IRepository<ProductCategory> _productCategoryRepository;
@@ -56,7 +57,19 @@ namespace MWT.Nop.Core.Service.StoreWideDiscount
             return await _staticCacheManager.GetAsync(_staticCacheManager.PrepareKeyForDefaultCache(CustomNopCatalogDefaults.StoreWideProductDiscountInfoCacheKey, productId), async () => await query.FirstOrDefaultAsync());
 
         }
+        public async Task<MWT.Nop.Core.Domain.StoreWideDiscount.StoreWideDiscount> GetProductSaleInfo(int productId)
+        {
+            var storeWideDiscount = await (from _storeWideDiscount in _storeWideDiscountRepository.Table
+                                           join _productDiscountInfo in _storeWideProductDiscountInfoRepository.Table
+                                           on _storeWideDiscount.Id equals _productDiscountInfo.StoreWideDiscountId
+                                           where _productDiscountInfo.ProductId == productId
+                                           && _storeWideDiscount.EndDate >= DateTime.Now
+                                           && _productDiscountInfo.Discount > 0
+                                           orderby _productDiscountInfo.Id descending
+                                           select _storeWideDiscount).FirstOrDefaultAsync();
+            return storeWideDiscount;
 
+        }
 
         #endregion
     }

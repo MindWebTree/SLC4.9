@@ -34,6 +34,9 @@
 	  <Content Include="Views\**\*.cshtml">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
+	  <Content Include="Areas\Admin\Views\**\*.cshtml">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
   </ItemGroup>
 
 	<ItemGroup>
@@ -61,7 +64,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Controller\" />
+	  <Folder Include="Factories\Api\" />
+	  <Folder Include="FrameWork\" />
 	</ItemGroup>
 
 	<ItemGroup>

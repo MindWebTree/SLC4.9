@@ -1,0 +1,127 @@
+﻿@model CustomProductOverviewModel
+@using Nop.Core
+@using Nop.Core.Domain.Catalog
+@using Nop.Core.Domain.Orders
+@using Nop.Core.Domain.Tax
+@inject CatalogSettings catalogSettings
+@inject IWorkContext workContext
+@inject ICustomSpecificationAttributeService _specificationAttributeService
+
+@{
+    var firstPicture = Model.DefaultPictureModel;
+}
+<div data-productid="@Model.Id" data-main-catid="@await _specificationAttributeService.GetMainCategoryOfProduct(Model.Id)">
+
+    @*Tags*@
+    <div class="Tags">
+
+        @if (Model.Tags != null)
+        {
+            foreach (var tag in Model.Tags)
+            {
+                <div class="@tag.Name">@tag.Name</div>break;
+            }
+        }
+    </div>
+    <a href="@Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName })" aria-label="@firstPicture.Title">
+        <img alt="" style="width:100%; height:auto;" width="415" height="415" src="/images/pixel.png" data-src="@firstPicture.ImageUrl" class="lazy" />
+    </a>
+    @*@if (ViewBag.Type == null)
+        {*@
+    <h3 class="product-title">
+        <a href="@Url.RouteUrl("Product", new {id=Model.Id,SeName = Model.SeName})">
+            @Model.Name
+        </a>
+    </h3>
+
+
+    @if (Model.ProductPrice.IsVariantProduct)
+    {
+
+
+        @if (!string.IsNullOrEmpty(Model.ProductPrice.MinMembershipPrice))
+        {
+            <h4 class="price actual-price">
+                @T("Label.RegularPrice")
+                @T("Price.Range",
+            !string.IsNullOrEmpty(Model.ProductPrice.MinOldPrice) ? Model.ProductPrice.MinOldPrice : Model.ProductPrice.MinPrice,
+            !string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ? Model.ProductPrice.MaxOldPrice : Model.ProductPrice.MaxPrice)
+            </h4>
+            <h5 class="price old-price">
+                @T("Label.MembershipPrice")
+                @T("Price.Range", Model.ProductPrice.MinMembershipPrice, Model.ProductPrice.MaxMembershipPrice)
+            </h5> }
+        else
+        {
+            @if (Model.ProductPrice.MinOldPriceValue > 0 && Model.ProductPrice.MinPriceValue > 0 && (Model.ProductPrice.MinOldPriceValue != Model.ProductPrice.MinPriceValue || Model.ProductPrice.MaxPriceValue != Model.ProductPrice.MaxOldPriceValue))
+            {
+                if (!string.IsNullOrEmpty(Model.ProductPrice.OfferText))
+                {
+                    <p class="sale-price  m-0 offertext-p">@Html.Raw(Model.ProductPrice.OfferText)</p> }
+
+                <h4 class="price actual-price sale-price"
+                     aria-label="Sale price @Model.ProductPrice.MinPrice to @Model.ProductPrice.MaxPrice, regular price @Model.ProductPrice.MinOldPrice to @Model.ProductPrice.MaxOldPrice">
+                    @T("Price.Range.With.Saleprice",
+                !string.IsNullOrEmpty(Model.ProductPrice.MinPrice) ? Model.ProductPrice.MinPrice : Model.ProductPrice.MinOldPrice,
+                !string.IsNullOrEmpty(Model.ProductPrice.MaxPrice) ? Model.ProductPrice.MaxPrice : Model.ProductPrice.MaxOldPrice,
+                !string.IsNullOrEmpty(Model.ProductPrice.MinOldPrice) ? Model.ProductPrice.MinOldPrice : Model.ProductPrice.MinPrice,
+                !string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ? Model.ProductPrice.MaxOldPrice : Model.ProductPrice.MaxPrice
+                )
+                </h4> }
+            else
+            {
+                if (!string.IsNullOrEmpty(Model.ProductPrice.OfferText))
+                {
+                    <p class="sale-price  m-0 offertext-p">@Html.Raw(Model.ProductPrice.OfferText)</p> }
+                <h4 class="price actual-price">
+                    @T("Price.Range",
+                !string.IsNullOrEmpty(Model.ProductPrice.MinOldPrice) ? Model.ProductPrice.MinOldPrice : Model.ProductPrice.MinPrice,
+                !string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ? Model.ProductPrice.MaxOldPrice : Model.ProductPrice.MaxPrice)
+                </h4>}} }
+    else
+    {
+        @if (!string.IsNullOrEmpty(Model.ProductPrice.MembershipPrice))
+        {
+            <h4 class="price actual-price">@T("Label.RegularPrice")@(!string.IsNullOrEmpty(Model.ProductPrice.OldPrice) ? Model.ProductPrice.OldPrice : Model.ProductPrice.Price)</h4>
+            <h5 class="price old-price">@T("Label.MembershipPrice")@Model.ProductPrice.MembershipPrice</h5> }
+        else
+        {
+            @if (Model.ProductPrice.OldPriceValue > 0 && Model.ProductPrice.PriceValue > 0 && Model.ProductPrice.OldPrice != Model.ProductPrice.Price)
+            {
+                if (!string.IsNullOrEmpty(Model.ProductPrice.OfferText))
+                {
+                    <p class="sale-price  m-0 offertext-p">@Html.Raw(Model.ProductPrice.OfferText)</p> }
+                <h4 class="price actual-price"
+                     aria-label="Sale price @Model.ProductPrice.Price, regular price @Model.ProductPrice.OldPrice">
+                    <p class="sale-price">@Model.ProductPrice.Price<span class="suggested-price">@Model.ProductPrice.OldPrice</span></p>
+                </h4> }
+            else
+            {
+                if (!string.IsNullOrEmpty(Model.ProductPrice.OfferText))
+                {
+                    <p class="sale-price  m-0 offertext-p">@Html.Raw(Model.ProductPrice.OfferText)</p> }
+                <h4 class="price actual-price">
+                    @(
+                            !string.IsNullOrEmpty(Model.ProductPrice.OldPrice) ? Model.ProductPrice.OldPrice : Model.ProductPrice.Price
+                            )
+                </h4>}}}
+
+    @*}
+        else
+        {
+            <h3 class="product-title">
+                <a href="@Url.RouteUrl("Product", new {id=Model.Id,SeName = Model.SeName})">@Model.Name</a>
+            </h3>
+            <h4>
+                <a href="@Url.RouteUrl("Product", new {id=Model.Id,SeName = Model.SeName})">@T("home.heading.Collection")</a>
+            </h4>
+
+        }*@
+
+
+
+
+</div>
+
+
+

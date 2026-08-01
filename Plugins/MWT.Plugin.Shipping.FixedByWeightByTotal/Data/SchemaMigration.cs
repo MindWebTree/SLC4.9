@@ -11,9 +11,20 @@ namespace MWT.Plugin.Shipping.FixedByWeightByTotal.Data
     { 
         public override void Up()
         {
-            Create.TableFor<MWTShippingZone>();
-            Create.TableFor<MWTShippingByWeightByTotalRecord>();
-            Create.TableFor<MWTEstimationDeliveryDateNotification>();
+          //  if (!Schema.Table(nameof(MWTShippingZone)).Exists())
+         //   {
+                Create.TableFor<MWTShippingZone>();
+          //  }
+
+         //   if (!Schema.Table(nameof(MWTShippingByWeightByTotalRecord)).Exists())
+        //    {
+                Create.TableFor<MWTShippingByWeightByTotalRecord>();
+        //    }
+
+        //    if (!Schema.Table(nameof(MWTEstimationDeliveryDateNotification)).Exists())
+        //    {
+                Create.TableFor<MWTEstimationDeliveryDateNotification>();
+       //     }
         }
     }
 }

@@ -26,4 +26,8 @@
     <ProjectReference Include="..\..\Libraries\Nop.Services\Nop.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Customization\Infrastructure\" />
+  </ItemGroup>
+
 </Project>

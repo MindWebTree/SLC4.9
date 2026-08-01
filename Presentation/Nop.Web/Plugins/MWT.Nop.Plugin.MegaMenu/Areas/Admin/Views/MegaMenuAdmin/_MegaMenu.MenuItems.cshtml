@@ -16,6 +16,9 @@
     NopHtml.SetActiveMenuItemSystemName("MWT.MegaMenu.Admin.Submenus.Menus");
 
     NopHtml.AppendCssFileParts("~/Plugins/MWT.Nop.Plugin.MegaMenu/Areas/Admin/Content/Styles/menuItemsStyles.css");
+    NopHtml.AppendCssFileParts("~/Plugins/MWT.Nop.Plugin.MegaMenu/Areas/Admin/Content/Styles/kendo.common.min.css");
+    NopHtml.AppendCssFileParts("~/Plugins/MWT.Nop.Plugin.MegaMenu/Areas/Admin/Content/Styles/kendo.default.min.css");
+    NopHtml.AppendCssFileParts("~/Plugins/MWT.Nop.Plugin.MegaMenu/Areas/Admin/Content/Styles/kendo.rtl.min.css");
 
     if (supportRtl)
     {
@@ -24,6 +27,9 @@
 
     NopHtml.AddScriptParts(ResourceLocation.Footer, "~/Plugins/MWT.Nop.Plugin.MegaMenu/Areas/Admin/Content/Scripts/MenuItemsScript.min.js");
     NopHtml.AddScriptParts(ResourceLocation.Footer, "~/Plugins/MWT.Nop.Plugin.MegaMenu/Areas/Admin/Content/Scripts/MegaMenuAdmin.min.js");
+    NopHtml.AddScriptParts(ResourceLocation.Footer, "~/Plugins/MWT.Nop.Plugin.MegaMenu/Areas/Admin/Content/Scripts/kendo.culture.en-US.min.js");
+    NopHtml.AddScriptParts(ResourceLocation.Footer, "~/Plugins/MWT.Nop.Plugin.MegaMenu/Areas/Admin/Content/Scripts/kendo.messages.en-US.min.js");
+    NopHtml.AddScriptParts(ResourceLocation.Footer, "~/Plugins/MWT.Nop.Plugin.MegaMenu/Areas/Admin/Content/Scripts/kendo.ui.core.min.js");
 
     NopHtml.AddCssFileParts("~/lib_npm/fine-uploader/fine-uploader/fine-uploader.min.css");
     NopHtml.AddScriptParts(ResourceLocation.Footer,"~/lib_npm/fine-uploader/jquery.fine-uploader/jquery.fine-uploader.min.js");

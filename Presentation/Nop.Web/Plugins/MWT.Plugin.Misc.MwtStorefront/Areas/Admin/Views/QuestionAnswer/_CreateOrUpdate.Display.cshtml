@@ -1,0 +1,134 @@
+﻿@model QuestionAnswerModel
+
+<div class="card-body">
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="Published" />
+        </div>
+        <div class="col-md-9">
+            <nop-editor asp-for="Published" />
+            <span asp-validation-for="Published"></span>
+        </div>
+    </div>
+ 
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="AllowCustomersToSelectPageSize" />
+        </div>
+        <div class="col-md-9">
+            <nop-editor asp-for="AllowCustomersToSelectPageSize" />
+            <span asp-validation-for="AllowCustomersToSelectPageSize"></span>
+        </div>
+    </div>
+    <nop-nested-setting asp-for="AllowCustomersToSelectPageSize">
+
+        <div class="form-group row">
+            <div class="col-md-3">
+                <nop-label asp-for="ListingTitle" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="ListingTitle" />
+                <span asp-validation-for="ListingTitle"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-md-3">
+                <nop-label asp-for="ListingLink" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="ListingLink" />
+                <span asp-validation-for="ListingLink"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <nop-label asp-for="PublishedOn" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="PublishedOn" />
+                <span asp-validation-for="PublishedOn"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <nop-label asp-for="BackgroundColor" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="BackgroundColor" />
+                <span asp-validation-for="BackgroundColor"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <nop-label asp-for="AuthorName" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="AuthorName" />
+                <span asp-validation-for="AuthorName"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-md-3">
+                <nop-label asp-for="AuthorPictureId" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="AuthorPictureId" />
+                <span asp-validation-for="AuthorPictureId"></span>
+            </div>
+        </div>
+    </nop-nested-setting>
+    
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="DisplayOrder" />
+        </div>
+        <div class="col-md-9">
+            <nop-editor asp-for="DisplayOrder" />
+            <span asp-validation-for="DisplayOrder"></span>
+        </div>
+    </div>
+    <div class="form-group row" >
+        <div class="col-md-3">
+            <nop-label asp-for="QuestionAnswerTemplateId" />
+        </div>
+        <div class="col-md-9">
+            <nop-select asp-for="QuestionAnswerTemplateId" asp-items="Model.AvailableQuestionAnswerTemplates" />
+            <span asp-validation-for="QuestionAnswerTemplateId"></span>
+        </div>
+    </div>
+
+
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="EnableInfiniteScroll" />
+        </div>
+        <div class="col-md-9">
+            <nop-editor asp-for="EnableInfiniteScroll" />
+            <span asp-validation-for="EnableInfiniteScroll"></span>
+        </div>
+    </div>
+
+    
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#@Html.IdFor(model => model.AllowCustomersToSelectPageSize)").click(togglePageSize);
+       togglePageSize();
+        togglePriceRangeFiltering();
+    });
+
+    function togglePageSize() {
+        if ($('#@Html.IdFor(model => model.AllowCustomersToSelectPageSize)').is(':checked')) {
+            $('#pnlPageSize').hideElement();
+            $('#pnlPageSizeOptions').showElement();
+        } else {
+            $('#pnlPageSize').showElement();
+            $('#pnlPageSizeOptions').hideElement();
+        }
+    }
+
+  
+</script>

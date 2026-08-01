@@ -2,8 +2,6 @@
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @addTagHelper *, Nop.Web.Framework
-
-
 @using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.Mvc.ViewFeatures
 @using Microsoft.AspNetCore.Routing
@@ -12,7 +10,6 @@
 @using Nop.Core.Infrastructure
 @using Nop.Core.Domain.Catalog   
 @using Nop.Services.Helpers
-@using Nop.Web.Areas.Admin.Models.Catalog
 @using Nop.Web.Extensions
 @using Nop.Web.Framework
 @using Nop.Web.Framework.Extensions
@@ -35,6 +32,15 @@
 @using Microsoft.Extensions.Primitives;
 @using Nop.Web.Components;
 @using MWT.Plugin.Misc.MwtStorefront.Components;
+@using MWT.Plugin.Misc.MwtStorefront.Models.QA;
 @using Nop.Core.Http;
 @using Nop.Services.Orders;
+@using MWT.Nop.Core.Services.Catalog;
+@using Nop.Core.Domain.Common;
+@using MWT.Plugin.Misc.MwtStorefront.Models.Seo;
+@using MWT.Plugin.Misc.MwtStorefront.Models.KW;
+
+
+
+@inject INopHtmlHelper NopHtml;
 @inject IUserAgentHelper _useragentContext;

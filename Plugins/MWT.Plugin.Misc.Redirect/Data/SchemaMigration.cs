@@ -16,7 +16,11 @@ namespace Nop.Plugin.Misc.Redirect.Data
         {
             if (!Schema.Table(nameof(RedirectionRule)).Exists())
             {
-                Create.TableFor<RedirectionRule>();
+      
+                if (!Schema.Table(nameof(RedirectionRule)).Exists())
+                {
+                    Create.TableFor<RedirectionRule>();
+                }
             }
             else
             {
