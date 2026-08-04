@@ -1,5 +1,7 @@
-﻿@inject Nop.Services.Configuration.ISettingService _settingServce;
-@inject Nop.Services.Customers.ICustomerService _customerService;
+﻿@using MWT.Nop.Core.Services
+@using MWT.Nop.Core.Services.Customer
+@inject Nop.Services.Configuration.ISettingService _settingServce;
+@inject ICustomCustomerService _customerService;
 @inject Nop.Core.IWorkContext _workContext;
 @inject Nop.Core.IWebHelper webHelper;
 @{

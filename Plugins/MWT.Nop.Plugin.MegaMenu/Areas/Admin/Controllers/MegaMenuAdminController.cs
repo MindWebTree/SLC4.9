@@ -20,11 +20,12 @@ using Nop.Services.Configuration;
 using Nop.Services.Customers;
 using Nop.Services.Localization;
 using Nop.Services.Security;
-using Nop.Web.Framework.Models; 
+using Nop.Web.Framework.Models;
 using Nop.Web.Framework.Mvc.Filters;
 using System.Linq.Expressions;
 using Category = Nop.Core.Domain.Catalog.Category;
 using Nop.Web.Framework.Models.Extensions;
+using MWT.Nop.Core.Services.Customers;
 
 
 #nullable enable

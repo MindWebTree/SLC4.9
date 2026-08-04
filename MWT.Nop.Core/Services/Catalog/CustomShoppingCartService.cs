@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Routing;
 using MWT.Nop.Core.Data.Discounts;
 using MWT.Nop.Core.Service.Catalog;
-using MWT.Nop.Core.Services.Seo;
+using MWT.Nop.Core.Services.Customers;
 using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Domain.Catalog;
@@ -28,11 +28,6 @@ using Nop.Services.Seo;
 using Nop.Services.Shipping;
 using Nop.Services.Shipping.Date;
 using Nop.Services.Stores;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MWT.Nop.Core.Services.Catalog
 {

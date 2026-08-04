@@ -11,10 +11,11 @@ using Nop.Core.Domain.Orders;
 using Nop.Data;
 using Nop.Services.Orders;
 using Nop.Services.Common;
- 
+
 //using Nop.Core.Domain.Customization.PhoneOrder;
 //using Nop.Services.Customizations.Phone_Order;
 using Nop.Services.Customers;
+using MWT.Nop.Core.Services.Customers;
 
 namespace MWT.Tax.FixedOrByCountryStateZip.Infrastructure.Cache
 {

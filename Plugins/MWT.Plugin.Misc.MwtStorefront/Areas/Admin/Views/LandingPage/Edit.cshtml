@@ -1,0 +1,36 @@
+@model LandingPageModel
+@{
+    //page title
+    ViewBag.PageTitle = T("Admin.Catalog.LandingPages.EditLandingPageDetails").Text;
+    //active menu item (system name)
+    NopHtml.SetActiveMenuItemSystemName("LandingPages");
+} 
+
+<form asp-controller="LandingPage" asp-action="Edit" method="post" id="LandingPage-form">
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            @T("Admin.Catalog.LandingPages.EditLandingPageDetails") - @Model.Name
+            <small>
+                <i class="fas fa-arrow-circle-left"></i>
+                <a asp-action="List">@T("Admin.Catalog.LandingPages.BackToList")</a>
+            </small>
+        </h1>
+        <div class="float-right">
+            <button type="submit" name="save" class="btn btn-primary">
+                <i class="far fa-save"></i>
+                @T("Admin.Common.Save")
+            </button>
+            <button type="submit" name="save-continue" class="btn btn-primary">
+                <i class="far fa-save"></i>
+                @T("Admin.Common.SaveContinue")
+            </button>
+            <span id="LandingPage-delete" class="btn btn-danger">
+                <i class="far fa-trash-alt"></i>
+                @T("Admin.Common.Delete")
+            </span>
+            @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.CategoryDetailsButtons, additionalData = Model })
+        </div>
+    </div>
+    @await Html.PartialAsync("_CreateOrUpdate", Model)
+</form>
+<nop-delete-confirmation asp-model-id="@Model.Id" asp-button-id="LandingPage-delete" />

@@ -1,4 +1,5 @@
 ﻿using MWT.Nop.Core.Infrastructure;
+using MWT.Nop.Core.Services.Customers;
 using MWT.Plugin.Shipping.FixedByWeightByTotal.Components;
 using MWT.Plugin.Shipping.FixedByWeightByTotal.Domain;
 using MWT.Plugin.Shipping.FixedByWeightByTotal.Services;

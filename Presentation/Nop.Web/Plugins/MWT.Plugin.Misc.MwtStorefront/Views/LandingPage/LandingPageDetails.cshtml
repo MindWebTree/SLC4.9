@@ -1,0 +1,36 @@
+﻿@using Nop.Core.Domain.Seo
+@inject Nop.Core.IWebHelper webHelper
+@inject SeoSettings seoSettings
+@{
+    var isPopup = ViewBag.IsPopup;
+    if (isPopup == null || isPopup == false)
+    {
+        Layout = "_LandingPage";
+    }
+    ViewData["Title"] = Model.Name;
+
+    //title
+    NopHtml.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    //meta
+    NopHtml.AddMetaDescriptionParts(Model.MetaDescription);
+    NopHtml.AddMetaKeywordParts(Model.MetaKeywords);
+
+
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        var landingUrl = Url.RouteUrl("LandingPage", new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
+        NopHtml.AddCanonicalUrlParts(landingUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+    }
+
+    //page class
+    NopHtml.AppendPageCssClassParts("html-topic-page");
+}
+
+
+
+<div class="page topic-page" id="ph-topic">
+
+    <div class="page-body">
+        @Html.Raw(Model.PageContent)
+    </div>
+</div>

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using MWT.Nop.Core.Service.Catalog;
+using MWT.Nop.Core.Services.Customers;
 using MWT.Plugin.Misc.MwtStorefront.Models.Common;
 using Nop.Core;
 using Nop.Core.Caching;

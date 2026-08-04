@@ -1,16 +1,30 @@
 ﻿using MWT.Nop.Core.Infrastructure;
+using MWT.Nop.Core.Service;
+using MWT.Nop.Core.Service.Campaign_Management;
 using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Core.Service.StoreWideDiscount;
+using MWT.Nop.Core.Service.Zoho;
 using MWT.Nop.Core.Services.Catalog;
+using MWT.Nop.Core.Services.CategoryCollection;
 using MWT.Nop.Core.Services.Configuration;
+using MWT.Nop.Core.Services.Custom;
+using MWT.Nop.Core.Services.Customers;
+using MWT.Nop.Core.Services.FeedBack;
+using MWT.Nop.Core.Services.IPLite;
 using MWT.Nop.Core.Services.KW;
+using MWT.Nop.Core.Services.LandingPage_Management;
+using MWT.Nop.Core.Services.MailChimp;
+using MWT.Nop.Core.Services.Manage;
+using MWT.Nop.Core.Services.Mandrill;
 using MWT.Nop.Core.Services.Media;
+using MWT.Nop.Core.Services.Message;
 using MWT.Nop.Core.Services.QA;
 using MWT.Nop.Core.Services.Search;
+using MWT.Nop.Core.Services.Search.RewardClaim;
 using MWT.Nop.Core.Services.Seo;
-using Nop.Core.Configuration;
+using MWT.Nop.Core.Services.Shared;
 using Nop.Core.Infrastructure;
-using Nop.Services.Customizations.Custom;
+using Nop.Services.Customizations.IpAddress;
 
 namespace Nop.Web.Infrastructure.Customizations
 {
@@ -48,7 +62,47 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<ICustomCategoryService, CustomCategoryService>();
             services.AddScoped<ICustomWorkContext, CustomWorkContext>();
             services.AddScoped<IKwTemplateService, KWTemplateService>();
+            services.AddScoped<ICustomCustomerService, CustomCustomerService>();
+            services.AddScoped<ILandingPageService, LandingPageService>();
+            services.AddScoped<ICustomFormService, CustomFormService>();
+            services.AddScoped<IFeedbackService, FeedbackService>();
+            services.AddScoped<ICategoryCollectionLinkService, CategoryCollectionLinkService>();
+            services.AddScoped<ITestimonialService, TestimonialService>();
+            services.AddScoped<IRewardClaimService, RewardClaimService>();
+            services.AddScoped<IManageService, ManageService>();
+
+
+            services.AddScoped<IIpAddressService, IpAddressService>();
+            services.AddScoped<IIPLiteService, IPLiteService>();
+
+            #region  Campagin Management
+            services.AddScoped<ICampaignManagementService, CampaignManagementService>();
+            #endregion
+
+            #region  Mailchimp
+
+            services.AddScoped<IMailchimpService, MailchimpService>();
+            services.AddScoped<IQueuedMailChimpCartSignUpService, QueuedMailChimpCartSignUpService>();
+            services.AddScoped<IMailchimpSegmentsService, MailchimpSegmentsService>();
+            services.AddScoped<IMandrillService, MandrillService>();
+            #endregion
+
+            #region  Message
+            services.AddScoped<ICustomMessageTokenProvider, CustomMessageTokenProvider>();
+            services.AddScoped<ICustomNewsLetterSubscriptionService, CustomNewsLetterSubscriptionService>();
+            services.AddScoped<ICustomWorkflowMessageService, CustomWorkflowMessageService>();
+            #endregion
+
+            #region  Shared
+            services.AddScoped<ICommonService, CommonService>();
+            #endregion
+
+            #region  Zoho
+
+            services.AddScoped<IZohoService, ZohoService>();
+            
+            #endregion
         }
-         
+
     }
 }

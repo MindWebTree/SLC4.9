@@ -16,6 +16,12 @@ namespace MWT.Nop.Core.Service.Catalog
         public static CacheKey FilterMappingByEntitybyfilterTypeCacheKey => new CacheKey("Nop.FilterMapping.byentity.{0}-{1}-{2}");
         public static CacheKey FilterMappingByEntityCacheKey => new CacheKey("Nop.FilterMapping.byentity.{0}-{1}");
         #endregion
+        #region CategoryCollectionlinks
+
+        public static string CategoryCollectionLinkPrefix => "Nop.CategoryCollectionLink.byentity";
+        public static CacheKey CategoryCollectionLinkCacheKey => new CacheKey("Nop.CategoryCollectionLink.byentityId.{0}");
+
+        #endregion
 
         #region Products
         public static CacheKey ProductSaleInfoCacheKey => new CacheKey("Nop.product.Sale.Info.{0}");

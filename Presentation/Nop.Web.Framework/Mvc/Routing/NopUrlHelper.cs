@@ -204,7 +204,7 @@ public partial class NopUrlHelper : INopUrlHelper
             return string.Empty;
 
         var urlHelper = _urlHelperFactory.GetUrlHelper(_actionContextAccessor.ActionContext);
-
+        var test= urlHelper.RouteUrl(routeName, values, protocol, host, fragment);
         return urlHelper.RouteUrl(routeName, values, protocol, host, fragment);
     }
 

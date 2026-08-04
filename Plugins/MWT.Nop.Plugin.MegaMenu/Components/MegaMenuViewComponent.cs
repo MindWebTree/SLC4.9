@@ -30,6 +30,7 @@ using MWT.Nop.Plugin.MegaMenu.Areas.Admin.Models;
 using Nop.Services.Media;
 using Nop.Core.Domain.Media;
 using Nop.Web.Areas.Admin.Infrastructure.Mapper.Extensions;
+using MWT.Nop.Core.Services.Customers;
 
 namespace MWT.Nop.Plugin.MegaMenu.Components
 {

@@ -71,7 +71,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
                 MetaTitle = model.MetaTitle,
                 SeName = model.SeName,
                 TopicTemplateId = model.TopicTemplateId,
-                HideDefualtTitle = true
+                HideDefaultTitle = true
             };
             return View(customTopicModel);
         }

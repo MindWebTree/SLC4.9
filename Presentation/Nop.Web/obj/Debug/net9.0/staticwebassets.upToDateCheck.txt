@@ -1221,6 +1221,8 @@ wwwroot\images\thumbs\0372499_bar-tables.jpeg
 wwwroot\images\thumbs\0412591_peoria-solid-wood-square-dining-table-set.jpeg
 wwwroot\images\thumbs\0412687_dallas-classic-4-6-8-10-seater-solid-wood-rustic-dining-room-table-set.jpeg
 wwwroot\images\thumbs\0412759_hartsville-sleigh-back-solid-wood-platform-bed-frame.jpeg
+wwwroot\images\thumbs\0412819_sierra-nevada-handcrafted-solid-wood-low-profile-platform-bed.jpeg
+wwwroot\images\thumbs\0412891_brocton-rustic-modern-solid-wood-platform-bed-with-storage-underneath.jpeg
 wwwroot\images\thumbs\0412973_idaho-modern-rustic-solid-wood-dining-table-chair-set.jpeg
 wwwroot\images\thumbs\0413049_rustic-solid-wood-long-tv-media-stand-console.jpeg
 wwwroot\images\thumbs\0413050_rustic-solid-wood-long-tv-media-stand-console.jpeg
@@ -1266,6 +1268,7 @@ wwwroot\images\thumbs\0416517_tesing-question_100.jpeg
 wwwroot\images\thumbs\0416517_tesing-question_450.jpeg
 wwwroot\images\thumbs\0416518_Gemini_Generated_Image_fsxi2mfsxi2mfsxi.png
 wwwroot\images\thumbs\0416518_Gemini_Generated_Image_fsxi2mfsxi2mfsxi_100.png
+wwwroot\images\thumbs\0416520_ankit-testing.png
 wwwroot\images\thumbs\default-image_1.png
 wwwroot\images\thumbs\default-image_100.png
 wwwroot\images\thumbs\default-image_200.png
@@ -6193,3 +6196,4 @@ wwwroot\lib_npm\typeahead.js\bloodhound.min.js
 wwwroot\lib_npm\typeahead.js\typeahead.bundle.min.js
 wwwroot\lib_npm\typeahead.js\typeahead.jquery.min.js
 wwwroot\sitemaps\Index.htm
+wwwroot\videos\feedback\6d936ed5-875a-4a61-9260-d4d298c5cf30-36567f9d1b.mp4

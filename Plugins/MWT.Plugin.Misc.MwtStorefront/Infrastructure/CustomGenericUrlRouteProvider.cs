@@ -2,8 +2,9 @@
 using Microsoft.AspNetCore.Routing;
 using Nop.Data;
 using Nop.Web.Framework.Mvc.Routing;
+using Nop.Web.Infrastructure;
 
-namespace Nop.Web.Infrastructure
+namespace MWT.Nop.Plugin.Widgets.Catalog.Infrastructure
 {
     /// <summary>
     /// Represents provider that provided generic routes
@@ -66,9 +67,9 @@ namespace Nop.Web.Infrastructure
                 pattern: genericPattern,
                 defaults: new { controller = "Blog", action = "BlogPost" });
 
-            endpointRouteBuilder.MapControllerRoute(name: "Topic",
+            endpointRouteBuilder.MapControllerRoute(name: NopRoutingDefaults.RouteName.Generic.Topic,
                 pattern: genericPattern,
-                defaults: new { controller = "Topic", action = "CustomTopicDetails" });
+                defaults: new { controller = "CustomTopic", action = "CustomTopicDetails" });
 
             endpointRouteBuilder.MapControllerRoute(name: "ProductsByTag",
                 pattern: genericPattern,
@@ -87,7 +88,7 @@ namespace Nop.Web.Infrastructure
         /// <remarks>
         /// it should be the last route. we do not set it to -int.MaxValue so it could be overridden (if required)
         /// </remarks>
-        public int Priority => -1000000;
+        public int Priority => -1100000;
 
         #endregion
     }

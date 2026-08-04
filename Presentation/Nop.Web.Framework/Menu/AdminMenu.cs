@@ -115,6 +115,22 @@ public partial class AdminMenu : IAdminMenu
                         },
                         new()
                         {
+                            SystemName = "Question Answer",
+                            Title = await _localizationService.GetResourceAsync("Admin.Catalog.QuestionAnswer"),
+                            PermissionNames = new List<string> { StandardPermission.Catalog.CATEGORIES_VIEW },
+                            Url = GetMenuItemUrl("QuestionAnswer", "List"),
+                            IconClass = "far fa-dot-circle"
+                        },
+                        new()
+                        {
+                            SystemName = "Landing Page",
+                            Title = await _localizationService.GetResourceAsync("Admin.Catalog.LandingPage"),
+                            PermissionNames = new List<string> { StandardPermission.Catalog.CATEGORIES_VIEW },
+                            Url = GetMenuItemUrl("LandingPage", "List"),
+                            IconClass = "far fa-dot-circle"
+                        },
+                        new()
+                        {
                             SystemName = "Manufacturers",
                             Title = await _localizationService.GetResourceAsync("Admin.Catalog.Manufacturers"),
                             PermissionNames = new List<string> { StandardPermission.Catalog.MANUFACTURER_VIEW },
@@ -979,6 +995,31 @@ public partial class AdminMenu : IAdminMenu
                                     IconClass = "far fa-dot-circle"
                                 }
                             }
+                        }
+                    }
+                },
+                       new()
+                {
+                    SystemName = "Utilities",
+                    Title = await _localizationService.GetResourceAsync("Admin.Utilities"),
+                    IconClass = "fas fa-chart-line",
+                    ChildNodes = new List<AdminMenuItem>
+                    {
+                        new()
+                        {
+                            SystemName = "Testimonials",
+                            Title = await _localizationService.GetResourceAsync("Admin.Utilities.Testimonials"),
+                            PermissionNames = new List<string> { StandardPermission.Orders.ORDERS_VIEW},
+                            Url = GetMenuItemUrl("Utilities", "Testimonials"),
+                            IconClass = "far fa-dot-circle"
+                        } ,
+                        new()
+                        {
+                            SystemName = "Custom Forms",
+                            Title = await _localizationService.GetResourceAsync("Admin.Utilities.CustomForms"),
+                            PermissionNames = new List<string> { StandardPermission.Orders.ORDERS_VIEW},
+                            Url = GetMenuItemUrl("CustomForm", "Index"),
+                            IconClass = "far fa-dot-circle"
                         }
                     }
                 },

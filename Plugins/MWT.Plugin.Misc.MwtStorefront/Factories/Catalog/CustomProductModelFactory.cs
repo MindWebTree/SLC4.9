@@ -4,6 +4,7 @@ using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Core.Service.StoreWideDiscount;
 using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.Configuration;
+using MWT.Nop.Core.Services.Customers;
 using MWT.Nop.Core.Services.Media;
 using MWT.Plugin.Misc.MwtStorefront.Models.Catalog;
 using MWT.Plugin.Misc.MwtStorefront.Models.Media;
@@ -3088,7 +3089,7 @@ bool prepareAlternatePictureModel = false, int variantId = 0)
             }
             return model;
         }
-
+        
         protected virtual async Task<(string, IList<ProductApiDetailsModel.ProductAttributeModel>, int pictureId)> CustomPrepareApiProductAttributeModelsAsync(Product product, ShoppingCartItem updatecartitem, int variantId = 0)
         {
             string variantTitle = "";

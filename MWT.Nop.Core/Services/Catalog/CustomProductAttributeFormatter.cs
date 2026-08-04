@@ -23,7 +23,12 @@ namespace MWT.Nop.Core.Services.Catalog
     public partial class CustomProductAttributeFormatter : ProductAttributeFormatter, ICustomProductAttributeFormatter
     {
  
-        public CustomProductAttributeFormatter(ICurrencyService currencyService, IDownloadService downloadService, IHtmlFormatter htmlFormatter, ILocalizationService localizationService, IPriceCalculationService priceCalculationService, IPriceFormatter priceFormatter, IProductAttributeParser productAttributeParser, IProductAttributeService productAttributeService, ITaxService taxService, IWebHelper webHelper, IWorkContext workContext, IStoreContext storeContext, ShoppingCartSettings shoppingCartSettings) : base(currencyService, downloadService, htmlFormatter, localizationService, priceCalculationService, priceFormatter, productAttributeParser, productAttributeService, taxService, webHelper, workContext, storeContext, shoppingCartSettings)
+        public CustomProductAttributeFormatter(ICurrencyService currencyService, IDownloadService downloadService, 
+            IHtmlFormatter htmlFormatter, ILocalizationService localizationService, IPriceCalculationService priceCalculationService, 
+            IPriceFormatter priceFormatter, IProductAttributeParser productAttributeParser, IProductAttributeService productAttributeService, 
+            ITaxService taxService, IWebHelper webHelper, IWorkContext workContext, IStoreContext storeContext, ShoppingCartSettings shoppingCartSettings
+            ) : base(currencyService, downloadService, htmlFormatter, localizationService, priceCalculationService, priceFormatter, productAttributeParser,
+                productAttributeService, taxService, webHelper, workContext, storeContext, shoppingCartSettings)
         {
         }
         public virtual async Task<string> CustomFormatAttributesAsync(Product product, string attributesXml)

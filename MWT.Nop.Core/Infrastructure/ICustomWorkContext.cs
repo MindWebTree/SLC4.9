@@ -14,6 +14,7 @@ namespace MWT.Nop.Core.Infrastructure
 
         bool IsMobileDeviceExcludingIpad();
         int GetDevice(string usrAgent);
+        int GetActualDevice(string usrAgent);
 
 
     }

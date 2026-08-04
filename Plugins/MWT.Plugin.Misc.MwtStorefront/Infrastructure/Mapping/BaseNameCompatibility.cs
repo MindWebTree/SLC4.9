@@ -1,4 +1,5 @@
-﻿using MWT.Nop.Core.Domain.QA;
+﻿using MWT.Nop.Core.Domain;
+using MWT.Nop.Core.Domain.QA;
 using Nop.Data.Mapping;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Infrastructure.Mapping
@@ -21,7 +22,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Infrastructure.Mapping
         //{ typeof(CustomOrderStatus), "CustomOrder_Status" },
         // { typeof(CustomOrderOrderSummaryAdjustment), "CustomOrder_OrderSummaryAdjustment" },
         //        { typeof(CategoryCollectionLink), "Category_CollectionLink" },
-        //        { typeof(CustomForm), "Custom_Forms" },
+                { typeof(CustomForm), "Custom_Forms" },
         //         { typeof(ProductSuggestedKeyword), "Product_SuggestedKeyword_Mapping" },
         //         { typeof(LogProductPicture), "Log_Product_Picture_Mapping" },
         //           { typeof(LogPicture), "Log_Picture" },
@@ -35,9 +36,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Infrastructure.Mapping
         };
 
         public Dictionary<(Type, string), string> ColumnName => new Dictionary<(Type, string), string>
-        {  
-            //{ (typeof(CustomFormEntryMeta), "MetaKey"), "Meta_Key" },
-            // { (typeof(CustomFormEntryMeta), "MetaValue"), "Meta_Value" }
+        {
+            { (typeof(CustomFormEntryMeta), "MetaKey"), "Meta_Key" },
+             { (typeof(CustomFormEntryMeta), "MetaValue"), "Meta_Value" }
 
         };
     }

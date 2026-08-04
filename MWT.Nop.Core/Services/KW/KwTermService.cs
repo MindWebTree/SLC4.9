@@ -1,10 +1,10 @@
 ﻿using MWT.Nop.Core.Domain.KW;
 using MWT.Nop.Core.Service.Catalog;
+using MWT.Nop.Core.Services.Customers;
 using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Domain.Catalog;
 using Nop.Data;
-using Nop.Services.Customers;
 using Nop.Services.Localization;
 using Nop.Services.Security;
 using Nop.Services.Stores;
@@ -21,7 +21,7 @@ namespace MWT.Nop.Core.Services.KW
         #region Fields
 
         private readonly IAclService _aclService;
-        private readonly ICustomerService _customerService;
+        private readonly ICustomCustomerService _customerService;
         private readonly ILocalizationService _localizationService;
         private readonly IRepository<KwTerm> _kwTermRepository;
         private readonly IRepository<Product> _productRepository;
@@ -39,7 +39,7 @@ namespace MWT.Nop.Core.Services.KW
 
         public KwTermService(
             IAclService aclService,
-            ICustomerService customerService,
+            ICustomCustomerService customerService,
             ILocalizationService localizationService,
             IRepository<KwTerm> kwTermRepository,
             IRepository<Product> productRepository,

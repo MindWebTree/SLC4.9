@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Nop.Services.Customizations.Custom
+namespace MWT.Nop.Core.Service
 {
     public partial interface IFiltersMappingByEntityService
     {

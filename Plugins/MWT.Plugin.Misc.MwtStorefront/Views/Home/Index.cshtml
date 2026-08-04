@@ -56,6 +56,7 @@
                 @if (!_useragentContext.IsMobileDevice())
                 {
                     @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "Desktop.Home.Page.Slider" })
+      
                 }
                 else
                 {
@@ -96,7 +97,7 @@
 
             @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "HomePage.Customization.Section" })
 
-@*             @await Component.InvokeAsync("Custom_RecentlyViewedProductsBlock") *@
+            @await Component.InvokeAsync("Custom_RecentlyViewedProductsBlock")
 
 @*             @await Component.InvokeAsync(typeof(HomepageProductsViewComponent))
             @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HomepageBeforeBestSellers }) *@

@@ -1,0 +1,63 @@
+﻿@model TestimonialSearchModel
+@using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Utilities
+<div class="card-body">
+
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            @T("Admin.Utilities.Testimonials.Heading")
+        </h1>
+        
+    </div>
+    @await Html.PartialAsync("Table", new DataTablesModel
+    {
+        Name = "productvideos-grid",
+        UrlRead = new DataUrl("SearchTestimonials", "Utilities", new RouteValueDictionary { [nameof(Model.OrderId)] = Model.OrderId }),
+        Length = Model.PageSize,
+        LengthMenu = Model.AvailablePageSizes,
+        ColumnCollection = new List<ColumnProperty>
+        {
+
+        new ColumnProperty(nameof(TestimonialModel.OrderId))
+        {
+        Title = T("Admin.Catalog.Testimonial.Fields.OrderId").Text,
+        Width = "150",
+        ClassName = NopColumnClassDefaults.CenterAll,
+        },
+        new ColumnProperty(nameof(TestimonialModel.CustomerEmail))
+        {
+        Title = T("Admin.Catalog.Testimonial.Fields.CustomerEmail").Text,
+        Width = "200",
+        },
+          new ColumnProperty(nameof(TestimonialModel.CustomerName))
+        {
+        Title = T("Admin.Catalog.Testimonial.Fields.CustomerName").Text,
+        Width = "200",
+        },
+            new ColumnProperty(nameof(TestimonialModel.VideoUrl))
+        {
+        Title = T("Admin.Catalog.Testimonial.Fields.Video").Text,
+
+        },
+          new ColumnProperty(nameof(TestimonialModel.VideoUrl))
+        {
+        Title = T("Admin.Catalog.Testimonial.Fields.Video").Text,
+        Render = new RenderCustom("renderVideosColumnProductVideoUrl")
+        },
+        new ColumnProperty(nameof(TestimonialModel.CreatedOn))
+        {
+        Title = T("Admin.Catalog.Testimonial.Fields.CreatedOn").Text,
+        Width = "200",
+        }
+        }
+    })
+
+    <script>
+        function renderVideosColumnProductVideoUrl(data, type, row, meta) {
+            return '<video width="150" controls>' +
+                '<source src="/' + row.VideoUrl + '" type="video/mp4">' +
+                'Your browser does not support the video tag.' +
+                '</video>';
+        }
+    </script>
+
+</div>

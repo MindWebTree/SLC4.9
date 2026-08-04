@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using MWT.Nop.Core.Services.Customers;
 using Nop.Core.Caching;
 using Nop.Core.Infrastructure;
 using Nop.Services.Customers;

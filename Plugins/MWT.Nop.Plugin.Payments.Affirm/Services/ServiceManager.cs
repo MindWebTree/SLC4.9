@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
+using MWT.Nop.Core.Services.Customers;
 using MWT.Nop.Plugin.Payments.Affirm.Data.Domain;
 using MWT.Nop.Plugin.Payments.Affirm.Domain;
 using MWT.Nop.Plugin.Payments.Affirm.Infrastructure;

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using MWT.Nop.Core.Services.Customers;
 using MWT.Nop.Core.Services.KW;
 using MWT.Nop.Core.Services.QA;
 using Nop.Core.Caching;

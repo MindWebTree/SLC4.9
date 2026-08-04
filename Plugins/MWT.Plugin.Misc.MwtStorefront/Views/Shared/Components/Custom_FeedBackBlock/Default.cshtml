@@ -1,0 +1,671 @@
+﻿@model List<ReviewModel>
+@inject Nop.Services.Configuration.ISettingService _settingService
+@inject Nop.Core.IWorkContext _workcontext
+@inject ICustomWorkContext _customworkContext;
+@{
+    var noOfWords = (_customworkContext.IsMobileDevice()) ? 100 : 360;
+    bool hasMoreItems = ViewBag.HasMoreItems == null ? false : (bool)ViewBag.HasMoreItems;
+    bool IsReviewPage = ViewBag.IsReviewPage == null ? false : (bool)ViewBag.IsReviewPage;
+    var feedBackImagePrefix = await this._settingService.GetSettingByKeyAsync<string>("Products.Feedback.Image.Domain");
+    string reviewHeading = "";
+
+}
+<script>
+    var reviewImageEndPoints = '@feedBackImagePrefix';
+</script>
+
+@if (!IsReviewPage)
+{
+
+    <style>
+    span[data-target="product-review-block"].cta-tab {
+            display: block !important;
+        }
+   </style>
+    noOfWords = 100;
+
+
+
+
+    <div class="product-review-block row bg-light">
+
+        @if (_customworkContext.IsMobileDevice())
+        {
+            <div class="row">
+                <div class="col-12 d-flex flex-column align-items-center gap-2 p-5">
+
+                    <h2 class="fw-bold mb-2">@T("Product.Reviews.Heading")</h2>
+                    <div class="text-muted mb-3">@T("Product.Reviews.SubHeading")</div>
+                </div>
+            </div>
+        }
+
+        <div class="row">
+            @if (!_customworkContext.IsMobileDevice())
+            {
+                <div class="col-4 d-flex flex-column align-items-center gap-2 p-5">
+
+                    <h2 class="fw-bold mb-2">@T("Product.Reviews.Heading")</h2>
+                    <div class="text-muted mb-3">@T("Product.Reviews.SubHeading")</div>
+                    <a href="@Url.RouteUrl("Reviews", new { productId = ViewBag.ProductId })" class="review-view-more text-decoration-none d-flex align-items-center gap-1">
+                        <span class="text-danger fw-semibold">@T("Product.Reviews.All")</span>
+
+                    </a>
+
+                </div>
+            }
+
+
+            <div class="card-body @(!_customworkContext.IsMobileDevice() ? "col-8" : "col-12") review-slider">
+                @{
+                    int index = 0;
+                }
+                @foreach (var review in Model)
+                {
+                    if (review.OrderID == 130590)
+                    {
+                        continue;
+                    }
+                    {
+                        index++;
+                        reviewHeading = "";
+                        if ((review.Suggestion ?? "") != "")
+                        {
+                            var words = review.Suggestion.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                            if (words.Length > 12)
+                            {
+                                reviewHeading = (review.Suggestion ?? "").Split('.', StringSplitOptions.RemoveEmptyEntries)[0] + ".";
+                                words = reviewHeading.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                                if (words.Length < 2 || words.Length > 12)
+                                {
+                                    reviewHeading = (review.Suggestion ?? "").Split('!', StringSplitOptions.RemoveEmptyEntries)[0] + "!";
+                                    words = reviewHeading.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                                    if (words.Length < 2 || words.Length > 12)
+                                    {
+                                        reviewHeading = string.Join(" ", review.Suggestion.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(8)) + "...";
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                reviewHeading = review.Suggestion;
+                            }
+                        }
+                    }
+                    <div class="review-slide">
+                        <div class="customer-review-content">
+                            <div class="review-left">
+
+                                @if (review.FeedbackImages != null)
+                                {
+                                    int count = 0;
+                                    string[] feedbackImages = ((string)review.FeedbackImages).Split(',');
+                                    @*foreach (var feedbackimage in feedbackImages[0])
+                        {*@
+                                    <div class="feedbackImage" data-index="@count">
+                                        <img class="" data-src="@feedBackImagePrefix@feedbackImages[0]" src="/images/loader.gif"  alt="" aria-hidden="true" height="200" />
+                                    </div>
+                                    count++;
+                                    @*}*@
+                                }
+                                
+
+                                <h3>@Html.Raw(T("Product.Review.CustomerName", review.CustomerName, review.City, review.State))</h3>
+                                <div class="verified-purchase">
+                                    @T("Product.Verified.Purchase")
+                                </div>
+                            </div>
+                            <div class="review-right">
+
+                                <div class="review-comment">
+                                    @if (string.IsNullOrEmpty(review.Suggestion) || review.Suggestion.Length <= noOfWords)
+                                    {
+                                        @Html.Raw(review.Suggestion)
+                                    }
+                                    else
+                                    {
+                                        <span class="review-text">@review.Suggestion.Substring(0, noOfWords)</span>
+                                        <span class="d-none more-content">@review.Suggestion.Substring(noOfWords)</span>
+                                        <button class="moretext" type="button" data-index="@(index - 1)" data-gallery-index="@(index - 1)">@T("Review.Show.More")</button>
+                                    }
+                                </div>
+                            </div>
+                            <div class="image-section" attr-img="@(string.IsNullOrEmpty((string)review.FeedbackImages)?"":review.FeedbackImages)">
+                            </div>
+                        </div>
+                    </div>
+                }
+
+
+            </div>
+        </div>
+        <!-- Gallery Modal (add after your slider markup) -->
+        <div id="review-gallery-modal" class="review-gallery-modal" aria-hidden="true" style="display:none;">
+            <div class="rg-overlay"></div>
+            <div class="rg-content" role="dialog" aria-modal="true" tabindex="-1">
+
+
+                <div class="rg-body">
+                    <button class="rg-close" aria-label="Close gallery">×</button>
+                    <button class="rg-nav rg-prev" aria-label="Previous">‹</button>
+
+                    <div class="rg-main">
+                        feedbackImageModel
+                        <div class="review-main-img"><img id="rg-image" class="rg-image" alt="Review" /></div>
+                        <div class="rg-info">
+                            <img src="/images/uploaded/quotes-icon-svg.svg" alt="Quote" class="review-quote-img">
+
+
+
+
+
+                            <p id="rg-text"></p>
+                      
+                            <div class="rg-verified">Verified Purchase</div>
+                        </div>
+                    </div>
+
+                    <button class="rg-nav rg-next" aria-label="Next">›</button>
+                </div>
+
+                <div class="rg-counter"><span id="rg-current">1</span> / <span id="rg-total">1</span></div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <a href="@Url.RouteUrl("Reviews", new { productId = ViewBag.ProductId })" class="review-view-more review-view-more-mobile text-decoration-none d-flex align-items-center gap-1">
+                    <span class="text-danger fw-semibold">@T("Product.Reviews.All")</span>
+
+                </a>
+            </div>
+        </div>
+    </div>
+    <script asp-location="Footer">
+
+        $('.feedbackImage img').each(function () {
+            if (!$(this).hasClass("lazy") && !$(this).hasClass("img_fadeIn")) {
+                $(this).addClass("img_fadeIn");
+                $(this).attr("src", $(this).attr("data-src"));
+            }
+        });
+        $(document).ready(function () {
+            $('.review-slider').slick({
+                slidesToShow: 3,
+                slidesToScroll: 1,
+                dots: true,
+                arrows: true,
+                infinite: false,
+                autoplay: true,
+                prevArrow: '<button type="button" class="slick-prev"><img src="/images/uploaded/review-left-svg-image.svg" alt="Previous"></button>',
+                nextArrow: '<button type="button" class="slick-next"><img src="/images/uploaded/review-sec-right-arrow.svg" alt="Next"></button>',
+                autoplaySpeed: 4000,
+                responsive: [
+                    {
+                        breakpoint: 992, // tablets
+                        settings: {
+                            slidesToShow: 2
+                        }
+                    },
+                    {
+                        breakpoint: 768, // mobile
+                        settings: {
+                            slidesToShow: 1,
+                            arrows: false,
+                            dots: true
+                        }
+                    }
+                ]
+            });
+
+
+            // Build testimonials array from DOM slides
+            var reviews = [];
+            $('.review-slide').each(function (i) {
+                var $slide = $(this);
+
+                // image sources - read from .image-section attr-img (as in your markup)
+                var imgAttr = $slide.find('.img_fadeIn').attr('data-src') || '';
+                // attr-img can be "img1.jpg,img2.jpg" or empty
+                var images = [];
+                if (imgAttr.trim() !== '') {
+                    images = imgAttr.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+                } else {
+                    // Fallback: check for any <img> in slide (like the .feedbackImage)
+                    var $img = $slide.find('img').first();
+                    if ($img.length) {
+                        // prefer data-src if lazy-loading
+                        images.push($img.attr('data-src') || $img.attr('src'));
+                    }
+                }
+
+                // text & author: pick from your markup
+                var text = $slide.find('.review-comment').text().trim();
+                var author = $slide.find('h3').text().trim();
+                var rating = $slide.find('.rating-star img[src*="Star-Full"]').length || 0;
+
+                reviews.push({
+                    images: images,    // array (maybe empty)
+                    text: text,
+                    author: author,
+                    rating: rating,
+                    slideIndex: i
+                });
+
+                // store index on feedbackImage element(s) for quick click
+                $slide.find('.feedbackImage, .image-section').attr('data-gallery-index', i);
+            });
+
+            // If no images at all, don't enable modal
+            var totalWithImages = reviews.filter(r => r.images && r.images.length).length;
+            if (totalWithImages === 0) {
+                // nothing to open
+                return;
+            }
+
+            // modal elements
+            var $modal = $('#review-gallery-modal');
+            var $img = $('#rg-image');
+            var $author = $('#rg-author');
+            var $text = $('#rg-text');
+            var $rating = $('#rg-rating');
+            var $current = $('#rg-current');
+            var $total = $('#rg-total');
+            var currentIndex = 0;
+
+            function updateModal(index) {
+                var item = reviews[index] || {};
+                // choose first image (you could allow per-item gallery if multiple)
+                var src = (item.images && item.images.length) ? item.images[0] : '';
+                if (src) {
+                    $img.attr('src', src);
+                    $img.show();
+                } else {
+                    $img.hide();
+                }
+                $author.text(item.author || '');
+                $text.text(item.text || '');
+                // rating stars simple text/html - customize as needed
+                var stars = '';
+                for (var i = 0; i < 5; i++) {
+                    stars += (i < (item.rating || 0)) ? '★' : '☆';
+                }
+                $rating.html(stars);
+                $current.text(index + 1);
+                $total.text(reviews.length);
+            }
+
+            function openModal(index) {
+                currentIndex = index;
+                updateModal(currentIndex);
+                $modal.show().attr('aria-hidden', 'false');
+                
+                $(document).on('keydown.rg', modalKeyHandler);
+                $("body").addClass("modal-open");
+            }
+
+            function closeModal() {
+                $("body").removeClass("modal-open");
+                $modal.hide().attr('aria-hidden', 'true');
+           
+                $(document).off('keydown.rg', modalKeyHandler);
+            }
+
+            function next() {
+                currentIndex = (currentIndex + 1) % reviews.length;
+                updateModal(currentIndex);
+            }
+
+            function prev() {
+                currentIndex = (currentIndex - 1 + reviews.length) % reviews.length;
+                updateModal(currentIndex);
+            }
+
+            function modalKeyHandler(e) {
+                if (e.key === 'Escape') closeModal();
+                if (e.key === 'ArrowRight') next();
+                if (e.key === 'ArrowLeft') prev();
+            }
+
+            // Delegated click - opens when user clicks slide image area or .feedbackImage
+            $(document).on('click', '.feedbackImage, .image-section, .moretext', function (e) {
+                // prevent slick dragging from triggering click — check if it's a real click
+                if ($(this).hasClass('slick-slide')) {
+                    // do nothing
+                }
+                var idx = parseInt($(this).attr('data-gallery-index'), 10);
+                if (!isNaN(idx)) {
+                    openModal(idx);
+                }
+            });
+
+            // modal controls
+            $modal.find('.rg-close').on('click', closeModal);
+            $modal.find('.rg-next').on('click', next);
+            $modal.find('.rg-prev').on('click', prev);
+
+            // click outside content to close
+            $modal.on('click', function (e) {
+                if ($(e.target).closest('.rg-content').length === 0) {
+                    closeModal();
+                }
+            });
+
+            // stop clicks inside rg-content from bubbling (so slide doesn't change)
+            $modal.find('.rg-content').on('click', function (e) { e.stopPropagation(); });
+
+
+
+
+        });
+    </script>
+}
+else
+{
+    var reviewCount = 0;
+
+    @foreach (var review in Model)
+    {
+        if (review.OrderID == 130590)
+        {
+            continue;
+        }
+        reviewCount += 1;
+        var cssClass = reviewCount > 10 ? "d-none" : ""; // Apply CSS class to hide reviews beyond 10
+
+        reviewHeading = "";
+        if ((review.Suggestion ?? "") != "")
+        {
+            var words = review.Suggestion.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (words.Length > 12)
+            {
+                reviewHeading = (review.Suggestion ?? "").Split('.', StringSplitOptions.RemoveEmptyEntries)[0] + ".";
+                words = reviewHeading.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                if (words.Length < 2 || words.Length > 12)
+                {
+                    reviewHeading = (review.Suggestion ?? "").Split('!', StringSplitOptions.RemoveEmptyEntries)[0] + "!";
+                    words = reviewHeading.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                    if (words.Length < 2 || words.Length > 12)
+                    {
+                        reviewHeading = string.Join(" ", review.Suggestion.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(8)) + "...";
+                    }
+                }
+            }
+            else
+            {
+                reviewHeading = review.Suggestion;
+            }
+        }
+
+
+        <div class="customer-review-content @cssClass">
+            <div class="review-left">
+              
+                @if (reviewHeading != "")
+                {
+                    <h2 class="review-heading">@Html.Raw(reviewHeading)</h2>
+                }
+                <h3>@Html.Raw(T("Product.Review.CustomerName", review.CustomerName, review.City, review.State))</h3>
+                <div class="verified-purchase">
+                    @T("Product.Verified.Purchase")
+                </div>
+            </div>
+            <div class="review-right">
+
+                <div class="review-date"></div>
+                <div class="review-comment">
+                    @if (string.IsNullOrEmpty(review.Suggestion) || review.Suggestion.Length <= noOfWords)
+                    {
+                        @Html.Raw(review.Suggestion)
+                    }
+                    else
+                    {
+                        <span class="review-text">@review.Suggestion.Substring(0, noOfWords)</span>
+                        <span class="d-none more-content">@review.Suggestion.Substring(noOfWords)</span>
+                        <button class="moretext" type="button" onclick="reviewCommentDisplay(this)">@T("Common.Show.More")</button>
+                    }
+                </div>
+            </div>
+            <div class="image-section" attr-img="@(string.IsNullOrEmpty((string)review.FeedbackImages)?"":review.FeedbackImages)">
+
+
+
+                @if (review.FeedbackImages != null)
+                {
+                    int count = 0;
+                    string[] feedbackImages = ((string)review.FeedbackImages).Split(',');
+                    foreach (var feedbackimage in feedbackImages)
+                    {
+                        <div class="feedbackImage" data-index="@count">
+
+                            <img data-src="@feedBackImagePrefix@feedbackimage" class="reviewlazy" src="/images/loader.gif" alt="" aria-hidden="true" />
+
+                        </div>
+                        count++;
+                    }
+
+                }
+            </div>
+        </div>
+
+
+    }
+	
+    <div class="load-more-section">
+        <button class="load-more-btn" id="loadMoreBtn">@T("Common.LoadMore")</button>
+    </div>
+
+    <script>
+        var image_count = 10;
+
+        document.getElementById("loadMoreBtn").addEventListener("click", function () {
+
+
+            // Get all hidden reviews
+            var hiddenReviews = document.querySelectorAll(".customer-review-content.d-none");
+
+            // Show the next 10 hidden reviews
+            for (var i = 0; i < 10 && i < hiddenReviews.length; i++) {
+                hiddenReviews[i].classList.remove("d-none");
+                var currentImageSection = $('.image-section').eq(image_count);
+
+                // Check if the current section has been initialized
+                if (currentImageSection.hasClass('slick-initialized')) {
+                    currentImageSection.slick('refresh');
+                }
+                image_count++;
+            }
+
+            // If there are no more hidden reviews, hide the "Load More" button
+            if (hiddenReviews.length <= 10) {
+                this.style.display = "none"; // Hide the button when no more hidden reviews
+            }
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            reviewlazyloadimages();
+        });
+        function reviewlazyloadimages() {
+            let lazyImages = [].slice.call(document.querySelectorAll("img.reviewlazy"));
+
+            let active = false;
+            const reviewlazyLoad = function () {
+                if (active === false) {
+                    active = true;
+                    lazyImages.forEach(function (lazyImage) {
+                        if (((lazyImage.getBoundingClientRect().top <= (window.innerHeight * .5)
+                            && lazyImage.getBoundingClientRect().bottom >= 0) && getComputedStyle(lazyImage).display !== "none"
+                        ) || lazyImage.classList.contains("loadedbyajax")) {
+                            if (lazyImage.classList.contains("loadedbyajax")) {
+
+                            }
+                            lazyImage.src = lazyImage.dataset.src;
+                            // lazyImage.srcset = lazyImage.dataset.srcset;
+                            lazyImage.classList.remove("reviewlazy");
+                            lazyImage.classList.remove("loadedbyajax");
+                            lazyImage.classList.add("img_fadeIn");
+                            lazyImages = lazyImages.filter(function (image) {
+                                return image !== lazyImage;
+                            });
+                            if (lazyImages.length === 0) {
+                                document.removeEventListener("scroll", reviewlazyLoad);
+                                window.removeEventListener("resize", reviewlazyLoad);
+                                window.removeEventListener("orientationchange", reviewlazyLoad);
+                            }
+                        }
+                    });
+                    active = false;
+                }
+            };
+            document.addEventListener("scroll", reviewlazyLoad);
+            window.addEventListener("resize", reviewlazyLoad);
+            window.addEventListener("orientationchange", reviewlazyLoad);
+            $(document).ready(function () {
+                reviewlazyLoad();
+            });
+        }
+    </script>
+
+}
+<div class="modal fade"
+     id="feedbackImageModel"
+     tabindex="-1" 
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <button type="button" class="modal-close-button modal-close-button-popup-icon ms-auto" data-bs-dismiss="modal" aria-label="Close"><img src="/images/close-icon-popup.png" alt="close icon"></button>
+            <div class="modal-body">
+                <div id="carouselExample"
+                     class="carousel slide"
+                     data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                    </div>
+                    <button class="carousel-control-prev"
+                            type="button"
+                            data-bs-target="#carouselExample"
+                            data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"
+                              aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next"
+                            type="button"
+                            data-bs-target="#carouselExample"
+                            data-bs-slide="next">
+                        <span class="carousel-control-next-icon"
+                              aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script asp-location="Footer">
+    function populateCarousel(imageArray, imageIndex) {
+        console.log(imageArray);
+        var $carouselInner = $(".carousel-inner");
+        $carouselInner.empty();
+        if (imageArray.length > 1) {
+            $('.carousel-control-prev').show();
+            $('.carousel-control-next').show();
+        } else {
+            $('.carousel-control-prev').hide();
+            $('.carousel-control-next').hide();
+        }
+
+        $.each(imageArray, function (index, imgSrc) {
+            var $carouselItem = $("<div>", {
+                class: "carousel-item" + (index == imageIndex ? " active" : ""),
+            });
+            var $imgElement = $("<img>", {
+                src: imgSrc,
+                class: "d-block w-100",
+                alt: "Image " + (index + 1),
+            });
+
+            $carouselItem.append($imgElement);
+            $carouselInner.append($carouselItem);
+        });
+        var myModal = new bootstrap.Modal(document.getElementById('feedbackImageModel'));
+
+        // Show the modal
+        myModal.show();
+
+    }
+
+    $(document).ready(function () {
+        $('body').on('click', '.feedbackImage', function (e) {
+
+            var index = $(this).attr('data-index');
+
+
+            // Check if the closest ancestor with class 'image-section' exists
+            if ($(this).closest('.image-section').length) {
+                // Get the attribute 'attr-img' from the closest '.image-section'
+                var imgAttr = $(this).closest('.image-section').attr("attr-img");
+
+                if (imgAttr) { // Check if imgAttr is not empty
+                    // Split the string into an array
+                    var imgs = imgAttr.split(",");
+
+                    // Initialize the reviewImagesArray
+                    var reviewImagesArray = [];
+
+                    // Construct full image URLs
+                    imgs.forEach(function (image) {
+                        reviewImagesArray.push(reviewImageEndPoints + image.trim()); // Trim spaces
+                    });
+
+                    console.log(reviewImagesArray.length, 'length');
+
+                    // Call populateCarousel if there are images
+                    if (reviewImagesArray.length > 0) {
+                        populateCarousel(reviewImagesArray, index);
+                    }
+                }
+            }
+        });
+    })
+
+    function reviewCommentDisplay(button) {
+        var reviewComment = button.closest('.review-comment');
+        var reviewText = reviewComment.querySelector('.more-content');
+        var moreText = reviewComment.querySelector('.moretext');
+
+        if (moreText.classList.contains("hidden")) {
+            reviewText.classList.toggle("d-none");
+            button.textContent = "@T("Common.Show.More")";
+        } else {
+            reviewText.classList.toggle("d-none");
+            button.textContent = "@T("Common.Show.Less")";
+        }
+        moreText.classList.toggle("hidden");
+    }
+    $(document).ready(function () {
+        function initSlickForMobile() {
+            if ($(window).width() < 768) {
+                if (!$('.image-section').hasClass('slick-initialized')) {
+                    $('.image-section').slick({
+                        infinite: true,
+                        slidesToShow: 3,
+                        slidesToScroll: 1,
+                        arrows: true,
+                        dots: false
+                    });
+                }
+            } else {
+                if ($('.image-section').hasClass('slick-initialized')) {
+                    $('.image-section').slick('unslick');
+                }
+            }
+        }
+
+        // Initialize on page load
+        initSlickForMobile();
+
+        // Re-initialize on window resize
+        $(window).resize(function () {
+            initSlickForMobile();
+        });
+    });
+</script>

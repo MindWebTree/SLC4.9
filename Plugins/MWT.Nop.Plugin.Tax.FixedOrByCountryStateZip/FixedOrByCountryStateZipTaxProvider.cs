@@ -23,6 +23,7 @@ using Nop.Core.Domain.Orders;
 using Nop.Services.Customers;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Shipping;
+using MWT.Nop.Core.Services.Customers;
 
 namespace MWT.Tax.FixedOrByCountryStateZip
 {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using MWT.Nop.Core.Service.Catalog;
+using MWT.Nop.Core.Services.Customers;
 using MWT.Plugin.Misc.MwtStorefront.Models.Common;
 using Nop.Core;
 using Nop.Core.Caching;

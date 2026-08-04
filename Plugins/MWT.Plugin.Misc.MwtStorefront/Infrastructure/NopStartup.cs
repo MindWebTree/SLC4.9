@@ -2,11 +2,11 @@
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MWT.Nop.Core.Infrastructure;
-using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories;
+using MWT.Nop.Core.Infrastructure; 
 using MWT.Plugin.Misc.MwtStorefront.Factories;
 using MWT.Plugin.Misc.MwtStorefront.Factories.Catalog;
 using MWT.Plugin.Misc.MwtStorefront.Factories.QA;
+using MWT.Plugin.Misc.MwtStorefront.Factories.Topics;
 using MWT.Plugin.Misc.MwtStorefront.ViewLocations;
 using Nop.Core.Infrastructure;
 
@@ -29,8 +29,8 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Infrastructure
             services.AddScoped<ICustomProductModelFactory, CustomProductModelFactory>();
             services.AddScoped<IVariantModelFactory, VariantModelFactory>(); 
             services.AddScoped<IQuestionAnswerModelFactory, QuestionAnswerModelFactory>(); 
-            services.AddScoped<MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.QA.IQuestionAnswerModelFactory, MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.QA.QuestionAnswerModelFactory>();  
-            services.AddScoped<ICustomBaseAdminModelFactory , CustomBaseAdminModelFactory>(); 
+            services.AddScoped<ILandingPageModelFactory, LandingPageModelFactory>();
+            services.AddScoped<ICustomTopicModelFactory, CustomTopicModelFactory>();
             services.Configure<RazorViewEngineOptions>(options =>
             { 
                 options.ViewLocationExpanders.Add(new MwtViewLocationExpander());

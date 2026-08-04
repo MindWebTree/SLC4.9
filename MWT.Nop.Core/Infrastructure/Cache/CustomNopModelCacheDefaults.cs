@@ -57,5 +57,9 @@ namespace Nop.Web.Infrastructure.Cache
         public static string QuestionAnswerPicturePrefixCacheKeyById => "Nop.pres.QuestionAnswer.picture-{0}-";
 
         #endregion
+
+        public static CacheKey ProductReviews => new CacheKey("Nop.pres.product.reviews-{0}-{1}-{2}");
+
+        public static string RecommendationProductsPrefix => "Nop.pres.recommendation.products-{0}";
     }
 }

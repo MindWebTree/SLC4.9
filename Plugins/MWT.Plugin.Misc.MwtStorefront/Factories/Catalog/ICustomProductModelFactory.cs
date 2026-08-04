@@ -24,6 +24,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
  
 
         Task<List<VariantCombination>> PrepareProductVariants(string sku);
+        Task<CategoryGroupProductModel> GetCategoryGroupedProducts(int categoryId);
 
 
 

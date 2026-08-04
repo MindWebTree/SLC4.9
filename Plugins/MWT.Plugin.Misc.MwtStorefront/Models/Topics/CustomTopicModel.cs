@@ -4,5 +4,5 @@ namespace MWT.Plugin.Misc.MwtStorefront.Models.Topics;
 
 public partial record CustomTopicModel : TopicModel
 {
-    public bool HideDefualtTitle { get; set; }
+    public bool HideDefaultTitle { get; set; }
 }
