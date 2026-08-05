@@ -2,7 +2,7 @@
 using MWT.Nop.Core.Service;
 using MWT.Nop.Core.Service.Campaign_Management;
 using MWT.Nop.Core.Service.Catalog;
-using MWT.Nop.Core.Service.StoreWideDiscount;
+using MWT.Nop.Core.Service.Discount;
 using MWT.Nop.Core.Service.Zoho;
 using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.CategoryCollection;

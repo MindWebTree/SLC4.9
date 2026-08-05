@@ -6,6 +6,7 @@ using MWT.Plugin.Misc.MwtStorefront.Models.RewardClaim;
 
 namespace Nop.Web.Controllers
 {
+    [AutoValidateAntiforgeryToken]
     public partial class RewardClaimController : BasePublicController
     {
 

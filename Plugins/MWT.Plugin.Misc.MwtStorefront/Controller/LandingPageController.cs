@@ -21,6 +21,7 @@ using System.Text.RegularExpressions;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Controllers
 {
+    [AutoValidateAntiforgeryToken]
     public partial class LandingPageController : BasePublicController
     {
         private readonly ILandingPageModelFactory _landingPageModelFactory;

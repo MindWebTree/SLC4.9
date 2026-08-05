@@ -1,0 +1,52 @@
+﻿@model CustomProductOverviewModel
+
+<script>
+    var priceRangeFormat = '@T("Price.Range.Product.Format")';
+    var conversionValue = 0;
+</script>
+
+<form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-form">
+
+    <img class="product-preview-img" alt="@Model.DefaultPictureModel.AlternateText" src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" />
+
+    <h3 class="product-title">@Model.Name</h3>
+
+    @{
+        var dataDictAttributes = new ViewDataDictionary(ViewData);
+        dataDictAttributes.TemplateInfo.HtmlFieldPrefix = $"attributes_{Model.Id}";
+
+        var dataDictPrice = new ViewDataDictionary(ViewData);
+        dataDictPrice.TemplateInfo.HtmlFieldPrefix = $"price_{Model.Id}";
+    }
+
+   @await Html.PartialAsync("_ProductOverViewPrice", Model.ProductPrice, dataDictPrice)
+
+    @if (!string.IsNullOrEmpty(Model.SizeShadeMessage))
+    {
+        <div class="product-variants">
+            @Model.SizeShadeMessage.Replace("|", ", ").Trim().TrimEnd(',')
+        </div>
+    }
+
+    <a href="@Url.RouteUrl("Product", new {id=Model.Id,SeName = Model.SeName})"
+       class="product-btn">
+        View Product Details
+    </a>
+
+
+    @{
+        bool isAttributePreselected = true;
+        var dataDictAddToCart = new ViewDataDictionary(ViewData);
+        dataDictAddToCart.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
+        dataDictAddToCart.Add("sename", Model.SeName);
+        dataDictAddToCart.Add("DefaultVariantId", Model.DefaultVariantId);
+        dataDictAddToCart.Add("VariantId", Model.VariantId);
+        ViewData["isAttributePreselected"] = isAttributePreselected;
+        dataDictAddToCart.Add("VariantSename", Model.VariantSename);}
+
+    <div style="display: none;">
+        @await Html.PartialAsync("_FeaturedProductAttributes", Model, dataDictAttributes)
+    </div>
+    @await Html.PartialAsync("_FeaturedProduct_AddToCart", Model.AddToCart, dataDictAddToCart)
+
+</form>

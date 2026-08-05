@@ -11,6 +11,7 @@ using Nop.Web.Controllers;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Controllers
 {
+    [AutoValidateAntiforgeryToken]
     public class TestimonialsController : BasePublicController
     {
         #region Fields

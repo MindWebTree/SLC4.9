@@ -11,5 +11,6 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
     public interface ICustomCatalogModelFactory : ICatalogModelFactory
     {
         Task<List<CustomCategoryModel>> CustomPrepareHomepageCategoryModelsAsync();
+
     }
 }

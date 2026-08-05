@@ -26,6 +26,13 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
         Task<List<VariantCombination>> PrepareProductVariants(string sku);
         Task<CategoryGroupProductModel> GetCategoryGroupedProducts(int categoryId);
 
+        Task<IEnumerable<CustomProductOverviewModel>> PrepareCustomProductOverviewDetailInfoModelAsync(IEnumerable<Product> products,
+bool preparePriceModel = true, bool preparePictureModel = true,
+int? productThumbPictureSize = null, bool prepareSpecificationAttributes = false,
+bool forceRedirectionAfterAddingToCart = false, bool prepareShades = false, bool prepareCollectionSpecificationAttribute = false,
+bool prepareSizeShadeAggregation = false,
+bool prepareAlternatePictureModel = false, int variantId = 0);
+
 
 
     }

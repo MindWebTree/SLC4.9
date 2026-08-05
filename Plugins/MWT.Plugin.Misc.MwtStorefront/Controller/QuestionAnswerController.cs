@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Controllers
 {
+    [AutoValidateAntiforgeryToken]
     public partial class QuestionAnswerController : BasePublicController
     {
         #region Fields

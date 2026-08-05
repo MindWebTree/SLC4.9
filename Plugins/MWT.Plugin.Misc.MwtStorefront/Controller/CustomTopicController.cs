@@ -20,23 +20,33 @@ using Nop.Web.Factories;
 using MWT.Plugin.Misc.MwtStorefront.Factories.Topics;
 using MWT.Plugin.Misc.MwtStorefront.Models.Topics;
 using MWT.Plugin.Misc.MwtStorefront.Components;
+using System.Xml;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Controllers;
 
 [AutoValidateAntiforgeryToken]
-public partial class CustomTopicController : TopicController
+public partial class CustomTopicController : BasePublicController
 {
     #region Fields
 
     private readonly ICustomTopicModelFactory _customTopicModelFactory;
-
+    private readonly ITopicService _topicService;
+    private readonly IAclService _aclService;
+    private readonly IStoreMappingService _storeMappingService;
+    private readonly IPermissionService _permissionService;
+    private readonly ILocalizationService _localizationService;
     #endregion
-    public CustomTopicController(IAclService aclService, ILocalizationService localizationService,
-        IPermissionService permissionService, IStoreMappingService storeMappingService, ITopicModelFactory topicModelFactory,
-        ITopicService topicService, ICustomTopicModelFactory customTopicModelFactory) :
-        base(aclService, localizationService, permissionService, storeMappingService, topicModelFactory, topicService)
+    public CustomTopicController(ICustomTopicModelFactory customTopicModelFactory, ITopicService topicService, IAclService aclService, IStoreMappingService storeMappingService,
+        IPermissionService permissionService, ILocalizationService localizationService)
     {
-        _customTopicModelFactory = customTopicModelFactory;
+        _customTopicModelFactory= customTopicModelFactory;
+        _topicService = topicService;
+        _storeMappingService = storeMappingService;
+        _aclService = aclService;
+        _permissionService = permissionService;
+        _localizationService=localizationService;
+
+
     }
 
     #region Methods
@@ -73,7 +83,7 @@ public partial class CustomTopicController : TopicController
 
         model = await ProcessTokens(model);
         //template
-        var templateViewPath = await _topicModelFactory.PrepareTemplateViewPathAsync(model.TopicTemplateId);
+        var templateViewPath = await _customTopicModelFactory.PrepareTemplateViewPathAsync(model.TopicTemplateId);
         return View(templateViewPath, model);
     }
     #endregion

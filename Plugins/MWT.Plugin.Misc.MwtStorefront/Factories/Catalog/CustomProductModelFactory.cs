@@ -1,7 +1,7 @@
 ﻿
 using MWT.Nop.Core.Infrastructure;
 using MWT.Nop.Core.Service.Catalog;
-using MWT.Nop.Core.Service.StoreWideDiscount;
+using MWT.Nop.Core.Service.Discount;
 using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.Configuration;
 using MWT.Nop.Core.Services.Customers;
@@ -1055,17 +1055,6 @@ bool prepareAlternatePictureModel = false, int variantId = 0)
 
             #region Price Offer Module
 
-            var _storeWideDiscountService = EngineContext.Current.Resolve<IStoreWideDiscountService>();
-            var offerInfo = await _storeWideDiscountService.GetStoreWideProductDiscountInfoByProductIdAsync(product.Id);
-            var _settingService = EngineContext.Current.Resolve<ISettingService>();
-
-            string offerText = offerInfo?.InfoText ?? "";
-            string offerHelptext = offerInfo?.InfoHelpText ?? "";
-            priceModel.OfferText = "";
-            if (!string.IsNullOrEmpty(offerText) && !string.IsNullOrEmpty(offerText))
-            {
-                priceModel.OfferText = string.Format(await _localizationService.GetResourceAsync("label.limitedoffer.placeholder"), offerText, offerHelptext);
-            }
             priceModel.Price = CustomCommonHelper.FormatCurrencyPriceWithoutDecimal(priceModel.Price);
             priceModel.PriceValue = CustomCommonHelper.FormatPriceWithoutDecimal((decimal)priceModel.PriceValue);
             priceModel.OldPrice = CustomCommonHelper.FormatCurrencyPriceWithoutDecimal(priceModel.OldPrice);
@@ -1079,6 +1068,10 @@ bool prepareAlternatePictureModel = false, int variantId = 0)
             priceModel.MaxOldPrice = CustomCommonHelper.FormatCurrencyPriceWithoutDecimal(priceModel.MaxOldPrice);
             priceModel.MaxOldPriceValue = CustomCommonHelper.FormatPriceWithoutDecimal(priceModel.MaxOldPriceValue);
             #endregion
+
+            (priceModel.OfferText, priceModel.OfferPlaceHolder, priceModel.DiscountAmount, priceModel.DiscountPercentage, priceModel.SaleStartDate, priceModel.SaleEndDate) 
+                = await _customProductService.GetProductSaleOfferInfo(product, priceModel.MinOldPrice != priceModel.MaxOldPrice ? null : priceModel.OldPriceValue, priceModel.MinPrice != priceModel.MaxPrice ? null : priceModel.PriceValue); ;
+
         }
         public virtual async Task<CustomPictureModel> PrepareCustomProductOverviewPictureModelAsync(Product product, int? productThumbPictureSize = null, bool isCategorypage = false)
         {
@@ -1575,16 +1568,7 @@ bool prepareAlternatePictureModel = false, int variantId = 0)
                         model.AssociatedProducts.Add(await PrepareCustomProductDetailsModelAsync(associatedProduct, null, true));
                 }
             }
-            #region Sale Info
-            var _storeWideDiscountService = EngineContext.Current.Resolve<IStoreWideDiscountService>();
-            var discountInfo = await _storeWideDiscountService.GetProductSaleInfo(model.Id);
-            if (discountInfo != null)
-            {
-                model.SaleStartDate = discountInfo.StartDate;
-                model.SaleEndDate = discountInfo.EndDate;
-            }
-
-            #endregion
+       
             return model;
         }
         protected virtual async Task<CustomProductDetailsModel.ProductPriceModel> PrepareCustomProductPriceModelAsync(Product product, int variantId = 0)
@@ -1773,20 +1757,10 @@ bool prepareAlternatePictureModel = false, int variantId = 0)
                 model.Price = null;
             }
 
-            #region Price Offer Module
+  
 
 
-            var _storeWideDiscountService = EngineContext.Current.Resolve<IStoreWideDiscountService>();
-            var offerInfo = await _storeWideDiscountService.GetStoreWideProductDiscountInfoByProductIdAsync(product.Id);
-            var _settingService = EngineContext.Current.Resolve<ISettingService>();
-
-            string offerText = offerInfo?.InfoText ?? "";
-            string offerHelptext = offerInfo?.InfoHelpText ?? "";
-            model.OfferText = "";
-            if (!string.IsNullOrEmpty(offerText) && !string.IsNullOrEmpty(offerText))
-            {
-                model.OfferText = string.Format(await _localizationService.GetResourceAsync("label.limitedoffer.placeholder"), offerText, offerHelptext);
-            }
+           
             model.Price = CustomCommonHelper.FormatCurrencyPriceWithoutDecimal(model.Price);
             model.PriceValue = CustomCommonHelper.FormatPriceWithoutDecimal((decimal)model.PriceValue);
             model.OldPrice = CustomCommonHelper.FormatCurrencyPriceWithoutDecimal(model.OldPrice);
@@ -1799,7 +1773,11 @@ bool prepareAlternatePictureModel = false, int variantId = 0)
             model.MaxPriceValue = CustomCommonHelper.FormatPriceWithoutDecimal(model.MaxPriceValue);
             model.MaxOldPrice = CustomCommonHelper.FormatCurrencyPriceWithoutDecimal(model.MaxOldPrice);
             model.MaxOldPriceValue = CustomCommonHelper.FormatPriceWithoutDecimal(model.MaxOldPriceValue);
-            #endregion
+            (model.OfferText, model.OfferPlaceHolder, model.DiscountAmount, model.DiscountPercentage, model.SaleStartDate, model.SaleEndDate) =
+                await _customProductService.GetProductSaleOfferInfo(product, model.OldPriceValue, model.PriceValue);
+
+
+
             return model;
         }
         public async Task<List<GroupedProductConfigurationModel>> PrepareGroupedProductConfiguration(int productId)
@@ -2027,17 +2005,7 @@ bool prepareAlternatePictureModel = false, int variantId = 0)
             }
             #region Price Offer Module
 
-            var _storeWideDiscountService = EngineContext.Current.Resolve<IStoreWideDiscountService>();
-            var offerInfo = await _storeWideDiscountService.GetStoreWideProductDiscountInfoByProductIdAsync(product.Id);
-            var _settingService = EngineContext.Current.Resolve<ISettingService>();
-
-            string offerText = offerInfo?.InfoText ?? "";
-            string offerHelptext = offerInfo?.InfoHelpText ?? "";
-            model.OfferText = "";
-            if (!string.IsNullOrEmpty(offerText) && !string.IsNullOrEmpty(offerText))
-            {
-                model.OfferText = string.Format(await _localizationService.GetResourceAsync("label.limitedoffer.placeholder"), offerText, offerHelptext);
-            }
+          
 
             model.Price = CustomCommonHelper.FormatCurrencyPriceWithoutDecimal(model.Price);
             model.PriceValue = CustomCommonHelper.FormatPriceWithoutDecimal((decimal)model.PriceValue);
@@ -2053,6 +2021,7 @@ bool prepareAlternatePictureModel = false, int variantId = 0)
             model.MaxOldPriceValue = CustomCommonHelper.FormatPriceWithoutDecimal(model.MaxOldPriceValue);
 
             #endregion
+            (model.OfferText, model.OfferPlaceHolder, model.DiscountAmount, model.DiscountPercentage, model.SaleStartDate, model.SaleEndDate) = await _customProductService.GetProductSaleOfferInfo(product, model.OldPriceValue, model.PriceValue);
 
             return model;
         }

@@ -4,8 +4,8 @@ using MWT.Nop.Core.Domain.Catalog;
 using MWT.Nop.Core.Domain.KW;
 using MWT.Nop.Core.Domain.QA;
 using MWT.Nop.Core.Domain.Security;
-using MWT.Nop.Core.Service.StoreWideDiscount;
-using MWT.Nop.Core.Services.Catalog; 
+using MWT.Nop.Core.Service.Discount;
+using MWT.Nop.Core.Services.Catalog;
 using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Domain.Catalog;
@@ -35,17 +35,17 @@ namespace MWT.Nop.Core.Service.Catalog
 
     public partial class CustomProductService : ProductService, ICustomProductService
     {
-        protected readonly IStaticCacheManager _staticCacheManager; 
+        protected readonly IStaticCacheManager _staticCacheManager;
         protected readonly INopDataProvider _dataProvider;
         private readonly ICustomProductAttributeParser _customProductAttributeParser;
-     
+
         public CustomProductService(CatalogSettings catalogSettings, IAclService aclService, ICustomerService customerService, IDateRangeService dateRangeService, ILanguageService languageService, ILocalizationService localizationService, IProductAttributeParser productAttributeParser, IProductAttributeService productAttributeService, IRepository<Category> categoryRepository, IRepository<CrossSellProduct> crossSellProductRepository, IRepository<DiscountProductMapping> discountProductMappingRepository, IRepository<LocalizedProperty> localizedPropertyRepository, IRepository<Manufacturer> manufacturerRepository, IRepository<Product> productRepository, IRepository<ProductAttributeCombination> productAttributeCombinationRepository, IRepository<ProductAttributeMapping> productAttributeMappingRepository, IRepository<ProductCategory> productCategoryRepository, IRepository<ProductManufacturer> productManufacturerRepository, IRepository<ProductPicture> productPictureRepository, IRepository<ProductProductTagMapping> productTagMappingRepository, IRepository<ProductSpecificationAttribute> productSpecificationAttributeRepository, IRepository<ProductTag> productTagRepository, IRepository<ProductVideo> productVideoRepository, IRepository<ProductWarehouseInventory> productWarehouseInventoryRepository, IRepository<RelatedProduct> relatedProductRepository, IRepository<Shipment> shipmentRepository, IRepository<StockQuantityHistory> stockQuantityHistoryRepository, IRepository<TierPrice> tierPriceRepository, ISearchPluginManager searchPluginManager, IStaticCacheManager staticCacheManager, IVendorService vendorService, IStoreMappingService storeMappingService, IWorkContext workContext, LocalizationSettings localizationSettings
             , INopDataProvider dataProvider, ICustomProductAttributeParser customProductAttributeParser) : base(catalogSettings, aclService, customerService, dateRangeService, languageService, localizationService, productAttributeParser, productAttributeService, categoryRepository, crossSellProductRepository, discountProductMappingRepository, localizedPropertyRepository, manufacturerRepository, productRepository, productAttributeCombinationRepository, productAttributeMappingRepository, productCategoryRepository, productManufacturerRepository, productPictureRepository, productTagMappingRepository, productSpecificationAttributeRepository, productTagRepository, productVideoRepository, productWarehouseInventoryRepository, relatedProductRepository, shipmentRepository, stockQuantityHistoryRepository, tierPriceRepository, searchPluginManager, staticCacheManager, vendorService, storeMappingService, workContext, localizationSettings)
         {
             _staticCacheManager = staticCacheManager;
             _dataProvider = dataProvider;
             _customProductAttributeParser = customProductAttributeParser;
-      
+
         }
 
 
@@ -608,7 +608,28 @@ namespace MWT.Nop.Core.Service.Catalog
             return result;
         }
 
+        public async Task<(string offerText, string offerPlaceHolder, string discountAmount, decimal discountPercentage, DateTime? saleStartDate, DateTime? saleEndDate)> GetProductSaleOfferInfo(Product product, decimal? oldPrice, decimal? price)
+        {
+            var _storeWideDiscountService = EngineContext.Current.Resolve<IStoreWideDiscountService>();
+            var productOfferInfo = await _storeWideDiscountService.GetStoreWideProductDiscountInfoByProductIdAsync(product.Id);
 
+            if (productOfferInfo == null)
+                return (string.Empty, string.Empty, string.Empty, 0, null, null);
+
+            var offerInfo = await _storeWideDiscountService.GetStoreWideDiscountByIdAsync(productOfferInfo.StoreWideDiscountId);
+
+            if (offerInfo == null)
+                return (string.Empty, string.Empty, string.Empty, 0, null, null);
+
+
+            string offerText = productOfferInfo?.InfoText ?? "";
+            (decimal discountAmount, decimal discountPercentage) = await GetMaxDiscountAsync(product, oldPrice, price);
+            var _priceFormatter = EngineContext.Current.Resolve<IPriceFormatter>();
+
+            return (offerText, await _localizationService.GetResourceAsync("label.limitedoffer.v2.placeholder"),
+ await _priceFormatter.FormatPriceAsync(discountAmount), discountPercentage,
+                    offerInfo.StartDate, offerInfo.EndDate);
+        }
         public virtual async Task<List<ProductSpecificationAttribute>> SearchGetProductSpecificationAttributeAsync(
        int pageIndex = 0,
    int pageSize = int.MaxValue,
@@ -1439,7 +1460,7 @@ namespace MWT.Nop.Core.Service.Catalog
         {
             return await _productRepository.Table.Where(p => p.IsServiceTypeProduct).ToListAsync();
         }
-    
+
         public async Task UpdateProductWithoutEvent(Product product)
         {
             await _productRepository.UpdateAsync(product, false);
@@ -1950,14 +1971,14 @@ namespace MWT.Nop.Core.Service.Catalog
             return await productsQuery.CustomOrderBy(orderBy).ToPagedListAsync(pageIndex, pageSize);
         }
 
-         
+
 
         #region SaleInfo
 
-     
+
 
         #endregion
- 
+
         protected virtual async Task<string> GetCustomProductAttributesXmlAsync(IList<ProductAttributeMapping> productAttributes, Dictionary<int, string> attrMappings)
         {
             var _productAttributeParser = EngineContext.Current.Resolve<IProductAttributeParser>();
@@ -2154,7 +2175,7 @@ namespace MWT.Nop.Core.Service.Catalog
             }
             return (msrp, oldPrice, price, isAttributeProduct);
         }
-   
+
         public virtual async Task<IPagedList<Product>> GetProductsByProductAtributeIdAsync(int productAttributeId
     , string search, int categoryId, int pageIndex = 0, int pageSize = int.MaxValue)
         {
@@ -2210,5 +2231,95 @@ namespace MWT.Nop.Core.Service.Catalog
 
      
 
+
+
+    #region utilities
+
+        private async Task<(decimal DiscountAmount, decimal DiscountPercentage)> GetMaxDiscountAsync(Product product, decimal? oldPrice, decimal? price)
+        {
+            decimal maxDiscountAmount = 0;
+            decimal maxDiscountPercentage = 0;
+
+            void TryUpdateMaxDiscount(decimal price, decimal? oldPrice)
+            {
+                if (!oldPrice.HasValue || oldPrice.Value <= price || price <= 0)
+                    return;
+
+                var discountAmount = oldPrice.Value - price;
+                var discountPercentage = (discountAmount / oldPrice.Value) * 100;
+
+                if (discountAmount > maxDiscountAmount)
+                {
+                    maxDiscountAmount = discountAmount;
+                    maxDiscountPercentage = Math.Round(discountPercentage, 0);
+                }
+            }
+            if (price.HasValue && price.Value > 0)
+            {
+                TryUpdateMaxDiscount(price.Value, oldPrice ?? 0);
+                return (Math.Round(maxDiscountAmount, 2), Math.Round(maxDiscountPercentage, 2));
+            }
+
+            var combinations = await _productAttributeService
+     .GetAllProductAttributeCombinationsAsync(product.Id);
+            if (combinations != null && combinations.Any())
+            {
+                foreach (var combination in combinations)
+                {
+
+                    var attributes = await _productAttributeParser.ParseProductAttributeMappingsAsync(combination.AttributesXml);
+                    if (!attributes.Any())
+                        continue;
+
+                    bool isAttributeValid = true;
+                    foreach (var attribute in attributes)
+                    {
+                        if (isAttributeValid)
+                        {
+                            if (!attribute.ShouldHaveValues())
+                            {
+                                isAttributeValid = false;
+                                break;
+                            }
+
+                            foreach (var attributeValue in _customProductAttributeParser.CustomParseValuesWithQuantity(combination.AttributesXml, attribute.Id))
+                            {
+                                if (string.IsNullOrEmpty(attributeValue.Item1) || !int.TryParse(attributeValue.Item1, out var attributeValueId))
+                                {
+                                    isAttributeValid = false;
+                                    break;
+                                }
+                                var value = await _productAttributeService.GetProductAttributeValueByIdAsync(attributeValueId);
+                                if (value == null || !value.Published)
+                                {
+                                    isAttributeValid = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (!isAttributeValid)
+                        continue;
+
+                    var combinationPrice = combination.OverriddenPrice.HasValue && combination.OverriddenPrice.Value > 0
+                        ? combination.OverriddenPrice.Value
+                        : product.Price;
+
+                    var combinationOldPrice = combination.OverriddenOldPrice.HasValue && combination.OverriddenPrice.Value > 0
+                        ? combination.OverriddenOldPrice
+                        : product.OldPrice > 0 ? product.OldPrice : null;
+
+                    TryUpdateMaxDiscount(combinationPrice, combinationOldPrice);
+                }
+            }
+
+
+            if (maxDiscountPercentage == 0 && product.OldPrice > 0 && product.OldPrice > product.Price)
+                TryUpdateMaxDiscount(product.Price, product.OldPrice);
+
+            return (Math.Round(maxDiscountAmount, 2), Math.Round(maxDiscountPercentage, 2));
+        }
+
+        #endregion
     }
 }

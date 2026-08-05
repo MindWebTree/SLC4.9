@@ -60,6 +60,9 @@ bool? overridePublished = null);
 
         #region Misc
         Task<IList<Product>> GetNewArrivalProductsAsync(int pageIndex, int pageSize);
+
+        Task<(string offerText, string offerPlaceHolder, string discountAmount, decimal discountPercentage, DateTime? saleStartDate, DateTime? saleEndDate)> GetProductSaleOfferInfo(Product product, decimal? oldPrice, decimal? price);
+
         Task<List<ProductSpecificationAttribute>> SearchGetProductSpecificationAttributeAsync(
         int pageIndex = 0,
 int pageSize = int.MaxValue,

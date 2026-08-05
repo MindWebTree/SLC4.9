@@ -139,8 +139,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Models.Catalog
         public string EstimatedDeliveryDate { get; set; }
         public string ARHeading { get; set; }
         public int CustomizationFormTemplateId { get; set; }
-        public DateTime? SaleStartDate { get; set; }
-        public DateTime? SaleEndDate { get; set; }
+
         public bool IsMainProduct { get; set; }
         public string Notes { get; set; }
         public bool IsThanksGivingProduct { get; set; }
@@ -221,6 +220,11 @@ namespace MWT.Plugin.Misc.MwtStorefront.Models.Catalog
             public string MinMembershipPrice { get; set; }
             public string MaxMembershipPrice { get; set; }
             public string OfferText { get; set; }
+            public string DiscountAmount { get; set; }
+            public decimal DiscountPercentage { get; set; }
+            public string OfferPlaceHolder { get; set; }
+            public DateTime? SaleStartDate { get; set; }
+            public DateTime? SaleEndDate { get; set; }
         }
 
 

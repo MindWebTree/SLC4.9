@@ -23,6 +23,7 @@ using System.Text;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Controllers
 {
+    [AutoValidateAntiforgeryToken]
     public partial class CustomFormController : BasePublicController
     {
         #region fields 

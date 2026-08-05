@@ -118,7 +118,15 @@ namespace MWT.Nop.Core.Infrastructure
 
         public static bool IsFakeCustomer(string invalidEmails, string email)
         {
-            return invalidEmails.Split(';').Contains(email, StringComparer.InvariantCultureIgnoreCase);
+            if (string.IsNullOrWhiteSpace(invalidEmails) || string.IsNullOrWhiteSpace(email))
+                return false;
+
+            return invalidEmails
+                .Split(';')
+                .Any(invalidPart =>
+                    !string.IsNullOrWhiteSpace(invalidPart) &&
+                    email.IndexOf(invalidPart.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0
+                );
         }
 
         public static string GetString(object oValue)
@@ -137,10 +145,10 @@ namespace MWT.Nop.Core.Infrastructure
 
             plain = plain
                 .Replace("\u00A0", " ")
-                .Replace("\u2013", "-") 
-                .Replace("\u2014", "-")  
-                .Replace("\u201C", "\"")  
-                .Replace("\u201D", "\"")  
+                .Replace("\u2013", "-")
+                .Replace("\u2014", "-")
+                .Replace("\u201C", "\"")
+                .Replace("\u201D", "\"")
                 .Replace("\u2022", "*")
                 .Replace("&#65533;", "*")
                 .Replace("�", "*").Replace("<br>", "").Replace("”", "\"").Replace("“", "\"").Replace("–", "-").Replace("•	", "* ").Replace("&nbsp;", " ");
@@ -198,7 +206,7 @@ namespace MWT.Nop.Core.Infrastructure
                     string idSegment = segments[1].Split('/')[0];
 
                     var idParts = idSegment.Split('_');
-                   int.TryParse(idParts[0], out productId);
+                    int.TryParse(idParts[0], out productId);
                     if (idParts.Length > 1)
                     {
                         int.TryParse(idParts[1], out variantId);
@@ -224,7 +232,112 @@ namespace MWT.Nop.Core.Infrastructure
                     nearest = c;
                 }
             }
-            return nearest<0?price:nearest;
+            return nearest < 0 ? price : nearest;
+        }
+
+
+        public static string FormatTimeRemaining(DateTime endDate)
+        {
+            TimeSpan timeRemaining = endDate - DateTime.Now;
+
+            int minutes = (int)timeRemaining.TotalMinutes;
+            int hours = (int)timeRemaining.TotalHours;
+            int days = (int)timeRemaining.TotalDays;
+
+            if (timeRemaining.TotalMinutes < 1)
+                return string.Empty;
+
+            if (timeRemaining.TotalMinutes < 60)
+                return $"{minutes} Minute{Plural(minutes)}";
+
+
+
+            if (timeRemaining.TotalHours < 24)
+                return $"{hours} Hour{Plural(hours)}";
+
+            if (timeRemaining.TotalHours < 48)
+                return $"{days} Day";
+
+            return $"{days} Day{Plural(days)}";
+        }
+
+        private static string Plural(int value) => value == 1 ? "" : "s";
+
+        public static string GetProductOfferText(int productId, string offerText, string offerPlaceHolder, string discount, decimal discountPercentage, DateTime? offerEndDate, bool isDetailProductPage)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(offerText))
+                    return string.Empty;
+
+                string offerHelpText = CustomCommonHelper.GetProductOfferHelpText(offerText, discount, discountPercentage, offerEndDate, isDetailProductPage);
+                return (string.Format(offerPlaceHolder, productId, offerText, offerHelpText));
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+        public static string GetProductOfferHelpText(string offerText, string discount, decimal discountPercentage, DateTime? offerEndDate, bool isDetailProductPage)
+        {
+            if (string.IsNullOrEmpty(offerText))
+                return string.Empty;
+
+            string timeRemaining = string.Empty;
+            if (offerEndDate == null)
+            {
+                return string.Empty;
+            }
+            timeRemaining = CustomCommonHelper.FormatTimeRemaining((DateTime)offerEndDate);
+            string offerHelpText = string.Empty;
+            if (discountPercentage > 0)
+            {
+
+                if (!isDetailProductPage)
+                {
+                    if (string.IsNullOrEmpty(timeRemaining))
+                        offerHelpText = string.Format(
+                        "You Save Up to <span class='offer'>{1}({2}%)</span><br/>Sale Ending Soon",
+                        timeRemaining,
+                        discount,
+                        discountPercentage);
+                    else
+                        offerHelpText = string.Format(
+                            "You Save Up to <span class='offer'>{1}({2}%)</span><br/>Sale Ends in <span class='offerexpiry'>{0}</span>",
+                            timeRemaining,
+                            discount,
+                            discountPercentage);
+                }
+                // Category/listing page — "You save"
+                else
+                {
+                    if (string.IsNullOrEmpty(timeRemaining))
+                        offerHelpText = string.Format(
+                      "You Save <span class='offer'>{1}({2}%)</span><br/>Sale Ending Soon",
+                      timeRemaining,
+                      discount,
+                      discountPercentage);
+                    else
+                        offerHelpText = string.Format(
+                            "You Save <span class='offer'>{1}({2}%)</span><br/>Sale Ends in <span class='offerexpiry'>{0}</span>",
+                            timeRemaining,
+                            discount,
+                            discountPercentage);
+                }
+            }
+
+            else if (string.IsNullOrEmpty(timeRemaining))
+            {
+                offerHelpText = string.Format(
+                "Sale Ending Soon",
+                timeRemaining);
+            }
+            else
+                offerHelpText = string.Format(
+                    "Sale Ends in <span class='offerexpiry'>{0}</span>",
+                    timeRemaining);
+
+            return offerHelpText;
         }
     }
 }
