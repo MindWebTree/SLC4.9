@@ -10,8 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using MWT.Nop.Core.Domain.StoreWideDiscount;
+using System.Threading.Tasks; 
 
 namespace MWT.Nop.Core.Service.Discount
 {
@@ -19,7 +18,7 @@ namespace MWT.Nop.Core.Service.Discount
     {
         #region Fields 
         private readonly IRepository<StoreWideDiscountSetting> _storeWideDiscountSettingRepository;
-        private readonly IRepository<MWT.Nop.Core.Domain.StoreWideDiscount.StoreWideDiscount> _storeWideDiscountRepository;
+        private readonly IRepository<StoreWideDiscount> _storeWideDiscountRepository;
         private readonly IRepository<StoreWideProductDiscountInfo> _storeWideProductDiscountInfoRepository;
         private readonly IRepository<StoreWideProductDiscountHistory> _storeWideProductDiscountHistoryRepository;
         protected readonly IRepository<ProductCategory> _productCategoryRepository;
@@ -32,7 +31,8 @@ namespace MWT.Nop.Core.Service.Discount
              IRepository<StoreWideProductDiscountInfo> storeWideProductDiscountInfoRepository,
              IRepository<StoreWideProductDiscountHistory> storeWideProductDiscountHistoryRepository,
              IRepository<ProductCategory> productCategoryRepository,
-             IStaticCacheManager staticCacheManager
+             IStaticCacheManager staticCacheManager,
+             IRepository<StoreWideDiscount> storeWideDiscountRepository
              )
         {   
             _storeWideDiscountSettingRepository = storeWideDiscountSettingRepository;
@@ -40,6 +40,7 @@ namespace MWT.Nop.Core.Service.Discount
             _storeWideProductDiscountHistoryRepository = storeWideProductDiscountHistoryRepository;
             _productCategoryRepository = productCategoryRepository;
             _staticCacheManager = staticCacheManager;
+            _storeWideDiscountRepository = storeWideDiscountRepository;
         }
 
         #endregion

@@ -88,7 +88,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
             ICustomShoppingCartService customShoppingCartService, IVariantService variantService,
             ICustomProductService customProductService, IVariantModelFactory variantModelFactory,
             ISettingService settingService,
-            IFeedService feedService) : base(captchaSettings,
+            IFeedService feedService, ICustomSpecificationAttributeService customSpecificationAttributeService) : base(captchaSettings,
                 catalogSettings, customerSettings, categoryService, currencyService, customerService,
                 customWishlistService, dateRangeService, dateTimeHelper, downloadService,
                 genericAttributeService, jsonLdModelFactory, localizationService, manufacturerService,
@@ -107,6 +107,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
             _variantModelFactory = variantModelFactory;
             _settingService = settingService;
             _feedService = feedService;
+            _customSpecificationAttributeService = customSpecificationAttributeService;
+
         }
 
 
@@ -423,7 +425,7 @@ bool prepareAlternatePictureModel = false, int variantId = 0)
                                             variantSize = attributeValue.Name;
                                             //need to confirm
                                             //  pictureId = attributeValue.FeaturedPictureId == 0 ? attributeValue.PictureId : attributeValue.FeaturedPictureId;
-                                            pictureId = attributeValue.FeaturedPictureId == 0 ? attributeValuePictures.FirstOrDefault().PictureId : attributeValue.FeaturedPictureId;
+                                            pictureId = attributeValue.FeaturedPictureId == 0 ? attributeValuePictures.FirstOrDefault()?.PictureId ?? 0 : attributeValue.FeaturedPictureId;
                                         }
                                         attributeValue.IsPreSelected = true;
                                     }
@@ -466,7 +468,9 @@ bool prepareAlternatePictureModel = false, int variantId = 0)
                         {
                             pictureDefaultSizeUrl = string.Empty;
                             var attributevaluePictures = await _customProductAttributeService.GetProductAttributeValuePicturesAsync(attributeValue.Id);
-                            int attributeDefualtPictureId = attributevaluePictures.FirstOrDefault().PictureId;
+             
+
+                            int attributeDefualtPictureId = attributevaluePictures.FirstOrDefault()?.PictureId ?? 0;
                             //if (attributeValue.PictureId > 0)
                             //{
                             //    var productAttributePictureCacheKey = _staticCacheManager.PrepareKeyForDefaultCache(NopModelCacheDefaults.ProductAttributePictureModelKey,

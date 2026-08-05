@@ -49,7 +49,15 @@
 
     <!-- We copy the \Logs directory -->
     <Content Include="Logs\**" CopyToPublishDirectory="PreserveNewest" />
+    <None Remove="Plugins\MWT.Plugin.Misc.MwtStorefront\Views\Shared\_FeaturedProductAttributes.cshtml" />
+    <None Remove="Plugins\MWT.Plugin.Misc.MwtStorefront\Views\Shared\_ProductOverViewPrice.cshtml" />
     <None Remove="Plugins\Uploaded\placeholder.txt" />
+    <Content Include="Plugins\MWT.Plugin.Misc.MwtStorefront\Views\Shared\_FeaturedProductAttributes.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Plugins\MWT.Plugin.Misc.MwtStorefront\Views\Shared\_ProductOverViewPrice.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Plugins\Uploaded\placeholder.txt">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

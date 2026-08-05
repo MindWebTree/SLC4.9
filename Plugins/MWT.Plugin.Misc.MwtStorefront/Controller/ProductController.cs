@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Controller
 {
-    [AutoValidateAntiforgeryToken]
+    [AutoValidateAntiforgeryToken]  
     public partial class ProductController : BasePublicController
     {
         public IActionResult ProductOverview(int id)

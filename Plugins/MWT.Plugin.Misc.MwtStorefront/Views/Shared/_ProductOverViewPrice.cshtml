@@ -3,7 +3,7 @@
 @using Nop.Core.Domain.Tax
 @inject IWorkContext workContext
 @{ 
-    string offerText = CommonHelper.GetProductOfferText(Model.ProductId, Model.OfferText, Model.OfferPlaceHolder, Model.DiscountAmount, Model.DiscountPercentage, Model.SaleEndDate, false);
+    string offerText = CustomCommonHelper.GetProductOfferText(Model.ProductId, Model.OfferText, Model.OfferPlaceHolder, Model.DiscountAmount, Model.DiscountPercentage, Model.SaleEndDate, false);
     List<ProductDetailsModel.ProductAttributeModel> attributes = new List<ProductDetailsModel.ProductAttributeModel>();
 
     if (ViewData["productAttributes"] != null && ViewData["productAttributes"] != "")
