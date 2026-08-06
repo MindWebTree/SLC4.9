@@ -1,0 +1,244 @@
+﻿@model CatalogProductsModel
+@inject Nop.Core.IWorkContext _workContext;
+@if (Model.Products.Count <= 0 &&
+!Model.PriceRangeFilter.Enabled &&
+!Model.SpecificationFilter.Enabled &&
+!Model.ManufacturerFilter.Enabled)
+{
+    return;
+}
+@{
+    var hidefilter = false;
+    var displayFilters = false;
+    if (!_workContext.IsMobileDevice())
+    {
+        if (Model.SpecificationFilter.Attributes.Count == 0)
+            hidefilter = true;
+
+        if (Model.SpecificationFilter.Attributes.Where(m => m.Values.Where(m => m.Selected).Count() > 0).Any())
+            displayFilters = true;
+    }
+    string featuredString = Context.Request.Query["featuredid"];
+
+    int productId = 0;
+    if (!string.IsNullOrEmpty(featuredString))
+    {
+        string[] parts = featuredString.Split('-');
+
+        int.TryParse(parts[0], out productId);
+    }
+}
+
+
+
+
+<div class="filter-section">
+    <div class="filter d-flex align-items-center">
+        @*region Filter hamBurger*@
+        @if (_workContext.IsMobileDevice())
+        {
+            <div class="position-relative filterIcon">
+
+                <span class="text-filter" data-filter-text="@T("catalog.filter.sort.text")" data-hidefilter-text="@T("catalog.hidefilter.text")">@T("catalog.filter.Sort.text") </span>
+
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 4.5H16H0Z" fill="black"/>
+<path d="M0 4.5H16" stroke="#222222"/>
+<path d="M3.5 2V7V2Z" fill="black"/>
+<path d="M3.5 2V7" stroke="#222222"/>
+<path d="M16 11.5H0H16Z" fill="black"/>
+<path d="M16 11.5H0" stroke="#222222"/>
+<path d="M12.5 14V9V14Z" fill="black"/>
+<path d="M12.5 14V9" stroke="#222222"/>
+</svg>
+
+
+            </div>
+        }
+        else
+        {
+            <div class="position-relative filterDesktopIcon @(hidefilter?"border-0":"") @(displayFilters?"show":"")">
+                <span class="text-filter @(hidefilter?"d-none":"")" data-filter-text="@T("catalog.filter.text")"
+                      data-hidefilter-text="@T("catalog.hidefilter.text")">
+                    @T(displayFilters ? "catalog.hidefilter.text" : "catalog.filter.text")
+                </span>
+                @if (!hidefilter)
+                {
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 4.5H16H0Z" fill="black"/>
+<path d="M0 4.5H16" stroke="#222222"/>
+<path d="M3.5 2V7V2Z" fill="black"/>
+<path d="M3.5 2V7" stroke="#222222"/>
+<path d="M16 11.5H0H16Z" fill="black"/>
+<path d="M16 11.5H0" stroke="#222222"/>
+<path d="M12.5 14V9V14Z" fill="black"/>
+<path d="M12.5 14V9" stroke="#222222"/>
+</svg>
+
+                }
+            </div>
+        }
+
+        @*Filter Icon end*@
+
+
+
+
+
+        <div class="filter-top-section">
+            @await Html.PartialAsync("_AjaxFilterSpecsBoxTop", Model)
+        </div>
+        @*sorting*@
+
+        <div class="sort-by  d-sm-block  @(_workContext.IsMobileDevice()?"hide":"")">
+            @if (!_workContext.IsMobileDevice())
+            {
+                <div id="noofprdDisplay">
+                    @Html.Raw(string.Format(T("Label.Showing").Text, (Model.PageIndex + 1) * Model.PageSize > Model.TotalItems ? Model.TotalItems : (Model.PageIndex + 1) * Model.PageSize, Model.TotalItems))
+                </div>
+            }
+            @if (Model.AllowProductSorting)
+            {
+                <div class="sortbysection">
+                  
+                    <div class="custom-select">
+                        <select aria-label="@T("Catalog.OrderBy.Label")" class="dropdown-filter" id="products-orderby" name="products-orderby">
+                            @foreach (var sortOption in Model.AvailableSortOptions)
+                            {
+                                <option selected="@sortOption.Selected" value="@( sortOption.Text.Replace(" ","_"))">@sortOption.Text</option>
+                            }
+
+                        </select>
+
+                    </div>
+                </div>
+                <script asp-location="Footer">
+            $(document).ready(function () {
+                var $orderByEl = $('#products-orderby');
+                $orderByEl.on('change', function () {
+                    CatalogProducts.getProducts();
+                });
+
+                $(CatalogProducts).on('before', function (e) {
+                     if ($orderByEl.val() != defaultSortOption)
+                        e.payload.urlBuilder
+                            .addParameter('@T("SortOption.Query.Param")', "[" + $orderByEl.val() + "]");
+                });
+            });
+                </script>
+            }
+        </div>
+
+        @*page size*@
+        @if (Model.AllowCustomersToSelectPageSize)
+        {
+            @*<div class="product-page-size col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 text-center d-inline-block">
+                <div class="row">
+                <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 product-span">
+                <span> @T("Catalog.PageSize") </span>
+                </div>
+                <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                @Html.DropDownList("products-pagesize", Model.PageSizeOptions, new { @class = "form-control dropdown-filter", aria_label = T("Catalog.PageSize.Label") })
+                </div>
+                <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 product-span">
+                <span> @T("Catalog.PageSize.PerPage") </span>
+                </div>
+                </div>
+                </div>
+                <script asp-location="Footer">
+                $(document).ready(function () {
+                var $pageSizeEl = $('#products-pagesize');
+                $pageSizeEl.on('change', function () {
+                CatalogProducts.getProducts();
+                });
+
+                $(CatalogProducts).on('before', function (e) {
+                e.payload.urlBuilder
+                .addParameter('pagesize', $pageSizeEl.val());
+                });
+                });
+                </script>*@
+        }
+        @*view mode*@
+        @if (Model.AllowProductViewModeChanging)
+        {
+            <div class="product-viewmode col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 text-center d-inline-block">
+                <div class="row">
+                    <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 product-span">
+                        <span>@T("Catalog.ViewMode")</span>
+                    </div>
+                    @if (Model.AvailableViewModes.Count > 1)
+                    {
+                        var gridMode = Model.AvailableViewModes[0];
+                        var listMode = Model.AvailableViewModes[1];
+                        <div class="col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 grid-list-icon">
+                            <a class="viewmode-icon grid @if(gridMode.Selected){
+                <text>selected</text>
+}" data-viewmode="@gridMode.Value" title="@gridMode.Text">@gridMode.Text</a>
+<a class="viewmode-icon list @if (listMode.Selected){
+                <text>selected</text>
+}" data-viewmode="@listMode.Value" title="@listMode.Text">@listMode.Text</a>
+</div>
+
+}
+                </div>
+            </div>
+            <script asp-location="Footer">
+                $(document).ready(function () {
+                    var $viewModeEls = $('[data-viewmode]');
+                    $viewModeEls.on('click', function () {
+                        if (!$(this).hasClass('selected')) {
+                            $viewModeEls.toggleClass('selected');
+                            CatalogProducts.getProducts();
+                        }
+                        return false;
+                    });
+
+                    $(CatalogProducts).on('before', function (e) {
+                        var $viewModeEl = $('[data-viewmode].selected');
+                        if ($viewModeEl) {
+                            e.payload.urlBuilder
+                                .addParameter('viewmode', $viewModeEl.data('viewmode'));
+                        }
+                    });
+                });
+            </script>
+        }
+    </div>
+</div>
+
+@if (_workContext.IsMobileDevice())
+{
+    <div id="noofprdDisplay">
+        @Html.Raw(string.Format(T("Label.Showing").Text, (Model.PageIndex + 1) * Model.PageSize > Model.TotalItems ? Model.TotalItems : (Model.PageIndex + 1) * Model.PageSize, Model.TotalItems))
+    </div>
+}
+
+<script asp-location="Footer">
+    jQuery(document).ready(function () {
+        var windowWidth = jQuery(window).width(); // Get current window width
+        if (windowWidth > 767) {
+            var filterSection = jQuery('.category-listing-sort-filter-conatiner');
+            if (filterSection.length) {
+                var filterOffset = filterSection.offset().top; // Get initial position of the filter section
+
+                jQuery(window).on("scroll", function () {
+                    console.log('Scroll event fired');
+                    var scrollPos = jQuery(window).scrollTop(); // Get current scroll position
+
+
+
+                    if (scrollPos >= filterOffset) {
+                        filterSection.addClass('fixed-filter');
+                    } else {
+                        filterSection.removeClass('fixed-filter');
+                    }
+
+                });
+            } else {
+                console.log('No filter section found');
+            }
+        }
+    });
+
+</script>

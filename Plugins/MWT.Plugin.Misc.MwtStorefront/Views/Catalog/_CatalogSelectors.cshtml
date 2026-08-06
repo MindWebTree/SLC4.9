@@ -1,0 +1,168 @@
+﻿@model CatalogProductsModel
+@inject Nop.Core.IWorkContext _workContext;
+@if (Model.Products.Count <= 0 &&
+!Model.PriceRangeFilter.Enabled &&
+!Model.SpecificationFilter.Enabled &&
+!Model.ManufacturerFilter.Enabled)
+{
+    return;
+}
+@{
+    var hidefilter = false;
+    var displayFilters = false;
+    if (!_workContext.IsMobileDevice())
+    {
+        if (Model.SpecificationFilter.Attributes.Count == 0)
+            hidefilter = true;
+
+        if (Model.SpecificationFilter.Attributes.Where(m => m.Values.Where(m => m.Selected).Count() > 0).Any())
+            displayFilters = true;
+    }
+}
+<div class="filter d-flex align-items-center">
+
+    @*region Filter hamBurger*@
+    @if (_workContext.IsMobileDevice())
+    {
+        <div class="position-relative filterIcon  @(hidefilter?"hide":"")">
+            <svg width="24" height="21" viewBox="0 0 24 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.5894 16.1428L7.58939 16.1428V15.4286C7.58939 15.0357 7.26796 14.7143 6.8751 14.7143L5.44653 14.7143C5.05368 14.7143 4.73225 15.0357 4.73225 15.4286V16.1428H1.16082C0.767962 16.1428 0.446533 16.4643 0.446533 16.8571L0.446533 18.2857C0.446533 18.6786 0.767962 19 1.16082 19H4.73225V19.7143C4.73225 20.1071 5.05368 20.4286 5.44653 20.4286H6.8751C7.26796 20.4286 7.58939 20.1071 7.58939 19.7143V19L22.5894 19C22.9822 19 23.3037 18.6786 23.3037 18.2857V16.8571C23.3037 16.4643 22.9822 16.1428 22.5894 16.1428ZM22.5894 8.99999H19.018V8.2857C19.018 7.89284 18.6965 7.57142 18.3037 7.57142H16.8751C16.4822 7.57142 16.1608 7.89284 16.1608 8.2857V8.99999L1.16082 8.99999C0.767962 8.99999 0.446533 9.32142 0.446533 9.71427L0.446533 11.1428C0.446533 11.5357 0.767962 11.8571 1.16082 11.8571L16.1608 11.8571V12.5714C16.1608 12.9643 16.4822 13.2857 16.8751 13.2857L18.3037 13.2857C18.6965 13.2857 19.018 12.9643 19.018 12.5714V11.8571H22.5894C22.9822 11.8571 23.3037 11.5357 23.3037 11.1428V9.71427C23.3037 9.32142 22.9822 8.99999 22.5894 8.99999ZM22.5894 1.85713L13.3037 1.85713V1.14284C13.3037 0.749987 12.9822 0.428558 12.5894 0.428558L11.1608 0.428558C10.768 0.428558 10.4465 0.749987 10.4465 1.14284V1.85713L1.16082 1.85713C0.767962 1.85713 0.446533 2.17856 0.446533 2.57142L0.446533 3.99999C0.446533 4.39284 0.767962 4.71427 1.16082 4.71427L10.4465 4.71427V5.42856C10.4465 5.82142 10.768 6.14284 11.1608 6.14284H12.5894C12.9822 6.14284 13.3037 5.82142 13.3037 5.42856V4.71427L22.5894 4.71427C22.9822 4.71427 23.3037 4.39284 23.3037 3.99999V2.57142C23.3037 2.17856 22.9822 1.85713 22.5894 1.85713Z" fill="#4D585A"></path>
+            </svg>
+            <span class="text-filter" data-filter-text="@T("catalog.filter.text")" data-hidefilter-text="@T("catalog.hidefilter.text")">@T("catalog.filter.text") </span>
+        </div>
+    }
+    else
+    {
+        <div class="position-relative filterDesktopIcon @(displayFilters?"show":"")  @(hidefilter?"hide":"")">
+            <svg width="24" height="21" viewBox="0 0 24 21" class="@(hidefilter?"d-none":"")" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.5894 16.1428L7.58939 16.1428V15.4286C7.58939 15.0357 7.26796 14.7143 6.8751 14.7143L5.44653 14.7143C5.05368 14.7143 4.73225 15.0357 4.73225 15.4286V16.1428H1.16082C0.767962 16.1428 0.446533 16.4643 0.446533 16.8571L0.446533 18.2857C0.446533 18.6786 0.767962 19 1.16082 19H4.73225V19.7143C4.73225 20.1071 5.05368 20.4286 5.44653 20.4286H6.8751C7.26796 20.4286 7.58939 20.1071 7.58939 19.7143V19L22.5894 19C22.9822 19 23.3037 18.6786 23.3037 18.2857V16.8571C23.3037 16.4643 22.9822 16.1428 22.5894 16.1428ZM22.5894 8.99999H19.018V8.2857C19.018 7.89284 18.6965 7.57142 18.3037 7.57142H16.8751C16.4822 7.57142 16.1608 7.89284 16.1608 8.2857V8.99999L1.16082 8.99999C0.767962 8.99999 0.446533 9.32142 0.446533 9.71427L0.446533 11.1428C0.446533 11.5357 0.767962 11.8571 1.16082 11.8571L16.1608 11.8571V12.5714C16.1608 12.9643 16.4822 13.2857 16.8751 13.2857L18.3037 13.2857C18.6965 13.2857 19.018 12.9643 19.018 12.5714V11.8571H22.5894C22.9822 11.8571 23.3037 11.5357 23.3037 11.1428V9.71427C23.3037 9.32142 22.9822 8.99999 22.5894 8.99999ZM22.5894 1.85713L13.3037 1.85713V1.14284C13.3037 0.749987 12.9822 0.428558 12.5894 0.428558L11.1608 0.428558C10.768 0.428558 10.4465 0.749987 10.4465 1.14284V1.85713L1.16082 1.85713C0.767962 1.85713 0.446533 2.17856 0.446533 2.57142L0.446533 3.99999C0.446533 4.39284 0.767962 4.71427 1.16082 4.71427L10.4465 4.71427V5.42856C10.4465 5.82142 10.768 6.14284 11.1608 6.14284H12.5894C12.9822 6.14284 13.3037 5.82142 13.3037 5.42856V4.71427L22.5894 4.71427C22.9822 4.71427 23.3037 4.39284 23.3037 3.99999V2.57142C23.3037 2.17856 22.9822 1.85713 22.5894 1.85713Z" fill="#4D585A"></path>
+            </svg>
+            <span class="text-filter @(hidefilter?"d-none":"")" data-filter-text="@T("catalog.filter.text")"
+                  data-hidefilter-text="@T("catalog.hidefilter.text")">
+                @T(displayFilters ? "catalog.hidefilter.text" : "catalog.filter.text")
+            </span>
+        </div>
+    }
+
+    @*Filter Icon end*@
+
+
+
+    @await Component.InvokeAsync("QuickFilter", new { entityId = Model.CategoryID, entityType = "Category", heading = "" })
+
+    @*sorting*@
+  
+<div class="sort-by  d-sm-block ">
+    <div id="noofprdDisplay">
+        @Html.Raw(string.Format(T("Label.Showing").Text, (Model.PageIndex + 1) * Model.PageSize > Model.TotalItems ? Model.TotalItems : (Model.PageIndex + 1) * Model.PageSize, Model.TotalItems))
+    </div>
+    @if (Model.AllowProductSorting)
+    {
+        <div class="sortbysection">
+            <div class="sortbylabel">
+                @T("Catalog.OrderBy")
+            </div>
+            <div class="custom-select">
+                <select aria-label="@T("Catalog.OrderBy.Label")" class="dropdown-filter" id="products-orderby" name="products-orderby">
+                    @foreach (var sortOption in Model.AvailableSortOptions)
+                    {
+                        <option selected="@sortOption.Selected" value="@( sortOption.Text.Replace(" ","_"))">@sortOption.Text</option>
+                    }
+
+                </select>
+
+            </div>
+        </div>
+        <script asp-location="Footer">
+            $(document).ready(function () {
+                var $orderByEl = $('#products-orderby');
+                $orderByEl.on('change', function () {
+                    CatalogProducts.getProducts();
+                });
+
+                $(CatalogProducts).on('before', function (e) {
+                     if ($orderByEl.val() != defaultSortOption)
+                        e.payload.urlBuilder
+                            .addParameter('@T("SortOption.Query.Param")', "[" + $orderByEl.val() + "]");
+                });
+            });
+        </script>
+    }
+</div>
+    
+    @*page size*@
+    @if (Model.AllowCustomersToSelectPageSize)
+    {
+        @*<div class="product-page-size col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 text-center d-inline-block">
+            <div class="row">
+            <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 product-span">
+            <span> @T("Catalog.PageSize") </span>
+            </div>
+            <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
+            @Html.DropDownList("products-pagesize", Model.PageSizeOptions, new { @class = "form-control dropdown-filter", aria_label = T("Catalog.PageSize.Label") })
+            </div>
+            <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 product-span">
+            <span> @T("Catalog.PageSize.PerPage") </span>
+            </div>
+            </div>
+            </div>
+            <script asp-location="Footer">
+            $(document).ready(function () {
+            var $pageSizeEl = $('#products-pagesize');
+            $pageSizeEl.on('change', function () {
+            CatalogProducts.getProducts();
+            });
+
+            $(CatalogProducts).on('before', function (e) {
+            e.payload.urlBuilder
+            .addParameter('pagesize', $pageSizeEl.val());
+            });
+            });
+            </script>*@
+    }
+    @*view mode*@
+    @if (Model.AllowProductViewModeChanging)
+    {
+        <div class="product-viewmode col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 text-center d-inline-block">
+            <div class="row">
+                <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 product-span">
+                    <span>@T("Catalog.ViewMode")</span>
+                </div>
+                @if (Model.AvailableViewModes.Count > 1)
+                {
+                    var gridMode = Model.AvailableViewModes[0];
+                    var listMode = Model.AvailableViewModes[1];
+                    <div class="col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 grid-list-icon">
+                        <a class="viewmode-icon grid @if(gridMode.Selected){
+                <text>selected</text>
+}" data-viewmode="@gridMode.Value" title="@gridMode.Text">@gridMode.Text</a>
+<a class="viewmode-icon list @if (listMode.Selected){
+                <text>selected</text>
+}" data-viewmode="@listMode.Value" title="@listMode.Text">@listMode.Text</a>
+</div>
+
+}
+            </div>
+        </div>
+        <script asp-location="Footer">
+            $(document).ready(function () {
+                var $viewModeEls = $('[data-viewmode]');
+                $viewModeEls.on('click', function () {
+                    if (!$(this).hasClass('selected')) {
+                        $viewModeEls.toggleClass('selected');
+                        CatalogProducts.getProducts();
+                    }
+                    return false;
+                });
+
+                $(CatalogProducts).on('before', function (e) {
+                    var $viewModeEl = $('[data-viewmode].selected');
+                    if ($viewModeEl) {
+                        e.payload.urlBuilder
+                            .addParameter('viewmode', $viewModeEl.data('viewmode'));
+                    }
+                });
+            });
+        </script>
+    }
+</div>

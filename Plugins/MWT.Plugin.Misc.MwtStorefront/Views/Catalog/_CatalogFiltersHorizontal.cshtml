@@ -1,0 +1,26 @@
+﻿@model CatalogProductsModel
+
+@if (!Model.PriceRangeFilter.Enabled &&
+!Model.SpecificationFilter.Enabled &&
+!Model.ManufacturerFilter.Enabled)
+{
+    return;
+}
+
+<div class="filter-horizontal  d-md-flex align-items-center w-100" >
+    @if (Model.SpecificationFilter.Enabled)
+    {
+        @await Html.PartialAsync("_FilterSpecsBoxHorizonatal", Model.SpecificationFilter)
+    }
+    @*@if (Model.PriceRangeFilter.Enabled)
+    {
+        @await Html.PartialAsync("_FilterPriceBox", Model.PriceRangeFilter)
+    }
+
+    @if (Model.ManufacturerFilter.Enabled)
+    {
+        @await Html.PartialAsync("_FilterManufacturerBox", Model.ManufacturerFilter)
+    }*@
+</div>
+
+

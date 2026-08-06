@@ -1,0 +1,285 @@
+﻿@model SpecificationFilterModel
+@using System.Linq;
+
+@{
+    int noOfFiltersToShow = 5;
+}
+
+
+<script>
+    var filterAttr = '@string.Join( ",",Model.Attributes.Select(m=>m.Name.ToLower().Trim()).ToArray())';
+
+</script>
+<div class="horizontalfilter_section d-md-flex align-items-center w-100">
+    @await Html.PartialAsync("_AjaxFilterSpecsBoxHorizontal", Model)
+</div>
+
+<div class="modal fade left" id="filterModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="popupfilterheading">
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">@T("Txt.Category.AllFilters")</h4>
+                </div>
+                <div class="buttons">
+                    <button type="button" class="btncancel">@T("Button.cancel")</button>
+                    <button type="button" class="btnapply">@T("Button.Apply")</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                @await Html.PartialAsync("_AjaxFilterSpecsBoxPopup", Model)
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script asp-location="Footer">
+    //$(document).ready(function () {
+    //    var $optionPopupEls = $('[popup-data-option-id]');
+    //    $optionPopupEls.on('change', function () {
+    //        var optionId = $(this).attr("popup-data-option-id");
+    //        if ($(this).prop('checked') == true) {
+    //            $("[data-option-id=" + optionId + "]").prop("checked", true).trigger("change");
+    //        }
+    //        else {
+    //            $("[data-option-id=" + optionId + "]").prop("checked", false).trigger("change");
+    //        }
+    //    });
+    //});
+
+
+    $(document).ready(function () {
+    
+        $("body").on('change', '[data-option-id]', function (e) {
+            var isCategoryFilterSelected = false;
+           
+            if ($(this).hasClass("popupfilter")) {
+                return;
+            }
+            var optionId = $(this).attr("data-option-id");
+            if ($(this).attr("data-parent-filterId") == -1) {
+                isCategoryFilterSelected = true;
+          
+                $(".filtercheckbox").each(function () {
+                    if ($(this).attr("data-option-id") != optionId)
+                        $(this).prop("checked", false);
+                });
+                $(".selectedFilters .selections").remove(); 
+                $(".inline-clear-all").hide();
+            }
+            if ($(this).prop('checked') == true) {
+                $("[popup-data-option-id=" + optionId + "]").prop("checked", true);
+            }
+            else {
+                $("[popup-data-option-id=" + optionId + "]").prop("checked", false);
+            }
+
+
+            // Add remove selection of Filter
+            if (!isCategoryFilterSelected) {
+                if ($(this).prop('checked') == true) {
+                    $(".inline-clear-all").after('<span class="selections"><button data-style="button" aria-label="" type="button" data-option-id="' + optionId + '" class="cta"><span class="selections-close">×</span> <span>' + $('label[for="attribute-option-' + optionId + '"]').contents().filter(function () {
+                        return this.nodeType === Node.TEXT_NODE;
+                    }).text() + '</span></button></span>');
+                }
+                else
+                    $(".selectedFilters").find("button[data-option-id=" + optionId + "]").parent().remove();
+
+                if ($(".selectedFilters .selections").length > 0) {
+                    $(".inline-clear-all").show();
+                }
+                else {
+                    $(".inline-clear-all").hide();
+                }
+            }
+
+            // end
+            CatalogProducts.getProducts();
+        });
+
+
+        $(CatalogProducts).on('before', function (e) {
+            var options = [];
+            var selected_options = $.map($('[data-option-id]'), function (el) {
+
+                var $optionEl = $(el);
+                if (($optionEl.is(':checked') && $optionEl.attr("data-parent-filterId") != -1) || ($optionEl.is(':checked') &&
+                    $optionEl.attr("data-parent-filterId") == -1)) {
+                    var parentName = "";
+                    var parent = $("#filter-btn-horizonatal-" + $optionEl.data("parent-filterid"));
+                    if (parent.length) {
+                        parentName = $(parent).data("filter-name");
+                    }
+                    else {
+                        parent = $("#filter-btn-" + $optionEl.data("parent-filterid"));
+                        parentName = $(parent).data("filter-name");
+                    }
+                    var attrName = $optionEl.data("filter-name");
+                    if (options.length == 0) {
+                        options.push({ name: parentName, values: [attrName], isProcessed: false, isExternal: false });
+                    }
+                    else {
+                        var obj = options.find(x => x.name === parentName);
+                        if (obj === undefined || obj === null)
+                            options.push({ name: parentName, values: [attrName], isProcessed: false, isExternal: false });
+                        else {
+                            obj.values.push(attrName);
+                        }
+                    }
+                    $optionEl.data('option-id');
+                }
+                return null;
+            });
+            options = orderingOfFilters(options);
+            if (options && options.length > 0) {
+                $(options).each(function (index, option) {
+                    if (option.isExternal == false) {
+                        if (option.name.toLowerCase().trim() == "categoryid") {
+                            e.payload.urlBuilder
+                                .addParameter(option.name, option.values.join(","));
+                        }
+                        else
+                            e.payload.urlBuilder
+                                .addParameter(option.name, '[' + option.values.join(",") + ']');
+
+                    }
+                    else {
+                        e.payload.urlBuilder
+                            .addParameter(option.name, option.values.join(","));
+                    }
+                });
+            }
+        });
+    });
+
+    function orderingOfFilters(options) {
+        var _options = [];
+        const params = new URLSearchParams(window.location.search);
+
+        for (var key of params.keys()) {
+            var obj = options.find(x => x.name === key);
+            if (obj !== undefined && obj !== null) {
+                _options.push(obj);
+                obj.isProcessed = true;
+            }
+            else {
+                if (key != "@T("SortOption.Query.Param")" && key != "@T("Pagenumber.Query.Param")" && key != "@T("viewall.Query.Param")") {
+
+                    if (!filterAttr.split(",").includes(key.toLowerCase().trim(), 0))
+                        _options.push({ name: key, values: [params.get(key)], isExternal: true });
+                }
+            }
+        }
+
+        $(options).each(function (index, option) {
+            if (option.isProcessed == false) {
+                _options.push(option);
+            }
+        });
+        return _options;
+    }
+
+
+
+    $("body").on("click", "#filterModal  .btncancel", function (e) {
+        e.preventDefault();
+        $(".filtercheckbox").each(function () {
+            $(this).prop("checked", false);
+
+
+
+        });
+
+        // Delete filters
+        $(".selectedFilters .selections").remove();
+        // end
+
+        // Hide Clear All
+        $(".inline-clear-all a").parent().parent().hide();
+
+        $(".popupfilterheading button").click();
+        // Load Filters
+        CatalogProducts.getProducts();
+    });
+
+    $("body").on("click", "#filterModal  .btnapply", function (e) {
+        e.preventDefault();
+        var elements = $('.popupfilter');
+
+        var isFilterSelected = false;
+        $(elements).each(function () {
+            var optionId = $(this).attr("popup-data-option-id");
+            if (!optionId) {
+                optionId = $(this).attr("data-option-id");
+            }
+
+            if ($("[data-option-id=" + optionId + "]")) {
+                if ($(this).prop('checked') == true) {
+                    if ($(".selectedFilters").find("button[data-option-id=\"" + optionId + "\"]").length == 0)
+                        $(".inline-clear-all").after('<span class="selections"><button data-style="button" aria-label="" type="button" data-option-id="' + optionId + '" class="cta"><span class="selections-close">×</span> <span>' + $('label[for="attribute-option-' + optionId + '"]').contents().filter(function () {
+                            return this.nodeType === Node.TEXT_NODE;
+                        }).text() + '</span></button></span>');
+                    isFilterSelected = true;
+                    if (!$("[data-option-id=" + optionId + "]").hasClass("popupfilter")) {
+                        if ($("[data-option-id=" + optionId + "]").prop('checked') != true) {
+                            $("[data-option-id=" + optionId + "]").prop("checked", true);
+                        }
+
+                    }
+                }
+                else {
+                    if ($(".selectedFilters").find("button[data-option-id=\"" + optionId + "\"]").length > 0)
+                        $(".selectedFilters").find("button[data-option-id=\"" + optionId + "\"]").remove();
+                    if (!$("[data-option-id=" + optionId + "]").hasClass("popupfilter")) {
+                        if ($("[data-option-id=" + optionId + "]").prop('checked') == true) {
+                            $("[data-option-id=" + optionId + "]").prop("checked", false);
+                        }
+                    }
+                }
+            }
+        });
+
+        if (isFilterSelected)
+            $(".inline-clear-all a").parent().parent().show();
+        else
+            $(".inline-clear-all a").parent().parent().hide();
+
+        $(".popupfilterheading button").click();
+        // Load Filters
+        CatalogProducts.getProducts();
+    });
+
+    function manageSelectedFilterText(element, filterText, isAdd) {
+        var filterContent = element.text().split(",");
+        if (isAdd) {
+            filterContent.push(filterText);
+        }
+        else {
+            for (var i = 0; i < filterContent.length; i++) {
+
+                if (filterContent[i] === filterText) {
+                    filterContent.splice(i, 1);
+                }
+            }
+        }
+        var content = filterContent.join(",");
+        if (content != "") {
+            content = content.substring(1);
+        }
+        element.text(content);
+
+    }
+
+    $('body').on('click', '#ShowAllFilters', function (e) {
+ 
+        $('#filterModal').modal('show');
+    });
+  
+
+    // Call the comparison function
+  
+
+</script>
+
