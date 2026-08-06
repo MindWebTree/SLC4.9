@@ -1,0 +1,71 @@
+﻿@model CatalogProductsModel
+
+@if (!Model.PriceRangeFilter.Enabled &&
+!Model.SpecificationFilter.Enabled &&
+!Model.ManufacturerFilter.Enabled)
+{
+    return;
+}
+
+<div id="accordion" class="block product-filters accordion">
+    <div class="card mb-0">
+        @*sorting*@
+        @if (Model.AllowProductSorting)
+        {
+            <button type="button" class="filter-close d-sm-none"> <span class="navbar-toggler-icon close"></span> </button>
+
+            <div class="card-header collapsed accordian-filter-mobile d-sm-none sortsection" data-bs-toggle="collapse" href="#collapsesort">
+                <span class="card-title">
+                @T("Catalog.Category.OrderBy")  @(Model.AvailableSortOptions.Where(m => m.Selected).FirstOrDefault()==null? Model.AvailableSortOptions.FirstOrDefault()?.Text:Model.AvailableSortOptions.Where(m => m.Selected).FirstOrDefault().Text)</span>
+            </div>
+            <div id="collapsesort" class="card-body collapse">
+                <ul role="group">
+                    @foreach (var sortOption in @Model.AvailableSortOptions)
+                    {
+                        if (sortOption.Value!="-1"){
+                        <li role="presentation">
+                            <input type="radio" id="sort-@sortOption.Value" @(sortOption.Selected ? "checked" : "")
+                                   class="a11y-radio sort-radion-btn" name="sortfilters" value="@(sortOption.Text.Replace(" ","_"))">
+                            <label class="form-check-label" for="sort-@sortOption.Value">
+                                @sortOption.Text
+                            </label>
+                        </li>
+                        }
+                    }
+                </ul>
+            </div>
+
+            <script asp-location="Footer">
+                var sortByHeader = '@T("Catalog.Category.OrderBy")';
+                $(function () {
+                    $('.sort-radion-btn').change(function (e) {
+              
+                        $('#products-orderby').val($(this).val()).trigger('change');
+                        $(".sortsection a").html($("label[for='" + $(this).attr("id") + "']").html());
+                   
+                        $(".d-sm-none.sortsection").find(".card-title").html(sortByHeader + $("label[for='" + $(this).attr("id") + "']").html());
+            });
+                });
+            </script>
+        }
+
+        @if (Model.SpecificationFilter.Enabled)
+        {
+            @await Html.PartialAsync("_ParentFilterSpecsBox", Model.SpecificationFilter)
+        }
+        @*@if (Model.PriceRangeFilter.Enabled)
+            {
+                @await Html.PartialAsync("_FilterPriceBox", Model.PriceRangeFilter)
+            }
+
+            @if (Model.ManufacturerFilter.Enabled)
+            {
+                @await Html.PartialAsync("_FilterManufacturerBox", Model.ManufacturerFilter)
+            }*@
+            </div>
+
+            <div class="buttons">
+                <button type="button" class="btncancel">@T("Button.cancel")</button>
+                <button type="button" class="btnapply">@T("Button.Apply")</button>
+            </div>
+        </div>

@@ -1,7 +1,6 @@
 ﻿using MWT.Nop.Core.Domain.QA;
 using MWT.Plugin.Misc.MwtStorefront.Models.Catalog;
 using MWT.Plugin.Misc.MwtStorefront.Models.QA;
-using MWT.Plugin.Misc.MwtStorefront.Models.Seo;
 using Nop.Web.Models.Catalog;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Factories.QA

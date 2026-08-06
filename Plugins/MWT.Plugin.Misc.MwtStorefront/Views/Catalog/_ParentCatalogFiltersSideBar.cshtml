@@ -1,0 +1,23 @@
+﻿@model CatalogProductsModel
+
+@if (!Model.PriceRangeFilter.Enabled &&
+!Model.SpecificationFilter.Enabled &&
+!Model.ManufacturerFilter.Enabled)
+{
+    return;
+}
+
+<div id="accordion" class="block product-filters accordion">
+    <div class="card mb-0">
+        @*sorting*@
+
+
+        @if (Model.SpecificationFilter.Enabled)
+        {
+            @await Html.PartialAsync("_ParentFilterSpecsBox", Model.SpecificationFilter)
+        }
+    
+    </div>
+
+
+</div>

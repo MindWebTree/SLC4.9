@@ -11,7 +11,6 @@ using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.QA;
 using MWT.Plugin.Misc.MwtStorefront.Models.Catalog;
 using MWT.Plugin.Misc.MwtStorefront.Models.QA;
-using MWT.Plugin.Misc.MwtStorefront.Models.Seo;
 using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Domain.Catalog;
@@ -249,7 +248,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.QA
 
             // Get All Products Ids with specification Attributes
 
-            var productSpecificationAttribute = await _customproductService.SearchGetProductSpecificationAttributeAsync(
+            var productSpecificationAttribute = await _customproductService.CustomSearchGetProductSpecificationAttributeAsync(
                command.ViewAll == 1 ? 0 : command.PageNumber - 1,
                  command.ViewAll == 1 ? int.MaxValue : command.PageSize,
                   questionAnswerId: QuestionAnswer.Id,

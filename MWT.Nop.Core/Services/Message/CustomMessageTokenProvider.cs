@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using MWT.Nop.Core.Domain.PhoneOrder;
 using MWT.Nop.Core.Infrastructure;
+using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.Customers;
 using MWT.Nop.Core.Services.Media;
@@ -55,35 +56,35 @@ namespace MWT.Nop.Core.Services.Message
     public partial class CustomMessageTokenProvider : MessageTokenProvider, ICustomMessageTokenProvider
     {
         private readonly ICustomCustomerService _customCustomerService;
-        private readonly ICustomPictureService  _pictureService;
-        private readonly MediaSettings  _mediaSettings;
-        private readonly IHttpContextAccessor  _httpContextAccessor;
-        private readonly IWebHelper  _webHelper;
-        private readonly IVariantService _variantService;
+        private readonly ICustomPictureService _pictureService;
+        private readonly MediaSettings _mediaSettings;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IWebHelper _webHelper;
         private readonly ICustomProductAttributeFormatter _productAttributeFormatter;
         private readonly ICustomShoppingCartService _shoppingCartService;
+        private readonly ICustomProductService _customProductService;
         private readonly ITaxService _taxService;
         private readonly ICategoryService _categoryService;
         private readonly IEncryptionService _encryptionService;
-        public CustomMessageTokenProvider(CatalogSettings catalogSettings, CurrencySettings currencySettings, IActionContextAccessor actionContextAccessor, IAddressService addressService, IAttributeFormatter<AddressAttribute, 
-            AddressAttributeValue> addressAttributeFormatter, IAttributeFormatter<CustomerAttribute, CustomerAttributeValue> customerAttributeFormatter, IAttributeFormatter<VendorAttribute, VendorAttributeValue> vendorAttributeFormatter, IBlogService blogService, ICountryService countryService, ICurrencyService currencyService, ICustomerService customerService, IDateTimeHelper dateTimeHelper, IEventPublisher eventPublisher, IGenericAttributeService genericAttributeService, IGiftCardService giftCardService, IHtmlFormatter htmlFormatter, ILanguageService languageService, ILocalizationService localizationService, ILogger logger, INewsService newsService, IOrderService orderService, IPaymentPluginManager paymentPluginManager, IPaymentService paymentService, IPriceFormatter priceFormatter, IProductService productService, IRewardPointService rewardPointService, IShipmentService shipmentService, IStateProvinceService stateProvinceService, IStoreContext storeContext, IStoreService storeService, IUrlHelperFactory urlHelperFactory, IUrlRecordService urlRecordService, IWorkContext workContext, MessageTemplatesSettings templatesSettings, PaymentSettings paymentSettings, StoreInformationSettings storeInformationSettings, 
+        public CustomMessageTokenProvider(CatalogSettings catalogSettings, CurrencySettings currencySettings, IActionContextAccessor actionContextAccessor, IAddressService addressService, IAttributeFormatter<AddressAttribute,
+            AddressAttributeValue> addressAttributeFormatter, IAttributeFormatter<CustomerAttribute, CustomerAttributeValue> customerAttributeFormatter, IAttributeFormatter<VendorAttribute, VendorAttributeValue> vendorAttributeFormatter, IBlogService blogService, ICountryService countryService, ICurrencyService currencyService, ICustomerService customerService, IDateTimeHelper dateTimeHelper, IEventPublisher eventPublisher, IGenericAttributeService genericAttributeService, IGiftCardService giftCardService, IHtmlFormatter htmlFormatter, ILanguageService languageService, ILocalizationService localizationService, ILogger logger, INewsService newsService, IOrderService orderService, IPaymentPluginManager paymentPluginManager, IPaymentService paymentService, IPriceFormatter priceFormatter, IProductService productService, IRewardPointService rewardPointService, IShipmentService shipmentService, IStateProvinceService stateProvinceService, IStoreContext storeContext, IStoreService storeService, IUrlHelperFactory urlHelperFactory, IUrlRecordService urlRecordService, IWorkContext workContext, MessageTemplatesSettings templatesSettings, PaymentSettings paymentSettings, StoreInformationSettings storeInformationSettings,
             TaxSettings taxSettings, ICustomCustomerService customCustomerService,
-            ICustomPictureService pictureService , MediaSettings mediaSettings ,
-            IHttpContextAccessor httpContextAccessor , IWebHelper webHelper, IVariantService variantService,
+            ICustomPictureService pictureService, MediaSettings mediaSettings,
+            IHttpContextAccessor httpContextAccessor, IWebHelper webHelper,
             ICustomProductAttributeFormatter productAttributeFormatter, ICustomShoppingCartService shoppingCartService,
-            ITaxService taxService, ICategoryService categoryService, IEncryptionService encryptionService) : base(catalogSettings, currencySettings, actionContextAccessor, addressService, addressAttributeFormatter, customerAttributeFormatter, vendorAttributeFormatter, blogService, countryService, currencyService, customerService, dateTimeHelper, eventPublisher, genericAttributeService, giftCardService, htmlFormatter, languageService, localizationService, logger, newsService, orderService, paymentPluginManager, paymentService, priceFormatter, productService, rewardPointService, shipmentService, stateProvinceService, storeContext, storeService, urlHelperFactory, urlRecordService, workContext, templatesSettings, paymentSettings, storeInformationSettings, taxSettings)
+            ITaxService taxService, ICategoryService categoryService, IEncryptionService encryptionService, ICustomProductService customProductService) : base(catalogSettings, currencySettings, actionContextAccessor, addressService, addressAttributeFormatter, customerAttributeFormatter, vendorAttributeFormatter, blogService, countryService, currencyService, customerService, dateTimeHelper, eventPublisher, genericAttributeService, giftCardService, htmlFormatter, languageService, localizationService, logger, newsService, orderService, paymentPluginManager, paymentService, priceFormatter, productService, rewardPointService, shipmentService, stateProvinceService, storeContext, storeService, urlHelperFactory, urlRecordService, workContext, templatesSettings, paymentSettings, storeInformationSettings, taxSettings)
         {
             _customCustomerService = customCustomerService;
             _pictureService = pictureService;
             _mediaSettings = mediaSettings;
             _httpContextAccessor = httpContextAccessor;
             _webHelper = webHelper;
-            _variantService=variantService;
             _productAttributeFormatter = productAttributeFormatter;
             _shoppingCartService = shoppingCartService;
             _taxService = taxService;
             _categoryService = categoryService;
             _encryptionService = encryptionService;
+            _customProductService = customProductService;
         }
 
         #region Methods
@@ -93,7 +94,7 @@ namespace MWT.Nop.Core.Services.Message
             var customer = await _customerService.GetCustomerByIdAsync(order.CustomerId);
             //lambda expression for choosing correct order address
             async Task<Address> orderAddress(Order o) => await _addressService.GetAddressByIdAsync((o.PickupInStore ? o.PickupAddressId : o.ShippingAddressId) ?? 0);
-          
+
             var taxRates = _orderService.ParseTaxRates(order, order.TaxRates);
 
             var taxPercentage = _priceFormatter.FormatTaxRate(taxRates.Count > 0 ?
@@ -190,8 +191,8 @@ namespace MWT.Nop.Core.Services.Message
 
         public async Task AddStoreLogoToken(IList<Token> tokens)
         {
-         
-        
+
+
 
             var logo = string.Empty;
             var logoPictureId = _storeInformationSettings.LogoPictureId;
@@ -235,7 +236,7 @@ namespace MWT.Nop.Core.Services.Message
             tokens.Add(new Token("Customer.Username", customer.Username));
             tokens.Add(new Token("Customer.FullName", await _customerService.GetCustomerFullNameAsync(customer)));
             tokens.Add(new Token("Customer.FirstName", customer.FirstName));
-            tokens.Add(new Token("Customer.LastName", customer.LastName)); 
+            tokens.Add(new Token("Customer.LastName", customer.LastName));
             tokens.Add(new Token("Customer.VatNumber", customer.VatNumber));
             tokens.Add(new Token("Customer.VatNumberStatus", customer.VatNumberStatus));
             tokens.Add(new Token("Customer.CustomAttributes", await _customerAttributeFormatter.FormatAttributesAsync(customer.CustomCustomerAttributesXML), true));
@@ -288,7 +289,7 @@ namespace MWT.Nop.Core.Services.Message
         {
 
             var _order = new Order();
-         
+
             int billingAddressId = 0;
             int shippingAddressId = 0;
             var customer = new Customer();
@@ -557,8 +558,8 @@ namespace MWT.Nop.Core.Services.Message
 
             //            tokens.Add(new Token("Cart.Product.Link", prdurl));
             //            tokens.Add(new Token("Cart.Product.Name", string.IsNullOrWhiteSpace(variant?.Title) ? product.Name : variant.Title));
-                   
-                
+
+
             //            var picture = (await _pictureService.CustomGetPicturesOfProducAsync(product.Id, 1)).FirstOrDefault();
             //            string fullSizeImageUrl, imageUrl;
             //            (imageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, _mediaSettings.CategoryThumbPictureSize);
@@ -585,7 +586,7 @@ namespace MWT.Nop.Core.Services.Message
             //            }));
             //            tokens.Add(new Token("Cart.Product.Link", prdurl));
             //            tokens.Add(new Token("Cart.Product.Name", product.Name));
-                       
+
             //            var picture = (await _pictureService.CustomGetPicturesOfProducAsync(product.Id, 1)).FirstOrDefault();
             //            string fullSizeImageUrl, imageUrl;
             //            (imageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, _mediaSettings.CategoryThumbPictureSize);
@@ -666,7 +667,7 @@ namespace MWT.Nop.Core.Services.Message
         }
         protected virtual async Task<string> CustomCartProductListToHtmlTableAsync(IList<ShoppingCartItem> cart, int languageId)
         {
-           
+
             var sb = new StringBuilder();
             sb.AppendLine("<br><br><br>----------------Cart Details--------------<br><br><table style=\"border: 1px solid black\">");
             sb.AppendLine("<tbody><tr>");
@@ -684,7 +685,7 @@ namespace MWT.Nop.Core.Services.Message
                 sb.Append(await _productAttributeFormatter.CustomFormatAttributesAsync(product, item.AttributesXml));
                 sb.Append("</td>");
                 sb.Append($"<td style=\"border: 1px solid black\">{item.Quantity}</td>");
-                sb.Append($"<td style=\"border: 1px solid black\">{await _taxService.GetProductPriceAsync(product, 
+                sb.Append($"<td style=\"border: 1px solid black\">{await _taxService.GetProductPriceAsync(product,
                     (await _shoppingCartService.GetUnitPriceAsync(item, true)).unitPrice)}</td>");
                 sb.AppendLine("</tr>");
             }
@@ -747,7 +748,7 @@ namespace MWT.Nop.Core.Services.Message
         #region Purchase Journey
 
 
-        public async Task CustomAddPurchaseJourneyTokenAsync(IList<Token> tokens, Customer customer, List<Product> products, 
+        public async Task CustomAddPurchaseJourneyTokenAsync(IList<Token> tokens, Customer customer, List<Product> products,
             int productId, int categoryId, string templateType, string utm_params)
         {
 
@@ -801,7 +802,7 @@ namespace MWT.Nop.Core.Services.Message
             }
             if (categoryId > 0)
             {
-    
+
                 var category = await _categoryService.GetCategoryByIdAsync(categoryId);
                 if (category != null)
                 {
@@ -829,7 +830,7 @@ namespace MWT.Nop.Core.Services.Message
                 products = await products.Take(3).ToListAsync();
             }
             string html = "";
-           
+
 
             StringBuilder productRows = new StringBuilder();
 
@@ -883,7 +884,7 @@ namespace MWT.Nop.Core.Services.Message
             }
 
             string html = "";
-            
+
 
             StringBuilder productRows = new StringBuilder();
 
@@ -937,7 +938,7 @@ namespace MWT.Nop.Core.Services.Message
                 products = await products.Take(6).ToListAsync();
             }
             string html = "";
-            
+
 
             StringBuilder productRows = new StringBuilder();
             for (int i = 0; i < products.Count; i += 3)
@@ -1189,8 +1190,8 @@ namespace MWT.Nop.Core.Services.Message
 
 
 
-       
-      
+
+
 
             for (var i = 0; i <= table.Count - 1; i++)
             {
@@ -1226,8 +1227,8 @@ namespace MWT.Nop.Core.Services.Message
 
 
                 VariantCombination variant = new VariantCombination();
-                variant = await _variantService.GetItemVariantInfo(product.Id, orderItem.AttributesXml);
-                string prdName = string.IsNullOrWhiteSpace(variant?.Title) ? product.Name: variant.Title;
+                variant = await _customProductService.GetItemVariantInfo(product.Id, orderItem.AttributesXml);
+                string prdName = string.IsNullOrWhiteSpace(variant?.Title) ? product.Name : variant.Title;
 
                 var productName = "<p style=\"margin-bottom:0;\"><a href=\"" + prdurl + "\">" +
                     prdName + "</a>";
@@ -1235,7 +1236,7 @@ namespace MWT.Nop.Core.Services.Message
                 productName += $"<br/><b>SKU</b> : ({product.Sku})</p>";
 
                 //attributes
-            
+
                 var attributeDescription = string.IsNullOrEmpty(orderItem.AttributesXml) ? orderItem.AttributeDescription :
                     await _productAttributeFormatter.CustomFormatAttributesAsync(product, orderItem.AttributesXml);
                 Dictionary<string, string> attrs = new Dictionary<string, string>();
@@ -1266,7 +1267,7 @@ namespace MWT.Nop.Core.Services.Message
                 {
                     //Special Instructions
 
-                    sb.AppendLine($"<p><b>{await _localizationService.GetResourceAsync("Messages.Order.Product(s).SpecialInstructions", 
+                    sb.AppendLine($"<p><b>{await _localizationService.GetResourceAsync("Messages.Order.Product(s).SpecialInstructions",
                         languageId)}</b> {orderItem.SpecialInstructions}</p>");
                 }
                 sb.AppendLine("</div></div></div></div>");
@@ -2114,7 +2115,7 @@ namespace MWT.Nop.Core.Services.Message
         }
         public async Task<string> CustomLatestCartItemHtml(Product product, string cartLink, string utmSource)
         {
-           
+
             var picture = (await _pictureService.CustomGetPicturesOfProducAsync(product.Id, 1)).FirstOrDefault();
             string fullSizeImageUrl, imageUrl;
             (imageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, _mediaSettings.CategoryThumbPictureSize);
@@ -2127,7 +2128,7 @@ namespace MWT.Nop.Core.Services.Message
         public async Task<string> CustomAddRelatedProductHtml(List<Product> relatedProducts, string utmSource)
         {
             string html = "";
-            
+
 
             foreach (var product in relatedProducts)
             {

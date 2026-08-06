@@ -1,7 +1,10 @@
-﻿using MWT.Nop.Core.Domain.Zoho;
+﻿using Microsoft.AspNetCore.Http;
+using MWT.Nop.Core.Domain.Customers;
+using MWT.Nop.Core.Domain.Zoho;
 using MWT.Nop.Core.Infrastructure;
 using MWT.Nop.Core.Services.Customers;
 using MWT.Nop.Core.Services.IPLite;
+using MWT.Nop.Core.Services.Zoho;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nop.Core;
@@ -42,6 +45,7 @@ namespace MWT.Nop.Core.Service.Zoho
         private readonly IStoreContext _storeContext;
        // private readonly ICustomOrderService _customOrderService;
         private readonly IOrderService _orderService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         #endregion
 
@@ -51,7 +55,7 @@ namespace MWT.Nop.Core.Service.Zoho
              IAddressService addressService, ICountryService countryService,
         IStateProvinceService stateProvinceService, IGenericAttributeService genericAttributeService,
         IStoreContext storeContext,/* ICustomOrderService customOrderService*/
-         IOrderService orderService)
+         IOrderService orderService, IHttpContextAccessor httpContextAccessor)
         {
             _settingService = settingService;
             _localizationService = localizationService;
@@ -68,8 +72,8 @@ namespace MWT.Nop.Core.Service.Zoho
             _storeContext = storeContext;
          //   _customOrderService = customOrderService;
             _orderService = orderService;
+            _httpContextAccessor = httpContextAccessor;
         }
-
         #region Methods
         public async Task<string> SaveLead(ZohoDto zohoObj, string zohoLeadId)
         {
@@ -136,8 +140,17 @@ namespace MWT.Nop.Core.Service.Zoho
                     obj.Product_Name = removeSpecialCharacters(zohoObj.ProductName);
                 if (!string.IsNullOrEmpty(zohoObj.IPAddress))
                     obj.IP_Address = zohoObj.IPAddress;
-                if (!string.IsNullOrEmpty(zohoObj.GCLID))
-                    obj.gclid = zohoObj.GCLID;
+
+                if (zohoObj.customer != null)
+                {
+                    string gclid = await _genericAttributeService.GetAttributeAsync<string>(zohoObj.customer, CustomNopCustomerDefaults.GCLID);
+                    if (!string.IsNullOrEmpty(gclid))
+                        obj.gclid = gclid;
+
+                    string campaign = await _genericAttributeService.GetAttributeAsync<string>(zohoObj.customer, CustomNopCustomerDefaults.Campaign);
+                    if (!string.IsNullOrEmpty(campaign))
+                        obj.Ad_Campaign_Name = campaign;
+                }
 
                 if (!string.IsNullOrEmpty(zohoObj.Address))
                     obj.Address_Of_Customer = zohoObj.Address;
@@ -440,8 +453,9 @@ namespace MWT.Nop.Core.Service.Zoho
                 oZoho.Message = "";
                 if (ipAddress != null)
                     oZoho.IPAddress = ipAddress;
-                if (glclidCookie != null)
-                    oZoho.GCLID = glclidCookie;
+
+                if (customer != null)
+                    oZoho.customer = customer;
 
                 oZoho.LeadStatus = orderStatus;
                 if (isCustomOrder)
@@ -541,19 +555,20 @@ namespace MWT.Nop.Core.Service.Zoho
                 string leadCreationDate = null;
                 string leadClosingDate = null;
 
-                if (!string.Equals(zohoObj.LeadStatus, "Paid"))
-                {
-                    //var customOrder = await _customOrderService.GetById(orderNumber);
-                    //if (customOrder != null)
-                    //{
-                    //    leadCreationDate = ((DateTime)customOrder.CreatedOn).ToString("yyyy-MM-dd");
-                    //}
-                }
-                else
-                {
-                    leadClosingDate = (await _orderService.GetOrderByIdAsync(orderNumber))?.CreatedOnUtc.ToString("yyyy-MM-dd") ?? null;
+                // Need to confirm
+                //if (!string.Equals(zohoObj.LeadStatus, "Paid"))
+                //{
+                //    var customOrder = await _customOrderService.GetById(orderNumber);
+                //    if (customOrder != null)
+                //    {
+                //        leadCreationDate = ((DateTime)customOrder.CreatedOn).ToString("yyyy-MM-dd");
+                //    }
+                //}
+                //else
+                //{
+                //    leadClosingDate = (await _orderService.GetOrderByIdAsync(orderNumber))?.CreatedOnUtc.ToString("yyyy-MM-dd") ?? null;
 
-                }
+                //}
                 if (DateTime.Now.AddMinutes(10) >= _ExpiryDate)
                     await GetAuthenticationToken();
                 dynamic obj = new ExpandoObject();
@@ -648,8 +663,35 @@ namespace MWT.Nop.Core.Service.Zoho
                     obj.Product_Name = removeSpecialCharacters(zohoObj.ProductName);
                 if (!string.IsNullOrEmpty(zohoObj.IPAddress))
                     obj.IP_Address = zohoObj.IPAddress;
-                if (!string.IsNullOrEmpty(zohoObj.GCLID))
-                    obj.gclid = zohoObj.GCLID;
+
+
+                if (zohoObj.customer != null)
+                {
+                    string gclid = await _genericAttributeService.GetAttributeAsync<string>(zohoObj.customer, CustomNopCustomerDefaults.GCLID);
+                    if (!string.IsNullOrEmpty(gclid))
+                        obj.gclid = gclid;
+
+                    string campaign = await _genericAttributeService.GetAttributeAsync<string>(zohoObj.customer, CustomNopCustomerDefaults.Campaign);
+                    if (!string.IsNullOrEmpty(campaign))
+                        obj.Ad_Campaign_Name = campaign;
+                }
+
+                var campaignCookie = _httpContextAccessor?.HttpContext?.Request?.Cookies["nop.utm.utm_campaign"];
+                var campaignIdCookie = _httpContextAccessor?.HttpContext?.Request?.Cookies["nop.utm.gad_campaignid"];
+                var keywordCookie = _httpContextAccessor?.HttpContext?.Request?.Cookies["nop.utm.keyword"];
+
+                if (campaignCookie != null)
+                {
+                    obj.Ad_Campaign_Name = campaignCookie;
+                }
+                else
+                {
+                    if (campaignIdCookie != null)
+                        obj.Ad_Campaign_Name = campaignIdCookie;
+                }
+
+                if (keywordCookie != null)
+                    obj.Keyword = keywordCookie;
 
                 if (!string.IsNullOrEmpty(zohoObj.Address))
                     obj.Address_Of_Customer = zohoObj.Address;
@@ -747,8 +789,35 @@ namespace MWT.Nop.Core.Service.Zoho
                     obj.Product_Name = removeSpecialCharacters(zohoObj.ProductName);
                 if (!string.IsNullOrEmpty(zohoObj.IPAddress))
                     obj.IP_Address = zohoObj.IPAddress;
-                if (!string.IsNullOrEmpty(zohoObj.GCLID))
-                    obj.gclid = zohoObj.GCLID;
+
+                if (zohoObj.customer != null)
+                {
+                    string gclid = await _genericAttributeService.GetAttributeAsync<string>(zohoObj.customer, CustomNopCustomerDefaults.GCLID);
+                    if (!string.IsNullOrEmpty(gclid))
+                        obj.gclid = gclid;
+
+                    string campaign = await _genericAttributeService.GetAttributeAsync<string>(zohoObj.customer, CustomNopCustomerDefaults.Campaign);
+                    if (!string.IsNullOrEmpty(campaign))
+                        obj.Ad_Campaign_Name = campaign;
+                }
+
+
+                var campaignCookie = _httpContextAccessor?.HttpContext?.Request?.Cookies["nop.utm.utm_campaign"];
+                var campaignIdCookie = _httpContextAccessor?.HttpContext?.Request?.Cookies["nop.utm.gad_campaignid"];
+                var keywordCookie = _httpContextAccessor?.HttpContext?.Request?.Cookies["nop.utm.keyword"];
+
+                if (campaignCookie != null)
+                {
+                    obj.Ad_Campaign_Name = campaignCookie;
+                }
+                else
+                {
+                    if (campaignIdCookie != null)
+                        obj.Ad_Campaign_Name = campaignIdCookie;
+                }
+
+                if (keywordCookie != null)
+                    obj.Keyword = keywordCookie;
 
                 if (!string.IsNullOrEmpty(zohoObj.Address))
                     obj.Address_Of_Customer = zohoObj.Address;

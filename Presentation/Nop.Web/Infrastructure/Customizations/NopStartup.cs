@@ -45,10 +45,10 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<ICustomProductService, CustomProductService>();
             services.AddScoped<ICustomProductAttributeParser, CustomProductAttributeParser>();
             services.AddScoped<ICustomProductAttributeService, CustomProductAttributeService>();
-            services.AddScoped<IVariantService, VariantService>();
-            services.AddScoped<IStoreWideDiscountService, StoreWideDiscountService>();
-            services.AddScoped<ICustomizationFormSerivce, CustomizationFormSerivce>();
-            services.AddScoped<IFeedService, FeedService>();
+
+            services.AddScoped<IStoreWideDiscountService,StoreWideDiscountService>();
+            services.AddScoped<ICustomizationFormSerivce,CustomizationFormSerivce>();
+            services.AddScoped<IFeedService,FeedService>();
             services.AddScoped<ICustomSpecificationAttributeService, CustomSpecificationAttributeService>();
             services.AddScoped<ICustomPictureService, CustomPictureService>();
             services.AddScoped<ICustomShoppingCartService, CustomShoppingCartService>();
