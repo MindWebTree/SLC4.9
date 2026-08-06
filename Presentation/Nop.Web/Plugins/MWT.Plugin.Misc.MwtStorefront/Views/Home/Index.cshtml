@@ -65,6 +65,8 @@
             </div>
         }
         <div class="@(isHome ? "container-fluid p-0" : "")">
+
+            @await Component.InvokeAsync("FaqBlock", new { entityId = 1265, entityType = "Product" })
             @await Component.InvokeAsync(typeof(TopicBlockViewComponent), new { systemName = "HomepageText" })
             @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HomepageBeforeCategories })
             @await Component.InvokeAsync("CustomHomepageCategories")
@@ -97,7 +99,6 @@
             @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "HomePage.Customization.Section" })
 
             @await Component.InvokeAsync("Custom_RecentlyViewedProductsBlock")
-
             @*             @await Component.InvokeAsync(typeof(HomepageProductsViewComponent))
             @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HomepageBeforeBestSellers }) *@ 
             @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HomepageBottom })

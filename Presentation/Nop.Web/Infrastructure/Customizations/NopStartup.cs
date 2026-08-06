@@ -3,6 +3,7 @@ using MWT.Nop.Core.Service;
 using MWT.Nop.Core.Service.Campaign_Management;
 using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Core.Service.Discount;
+using MWT.Nop.Core.Service.FAQModule;
 using MWT.Nop.Core.Service.Zoho;
 using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.CategoryCollection;
@@ -34,20 +35,20 @@ namespace Nop.Web.Infrastructure.Customizations
 
         public void Configure(IApplicationBuilder application)
         {
- 
+
         }
 
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<ViewComponentRenderHelper>();
-            services.AddScoped<ISearchLogService,SearchLogService>();
+            services.AddScoped<ISearchLogService, SearchLogService>();
             services.AddScoped<ICustomProductService, CustomProductService>();
             services.AddScoped<ICustomProductAttributeParser, CustomProductAttributeParser>();
             services.AddScoped<ICustomProductAttributeService, CustomProductAttributeService>();
             services.AddScoped<IVariantService, VariantService>();
-            services.AddScoped<IStoreWideDiscountService,StoreWideDiscountService>();
-            services.AddScoped<ICustomizationFormSerivce,CustomizationFormSerivce>();
-            services.AddScoped<IFeedService,FeedService>();
+            services.AddScoped<IStoreWideDiscountService, StoreWideDiscountService>();
+            services.AddScoped<ICustomizationFormSerivce, CustomizationFormSerivce>();
+            services.AddScoped<IFeedService, FeedService>();
             services.AddScoped<ICustomSpecificationAttributeService, CustomSpecificationAttributeService>();
             services.AddScoped<ICustomPictureService, CustomPictureService>();
             services.AddScoped<ICustomShoppingCartService, CustomShoppingCartService>();
@@ -100,8 +101,18 @@ namespace Nop.Web.Infrastructure.Customizations
             #region  Zoho
 
             services.AddScoped<IZohoService, ZohoService>();
-            
+
             #endregion
+
+            #region Faq
+            services.AddScoped<IFaqService, FaqService>();
+
+            #endregion
+            #region NewsLetter
+
+            services.AddScoped<ICustomNewsLetterSubscriptionService, CustomNewsLetterSubscriptionService>();
+            #endregion
+
         }
 
     }

@@ -117,7 +117,7 @@ public partial class AdminMenu : IAdminMenu
                         {
                             SystemName = "Question Answer",
                             Title = await _localizationService.GetResourceAsync("Admin.Catalog.QuestionAnswer"),
-                            PermissionNames = new List<string> { StandardPermission.Catalog.CATEGORIES_VIEW },
+                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_QA_VIEW},
                             Url = GetMenuItemUrl("QuestionAnswer", "List"),
                             IconClass = "far fa-dot-circle"
                         },
@@ -129,6 +129,7 @@ public partial class AdminMenu : IAdminMenu
                             Url = GetMenuItemUrl("LandingPage", "List"),
                             IconClass = "far fa-dot-circle"
                         },
+
                         new()
                         {
                             SystemName = "Manufacturers",
@@ -1003,13 +1004,14 @@ public partial class AdminMenu : IAdminMenu
                     SystemName = "Utilities",
                     Title = await _localizationService.GetResourceAsync("Admin.Utilities"),
                     IconClass = "fas fa-chart-line",
+                    PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES},
                     ChildNodes = new List<AdminMenuItem>
                     {
                         new()
                         {
                             SystemName = "Testimonials",
                             Title = await _localizationService.GetResourceAsync("Admin.Utilities.Testimonials"),
-                            PermissionNames = new List<string> { StandardPermission.Orders.ORDERS_VIEW},
+                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES},
                             Url = GetMenuItemUrl("Utilities", "Testimonials"),
                             IconClass = "far fa-dot-circle"
                         } ,
@@ -1017,10 +1019,18 @@ public partial class AdminMenu : IAdminMenu
                         {
                             SystemName = "Custom Forms",
                             Title = await _localizationService.GetResourceAsync("Admin.Utilities.CustomForms"),
-                            PermissionNames = new List<string> { StandardPermission.Orders.ORDERS_VIEW},
+                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES},
                             Url = GetMenuItemUrl("CustomForm", "Index"),
                             IconClass = "far fa-dot-circle"
-                        }
+                        },
+                          new()
+                        {
+                            SystemName = "Campaign Management",
+                            Title = await _localizationService.GetResourceAsync("Admin.Catalog.CampaignManagement"),
+                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES },
+                            Url = GetMenuItemUrl("CampaignManagement", "List"),
+                            IconClass = "far fa-dot-circle"
+                        },
                     }
                 },
                 //help

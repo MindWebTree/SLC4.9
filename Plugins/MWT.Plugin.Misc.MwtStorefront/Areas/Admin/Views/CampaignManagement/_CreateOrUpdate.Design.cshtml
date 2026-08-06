@@ -1,0 +1,72 @@
+@model  CampaignCreateModel
+<div class="card-body">
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="@Model.CampaignDeviceType" />
+        </div>
+        <div class="col-md-9">
+            <select class="form-control" asp-items="@Model.DeviceTypes.Where(s=>s.Value=="1" || s.Value=="3").ToList()" asp-for="@Model.CampaignDeviceType"></select>
+            <span asp-validation-for="@Model.CampaignDeviceType"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="@Model.TemplateDesign" />
+        </div>
+        <div class="col-md-9">
+            <nop-editor asp-for="@Model.TemplateDesign" asp-template="RichEditor" />
+            <span asp-validation-for="@Model.TemplateDesign"></span>
+        </div>
+    </div>
+
+
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="@Model.ResponseTemplateDesign" />
+        </div>
+        <div class="col-md-9">
+            <nop-editor asp-for="@Model.ResponseTemplateDesign" asp-template="RichEditor" />
+            <span asp-validation-for="@Model.ResponseTemplateDesign"></span>
+        </div>
+    </div>
+
+    <h1>@T("CampaignManagement.Events.heading")</h1>
+
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="@Model.SubmitButtonClick" />
+        </div>
+        <div class="col-md-9">
+            <nop-textarea asp-for="@Model.SubmitButtonClick" />
+            <span asp-validation-for="@Model.SubmitButtonClick"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="@Model.CloseButtonClick" />
+        </div>
+        <div class="col-md-9">
+            <nop-textarea asp-for="@Model.CloseButtonClick" />
+            <span asp-validation-for="@Model.CloseButtonClick"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="@Model.ResponseCloseButtonClick" />
+        </div>
+        <div class="col-md-9">
+            <nop-textarea asp-for="@Model.ResponseCloseButtonClick" />
+            <span asp-validation-for="@Model.ResponseCloseButtonClick"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="@Model.EmailTextBoxClick" />
+        </div>
+        <div class="col-md-9">
+            <nop-textarea asp-for="@Model.EmailTextBoxClick" />
+            <span asp-validation-for="@Model.EmailTextBoxClick"></span>
+        </div>
+    </div>
+</div>

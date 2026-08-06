@@ -16,7 +16,7 @@
 
     <script>
         var defaultSearchSuggestions = '[]';
-            var defaultSearchSuggestions = '[]'@(await Component.InvokeAsync("SearchDefaultAutoComplete"));
+            // var defaultSearchSuggestions = '[]'@(await Component.InvokeAsync("SearchDefaultAutoComplete"));
         defaultSearchSuggestions = defaultSearchSuggestions.replaceAll("\&quot;", "\"");
         defaultSearchSuggestions = defaultSearchSuggestions.replaceAll("double-quot", "\\\"");
         defaultSearchSuggestions = JSON.parse(defaultSearchSuggestions);

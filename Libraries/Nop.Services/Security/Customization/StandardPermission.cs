@@ -15,7 +15,10 @@ public partial class StandardPermission
         public const string CUSTOM_QA_PRODUCTS_CREATE_EDIT_DELETE = $"{nameof(Catalog)}.QAProductsCreateEditDelete";
         public const string CUSTOM_FORM_VIEW = $"{nameof(CustomPermission)}.FORMView";
         public const string CUSTOM_FORM_CREATE_EDIT_DELETE = $"{nameof(CustomPermission)}.FORMCreateEditDelete";
-        
+         
+        public const string CUSTOM_FAQ_CATEGORY_ACCESS= $"{nameof(CustomPermission)}.FAQCategoryAccess";
+        public const string CUSTOM_FAQ_PRODUCT_ACCESS= $"{nameof(CustomPermission)}.FAQProductAccess";
+        public const string CUSTOM_ACCESS_UTILITITES = $"{nameof(CustomPermission)}.AccessUtilities";
 
 
     }

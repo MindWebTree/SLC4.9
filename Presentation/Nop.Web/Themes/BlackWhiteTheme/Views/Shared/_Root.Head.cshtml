@@ -34,6 +34,7 @@
     NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/public.common.js");
     NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/common.js?ver48");
     NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/home.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/campaignassets/js/apicall.js?ver=7", string.Empty, false);
     //when jQuery migrate script logging is active you will see the log in the browser console
     if (commonSettings.JqueryMigrateScriptLoggingActive)
     {
@@ -71,6 +72,30 @@
     <meta name="keywords" content="@keywords" />
     <meta name="generator" content="nopCommerce" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+         function generateUUID() {
+            const bytes = new Uint8Array(16);
+            crypto.getRandomValues(bytes);
+
+            bytes[6] = (bytes[6] & 0x0f) | 0x40; // version 4
+            bytes[8] = (bytes[8] & 0x3f) | 0x80; // variant
+
+            const hex = [...bytes].map(b => b.toString(16).padStart(2, '0'));
+
+            return `${hex[0]}${hex[1]}${hex[2]}${hex[3]}-` +
+                `${hex[4]}${hex[5]}-` +
+                `${hex[6]}${hex[7]}-` +
+                `${hex[8]}${hex[9]}-` +
+                `${hex[10]}${hex[11]}${hex[12]}${hex[13]}${hex[14]}${hex[15]}`;
+        }
+        window.ContentEvent_Id = window.Event_Id = generateUUID();
+        window.dataLayer = window.dataLayer || [];
+        dataLayer.push({
+            'Event_Id': window.Event_Id,
+            'ContentEvent_Id': window.Event_Id
+        });
+
+    </script>
     @NopHtml.GenerateHeadCustom()
     @*This is used so that themes can inject content into the header*@
     @await Html.PartialAsync("Head")

@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using MWT.Nop.Core.Domain;
-using MWT.Nop.Core.Domain.Catalog;
+using MWT.Nop.Core.Domain.Custom.Campaign_Management;
 using MWT.Nop.Core.Domain.Custom.LandingPage_Management;
 using MWT.Nop.Core.Domain.QA;
-using MWT.Nop.Core.Domain.StoreWideDiscount;
 using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Models.Catalog.LandingPage_Management;
 using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models;
+using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Campaign_Management;
 using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.QA;
 using Nop.Core.Infrastructure.Mapper;
 
@@ -19,7 +19,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Infrastructure
         public CustomMapperConfiguration()
         {
             CreateCustomFormMaps();
-            //CreateCampaignManagemenMap();
+            CreateCampaignManagemenMap();
             //CreateProductMap();
 
             //CreateStoreWideDiscountMap();
@@ -65,11 +65,11 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Infrastructure
         //.ForMember(model => model.PictureUrl, options => options.Ignore());
 
         //     }
-        //     public virtual void CreateCampaignManagemenMap()
-        //     {
-        //         CreateMap<MWT_CampaignTemplates, DesignModel>();
-        //         CreateMap<DesignModel, MWT_CampaignTemplates>();
-        //     }
+        public virtual void CreateCampaignManagemenMap()
+        {
+            CreateMap<MWT_CampaignTemplates, DesignModel>();
+            CreateMap<DesignModel, MWT_CampaignTemplates>();
+        }
 
         //     public virtual void CreateKwtermMap()
         //     {
