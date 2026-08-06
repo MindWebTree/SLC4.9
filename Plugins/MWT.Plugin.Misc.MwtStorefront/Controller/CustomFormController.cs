@@ -8,6 +8,7 @@ using MWT.Nop.Core.Services.Custom;
 using MWT.Nop.Core.Services.MailChimp;
 using MWT.Nop.Core.Services.Message;
 using MWT.Nop.Core.Services.Shared;
+using MWT.Nop.Core.Services.Zoho;
 using MWT.Plugin.Misc.MwtStorefront.Models.Custom;
 using Nop.Core;
 using Nop.Core.Domain.Logging;
@@ -79,7 +80,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                 var formId = 0;
                 try
                 {
-
+                    var _localizationService = EngineContext.Current.Resolve<ILocalizationService>();
 
                     foreach (var formKey in form.Keys)
                         if (formKey.Equals("customform_id", StringComparison.InvariantCultureIgnoreCase))
@@ -96,7 +97,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                     {
 
 
-
+                        var _customFormService = EngineContext.Current.Resolve<ICustomFormService>();
                         var customform = await _customFormService.GetCustomformById(formId);
                         if (customform == null)
                             model.ErrorMessage = await _localizationService.GetResourceAsync("Customform.NotFound");
@@ -104,6 +105,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
 
                         else
                         {
+                            var _settingService = EngineContext.Current.Resolve<ISettingService>();
                             int uploadMaxSize = await _settingService.GetSettingByKeyAsync<int>("Customizationform.UploadMaxSize");
                             var allowedTypes = new[] { "image/jpeg", "image/png", "image/gif", "image/webp" };
                             bool newsLetterSubscribed = false;
@@ -166,7 +168,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                             foreach (var file in form.Files)
                             {
                                 string fileName = Guid.NewGuid().ToString() + "-" + file.FileName;
-
+                                INopFileProvider _nopFileProvider = EngineContext.Current.Resolve<INopFileProvider>();
                                 string filePath = Path.Combine(_nopFileProvider.MapPath("/wwwroot/images/customform/"),
                                   fileName);
                                 using (Stream fileStream = new FileStream(filePath, FileMode.Create))
@@ -205,12 +207,13 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
 
                             #region Email
 
+
                             string subject = "";
                             string emailContent = "";
 
                             if (!string.IsNullOrEmpty(customform.Body))
                             {
-                                emailContent =await this._commonService.ReplaceTokens(customform.Body, tokens);
+                                emailContent = await this._commonService.ReplaceTokens(customform.Body, tokens);
                                 subject = await this._commonService.ReplaceTokens(customform.Subject, tokens);
                                 await _workflowMessageService.SendCustomFormMessageAsync((await _workContext.GetWorkingLanguageAsync()).Id, "", "",
                                        String.IsNullOrEmpty(customform.BccEmailAddresses) ? "" : customform.BccEmailAddresses, subject, emailContent);
@@ -244,21 +247,21 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                             {
                                 if (string.IsNullOrEmpty(customerEmailAddress))
                                 {
-
+                                    var _logger = EngineContext.Current.Resolve<ILogger>();
                                     await _logger.InsertLogAsync(LogLevel.Error, "Failed to add user Under NewsLetter  for  form  " + formId,
                                         "Logic failed to find Email Address of Customer");
                                 }
                                 else
                                 {
 
-
-
+                                    var mailchimpService = EngineContext.Current.Resolve<IMailchimpService>();
+                                    var _httpContextAccessor = EngineContext.Current.Resolve<IHttpContextAccessor>();
                                     string url = _httpContextAccessor.HttpContext?.Request.Headers["Referer"];
                                     string absoluteUrl = _httpContextAccessor.HttpContext?.Request.Headers["Referer"];
                                     string userAgent = _httpContextAccessor.HttpContext?.Request.Headers["User-Agent"];
                                     List<string> tags = new List<string>();
                                     tags.Add("Leads");
-                                    await _mailchimpService.CartOperation(customerEmailAddress, name, customform.FormName, tags, url, userAgent, "", "");
+                                    await mailchimpService.CartOperation(customerEmailAddress, name, customform.FormName, tags, url, userAgent, "", "");
 
 
                                     //await _iNewsLetterSubscriptionService.InsertNewsLetterSubscriptionAsync(new Core.Domain.Messages.NewsLetterSubscription()
@@ -283,6 +286,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
 
                             try
                             {
+                                var _zohoService = EngineContext.Current.Resolve<IZohoService>();
                                 StringBuilder sbZohoDescription = new StringBuilder();
                                 ZohoDto oZoho = new ZohoDto();
                                 oZoho.FirstName = oZoho.FullName = name;
@@ -313,9 +317,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                                 oZoho.ZipCode = " - ";
                                 oZoho.Description = Convert.ToString(sbZohoDescription);
                                 oZoho.IPAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
-                                var glclidCookie = Request.Cookies["gclid"];
-                                if (glclidCookie != null)
-                                    oZoho.GCLID = glclidCookie;
+                                oZoho.customer = await _workContext.GetCurrentCustomerAsync();
                                 await _zohoService.SaveLead(oZoho);
                             }
                             catch
@@ -340,7 +342,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                 }
                 catch (Exception exp)
                 {
-
+                    var _logger = EngineContext.Current.Resolve<ILogger>();
                     await _logger.InsertLogAsync(LogLevel.Error, "Error Happened in Custom form Submission, Form Id " + formId,
                         exp.Message);
                     model.ErrorMessage = await _localizationService.GetResourceAsync("Customform.Common.ExceptionMessage");

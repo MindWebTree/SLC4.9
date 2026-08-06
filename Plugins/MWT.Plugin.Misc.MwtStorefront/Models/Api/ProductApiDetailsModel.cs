@@ -4,7 +4,7 @@ using Nop.Core.Domain.Catalog;
 using Nop.Web.Framework.Models;
 
 
-namespace MWT.Plugin.Misc.MwtStorefront.Models.ProductApi
+namespace MWT.Plugin.Misc.MwtStorefront.Models.Api
 {
     public partial record ProductApiDetailsModel : BaseNopEntityModel
     {

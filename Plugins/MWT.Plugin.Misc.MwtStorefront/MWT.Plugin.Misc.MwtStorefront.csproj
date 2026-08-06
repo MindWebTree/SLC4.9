@@ -65,6 +65,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Factories\Api\" />
+	  <Folder Include="Models\Seo\" />
 	</ItemGroup>
 
 	<ItemGroup>

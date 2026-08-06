@@ -27,7 +27,6 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Infrastructure
             services.AddScoped<ViewComponentRenderHelper>();
             services.AddScoped<ICustomCatalogModelFactory,CustomCatalogModelFactory>();
             services.AddScoped<ICustomProductModelFactory, CustomProductModelFactory>();
-            services.AddScoped<IVariantModelFactory, VariantModelFactory>(); 
             services.AddScoped<IQuestionAnswerModelFactory, QuestionAnswerModelFactory>(); 
             services.AddScoped<ILandingPageModelFactory, LandingPageModelFactory>();
             services.AddScoped<ICustomTopicModelFactory, CustomTopicModelFactory>();

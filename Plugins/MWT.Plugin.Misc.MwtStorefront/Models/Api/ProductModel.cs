@@ -1,4 +1,5 @@
-﻿using Nop.Core.Domain.Catalog;
+﻿using MWT.Plugin.Misc.MwtStorefront.Models.Media;
+using Nop.Core.Domain.Catalog;
 using Nop.Web.Areas.Admin.Models.Catalog;
 using Nop.Web.Framework.Models;
 using Nop.Web.Models.Catalog;
@@ -8,20 +9,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MWT.Plugin.Misc.MwtStorefront.Models.ProductApi
+namespace MWT.Plugin.Misc.MwtStorefront.Models.Api
 {
     public partial record ProductModel : BaseNopEntityModel
     {
         public ProductModel()
         {
-            PictureModels = new List<ProductPictureModel>();
+            PictureModels = new List<CustomPictureModel>();
             ProductPrice = new ProductPriceModel();
             Specifications = new List<CustomProductSpecificationModel>();
             RelatedProducts = new List<string>();
         }
 
         //picture(s)
-        public IList<ProductPictureModel> PictureModels { get; set; }
+        public IList<CustomPictureModel> PictureModels { get; set; }
         public string Name { get; set; }
         public string ShortDescription { get; set; }
         public string FullDescription { get; set; }

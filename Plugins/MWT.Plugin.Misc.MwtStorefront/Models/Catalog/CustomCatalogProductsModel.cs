@@ -6,11 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MWT.Plugin.Misc.MwtStorefront.Models.Seo
+namespace MWT.Plugin.Misc.MwtStorefront.Models.Catalog
 {
     public record class CustomCatalogProductsModel: CatalogProductsModel
     {
         public new IList<CustomProductOverviewModel> Products = new List<CustomProductOverviewModel>();
+        public new CustomSpecificationFilterModel SpecificationFilter { get; set; }
         public int defaultPageSize { get; set; }
         public string CategoryName { get; set; }
         public string Sename { get; set; }

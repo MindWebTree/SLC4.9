@@ -35,13 +35,23 @@ namespace MWT.Nop.Core.Services.Catalog
     {
         private readonly ICustomSpecificationAttributeService _customSpecificationAttributeService;
         private readonly ICustomProductAttributeFormatter _customProductAttributeFormatter;
-        private readonly IVariantService _variantService;
+        private readonly ICustomProductService _customProductService;
 
-        public CustomShoppingCartService(CatalogSettings catalogSettings, IAclService aclService, IActionContextAccessor actionContextAccessor, IAttributeParser<CheckoutAttribute, CheckoutAttributeValue> checkoutAttributeParser, IAttributeService<CheckoutAttribute, CheckoutAttributeValue> checkoutAttributeService, ICurrencyService currencyService, ICustomerService customerService, IDateRangeService dateRangeService, IDateTimeHelper dateTimeHelper, IEventPublisher eventPublisher, IGenericAttributeService genericAttributeService, IGiftCardService giftCardService, ILocalizationService localizationService, IPermissionService permissionService, IPriceCalculationService priceCalculationService, IPriceFormatter priceFormatter, IProductAttributeParser productAttributeParser, IProductAttributeService productAttributeService, IProductService productService, IRepository<ShoppingCartItem> sciRepository, IShippingService shippingService, IShortTermCacheManager shortTermCacheManager, IStaticCacheManager staticCacheManager, IStoreContext storeContext, IStoreService storeService, IStoreMappingService storeMappingService, IUrlHelperFactory urlHelperFactory, IUrlRecordService urlRecordService, IWorkContext workContext, OrderSettings orderSettings, ShoppingCartSettings shoppingCartSettings, ICustomSpecificationAttributeService customSpecificationAttributeService, ICustomProductAttributeFormatter customProductAttributeFormatter, IVariantService variantService) : base(catalogSettings, aclService, actionContextAccessor, checkoutAttributeParser, checkoutAttributeService, currencyService, customerService, dateRangeService, dateTimeHelper, eventPublisher, genericAttributeService, giftCardService, localizationService, permissionService, priceCalculationService, priceFormatter, productAttributeParser, productAttributeService, productService, sciRepository, shippingService, shortTermCacheManager, staticCacheManager, storeContext, storeService, storeMappingService, urlHelperFactory, urlRecordService, workContext, orderSettings, shoppingCartSettings)
+        public CustomShoppingCartService(CatalogSettings catalogSettings, IAclService aclService, IActionContextAccessor actionContextAccessor, IAttributeParser<CheckoutAttribute,
+            CheckoutAttributeValue> checkoutAttributeParser, IAttributeService<CheckoutAttribute, CheckoutAttributeValue> checkoutAttributeService,
+            ICurrencyService currencyService, ICustomerService customerService, IDateRangeService dateRangeService, 
+            IDateTimeHelper dateTimeHelper, IEventPublisher eventPublisher, IGenericAttributeService genericAttributeService, 
+            IGiftCardService giftCardService, ILocalizationService localizationService, IPermissionService permissionService, IPriceCalculationService priceCalculationService,
+            IPriceFormatter priceFormatter, IProductAttributeParser productAttributeParser, IProductAttributeService productAttributeService, IProductService productService, 
+            IRepository<ShoppingCartItem> sciRepository, IShippingService shippingService, IShortTermCacheManager shortTermCacheManager, IStaticCacheManager staticCacheManager, 
+            IStoreContext storeContext, IStoreService storeService, IStoreMappingService storeMappingService, IUrlHelperFactory urlHelperFactory, IUrlRecordService urlRecordService, 
+            IWorkContext workContext, OrderSettings orderSettings, ShoppingCartSettings shoppingCartSettings, ICustomSpecificationAttributeService customSpecificationAttributeService,
+            ICustomProductAttributeFormatter customProductAttributeFormatter, ICustomProductService customProductService) : base(catalogSettings, aclService, actionContextAccessor, checkoutAttributeParser, 
+                checkoutAttributeService, currencyService, customerService, dateRangeService, dateTimeHelper, eventPublisher, genericAttributeService, giftCardService, localizationService, permissionService, priceCalculationService, priceFormatter, productAttributeParser, productAttributeService, productService, sciRepository, shippingService, shortTermCacheManager, staticCacheManager, storeContext, storeService, storeMappingService, urlHelperFactory, urlRecordService, workContext, orderSettings, shoppingCartSettings)
         {
             _customSpecificationAttributeService = customSpecificationAttributeService;
             _customProductAttributeFormatter = customProductAttributeFormatter;
-            _variantService = variantService;
+            _customProductService = customProductService;
         }
 
         public virtual async Task<(decimal unitPrice, decimal oldPrice, decimal msrp, decimal discountAmount, List<Discount> appliedDiscounts)> GetCustomUnitPriceAsync(Product product,
@@ -575,10 +585,10 @@ bool includeDiscounts)
                 foreach (var item in cart)
                 {
                     string attributeDescription = await _customProductAttributeFormatter.CustomFormatAttributesAsync(await _productService.GetProductByIdAsync(item.ProductId), item.AttributesXml);
-                    int variantId = await _variantService.GetVariantId(item.ProductId, attributeDescription);
+                    int variantId = await _customProductService.GetVariantId(item.ProductId, attributeDescription);
                     if (variantId > 0)
                     {
-                        var variantCombination = await _variantService.GetProductVariants(item.ProductId);
+                        var variantCombination = await _customProductService.GetProductVariants(item.ProductId);
                         if ((variantCombination.Where(v => v.VariantId == variantId).FirstOrDefault()?.EnableSurcharge ?? false))
                         {
                             wgsSurchargeApplicable = true;

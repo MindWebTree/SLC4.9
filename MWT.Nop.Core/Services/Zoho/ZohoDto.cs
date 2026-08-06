@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Nop.Core.Domain.Customers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MWT.Nop.Core.Domain.Zoho
+namespace MWT.Nop.Core.Services.Zoho
 {
     public partial class ZohoDto
     {
@@ -28,11 +29,10 @@ namespace MWT.Nop.Core.Domain.Zoho
         public string Message { get; set; }
         public string Description { get; set; }
         public string IPAddress { get; set; }
-
         public string Address { get; set; }
-        public string GCLID { get; set; }
         public string Attachments { get; set; }
         public string LeadStatus { get; set; }
         public decimal Total { get; set; }
+        public Customer customer { get; set; }
     }
 }

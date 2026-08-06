@@ -1,4 +1,5 @@
-﻿using Nop.Web.Framework.Mvc.ModelBinding;
+﻿using MWT.Plugin.Misc.MwtStorefront.Models.Media;
+using Nop.Web.Framework.Mvc.ModelBinding;
 using Nop.Web.Models.Catalog;
 using Nop.Web.Models.Media;
 using System.Collections.Generic;
@@ -40,7 +41,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Models.Catalog
         public ProductSpecificationModel ProductSpecificationModel { get; set; }
 
         public PictureModel DefaultPictureModel { get; set; }
-        public IList<PictureModel> PictureModels { get; set; }
+        public IList<CustomPictureModel> PictureModels { get; set; }
 
         public string DefaultPicture { get; set; }
         public string ProductName { get; set; }

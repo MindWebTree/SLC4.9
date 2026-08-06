@@ -155,13 +155,10 @@ namespace MWT.Plugin.Misc.MwtStorefront.Models.Catalog
         public List<VariantCombination> Variants { get; set; } = new();
         public List<List<int>> AllCombinations { get; set; } = new List<List<int>>();
         public bool EnableConditionalAttributes { get; set; }
+        public bool IsBundleProduct { get; set; }
+        public bool DisplayBundleConfiguration { get; set; }
 
         #region Nested Classes
-
-
-
-
-
         public record ProductPriceModel : BaseNopModel
         {
             /// <summary>
@@ -227,9 +224,6 @@ namespace MWT.Plugin.Misc.MwtStorefront.Models.Catalog
             public DateTime? SaleEndDate { get; set; }
         }
 
-
-
-       
         public record ProductAttributeModel : BaseNopEntityModel
         {
             public ProductAttributeModel()
@@ -325,7 +319,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Models.Catalog
             public bool Hide { get; set; }
         }
 
- 
+
 
         #endregion
     }

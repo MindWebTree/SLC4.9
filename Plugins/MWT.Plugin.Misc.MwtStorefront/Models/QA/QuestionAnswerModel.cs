@@ -1,4 +1,4 @@
-﻿using MWT.Plugin.Misc.MwtStorefront.Models.Seo;
+﻿using MWT.Plugin.Misc.MwtStorefront.Models.Catalog;
 using Nop.Web.Framework.Models;
 using Nop.Web.Models.Catalog;
 using Nop.Web.Models.Media;
