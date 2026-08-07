@@ -21,6 +21,7 @@ using MWT.Nop.Core.Services.Manage;
 using MWT.Nop.Core.Services.Mandrill;
 using MWT.Nop.Core.Services.Media;
 using MWT.Nop.Core.Services.Message;
+using MWT.Nop.Core.Services.Orders;
 using MWT.Nop.Core.Services.QA;
 using MWT.Nop.Core.Services.QuickFilters;
 using MWT.Nop.Core.Services.Search;
@@ -54,7 +55,7 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<IFeedService, FeedService>();
             services.AddScoped<ICustomSpecificationAttributeService, CustomSpecificationAttributeService>();
             services.AddScoped<ICustomPictureService, CustomPictureService>();
-            services.AddScoped<ICustomShoppingCartService, CustomShoppingCartService>();
+            services.AddScoped<IShoppingCartExtendedCartService, ShoppingCartExtendedCartService>();
             services.AddScoped<ICustomProductAttributeFormatter, CustomProductAttributeFormatter>();
             services.AddScoped<IGroupedProductConfigurationService, GroupedProductConfigurationService>();
             services.AddScoped<IKwTermService, KwTermService>();

@@ -17,6 +17,7 @@ using Nop.Services.Security;
 using Nop.Services.Seo;
 using Nop.Web.Controllers;
 using Nop.Web.Framework;
+using Nop.Web.Framework.Mvc.Filters;
 using System.Text.RegularExpressions;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Controllers
@@ -57,6 +58,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
             this._permissionService = permissionService;
             this._customerActivityService = customerActivityService;
         }
+
+        [SaveLastContinueShoppingPage]
         public virtual async Task<IActionResult> Index(string SeName)
         {
             var urlRecord = await _urlRecordService.GetByLandingPageSlugAsync(SeName);
@@ -72,10 +75,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                 return StatusCode(404);
             }
 
-            await _genericAttributeService.SaveAttributeAsync(await _workContext.GetCurrentCustomerAsync(),
-        NopCustomerDefaults.LastContinueShoppingPageAttribute,
-            _webHelper.GetThisPageUrl(false),
-        (await _storeContext.GetCurrentStoreAsync()).Id);
+       
 
 
             if (await _permissionService.AuthorizeAsync(StandardPermission.Security.ACCESS_ADMIN_PANEL) && await _permissionService.AuthorizeAsync(StandardPermission.ContentManagement.TOPICS_CREATE_EDIT_DELETE))

@@ -970,6 +970,7 @@ public partial class ShoppingCartService : IShoppingCartService
             }
         }
 
+
         if (warnings.Any() || ignoreBundledProducts)
             return warnings;
 
@@ -1013,6 +1014,19 @@ public partial class ShoppingCartService : IShoppingCartService
             else
                 warnings.Add($"Associated product cannot be loaded - {attributeValue.AssociatedProductId}");
         }
+        #region MWT Custom Changes
+
+        foreach (var attributeValue in attributeValues)
+        {
+            if (!attributeValue.Published)
+            {
+                warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.UnPublish"));
+                break;
+            }
+        }
+
+        #endregion
+
 
         return warnings;
     }
