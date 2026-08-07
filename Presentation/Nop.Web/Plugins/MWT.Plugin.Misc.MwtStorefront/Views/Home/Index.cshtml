@@ -66,7 +66,7 @@
         }
         <div class="@(isHome ? "container-fluid p-0" : "")">
 
-            @await Component.InvokeAsync("FaqBlock", new { entityId = 1265, entityType = "Product" })
+ 
             @await Component.InvokeAsync(typeof(TopicBlockViewComponent), new { systemName = "HomepageText" })
             @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HomepageBeforeCategories })
             @await Component.InvokeAsync("CustomHomepageCategories")

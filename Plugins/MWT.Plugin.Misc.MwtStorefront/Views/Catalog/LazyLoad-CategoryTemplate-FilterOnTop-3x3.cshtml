@@ -1,12 +1,12 @@
-﻿@model CategoryModel
+﻿@model CustomCategoryModel 
 @using Nop.Core.Domain.Common
 @using Nop.Core.Domain.Seo
-@inject Nop.Core.IWebHelper webHelper
+@inject IWebHelper webHelper
 @inject SeoSettings seoSettings
 @inject CommonSettings commonSettings
-@inject Nop.Core.IWorkContext _workcontext
-@inject Nop.Services.Catalog.ICategoryService _categoryService
-@inject Nop.Services.Catalog.IProductService _productService
+@inject ICustomWorkContext _workcontext
+@inject ICustomCategoryService _categoryService
+@inject ICustomProductService _productService
 @{
     Layout = "_verson2CategoryTemplate";
     <script>
@@ -15,10 +15,10 @@
         }
     </script>
     //title
-    Html.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    NopHtml.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
     //meta
-    Html.AddMetaDescriptionParts(Model.MetaDescription);
-    Html.AddMetaKeywordParts(Model.MetaKeywords);
+    NopHtml.AddMetaDescriptionParts(Model.MetaDescription);
+    NopHtml.AddMetaKeywordParts(Model.MetaKeywords);
     //page class
     string featuredString = Context.Request.Query["featuredid"];
     int variantId = 0;
@@ -43,16 +43,16 @@
         }
     }
 
-    Html.AppendPageCssClassParts("html-category-page");
+    NopHtml.AppendPageCssClassParts("html-category-page");
     if (Model.Id == 345)
     {
-        Html.AppendInlineScriptParts(ResourceLocation.Head, "<script>merchantWidgetScript.addEventListener('load', function(){merchantwidget.start({position:'LEFT_BOTTOM'});});</script>");
-        Html.AppendInlineScriptParts(ResourceLocation.Head, "<script id=\"merchantWidgetScript\" src=\"https://www.gstatic.com/shopping/merchant/merchantwidget.js\" defer></script>");
+        NopHtml.AppendInlineScriptParts(ResourceLocation.Head, "<script>merchantWidgetScript.addEventListener('load', function(){merchantwidget.start({position:'LEFT_BOTTOM'});});</script>");
+        NopHtml.AppendInlineScriptParts(ResourceLocation.Head, "<script id=\"merchantWidgetScript\" src=\"https://www.gstatic.com/shopping/merchant/merchantwidget.js\" defer></script>");
     }
     if (seoSettings.CanonicalUrlsEnabled)
     {
         var categoryUrl = Url.RouteUrl("Category", new { id = Model.Id, SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
-        Html.AddCanonicalUrlParts(categoryUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+        NopHtml.AddCanonicalUrlParts(categoryUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
     }
 
     var breadcrumbDelimiter = commonSettings.BreadcrumbDelimiter;
@@ -111,12 +111,12 @@
                         {
                             <strong class="current-item" itemprop="name">@cat.Name</strong>
                             <span itemprop="item" itemscope itemtype="http://schema.org/Thing"
-                                  id="@Url.RouteUrl("Category", new {id=cat.Id,SeName = cat.SeName})">
+                                  id="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })">
                             </span>
                         }
                         else
                         {
-                            <a href="@Url.RouteUrl("Category", new {id=cat.Id, SeName = cat.SeName })" title="@cat.Name" itemprop="item">
+                            <a href="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })" title="@cat.Name" itemprop="item">
                                 <span itemprop="name">@cat.Name</span>
                             </a>
                         }
@@ -138,7 +138,7 @@
 
 <div class="page category-page">
     @section Video {
-        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsTopVideo, additionalData = Model })
+        @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsTopVideo, additionalData = Model })
     }
     @section FeaturedProduct {
         @if (productId != 0)
@@ -160,12 +160,12 @@
 
             }
             @await Component.InvokeAsync("HeadLinks", new
-                {
-                    categoryId = Model.Id,
-                    catSeName = Url.RouteUrl("Category", new { id = Model.Id, SeName = Model.SeName }),
-                    currentPageurl = Url.RouteUrl("Category", new { id = Model.Id, SeName = Model.SeName })
+            {
+                categoryId = Model.Id,
+                catSeName = Url.RouteUrl("Category", new { id = Model.Id, SeName = Model.SeName }),
+                currentPageurl = Url.RouteUrl("Category", new { id = Model.Id, SeName = Model.SeName })
                 })
-            @if (_workcontext.IsMobileDevice() && Model.DisplayGridListOption)
+        @if (_workcontext.IsMobileDevice() && Model.DisplayGridListOption)
             {
                 <div class="grid-list">
                     <button class="grid">
@@ -193,11 +193,12 @@
 
             <div class="shop-by-category">
                 <div class="category-additional-description" @if (Model.AdditionalDescription.Length > 500)
-                {
-                    <text> style="height:85px;overflow:hidden" </text>
-                }>
-                    @Html.Raw(Model.AdditionalDescription)
-                        </div>
+                     {
+                                <text> style="height:85px;overflow:hidden" </text>
+                        }
+        >
+                            @Html.Raw(Model.AdditionalDescription)
+                                </div>
                 @if (Model.AdditionalDescription.Length > 500)
                 {
                     <div class="w-100 text-right">
@@ -219,7 +220,7 @@
         @if (productId == 0)
         {
             @section CategoryTopWidget {
-            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsTop, additionalData = Model })
+                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsTop, additionalData = Model })
             }
 
             @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBeforeSubcategories, additionalData = Model })
@@ -259,14 +260,14 @@
         @if (Model.SubCategories.Count == 0)
         {
             @section CatalogFilters {
-            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBeforeFilters, additionalData = Model })
-            @if (_workcontext.IsMobileDevice())
+                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBeforeFilters, additionalData = Model })
+                @if (_workcontext.IsMobileDevice())
                 {
                     @await Html.PartialAsync("_CatalogFilters", Model.CatalogProductsModel)
                 }
                 else
                 {
-                    <div class="desktopFilters w-100" style="@(displayFilters?"":"display:none;")">
+                    <div class="desktopFilters w-100" style="@(displayFilters ? "" : "display:none;")">
                         @await Html.PartialAsync("_CatalogFiltersHorizontal", Model.CatalogProductsModel)
                         @await Html.PartialAsync("_SelectedtFilters", Model.CatalogProductsModel)
                     </div>
@@ -275,13 +276,13 @@
 
 
             @section CatalogSelector {
-            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsAfterFeaturedProducts, additionalData = Model })
-            @await Html.PartialAsync("_version2CatalogSelectors", Model.CatalogProductsModel)
+                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsAfterFeaturedProducts, additionalData = Model })
+                @await Html.PartialAsync("_version2CatalogSelectors", Model.CatalogProductsModel)
             }
             @if (_workcontext.IsMobileDevice())
             {
                 @section SelectedtFilters {
-            @await Html.PartialAsync("_SelectedtFilters", Model.CatalogProductsModel)
+                    @await Html.PartialAsync("_SelectedtFilters", Model.CatalogProductsModel)
                 }
             }
 
@@ -373,11 +374,12 @@
             <div class=" shop-by-category about-buffet">
 
                 <div class="category-description" @if (Model.Description.Length > 500)
-                {
-                    <text> style="height:250px;overflow:hidden" </text>
-                }>
-                    @Html.Raw(Model.Description)
-                </div>
+                     {
+                            <text> style="height:250px;overflow:hidden" </text>
+                    }
+    >
+                        @Html.Raw(Model.Description)
+                    </div>
                 @if (Model.Description.Length > 500)
                 {
                     <div class="w-100 text-right">

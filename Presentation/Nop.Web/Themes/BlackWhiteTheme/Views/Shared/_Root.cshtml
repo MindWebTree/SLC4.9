@@ -6,6 +6,10 @@
 @{ await Html.RenderPartialAsync("_Notifications"); }
 @{ await Html.RenderPartialAsync("_JavaScriptDisabledWarning"); }
 <div class="master-wrapper-page">
+    <div class="skip-main-link">
+        <a href="#main" id="skip-to-main" onclick="addTabIndex('main')">Skip to Main Content</a>
+        <a href="#footer" id="skip-to-footer" onclick="addTabIndex('footer')">Skip to Footer</a>
+    </div>
     @await Component.InvokeAsync(typeof(AdminHeaderLinksViewComponent))
     @{
         @await Html.PartialAsync("_Header")
@@ -26,7 +30,7 @@
         {
             @RenderSection("Breadcrumb") 
         }
-        <div class="master-column-wrapper">
+        <div class="master-column-wrapper container">
             @RenderBody()
         </div>
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ContentAfter })

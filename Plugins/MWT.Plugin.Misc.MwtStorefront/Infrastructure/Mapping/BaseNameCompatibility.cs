@@ -1,5 +1,7 @@
 ﻿using MWT.Nop.Core.Domain;
+using MWT.Nop.Core.Domain.KW;
 using MWT.Nop.Core.Domain.QA;
+using MWT.Nop.Core.Domain.Security;
 using Nop.Data.Mapping;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Infrastructure.Mapping
@@ -21,18 +23,18 @@ namespace MWT.Plugin.Misc.MwtStorefront.Infrastructure.Mapping
         //   { typeof(CustomOrderShoppingCartItem), "CustomOrder_ShoppingCartItem" },
         //{ typeof(CustomOrderStatus), "CustomOrder_Status" },
         // { typeof(CustomOrderOrderSummaryAdjustment), "CustomOrder_OrderSummaryAdjustment" },
-        //        { typeof(CategoryCollectionLink), "Category_CollectionLink" },
+                { typeof(CategoryCollectionLink), "Category_CollectionLink" },
                 { typeof(CustomForm), "Custom_Forms" },
         //         { typeof(ProductSuggestedKeyword), "Product_SuggestedKeyword_Mapping" },
         //         { typeof(LogProductPicture), "Log_Product_Picture_Mapping" },
         //           { typeof(LogPicture), "Log_Picture" },
         //          { typeof(ProductKwTerm), "Product_KwTerm_Mapping" },
         //           { typeof(ProductAttributeValueGalleryPicturesMapping), "ProductAttributeValue_GalleryPictures_Mapping" },
-        //            { typeof(CategorySuggestedKeyword), "Category_SuggestedKeyword_Mapping" },
-                      { typeof(ProductQuestionAnswer), "Product_QuestionAnswer_Mapping" }
-                               //{ typeof(CategoryUserMapping), "Category_User_Mapping" },
+                    { typeof(CategorySuggestedKeyword), "Category_SuggestedKeyword_Mapping" },
+                      { typeof(ProductQuestionAnswer), "Product_QuestionAnswer_Mapping" },
+                               { typeof(CategoryUserMapping), "Category_User_Mapping" },
                                //{ typeof(ProductAttributeCombinationGalleryPicturesMapping), "ProductAttributeCombination_GalleryPictures_Mapping" },
-                               //{ typeof(CategoryKwTerm), "Category_KwTerm_Mapping" }
+                               { typeof(CategoryKwTerm), "Category_KwTerm_Mapping" }
         };
 
         public Dictionary<(Type, string), string> ColumnName => new Dictionary<(Type, string), string>

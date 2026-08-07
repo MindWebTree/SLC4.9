@@ -37,14 +37,17 @@
 @using Nop.Core.Http;
 @using Nop.Services.Orders;
 @using MWT.Nop.Core.Services.Catalog;
-@using Nop.Core.Domain.Common;
-@using MWT.Plugin.Misc.MwtStorefront.Models.Seo;
+@using Nop.Core.Domain.Common; 
 @using MWT.Plugin.Misc.MwtStorefront.Models.KW;
 @using MWT.Plugin.Misc.MwtStorefront.Models.LandingPage_Management;
 @using MWT.Plugin.Misc.MwtStorefront.Models.Custom; 
 @using MWT.Plugin.Misc.MwtStorefront.Models.RewardClaim; 
 @using MWT.Plugin.Misc.MwtStorefront.Models.FAQModule;
-
+@using Nop.Web.Extensions.Customizations;
+@using Nop.Services.Configuration;
+@using MWT.Nop.Core.Service.Catalog;
+@using Nop.Services.Localization;
+@using Microsoft.AspNetCore.Http;
 @inject INopHtmlHelper NopHtml;
 @inject IUserAgentHelper _useragentContext;
 @inject ICustomWorkContext _customworkContext;

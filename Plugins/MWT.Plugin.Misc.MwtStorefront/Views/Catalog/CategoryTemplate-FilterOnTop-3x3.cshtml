@@ -1,18 +1,18 @@
-﻿@model CategoryModel
+﻿@model CustomCategoryModel
 @using Nop.Core.Domain.Common
 @using Nop.Core.Domain.Seo
-@inject Nop.Core.IWebHelper webHelper
+@inject IWebHelper webHelper
 @inject SeoSettings seoSettings
 @inject CommonSettings commonSettings
-@inject Nop.Core.IWorkContext _workcontext
+@inject ICustomWorkContext _workcontext
 @{
     Layout = "_categoryTemplate";
 
     //title
-    Html.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    NopHtml.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
     //meta
-    Html.AddMetaDescriptionParts(Model.MetaDescription);
-    Html.AddMetaKeywordParts(Model.MetaKeywords);
+    NopHtml.AddMetaDescriptionParts(Model.MetaDescription);
+    NopHtml.AddMetaKeywordParts(Model.MetaKeywords);
     //page class
     string featuredString = Context.Request.Query["featuredid"];
     int variantId = 0;
@@ -27,12 +27,12 @@
             int.TryParse(parts[1], out variantId);
         }
     }
-    Html.AppendPageCssClassParts("html-category-page");
+    NopHtml.AppendPageCssClassParts("html-category-page");
 
     if (seoSettings.CanonicalUrlsEnabled)
     {
         var categoryUrl = Url.RouteUrl("Category", new { id = Model.Id, SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
-        Html.AddCanonicalUrlParts(categoryUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+        NopHtml.AddCanonicalUrlParts(categoryUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
     }
 
     var breadcrumbDelimiter = commonSettings.BreadcrumbDelimiter;
@@ -114,7 +114,7 @@ var pageSize='@Model.CatalogProductsModel.PageSize';
 
 <div class="page category-page">
  @section Video{
-     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsTopVideo, additionalData = Model })
+     @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsTopVideo, additionalData = Model })
  }
     @section FeaturedProduct{
         @if (productId != 0)
@@ -284,9 +284,9 @@ var pageSize='@Model.CatalogProductsModel.PageSize';
 
 
     }
-
-    @await Component.InvokeAsync("BestSellerByCategoryBlock", new { categoryId = Model.Id })
-    @await Component.InvokeAsync("RelatedSearchTerms", new { entityId = Model.Id, entityType = "Category" })
+    // commented
+    // @await Component.InvokeAsync("BestSellerByCategoryBlock", new { categoryId = Model.Id })
+    // @await Component.InvokeAsync("RelatedSearchTerms", new { entityId = Model.Id, entityType = "Category" })
 
 
 
@@ -312,7 +312,7 @@ var pageSize='@Model.CatalogProductsModel.PageSize';
         @*//Related Search*@
 
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBottom, additionalData = Model })
-        @await Component.InvokeAsync("RecommendationProductsBlock", new { categoryId = Model.Id })
+            @*    @await Component.InvokeAsync("RecommendationProductsBlock", new { categoryId = Model.Id }) *@
 
         @*recently  products*@
         @await Component.InvokeAsync("Custom_RecentlyViewedProductsBlock")

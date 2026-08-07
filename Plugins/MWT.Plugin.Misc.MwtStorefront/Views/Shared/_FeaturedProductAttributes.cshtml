@@ -21,14 +21,14 @@
     {
         showSelectedAttributeInFront = true;
     }
-    var selectedSizeValueId = Model.Id == 15426?0: Model.ProductAttributes?
+    var selectedSizeValueId = Model.Id == 15426 ? 0 : Model.ProductAttributes?
       .FirstOrDefault(pa => pa.Name == T("Product.Attr.Size").Text)?
       .Values?
       .FirstOrDefault(pv => pv.IsPreSelected)?
       .Id ?? 0;
     string refFormId = addtoCartFormId.Replace("#", "").Replace("-", "_").Split('?')[0];
-    <div class="attributes featuredproduct @(_customworkcontext.IsMobileDevice()?"mobile":"")">
-        <table>
+    <div class="attributes featuredproduct @(_customworkcontext.IsMobileDevice() ? "mobile" : "")">
+        <table role="presentation">
             @foreach (var attribute in Model.ProductAttributes)
             {
 
@@ -40,9 +40,9 @@
                 {
                     customTextPrompt = "Configuration";
                 }
-                <tr @(T("Product.Attr.shades").Text == @customTextPrompt ? "class=shade-section" : "")>
+                <tr role="presentation" @(T("Product.Attr.shades").Text == @customTextPrompt ? "class=shade-section" : "")>
                     <td id="@($"{NopCatalogDefaults.ProductAttributePrefix}label_{attribute.Id}")" class="control-label">
-                        <label class="text-prompt col-form-label">
+                        <span class="text-prompt col-form-label">
                             @label&nbsp;:
                             @*     @if (T("Product.Attr.shades").Text == @textPrompt)
                     {
@@ -52,7 +52,7 @@
                     </svg>
                     </span>
                     }*@
-                        </label>
+                        </span>
                         @if (attribute.IsRequired)
                         {
                             <span class="required">*</span>
@@ -72,39 +72,46 @@
                             case AttributeControlType.Checkboxes:
                             case AttributeControlType.ReadonlyCheckboxes:
                                 {
-                                    <ul @(attribute.AttributeControlType == AttributeControlType.Checkboxes ? Html.Raw("data-attr=" + attribute.Id) : null) class="option-list">
-                                        @foreach (var attributeValue in attribute.Values)
-                                        {
-                                            var attributeName = string.IsNullOrEmpty(attributeValue.PriceAdjustment) ?
-                                            attributeValue.Name :
-                                            T("Products.ProductAttributes.PriceAdjustment", attributeValue.Name, attributeValue.PriceAdjustment,
-                                            attributeValue.CustomerEntersQty ? T("Products.ProductAttributes.PriceAdjustment.PerItem").Text : string.Empty).Text;
-                                            <li>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" name="@(controlId)" class="custom-control-input" id="@(controlId)_@(attributeValue.Id)" value="@attributeValue.Id" checked="@attributeValue.IsPreSelected" @(attribute.AttributeControlType == AttributeControlType.ReadonlyCheckboxes ? Html.Raw(" disabled=\"disabled\"") : null)
-                                                    @(attributeValue.CustomerEntersQty ? Html.Raw($"onchange=\"showHideCheckboxQuantity('{controlId}_{attributeValue.Id}')\"") : null) />
-                                                    <label class="custom-control-label" for="@(controlId)_@(attributeValue.Id)">@attributeName</label>
-                                                </div>
+                                    <fieldset aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                        <legend style="display:none;">
+                                            @textPrompt
+                                        </legend>
+                                        <ul @(attribute.AttributeControlType == AttributeControlType.Checkboxes ? Html.Raw("data-attr=" + attribute.Id) : null) class="option-list">
+                                            @foreach (var attributeValue in attribute.Values)
+                                            {
+                                                var attributeName = string.IsNullOrEmpty(attributeValue.PriceAdjustment) ?
+                                                attributeValue.Name :
+                                                T("Products.ProductAttributes.PriceAdjustment", attributeValue.Name, attributeValue.PriceAdjustment,
+                                                attributeValue.CustomerEntersQty ? T("Products.ProductAttributes.PriceAdjustment.PerItem").Text : string.Empty).Text;
+                                                <li>
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" name="@(controlId)" class="custom-control-input" id="@(controlId)_@(attributeValue.Id)" value="@attributeValue.Id"
+                                                               checked="@attributeValue.IsPreSelected" @(attribute.AttributeControlType == AttributeControlType.ReadonlyCheckboxes ? Html.Raw(" disabled=\"disabled\"")
+                                                                                                                                              : null)
+                                       @(attributeValue.CustomerEntersQty? Html.Raw($"onchange=\"showHideCheckboxQuantity('{controlId}_{attributeValue.Id}')\"") : null) />
+                                <label class="custom-control-label" for="@(controlId)_@(attributeValue.Id)">@attributeName</label>
+                            </div>
 
-                                                @if (attributeValue.CustomerEntersQty)
-                                                {
-                                                    <div class="qty-box" id="@(controlId)_@(attributeValue.Id)_qty_box" style="display:none">
-                                                        <div class="form-group row">
-                                                            <label class="text-prompt col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 control-label" for="@(controlId)_@(attributeValue.Id)_qty">@(T("Products.ProductAttributes.PriceAdjustment.Quantity").Text)</label>
-                                                            <div class="col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 qty-text">
-                                                                <input class="form-control" type="text" name="@(controlId)_@(attributeValue.Id)_qty" id="@(controlId)_@(attributeValue.Id)_qty" value="@(attributeValue.Quantity)" />
-                                                                <script asp-location="Footer">
-                                                                    $(document).ready(function () {
-                                                                        showHideCheckboxQuantity('@(controlId)_@(attributeValue.Id)');
-                                                                    })
-                                                                </script>
+                            @if (attributeValue.CustomerEntersQty)
+                                                    {
+                                                        <div class="qty-box" id="@(controlId)_@(attributeValue.Id)_qty_box" style="display:none">
+                                                            <div class="form-group row">
+                                                                <label class="text-prompt col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 control-label" for="@(controlId)_@(attributeValue.Id)_qty">@(T("Products.ProductAttributes.PriceAdjustment.Quantity").Text)</label>
+                                                                <div class="col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 qty-text">
+                                                                    <input class="form-control" type="text" name="@(controlId)_@(attributeValue.Id)_qty" id="@(controlId)_@(attributeValue.Id)_qty" value="@(attributeValue.Quantity)" />
+                                                                    <script asp-location="Footer">
+                                                                        $(document).ready(function () {
+                                                                            showHideCheckboxQuantity('@(controlId)_@(attributeValue.Id)');
+                                                                        })
+                                                                    </script>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                }
-                                            </li>
-                                        }
-                                    </ul>
+                                                    }
+                                                </li>
+                                            }
+                                        </ul>
+                                    </fieldset>
                                 }
                                 break;
                             case AttributeControlType.TextBox:
@@ -123,7 +130,7 @@
                                                      asp-month-name="@(controlId + "_month")"
                                                      asp-year-name="@(controlId + "_year")"
                                                      asp-begin-year="@(DateTime.UtcNow)"
-                                                     asp-end-year="@(DateTime.UtcNow.AddYears(catalogSettings.CountDisplayedYearsDatePicker))" 
+                                                     asp-end-year="@(DateTime.UtcNow.AddYears(catalogSettings.CountDisplayedYearsDatePicker))"
                                                      asp-selected-day="@(attribute.SelectedDay)"
                                                      asp-selected-month="@(attribute.SelectedMonth)"
                                                      asp-selected-year="@(attribute.SelectedYear)" />
@@ -218,7 +225,7 @@
                                     <div id="@(controlId + "downloadurl")" class="file-upload-btn download-btn">
                                         @if (download != null)
                                         {
-                                            <a href="@(Url.Action("GetFileUpload", "Download", new {downloadId = download.DownloadGuid}))" class="download-uploaded-file">@T("Common.FileUploader.DownloadUploadedFile")</a>
+                                            <a href="@(Url.Action("GetFileUpload", "Download", new { downloadId = download.DownloadGuid }))" class="download-uploaded-file">@T("Common.FileUploader.DownloadUploadedFile")</a>
                                         }
                                     </div>
                                     <div class="file-upload-btn delete-button">
@@ -246,92 +253,97 @@
                                         attributeValues = attribute.Values.Take(1).ToList();
                                     }
 
+                                    <fieldset aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                        <legend style="display:none;">
+                                            @textPrompt
+                                        </legend>
 
+                                        <ul data-attr="@(attribute.Id)" class="option-list attribute-squares color-squares @(attribute.Values.Count>0
+                                                                                                                                                                                && T("Product.Attr.Size").Text == @textPrompt
+                                                                                                                                                                                ? "new-size-box" + (attribute.Values.Count == 1 ? " single" : "") : "shade-box")" id="color-squares-@(attribute.Id)">
 
-                                    <ul data-attr="@(attribute.Id)" class="option-list attribute-squares color-squares @(attribute.Values.Count>0
-                                    && T("Product.Attr.Size").Text == @textPrompt
-                                    ?"new-size-box"+ (attribute.Values.Count==1?" single":""):"shade-box")" id="color-squares-@(attribute.Id)">
-
-                                        @foreach (var attributeValue in attributeValues)
-                                        {
-                                            var attributeName = string.IsNullOrEmpty(attributeValue.PriceAdjustment) ?
-                                            attributeValue.Name :
-                                            T("Products.ProductAttributes.PriceAdjustment", attributeValue.Name, attributeValue.PriceAdjustment, string.Empty).Text;
-
-                                            if (T("Product.Attr.Size").Text == @textPrompt)
+                        @foreach (var attributeValue in attributeValues)
                                             {
-                                                <li style="margin:0px" data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected ? @Html.Raw(" class=\"selected-value\"") : null)>
-                                                    <label for="@(controlId)_@(attributeValue.Id)" class="custom-size-control">
-                                                        @{
-                                                            var attrName = attributeValue.Name;
+                                                var attributeName = string.IsNullOrEmpty(attributeValue.PriceAdjustment) ?
+                                                attributeValue.Name :
+                                                T("Products.ProductAttributes.PriceAdjustment", attributeValue.Name, attributeValue.PriceAdjustment, string.Empty).Text;
 
-                                                            var attrNameParts = attrName.Split(new string[] { "\" H" }, StringSplitOptions.RemoveEmptyEntries);
-                                                            if (attrNameParts.Length > 1 && attrName.IndexOf("<br>") < 0)
-                                                            {
-                                                                @Html.Raw("<span>" + attrNameParts[0] + "\" H" + " </span>")
-                                                                ;
-                                                                @Html.Raw("<span>" + attrName.Replace(attrNameParts[0] + "\" H", "") + "</span>")
-                                                                ;
+                                                if (T("Product.Attr.Size").Text == @textPrompt)
+                                                {
+                                                    <li style="margin:0px" data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected? @Html.Raw(" class=\"selected-value\"") : null)>
+                                                        <label for="@(controlId)_@(attributeValue.Id)" class="custom-size-control">
+                                                            @{
+                                                                var attrName = attributeValue.Name;
 
+                                                                var attrNameParts = attrName.Split(new string[] { "\" H" }, StringSplitOptions.RemoveEmptyEntries);
+                                                                if (attrNameParts.Length > 1 && attrName.IndexOf("<br>") < 0)
+                                                                {
+                                                                    @Html.Raw("<span>" + attrNameParts[0] + "\" H" + " </span>")
+                                                                    ;
+                                                                    @Html.Raw("<span>" + attrName.Replace(attrNameParts[0] + "\" H", "") + "</span>")
+                                                                    ;
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.Raw(attrName)
+                                                                }
                                                             }
-                                                            else
-                                                            {
-                                                                @Html.Raw(attrName)
-                                                            }
-                                                        }
 
 
 
-                                                        <input id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)" value="@attributeValue.Id" checked="@attributeValue.IsPreSelected"
-                                                        @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onclick=\"showHideRadioQuantity('{controlId}')\"") : null) />
-                                                    </label>
-                                                    <div class="tooltip-container">
-                                                        <div class="not-available-text">@T("Products.ProductAttributes.NotAvailable")</div>
-                                                    </div>
-                                                </li>
+                                                            <input id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)" value="@attributeValue.Id" checked="@attributeValue.IsPreSelected"
+                                                                   @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onclick=\"showHideRadioQuantity('{controlId}')\"") : null) />
+                                                        </label>
+                                                        <div class="tooltip-container">
+                                                            <div class="not-available-text">@T("Products.ProductAttributes.NotAvailable")</div>
+                                                        </div>
+                                                    </li>
+                                                }
+                                                else if (T("Product.Attr.shades").Text == @textPrompt)
+                                                {
+                                                    <li style="margin:0px" data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected? @Html.Raw(" class=\"selected-value\"") : null)>
+                                                        <label for="@(controlId)_@(attributeValue.Id)" attr-is-show="@(attributeValue.IsPreSelected ? "true" : "false")" class="custom-shade-control" data-attr-name="@attributeValue.Name">
+                                                            @*<img class="lazy" src="/images/pixel.png" data-src="/images/shades/@(attributeValue.Name).jpg" alt="@attributeValue.Name">*@
+                                                            <span>  @CustomCommonHelper.StripUnwantedPrefixFromShade(attributeValue.Name)</span>
+                                                            <input id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)"
+                                                                   value="@attributeValue.Id" checked="@attributeValue.IsPreSelected"
+                                                                   @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onclick=\"showHideRadioQuantity('{controlId}')\"") : null) />
+                                                        </label>
+                                                        <div class="tooltip-container">
+                                                            <div class="not-available-text">@T("Products.ProductAttributes.NotAvailable")</div>
+                                                        </div>
+
+
+                                                    </li>
+                                                }
+                                                else
+                                                {
+                                                    <li style="margin:0px" data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected? @Html.Raw(" class=\"selected-value\"") : null)>
+                                                        <label for="@(controlId)_@(attributeValue.Id)" attr-is-show="@(attributeValue.IsPreSelected ? "true" : "false")" class="custom-shade-control" data-attr-name="@attributeValue.Name">
+                                                            @*<img class="lazy" src="/images/pixel.png" data-src="/images/shades/@(attributeValue.Name).jpg" alt="@attributeValue.Name">*@
+                                                            <span>  @attributeValue.Name</span>
+                                                            <input id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)"
+                                                                   value="@attributeValue.Id" checked="@attributeValue.IsPreSelected"
+                                                                   @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onclick=\"showHideRadioQuantity('{controlId}')\"") : null) />
+                                                        </label>
+                                                        <div class="tooltip-container">
+                                                            <div class="not-available-text">@T("Products.ProductAttributes.NotAvailable")</div>
+                                                        </div>
+
+
+                                                    </li>
+                                                }
+
                                             }
-                                            else if (T("Product.Attr.shades").Text == @textPrompt)
-                                            {
-                                                <li style="margin:0px" data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected ? @Html.Raw(" class=\"selected-value\"") : null)>
-                                                    <label for="@(controlId)_@(attributeValue.Id)" attr-is-show="@(attributeValue.IsPreSelected?"true":"false")" class="custom-shade-control" data-attr-name="@attributeValue.Name">
-                                                        @*<img class="lazy" src="/images/pixel.png" data-src="/images/shades/@(attributeValue.Name).jpg" alt="@attributeValue.Name">*@
-                                                        <span>  @CustomCommonHelper.StripUnwantedPrefixFromShade(attributeValue.Name)</span>
-                                                        <input id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)"
-                                                               value="@attributeValue.Id" checked="@attributeValue.IsPreSelected"
-                                                        @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onclick=\"showHideRadioQuantity('{controlId}')\"") : null) />
-                                                    </label>
-                                                    <div class="tooltip-container">
-                                                        <div class="not-available-text">@T("Products.ProductAttributes.NotAvailable")</div>
-                                                    </div>
+                                        </ul>
+                                    </fieldset>
 
-
-                                                </li>
-                                            }
-                                            else
-                                            {
-                                                <li style="margin:0px" data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected ? @Html.Raw(" class=\"selected-value\"") : null)>
-                                                    <label for="@(controlId)_@(attributeValue.Id)" attr-is-show="@(attributeValue.IsPreSelected?"true":"false")" class="custom-shade-control" data-attr-name="@attributeValue.Name">
-                                                        @*<img class="lazy" src="/images/pixel.png" data-src="/images/shades/@(attributeValue.Name).jpg" alt="@attributeValue.Name">*@
-                                                        <span>  @attributeValue.Name</span>
-                                                        <input id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)"
-                                                               value="@attributeValue.Id" checked="@attributeValue.IsPreSelected"
-                                                        @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onclick=\"showHideRadioQuantity('{controlId}')\"") : null) />
-                                                    </label>
-                                                    <div class="tooltip-container">
-                                                        <div class="not-available-text">@T("Products.ProductAttributes.NotAvailable")</div>
-                                                    </div>
-
-
-                                                </li>
-                                            }
-
-                                        }
-                                    </ul>
                                     @if (attribute.Values.Count > 1)
                                     {
                                         @T("Common.Shade.Size.Sperator")
 
-                                        <a href="@Url.RouteUrl("Product", new {id=Model.Id, SeName = Model.SeName })">
+                                        <a href="@Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName })">
                                             @T($"Common.Available.{textPrompt}", attribute.Values.Count - 1)
                                         </a>
                                     }
@@ -479,7 +491,7 @@
 
         //render scripts
         //almost the same implementation is used in the \Views\Product\_RentalInfo.cshtml file
-<script asp-location="Footer">
+        <script asp-location="Footer">
             function @(attributeChangeHandlerFuncName)(refId) {
 
 
@@ -508,7 +520,7 @@
                                 $('@addtoCartFormId .price-value-@Model.Id').show();
                                 if ($('@addtoCartFormId .limited-offer-@Model.Id')) {
                                     $('@addtoCartFormId .limited-offer-@Model.Id').show();
-			                        $('@addtoCartFormId .limited-offer-@Model.Id').html(data.offerText);
+                                    $('@addtoCartFormId .limited-offer-@Model.Id').html(data.offerText);
                                 }
                                 else {
                                     $('<p class="sale-price  m-0 limited-offer-@Model.Id">' + data.offerText + '</p>').parent().insertBefore($('@addtoCartFormId .price-value-@Model.Id').parent());
@@ -576,7 +588,7 @@
             @(attributeChangeHandlerFuncName)();
             @Html.Raw(attributeChangeScriptsBuilder.ToString())
                                                                                                 });
-</script>
+        </script>
     }
 }
 

@@ -10,6 +10,7 @@ using MWT.Nop.Core.Services.CategoryCollection;
 using MWT.Nop.Core.Services.Configuration;
 using MWT.Nop.Core.Services.Custom;
 using MWT.Nop.Core.Services.Customers;
+using MWT.Nop.Core.Services.ElasticSearch;
 using MWT.Nop.Core.Services.FeedBack;
 using MWT.Nop.Core.Services.IPLite;
 using MWT.Nop.Core.Services.KW;
@@ -46,9 +47,9 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<ICustomProductAttributeParser, CustomProductAttributeParser>();
             services.AddScoped<ICustomProductAttributeService, CustomProductAttributeService>();
 
-            services.AddScoped<IStoreWideDiscountService,StoreWideDiscountService>();
-            services.AddScoped<ICustomizationFormSerivce,CustomizationFormSerivce>();
-            services.AddScoped<IFeedService,FeedService>();
+            services.AddScoped<IStoreWideDiscountService, StoreWideDiscountService>();
+            services.AddScoped<ICustomizationFormSerivce, CustomizationFormSerivce>();
+            services.AddScoped<IFeedService, FeedService>();
             services.AddScoped<ICustomSpecificationAttributeService, CustomSpecificationAttributeService>();
             services.AddScoped<ICustomPictureService, CustomPictureService>();
             services.AddScoped<ICustomShoppingCartService, CustomShoppingCartService>();
@@ -113,6 +114,15 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<ICustomNewsLetterSubscriptionService, CustomNewsLetterSubscriptionService>();
             #endregion
 
+            #region ElasticSearch
+            services.AddScoped<IElasticSearchHelpService, ElasticSearchHelpService>();
+            services.AddScoped<ICustomBackInStockSubscriptionService, CustomBackInStockSubscriptionService>();
+            services.AddScoped<ICustomCategoryService, CustomCategoryService>();
+            services.AddScoped<ICustomizationFormSerivce, CustomizationFormSerivce>();
+            services.AddScoped<ICustomRecentlyViewedProductsService, CustomRecentlyViewedProductsService>(); 
+            services.AddScoped<ISuggestedKeywordsService, SuggestedKeywordsService>(); 
+            services.AddScoped<IFuzzySearchService, FuzzySearchService>(); 
+            #endregion
         }
 
     }

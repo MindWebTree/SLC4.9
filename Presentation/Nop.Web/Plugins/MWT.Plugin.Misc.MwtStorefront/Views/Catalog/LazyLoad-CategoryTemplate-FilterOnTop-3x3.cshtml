@@ -1,0 +1,425 @@
+﻿@model CustomCategoryModel 
+@using Nop.Core.Domain.Common
+@using Nop.Core.Domain.Seo
+@inject IWebHelper webHelper
+@inject SeoSettings seoSettings
+@inject CommonSettings commonSettings
+@inject ICustomWorkContext _workcontext
+@inject ICustomCategoryService _categoryService
+@inject ICustomProductService _productService
+@{
+    Layout = "_verson2CategoryTemplate";
+    <script>
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+    </script>
+    //title
+    NopHtml.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    //meta
+    NopHtml.AddMetaDescriptionParts(Model.MetaDescription);
+    NopHtml.AddMetaKeywordParts(Model.MetaKeywords);
+    //page class
+    string featuredString = Context.Request.Query["featuredid"];
+    int variantId = 0;
+    int productId = 0;
+    if (!string.IsNullOrEmpty(featuredString))
+    {
+        string[] parts = featuredString.Split('-');
+
+        int.TryParse(parts[0], out productId);
+        if (parts.Length > 1)
+        {
+            int.TryParse(parts[1], out variantId);
+        }
+    }
+    if (productId != 0)
+    {
+        var product = await _productService.GetProductByIdAsync(productId);
+        if (product != null && (product.Deleted || !product.Published))
+        {
+            productId = 0;
+            variantId = 0;
+        }
+    }
+
+    NopHtml.AppendPageCssClassParts("html-category-page");
+    if (Model.Id == 345)
+    {
+        NopHtml.AppendInlineScriptParts(ResourceLocation.Head, "<script>merchantWidgetScript.addEventListener('load', function(){merchantwidget.start({position:'LEFT_BOTTOM'});});</script>");
+        NopHtml.AppendInlineScriptParts(ResourceLocation.Head, "<script id=\"merchantWidgetScript\" src=\"https://www.gstatic.com/shopping/merchant/merchantwidget.js\" defer></script>");
+    }
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        var categoryUrl = Url.RouteUrl("Category", new { id = Model.Id, SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
+        NopHtml.AddCanonicalUrlParts(categoryUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+    }
+
+    var breadcrumbDelimiter = commonSettings.BreadcrumbDelimiter;
+
+    #region filter display
+    var hidefilter = false;
+    var displayFilters = false;
+    if (!_workcontext.IsMobileDevice())
+    {
+        if (Model.CatalogProductsModel.SpecificationFilter.Attributes.Count == 0)
+            hidefilter = true;
+
+        if (Model.CatalogProductsModel.SpecificationFilter.Attributes.Where(m => m.Values.Where(m => m.Selected).Count() > 0).Any())
+            displayFilters = true;
+    }
+
+    ViewBag.hidefilter = hidefilter.ToString();
+    ViewBag.displayFilters = displayFilters.ToString();
+    ViewBag.EnableInfiniteScroll = Model.EnableInfiniteScroll.ToString();
+    #endregion
+}
+<script>
+    var pageSize = '@Model.CatalogProductsModel.PageSize';
+</script>
+@*category breadcrumb*@
+@section Breadcrumb
+{
+    @if (Model.DisplayCategoryBreadcrumb)
+    {
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" itemscope itemtype="http://schema.org/BreadcrumbList">
+                @{
+                    int position = 1;
+                }
+                <li class="breadcrumb-item">
+                    <span itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                        <a href="@Url.RouteUrl("Homepage")" itemprop="item">
+                            <span itemprop="name">@T("Categories.Breadcrumb.Top")</span>
+
+                        </a>
+                        <meta itemprop="position" content="@position" />
+                    </span>
+                </li>
+
+
+
+                @{
+                    position++;
+                }
+
+                @foreach (var cat in Model.CategoryBreadcrumb)
+                {
+                    var isLastCategory = cat.Id == Model.Id;
+                    <li itemprop="itemListElement" class="breadcrumb-item active" itemscope itemtype="http://schema.org/ListItem">
+                        @if (isLastCategory)
+                        {
+                            <strong class="current-item" itemprop="name">@cat.Name</strong>
+                            <span itemprop="item" itemscope itemtype="http://schema.org/Thing"
+                                  id="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })">
+                            </span>
+                        }
+                        else
+                        {
+                            <a href="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })" title="@cat.Name" itemprop="item">
+                                <span itemprop="name">@cat.Name</span>
+                            </a>
+                        }
+                        <meta itemprop="position" content="@position" />
+                        @{
+                            position++;
+                        }
+                    </li>
+
+                }
+
+            </ol>
+        </nav>
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsAfterBreadcrumb, additionalData = Model })
+    }
+}
+
+
+
+<div class="page category-page">
+    @section Video {
+        @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsTopVideo, additionalData = Model })
+    }
+    @section FeaturedProduct {
+        @if (productId != 0)
+        {
+            @await Component.InvokeAsync("Version2CustomCategoryFeaturedProductBlock", new { productId = productId, variantId = variantId })
+        }
+    }
+
+    @section Heading {
+
+        <div class="version1 categorypage-heading-section">
+            @if (productId == 0)
+            {
+                <h1 class="page-heading" style="display:@(await _categoryService.IsMwtWidgetApplied(PublicWidgetZones.CategoryDetailsTop, Model.Id, "Category", _workcontext.IsMobileDevice()) && productId == 0 ? "none" : "block")">@(Model.Name)</h1>
+            }
+            else
+            {
+                <span class="page-heading" style="display:@(await _categoryService.IsMwtWidgetApplied(PublicWidgetZones.CategoryDetailsTop, Model.Id, "Category", _workcontext.IsMobileDevice()) && productId == 0 ? "none" : "block")">@(Model.Name)</span>
+
+            }
+            @await Component.InvokeAsync("HeadLinks", new
+            {
+                categoryId = Model.Id,
+                catSeName = Url.RouteUrl("Category", new { id = Model.Id, SeName = Model.SeName }),
+                currentPageurl = Url.RouteUrl("Category", new { id = Model.Id, SeName = Model.SeName })
+                })
+        @if (_workcontext.IsMobileDevice() && Model.DisplayGridListOption)
+            {
+                <div class="grid-list">
+                    <button class="grid">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 1H1V9H9V1Z" fill="#C4C4C4" />
+                            <path d="M19 1H11V9H19V1Z" fill="#C4C4C4" />
+                            <path d="M19 11H1V19H19V11Z" fill="#C4C4C4" />
+                        </svg>
+                    </button>
+
+                    <button class="listing border-0">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18.75 1.25H1.25V18.75H18.75V1.25Z" fill="#444444" />
+                        </svg>
+                    </button>
+                </div>
+
+            }
+        </div>
+    }
+
+    @section AdditionalDescription {
+        @if (!string.IsNullOrEmpty(Model.AdditionalDescription))
+        {
+
+            <div class="shop-by-category">
+                <div class="category-additional-description" @if (Model.AdditionalDescription.Length > 500)
+                     {
+                                <text> style="height:85px;overflow:hidden" </text>
+                        }
+        >
+                            @Html.Raw(Model.AdditionalDescription)
+                                </div>
+                @if (Model.AdditionalDescription.Length > 500)
+                {
+                    <div class="w-100 text-right">
+                        <a href="#" id="additional_lessmore" data-more-text="@T("Button.More")" data-less-text="@T("Button.Less")">@T("Button.More")&nbsp;<i class="fas fa-angle-down"></i></a>
+                    </div>
+                }
+            </div>
+
+        }
+    }
+    @*@section QuickFilter{
+    @await Component.InvokeAsync("QuickFilter", new { entityId = Model.Id, entityType = "Category", heading = Model.QuickFilterHeading })
+    }*@
+
+    <div class="page-body">
+
+
+
+        @if (productId == 0)
+        {
+            @section CategoryTopWidget {
+                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsTop, additionalData = Model })
+            }
+
+            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBeforeSubcategories, additionalData = Model })
+        }
+        @*subcategories*@
+        @if (Model.SubCategories.Count > 0)
+        {
+            <div class="row subcategories">
+                @foreach (var item in Model.SubCategories)
+                {
+                    <div class="item-box card col-6 col-sm-3 col-md-4 col-lg-4 col-xl-4">
+                        <div class="sub-category-item card-block">
+
+                            <div class="picture">
+                                <a container="#cat-@item.Id" title="@item.PictureModel.Title">
+                                    <img alt="@item.PictureModel.AlternateText" width="450" height="450" class="card-img-top lazy" src="/images/pixel.png" data-src="@item.PictureModel.ImageUrl" title="@item.PictureModel.Title" />
+                                </a>
+                            </div>
+                            <h2 class="title">
+                                <a container="#cat-@item.Id" class="card-title" title="@item.PictureModel.Title">
+                                    @item.Name
+                                </a>
+                            </h2>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            // Top Selling products By Category
+            @foreach (var item in Model.SubCategories)
+            {
+                      }
+            // end
+        }
+
+        @if (Model.SubCategories.Count == 0)
+        {
+            @section CatalogFilters {
+                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBeforeFilters, additionalData = Model })
+                @if (_workcontext.IsMobileDevice())
+                {
+                    @await Html.PartialAsync("_CatalogFilters", Model.CatalogProductsModel)
+                }
+                else
+                {
+                    <div class="desktopFilters w-100" style="@(displayFilters ? "" : "display:none;")">
+                        @await Html.PartialAsync("_CatalogFiltersHorizontal", Model.CatalogProductsModel)
+                        @await Html.PartialAsync("_SelectedtFilters", Model.CatalogProductsModel)
+                    </div>
+                }
+            }
+
+
+            @section CatalogSelector {
+                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsAfterFeaturedProducts, additionalData = Model })
+                @await Html.PartialAsync("_version2CatalogSelectors", Model.CatalogProductsModel)
+            }
+            @if (_workcontext.IsMobileDevice())
+            {
+                @section SelectedtFilters {
+                    @await Html.PartialAsync("_SelectedtFilters", Model.CatalogProductsModel)
+                }
+            }
+
+
+            var catalogProductsViewData = new ViewDataDictionary(ViewData);
+
+            catalogProductsViewData["fetchUrl"] = Html.Raw(Url.Action("GetCategoryProducts", "Catalog", new { categoryId = Model.Id }));
+            catalogProductsViewData["entityId"] = Model.Id;
+            @await Html.PartialAsync("_Version2CatalogProducts-FilterOnTop-3x3", Model.CatalogProductsModel, catalogProductsViewData)
+
+            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBeforeFeaturedProducts, additionalData = Model })
+
+
+            @*Best Seller products*@
+            @if (Model.FeaturedProducts.Count > 0)
+            {
+                // BE
+                <div class="shop-by-category featured-for-you-section">
+                    <h2>
+                        @Html.Raw(string.Format(T("Heading.Featured.byCategory").Text, Model.Name))
+                    </h2>
+                    <div class="featured-for-you">
+                        @foreach (var item in Model.FeaturedProducts)
+                        {
+                            @await Html.PartialAsync("_home_ProductBox", item)
+                        }
+                    </div>
+                </div>
+
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        $('.featured-for-you').slick({
+                            dots: true,
+                            infinite: true,
+                            speed: 300,
+                            slidesToShow: 4,
+                            slidesToScroll: 1,
+                            variableWidth: false,
+                            centerMode: false,
+                            centerPadding: '0',
+
+                            prevArrow: '<button class="slide-arrow prev-arrow"><i class="fas fa-chevron-left"></i></button>',
+                            nextArrow: '<button class="slide-arrow next-arrow"><i class="fas fa-chevron-right"></i></button>',
+                            responsive: [
+                                {
+                                    breakpoint: 991,
+                                    settings: {
+                                        centerMode: false,
+                                        centerPadding: '40px',
+                                        slidesToShow: 3
+                                    }
+                                },
+                                {
+                                    breakpoint: 767,
+                                    settings: {
+                                        centerMode: false,
+                                        centerPadding: '40px',
+                                        dots: false,
+                                        slidesToShow: 2
+                                    }
+                                },
+                                {
+                                    breakpoint: 480,
+                                    settings: {
+                                        centerMode: false,
+                                        centerPadding: '40px',
+                                        dots: false,
+                                        slidesToShow: 1
+                                    }
+                                }
+                            ]
+                        });
+                    });
+                </script>
+            }
+
+
+
+        }
+
+       
+
+
+        @*description*@
+        @if (!string.IsNullOrWhiteSpace(Model.Description))
+        {
+            <div class=" shop-by-category about-buffet">
+
+                <div class="category-description" @if (Model.Description.Length > 500)
+                     {
+                            <text> style="height:250px;overflow:hidden" </text>
+                    }
+    >
+                        @Html.Raw(Model.Description)
+                    </div>
+                @if (Model.Description.Length > 500)
+                {
+                    <div class="w-100 text-right">
+                        <a href="#" id="lessmore" data-more-text="@T("Button.More")" data-less-text="@T("Button.Less")">@T("Button.More")&nbsp;<i class="fas fa-angle-down"></i></a>
+                    </div>
+                }
+            </div>
+        }
+
+        @await Component.InvokeAsync("FaqBlock", new { entityId = Model.Id, entityType = "Category" })
+        @section categoryBottom {
+            @*//Related Search*@
+
+            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBottom, additionalData = Model })
+      
+            @*recently  products*@
+            @await Component.InvokeAsync("Custom_RecentlyViewedProductsBlock")
+        }
+
+
+
+    </div>
+</div>
+<style>
+    .btn-load-more {
+        display: none !important;
+    }
+</style>
+
+<script asp-location="Footer">
+    $(document).ready(function () {
+        if (EnableInfiniteScroll == 'True') {
+            $(window).scroll(function () {
+                if ($(window).scrollTop() + 300 >= $('.products-wrapper').offset().top + $('.products-wrapper').outerHeight() - window.innerHeight) {
+                    if ($(".infinite-scroll-loader").last().is(":visible") === false) {
+                        if ($(".pager .next-page").length > 0) {
+                            $(".infinite-scroll-loader").last().show();  // Show the last loader
+                            $(".pager .next-page a").click();
+                            $(".products-wrapper>.pager").remove();
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>

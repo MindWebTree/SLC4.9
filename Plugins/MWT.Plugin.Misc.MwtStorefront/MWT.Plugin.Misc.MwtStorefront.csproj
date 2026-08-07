@@ -11,10 +11,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Migrations\**" />
+    <Compile Remove="Models\Seo\**" />
     <Compile Remove="PackageFiles\**" />
     <EmbeddedResource Remove="Migrations\**" />
+    <EmbeddedResource Remove="Models\Seo\**" />
     <EmbeddedResource Remove="PackageFiles\**" />
     <None Remove="Migrations\**" />
+    <None Remove="Models\Seo\**" />
     <None Remove="PackageFiles\**" />
   </ItemGroup>
 
@@ -65,7 +68,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Factories\Api\" />
-	  <Folder Include="Models\Seo\" />
 	</ItemGroup>
 
 	<ItemGroup>

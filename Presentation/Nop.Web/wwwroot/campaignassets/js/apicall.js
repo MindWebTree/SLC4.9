@@ -52,11 +52,8 @@ $(document).ready(function () {
     });
 
     $('body').append("" + html);
-    function OnLoad() {
-        debugger;
-        var isExitPopUp = false;
-        console.log(isExitPopUp);
-        console.log(Hiturl);
+    function OnLoad() { 
+        var isExitPopUp = false; 
         $.ajax({
             type: "POST",
             url: Hiturl,
