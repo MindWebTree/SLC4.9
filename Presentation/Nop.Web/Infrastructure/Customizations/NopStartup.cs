@@ -19,6 +19,7 @@ using MWT.Nop.Core.Services.Manage;
 using MWT.Nop.Core.Services.Mandrill;
 using MWT.Nop.Core.Services.Media;
 using MWT.Nop.Core.Services.Message;
+using MWT.Nop.Core.Services.Orders;
 using MWT.Nop.Core.Services.QA;
 using MWT.Nop.Core.Services.Search;
 using MWT.Nop.Core.Services.Search.RewardClaim;

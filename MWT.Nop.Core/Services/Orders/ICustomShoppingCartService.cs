@@ -2,6 +2,7 @@
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Discounts;
 using Nop.Core.Domain.Orders;
+using Nop.Core.Domain.Stores;
 using Nop.Services.Orders;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace MWT.Nop.Core.Services.Catalog
     {
         Task<(decimal unitPrice, decimal oldPrice, decimal msrp, decimal discountAmount, List<Discount> appliedDiscounts)> GetCustomUnitPriceAsync(Product product,
          Customer customer,
+         Store store,
          ShoppingCartType shoppingCartType,
          int quantity,
          string attributesXml,
@@ -28,7 +30,7 @@ namespace MWT.Nop.Core.Services.Catalog
         ShoppingCartType shoppingCartType, int storeId, string attributesXml = null,
         decimal customerEnteredPrice = decimal.Zero,
         DateTime? rentalStartDate = null, DateTime? rentalEndDate = null,
-        int quantity = 1, bool addRequiredProducts = true);
+        int quantity = 1, bool addRequiredProducts = true, int? wishlistId = null);
 
         Task UpdateShoppingCartItemAsync(ShoppingCartItem item);
         Task<IList<string>> UpdateShoppingCartItemAsync(Customer customer,

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Routing;
 using MWT.Nop.Core.Data.Discounts;
 using MWT.Nop.Core.Service.Catalog;
+using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.Customers;
 using Nop.Core;
 using Nop.Core.Caching;
@@ -10,6 +11,7 @@ using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Discounts;
 using Nop.Core.Domain.Logging;
 using Nop.Core.Domain.Orders;
+using Nop.Core.Domain.Stores;
 using Nop.Core.Events;
 using Nop.Core.Infrastructure;
 using Nop.Data;
@@ -29,7 +31,7 @@ using Nop.Services.Shipping;
 using Nop.Services.Shipping.Date;
 using Nop.Services.Stores;
 
-namespace MWT.Nop.Core.Services.Catalog
+namespace MWT.Nop.Core.Services.Orders
 {
     public partial class CustomShoppingCartService : ShoppingCartService, ICustomShoppingCartService
     {
@@ -56,6 +58,7 @@ namespace MWT.Nop.Core.Services.Catalog
 
         public virtual async Task<(decimal unitPrice, decimal oldPrice, decimal msrp, decimal discountAmount, List<Discount> appliedDiscounts)> GetCustomUnitPriceAsync(Product product,
 Customer customer,
+   Store store,
 ShoppingCartType shoppingCartType,
 int quantity,
 string attributesXml,
@@ -75,7 +78,6 @@ bool includeDiscounts)
             decimal finalPrice;
             decimal oldPrice = product.OldPrice;
             decimal msrp = product.Msrp;
-            var store = await _storeContext.GetCurrentStoreAsync();
 
             var combination = await _productAttributeParser.FindProductAttributeCombinationAsync(product, attributesXml);
             if (combination?.OverriddenPrice.HasValue ?? false)
@@ -101,7 +103,7 @@ bool includeDiscounts)
                 {
                     foreach (var attributeValue in attributeValues)
                     {
-                        attributesTotalPrice += await _priceCalculationService.GetProductAttributeValuePriceAdjustmentAsync(product, attributeValue, customer, store, product.CustomerEntersPrice ? (decimal?)customerEnteredPrice : null);
+                        attributesTotalPrice += await _priceCalculationService.GetProductAttributeValuePriceAdjustmentAsync(product, attributeValue, customer, store, product.CustomerEntersPrice ? customerEnteredPrice : null);
                     }
                 }
 
@@ -203,9 +205,9 @@ bool includeDiscounts)
                 });
 
                 if (discountPercent > 0 && price > 0)
-                    memberShipPrice = price - ((price * discountPercent) / 100);
+                    memberShipPrice = price - price * discountPercent / 100;
                 else if (discountPercent > 0 && salePrice > 0)
-                    memberShipPrice = salePrice - ((salePrice * discountPercent) / 100);
+                    memberShipPrice = salePrice - salePrice * discountPercent / 100;
 
             }
             catch (Exception exp)
@@ -220,7 +222,7 @@ bool includeDiscounts)
         ShoppingCartType shoppingCartType, int storeId, string attributesXml = null,
         decimal customerEnteredPrice = decimal.Zero,
         DateTime? rentalStartDate = null, DateTime? rentalEndDate = null,
-        int quantity = 1, bool addRequiredProducts = true)
+        int quantity = 1, bool addRequiredProducts = true, int? wishlistId = null)
         {
             if (customer == null)
                 throw new ArgumentNullException(nameof(customer));
@@ -589,7 +591,7 @@ bool includeDiscounts)
                     if (variantId > 0)
                     {
                         var variantCombination = await _customProductService.GetProductVariants(item.ProductId);
-                        if ((variantCombination.Where(v => v.VariantId == variantId).FirstOrDefault()?.EnableSurcharge ?? false))
+                        if (variantCombination.Where(v => v.VariantId == variantId).FirstOrDefault()?.EnableSurcharge ?? false)
                         {
                             wgsSurchargeApplicable = true;
                             break;

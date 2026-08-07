@@ -66,6 +66,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
 
 
         #endregion
+
+        [SaveLastContinueShoppingPage]
         public virtual async Task<IActionResult> Index(string SeName, CustomCatalogProductsCommand command)
         {
             var urlRecord = await _customurlRecordService.GetByQuestionAnswerSlugAsync(SeName);
@@ -80,11 +82,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
             {
                 return StatusCode(404);
             }
-            //'Continue shopping' URL
-            await _genericAttributeService.SaveAttributeAsync(await _workContext.GetCurrentCustomerAsync(),
-                NopCustomerDefaults.LastContinueShoppingPageAttribute,
-                _webHelper.GetThisPageUrl(false),
-                (await _storeContext.GetCurrentStoreAsync()).Id);
+
 
             //display "edit" (manage) link
             if (await _permissionService.AuthorizeAsync(StandardPermission.Security.ACCESS_ADMIN_PANEL) &&

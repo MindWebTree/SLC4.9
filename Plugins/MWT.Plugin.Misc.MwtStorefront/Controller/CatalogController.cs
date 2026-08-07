@@ -145,11 +145,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controller
             if (category == null || !await CheckCategoryAvailabilityAsync(category))
                 return InvokeHttp404();
 
-            //'Continue shopping' URL
-            await _genericAttributeService.SaveAttributeAsync(await _workContext.GetCurrentCustomerAsync(),
-                NopCustomerDefaults.LastContinueShoppingPageAttribute,
-                _webHelper.GetThisPageUrl(false),
-                (await _storeContext.GetCurrentStoreAsync()).Id);
+     
 
             //display "edit" (manage) link
             if (await _permissionService.AuthorizeAsync(StandardPermission.Security.ACCESS_ADMIN_PANEL) && await _permissionService.AuthorizeAsync(StandardPermission.Catalog.CATEGORIES_VIEW))
@@ -205,11 +201,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controller
             if (!await CheckCategoryAvailabilityAsync(category))
                 return InvokeHttp404();
 
-            //'Continue shopping' URL
-            await _genericAttributeService.SaveAttributeAsync(await _workContext.GetCurrentCustomerAsync(),
-                NopCustomerDefaults.LastContinueShoppingPageAttribute,
-                _webHelper.GetThisPageUrl(false),
-                (await _storeContext.GetCurrentStoreAsync()).Id);
+   
+        
 
             //display "edit" (manage) link
             if (await _permissionService.AuthorizeAsync(StandardPermission.Security.ACCESS_ADMIN_PANEL) && await _permissionService.AuthorizeAsync(StandardPermission.Catalog.CATEGORIES_VIEW))
