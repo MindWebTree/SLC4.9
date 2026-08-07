@@ -1,0 +1,88 @@
+﻿@inject Nop.Core.IWorkContext _workContext;
+@inject Nop.Services.Localization.ILocalizationService _localizationService;
+@{
+    Layout = "_Root";
+}
+<script>
+
+    var shadeAsShow = '@T("Product.selected.shades")';
+    var defaultSortOption = '@((await _localizationService.GetResourceAsync("Common.Select")).Replace(" ", "_"))';
+</script>
+@{
+   
+
+
+ 
+
+
+    //current product ID
+    var currentProductId = 0;
+    if (Url.ActionContext.RouteData.Values["controller"].ToString().Equals("product", StringComparison.InvariantCultureIgnoreCase) &&
+        Url.ActionContext.RouteData.Values["action"].ToString().Equals("productdetails", StringComparison.InvariantCultureIgnoreCase))
+    {
+        currentProductId = Convert.ToInt32(Url.ActionContext.RouteData.Values["productId"].ToString());
+    }
+    var hidefilter = false;
+    var displayFilters = false;
+    bool.TryParse((string)ViewBag.hidefilter, out hidefilter);
+    bool.TryParse((string)ViewBag.displayFilters, out displayFilters);
+    var EnableInfiniteScroll = false;
+    bool.TryParse((string)ViewBag.EnableInfiniteScroll, out EnableInfiniteScroll);
+}
+<script>
+    var EnableInfiniteScroll='@EnableInfiniteScroll';
+</script>
+@if (EnableInfiniteScroll){
+    <text>
+        <style>
+            .pager{
+                display:none;
+            }
+        </style>
+    </text>
+}
+@await RenderSectionAsync("Breadcrumb", false)
+
+@*@if (IsSectionDefined("left"))
+    {
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnBefore })
+        @await RenderSectionAsync("left")
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnAfter })
+    }
+    else
+    {*@
+
+
+<div class="row mx-0">
+    @await RenderSectionAsync("Heading")
+
+    @*@await RenderSectionAsync("QuickFilter")*@
+    @if (IsSectionDefined("CatalogSelector"))
+    {
+        @await RenderSectionAsync("CatalogSelector")
+    }
+    @if (_workContext.IsMobileDevice())
+    {
+        @if (IsSectionDefined("SelectedtFilters"))
+        {
+            @await RenderSectionAsync("SelectedtFilters", false)
+        }
+    }
+  
+</div>
+<div class="row version1">
+
+    <div class="listinggrid  col-sm-12">
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.MainColumnBefore })
+        @RenderBody()
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.MainColumnAfter })
+    </div>
+    <div class="col-sm-12">
+        @await RenderSectionAsync("categoryBottom")
+    </div>
+</div>
+@*}*@
+
+
+
+
