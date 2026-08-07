@@ -33,13 +33,13 @@ using Nop.Services.Stores;
 
 namespace MWT.Nop.Core.Services.Orders
 {
-    public partial class CustomShoppingCartService : ShoppingCartService, ICustomShoppingCartService
+    public partial class ShoppingCartExtendedCartService : ShoppingCartService, IShoppingCartExtendedCartService
     {
         private readonly ICustomSpecificationAttributeService _customSpecificationAttributeService;
         private readonly ICustomProductAttributeFormatter _customProductAttributeFormatter;
         private readonly ICustomProductService _customProductService;
 
-        public CustomShoppingCartService(CatalogSettings catalogSettings, IAclService aclService, IActionContextAccessor actionContextAccessor, IAttributeParser<CheckoutAttribute,
+        public ShoppingCartExtendedCartService(CatalogSettings catalogSettings, IAclService aclService, IActionContextAccessor actionContextAccessor, IAttributeParser<CheckoutAttribute,
             CheckoutAttributeValue> checkoutAttributeParser, IAttributeService<CheckoutAttribute, CheckoutAttributeValue> checkoutAttributeService,
             ICurrencyService currencyService, ICustomerService customerService, IDateRangeService dateRangeService, 
             IDateTimeHelper dateTimeHelper, IEventPublisher eventPublisher, IGenericAttributeService genericAttributeService, 

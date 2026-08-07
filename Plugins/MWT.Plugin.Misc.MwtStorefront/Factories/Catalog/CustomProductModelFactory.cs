@@ -60,7 +60,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
         private readonly ICustomProductAttributeService _customProductAttributeService;
         private readonly ICustomPictureService _customPictureService;
         private readonly ICustomSpecificationAttributeService _customSpecificationAttributeService;
-        private readonly ICustomShoppingCartService _customShoppingCartService;
+        private readonly IShoppingCartExtendedCartService _customShoppingCartService;
         private readonly ICustomProductService _customProductService;
         private readonly ISettingService _settingService;
         private readonly IActionContextAccessor _actionContextAccessor;
@@ -93,7 +93,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
             IVideoService videoService, IWebHelper webHelper, IWorkContext workContext,
             MediaSettings mediaSettings, OrderSettings orderSettings, SeoSettings seoSettings,
             ShippingSettings shippingSettings, VendorSettings vendorSettings, ICustomProductAttributeService customProductAttributeService, ICustomPictureService customPictureService,
-            ICustomShoppingCartService customShoppingCartService,
+            IShoppingCartExtendedCartService customShoppingCartService,
             ICustomProductService customProductService,
             ISettingService settingService,
             ICustomSpecificationAttributeService customSpecificationAttributeService,

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace MWT.Nop.Core.Services.Catalog
 {
-    public partial interface ICustomShoppingCartService : IShoppingCartService
+    public partial interface IShoppingCartExtendedCartService : IShoppingCartService
     {
         Task<(decimal unitPrice, decimal oldPrice, decimal msrp, decimal discountAmount, List<Discount> appliedDiscounts)> GetCustomUnitPriceAsync(Product product,
          Customer customer,

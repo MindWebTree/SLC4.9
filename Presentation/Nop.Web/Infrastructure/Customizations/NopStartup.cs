@@ -52,7 +52,7 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<IFeedService,FeedService>();
             services.AddScoped<ICustomSpecificationAttributeService, CustomSpecificationAttributeService>();
             services.AddScoped<ICustomPictureService, CustomPictureService>();
-            services.AddScoped<ICustomShoppingCartService, CustomShoppingCartService>();
+            services.AddScoped<IShoppingCartExtendedCartService, ShoppingCartExtendedCartService>();
             services.AddScoped<ICustomProductAttributeFormatter, CustomProductAttributeFormatter>();
             services.AddScoped<IGroupedProductConfigurationService, GroupedProductConfigurationService>();
             services.AddScoped<IKwTermService, KwTermService>();
