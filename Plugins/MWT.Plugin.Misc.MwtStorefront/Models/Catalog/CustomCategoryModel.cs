@@ -9,11 +9,11 @@ namespace MWT.Plugin.Misc.MwtStorefront.Models.Catalog
 {
     public record CustomCategoryModel : CategoryModel
     {
-        public CustomCategoryModel()
-        {
-            CatalogProductsModel = new CustomCatalogProductsModel();
-        }
-        public new IList<CustomProductOverviewModel> FeaturedProducts = new List<CustomProductOverviewModel>();
+            public CustomCategoryModel()
+            {
+                CatalogProductsModel = new CustomCatalogProductsModel();
+            }
+            public new IList<CustomProductOverviewModel> FeaturedProducts = new List<CustomProductOverviewModel>();
         public string QuickFilterHeading { get; set; }
         public string GridLineViewPath { get; set; }
         public string FilterViewPath { get; set; }

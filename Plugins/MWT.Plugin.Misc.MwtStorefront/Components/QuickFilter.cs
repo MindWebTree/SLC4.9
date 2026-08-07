@@ -1,11 +1,14 @@
 ﻿
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using MWT.Nop.Core.Service.Catalog;
+using MWT.Plugin.Misc.MwtStorefront.Factories;
+using MWT.Plugin.Misc.MwtStorefront.Models.QuickFilter;
 using Nop.Core.Caching;
 using Nop.Web.Factories;
 using Nop.Web.Framework.Components;
 using Nop.Web.Infrastructure.Cache;
 using Nop.Web.Models.Catalog;
+using System.Threading.Tasks;
 
 namespace Nop.Web.Components
 {
@@ -32,7 +35,7 @@ namespace Nop.Web.Components
         /// <returns>A task that represents the asynchronous operation</returns>
         public async Task<IViewComponentResult> InvokeAsync(int entityId, string entityType, string heading)
         {
-            var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(NopModelCacheDefaults.QuickFilterCacheKey,
+            var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(CustomNopCatalogDefaults.QuickFilterCacheKey,
                 entityId, entityType);
 
             var filters = await this._staticCacheManager.GetAsync(cacheKey, async () =>

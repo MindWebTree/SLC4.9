@@ -1,6 +1,7 @@
 ﻿
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using MWT.Plugin.Misc.MwtStorefront.Factories;
 using Nop.Core.Caching;
 using Nop.Web.Factories;
 using Nop.Web.Framework.Components;
@@ -33,7 +34,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
         /// <returns>A task that represents the asynchronous operation</returns>
         public async Task<IViewComponentResult> InvokeAsync(int entityId, string entityType)
         {
-            var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(NopModelCacheDefaults.RelatedSearchTermCacheKey,
+            var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(CustomNopModelCacheDefaults.RelatedSearchTermCacheKey,
                 entityId, entityType);
 
             var terms = await this._staticCacheManager.GetAsync(cacheKey, async () =>
