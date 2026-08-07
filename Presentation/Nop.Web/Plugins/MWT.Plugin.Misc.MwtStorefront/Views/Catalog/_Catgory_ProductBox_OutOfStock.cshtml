@@ -5,7 +5,7 @@
 @using Nop.Core.Domain.Tax
 @inject CatalogSettings catalogSettings
 @inject ICustomWorkContext _workContext
-@{ 
+@{
     string offerText = CustomCommonHelper.GetProductOfferText(Model.Id, Model.ProductPrice.OfferText, Model.ProductPrice.OfferPlaceHolder, Model.ProductPrice.DiscountAmount, Model.ProductPrice.DiscountPercentage, Model.ProductPrice.SaleEndDate, false);
     var addtowishlistlink = Url.RouteUrl("AddProductToCart-Catalog", new
     {
@@ -13,7 +13,8 @@
         shoppingCartTypeId = (int)ShoppingCartType.Wishlist,
         quantity = 1,
         iswishlist = true
-    }); }
+    });
+}
 <div class="category product-card out-of-stock">
     <div data-productid="@Model.Id" data-isSimilarProduct="@Model.IsSimilarProduct">
         <div class="cat-img out-of-stock-blur">
@@ -23,22 +24,24 @@
                 {
                     foreach (var tag in Model.Tags)
                     {
-    <div class="@tag.Name">@tag.Name</div>break;
-}
-}
+                        <div class="@tag.Name">@tag.Name</div>
+                        break;
+                    }
+                }
             </div>
 
-            <a href="@Url.RouteUrl("Product", new {id=Model.Id, SeName = Model.SeName })" title="@Model.DefaultPictureModel.Title">
+            <a href="@Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName })" aria-label="@Model.DefaultPictureModel.Title is out of stock">
                 <div class="image-container out-of-stock" ">
-                    <img alt="@Model.DefaultPictureModel.AlternateText" src="/images/pixel.png" height="415" width="415"
+                    <img alt="" src="/images/pixel.png" height="415" width="415"
                          data-src="@Model.DefaultPictureModel.ImageUrl"
-                         default-pic="@Model.DefaultPictureModel.ImageUrl" alt-pic="@(Model.AlternatePictureModel==null?"":Model.AlternatePictureModel.ImageUrl)"
-                         title="@Model.DefaultPictureModel.Title" class="lazy" style="width:100%;height:auto;" />
+                         default-pic="@Model.DefaultPictureModel.ImageUrl" alt-pic="@(Model.AlternatePictureModel == null ? "" : Model.AlternatePictureModel.ImageUrl)"
+                           class="lazy" style="width:100%;height:auto;" />
 
                     <div class="sold-out-text">@T("Label.SoldOut")</div>
                 </div>
             </a>
-            <div class="wishlist-icon" data-toggle="tooltip" data-placement="top" title="Add to Wishlist" data-wishlistid="@Model.Id" onclick="AjaxCart.addproducttocart_catalog('@addtowishlistlink');return false;">
+            <div class="wishlist-icon"
+                 role="button" tabindex="0" aria-expanded="false" data-toggle="tooltip" data-placement="top" title="Add to Wishlist" data-wishlistid="@Model.Id" onclick="AjaxCart.addproducttocart_catalog('@addtowishlistlink');return false;">
                 <i class="far fa-heart" alt="Add to Wishlist"></i>
             </div>
         </div>
@@ -47,32 +50,43 @@
 
             @if (Model.Attribute != null)
             {
-        @if (Model.Attribute.Count > 0)
-        {
-            <div class="shade d-flex shadesSection">
-                @{ var shadeAttributes = _workContext.IsMobileDevice() ? (Model.Attribute.Count > 4 ? Model.Attribute.Take(4) : Model.Attribute) : Model.Attribute;
+                @if (Model.Attribute.Count > 0)
+                {
+                    <div class="shade d-flex shadesSection">
+                        @{
+                            var shadeAttributes = _workContext.IsMobileDevice() ? (Model.Attribute.Count > 4 ? Model.Attribute.Take(4) : Model.Attribute) : Model.Attribute;
 
-                    foreach (var attr in shadeAttributes)
-                    {
-                        if (string.IsNullOrEmpty(attr.PictureUrl))
-                        {
-                            <a href="@Url.RouteUrl("Product", new {id=Model.Id,SeName = Model.SeName})">
-                                <img src="/images/shades/Squareimage/@(attr.Name).jpg" data-id="@Model.Id" alt="@attr.Name" height="44" width="44">
-                            </a>
+                            foreach (var attr in shadeAttributes)
+                            {
+                                if (string.IsNullOrEmpty(attr.PictureUrl))
+                                {
+                                    <a href="@Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName })">
+                                        <img
+                                        src="/images/shades/Squareimage/@(attr.Name).jpg"
+                                             data-id="@Model.Id" alt="Available in @attr.Name Shade" height="44" width="44">
+                                    </a>
+                                }
+                                else
+                                {
+                                    <img src="/images/shades/Squareimage/@(attr.Name).jpg"
+                                         data-id="@Model.Id" tabindex="0" role="button"
+                                    pic-url="@(attr.PictureUrl == "" ?
+                                         Model.DefaultPictureModel.ImageUrl : attr.PictureUrl)" alt="Available in @attr.Name Shade" height="44" width="44">
+                                }
+                            }
+                            if (_workContext.IsMobileDevice() && Model.Attribute.Count > 4)
+                            {
+                                <a href="@Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName })">
+                                    +
+                                </a>
+                            }
+
                         }
-                        else
-                        {
-                            <img src="/images/shades/Squareimage/@(attr.Name).jpg" data-id="@Model.Id" pic-url="@(attr.PictureUrl==""?Model.DefaultPictureModel.ImageUrl:attr.PictureUrl)" alt="@attr.Name"  height="44" width="44" >
-                        }
-                    }
-                    if (_workContext.IsMobileDevice() && Model.Attribute.Count > 4)
-                    {
-            <a href="@Url.RouteUrl("Product", new {id=Model.Id,SeName = Model.SeName})">
-                +
-            </a> } }
-            </div>}            }
+                    </div>
+                }
+            }
             <h3>
-                <a href="@Url.RouteUrl("Product", new {id=Model.Id,SeName = Model.SeName})">@Model.Name</a>
+                <a href="@Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName })">@Model.Name</a>
             </h3>
             @if (!string.IsNullOrEmpty(Model.SizeShadeMessage))
             {
@@ -82,95 +96,140 @@
                         var attrs = Model.SizeShadeMessage.Split('|', StringSplitOptions.RemoveEmptyEntries);
                         foreach (var attr in attrs)
                         {
-                            <a href="@Url.RouteUrl("Product", new {id=Model.Id,SeName = Model.SeName})">
-                                @attr
-                            </a>
+                            <span>  @attr</span>
                         }
                     }
 
-                </h4> } @*end*@
+                </h4>
+            }
+ @*end*@
 
             @if (Model.ProductPrice.IsVariantProduct)
             {
 
 
-        @if (!string.IsNullOrEmpty(Model.ProductPrice.MinMembershipPrice))
-        {
-        <h4 class="price actual-price">
-            @T("Label.RegularPrice")
-            @T("Price.Range",
-                                               !string.IsNullOrEmpty(Model.ProductPrice.MinOldPrice) ? Model.ProductPrice.MinOldPrice : Model.ProductPrice.MinPrice,
-                                               !string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ? Model.ProductPrice.MaxOldPrice : Model.ProductPrice.MaxPrice)
-        </h4>
-                            <h5 class="price old-price">
-                                @T("Label.MembershipPrice")
-                                @T("Price.Range", Model.ProductPrice.MinMembershipPrice, Model.ProductPrice.MaxMembershipPrice)
-                            </h5> }
-                        else
+                @if (!string.IsNullOrEmpty(Model.ProductPrice.MinMembershipPrice))
+                {
+                    <h4 class="price actual-price"
+                        aria-label="Regular price ranges from @(!string.IsNullOrEmpty(Model.ProductPrice.MinOldPrice) ? Model.ProductPrice.MinOldPrice :
+                                                                            Model.ProductPrice.MinPrice) to
+                                    @(!string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ?
+                                                                             Model.ProductPrice.MaxOldPrice :
+                                                                             Model.ProductPrice.MaxPrice). Membership price ranges
+                                                                                                                                                                                                                                                                         from @Model.ProductPrice.MinMembershipPrice to
+                                                                                                                                                                                                                                                                         @Model.ProductPrice.MaxMembershipPrice">
+                                                                                                         @T("Label.RegularPrice")
+                                                                                                         @T("Price.Range",
+                                        !string.IsNullOrEmpty(Model.ProductPrice.MinOldPrice) ? Model.ProductPrice.MinOldPrice : Model.ProductPrice.MinPrice,
+                                        !string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ? Model.ProductPrice.MaxOldPrice : Model.ProductPrice.MaxPrice)
+            </h4>
+            <h5 class="price old-price">
+                @T("Label.MembershipPrice")
+                @T("Price.Range", Model.ProductPrice.MinMembershipPrice, Model.ProductPrice.MaxMembershipPrice)
+            </h5>
+                        }
+                else
+                {
+                    @if (Model.ProductPrice.MinOldPriceValue > 0 && Model.ProductPrice.MinPriceValue > 0 && (Model.ProductPrice.MinOldPriceValue != Model.ProductPrice.MinPriceValue || Model.ProductPrice.MaxPriceValue != Model.ProductPrice.MaxOldPriceValue))
+                    {
+                        if (!string.IsNullOrEmpty(Model.ProductPrice.OfferText))
                         {
-        @if (Model.ProductPrice.MinOldPriceValue > 0 && Model.ProductPrice.MinPriceValue > 0 && (Model.ProductPrice.MinOldPriceValue != Model.ProductPrice.MinPriceValue || Model.ProductPrice.MaxPriceValue != Model.ProductPrice.MaxOldPriceValue))
-        {
-            if (!string.IsNullOrEmpty(Model.ProductPrice.OfferText))
-            {
-        <p class="sale-price  m-0">@Html.Raw(offerText)</p> }
+                            <p class="sale-price  m-0">@Html.Raw(offerText)</p>
+                        }
 
-        <h4 class="price actual-price sale-price">
-            @T("Price.Range.With.Saleprice",
-                                                 !string.IsNullOrEmpty(Model.ProductPrice.MinPrice) ? Model.ProductPrice.MinPrice : Model.ProductPrice.MinOldPrice,
-                                                 !string.IsNullOrEmpty(Model.ProductPrice.MaxPrice) ? Model.ProductPrice.MaxPrice : Model.ProductPrice.MaxOldPrice,
-                                                 !string.IsNullOrEmpty(Model.ProductPrice.MinOldPrice) ? Model.ProductPrice.MinOldPrice : Model.ProductPrice.MinPrice,
-                                                 !string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ? Model.ProductPrice.MaxOldPrice : Model.ProductPrice.MaxPrice
-                                               )
-        </h4> }
-    else
-    {
-        if (!string.IsNullOrEmpty(Model.ProductPrice.OfferText))
-        {
-        <p class="sale-price  m-0">@Html.Raw(offerText)</p> }
-        <h4 class="price actual-price">
-            @T("Price.Range",
-                                                 !string.IsNullOrEmpty(Model.ProductPrice.MinOldPrice) ? Model.ProductPrice.MinOldPrice : Model.ProductPrice.MinPrice,
-                                                 !string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ? Model.ProductPrice.MaxOldPrice : Model.ProductPrice.MaxPrice)
-        </h4>}} }
-    else
-    {
-        @if (!string.IsNullOrEmpty(Model.ProductPrice.MembershipPrice))
-        {
-        <h4 class="price actual-price">@T("Label.RegularPrice")@(!string.IsNullOrEmpty(Model.ProductPrice.OldPrice) ? Model.ProductPrice.OldPrice : Model.ProductPrice.Price)</h4>
-                            <h5 class="price old-price">@T("Label.MembershipPrice")@Model.ProductPrice.MembershipPrice</h5> }
-                        else
+                        <h4 class="price actual-price sale-price"
+                            aria-label="Sale price ranges from @(!string.IsNullOrEmpty(Model.ProductPrice.MinPrice) ?
+                                                    Model.ProductPrice.MinPrice : Model.ProductPrice.MinOldPrice)
+                                                                                                                                                                                 to @(!string.IsNullOrEmpty(Model.ProductPrice.MaxPrice) ?
+                                                    Model.ProductPrice.MaxPrice : Model.ProductPrice.MaxOldPrice).
+                                                                                                                                                                                  Regular price ranges from @(!string.IsNullOrEmpty(Model.ProductPrice.MinOldPrice)
+                                                     ? Model.ProductPrice.MinOldPrice : Model.ProductPrice.MinPrice) to
+                             @(!string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ?
+                                                     Model.ProductPrice.MaxOldPrice : Model.ProductPrice.MaxPrice)">
+                                                                                                                  @T("Price.Range.With.Saleprice",
+                                            !string.IsNullOrEmpty(Model.ProductPrice.MinPrice) ? Model.ProductPrice.MinPrice : Model.ProductPrice.MinOldPrice,
+                                            !string.IsNullOrEmpty(Model.ProductPrice.MaxPrice) ? Model.ProductPrice.MaxPrice : Model.ProductPrice.MaxOldPrice,
+                                            !string.IsNullOrEmpty(Model.ProductPrice.MinOldPrice) ? Model.ProductPrice.MinOldPrice : Model.ProductPrice.MinPrice,
+                                            !string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ? Model.ProductPrice.MaxOldPrice : Model.ProductPrice.MaxPrice
+                                            )
+            </h4>
+                        }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(Model.ProductPrice.OfferText))
                         {
-        @if (Model.ProductPrice.OldPriceValue > 0 && Model.ProductPrice.PriceValue > 0 && Model.ProductPrice.OldPrice != Model.ProductPrice.Price)
-        {
-            if (!string.IsNullOrEmpty(Model.ProductPrice.OfferText))
+                            <p class="sale-price  m-0">@Html.Raw(offerText)</p>
+                        }
+            <h4 class="price actual-price"
+                aria-label="Regular price ranges from
+       @(!string.IsNullOrEmpty(Model.ProductPrice.MinOldPrice) ?
+                               Model.ProductPrice.MinOldPrice : Model.ProductPrice.MinPrice) to
+        @(!string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ?
+                                 Model.ProductPrice.MaxOldPrice : Model.ProductPrice.MaxPrice)">
+                                                                                              @T("Price.Range",
+                                !string.IsNullOrEmpty(Model.ProductPrice.MinOldPrice) ? Model.ProductPrice.MinOldPrice : Model.ProductPrice.MinPrice,
+                                !string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ? Model.ProductPrice.MaxOldPrice : Model.ProductPrice.MaxPrice)
+            </h4>
+                        }
+                }
+            }
+            else
             {
-        <p class="sale-price  m-0">@Html.Raw(offerText)</p> }
-        <h4 class="price actual-price">
-            <p class="sale-price">@Model.ProductPrice.Price<span class="suggested-price">@Model.ProductPrice.OldPrice</span></p>
-        </h4> }
-    else
-    {
-        if (!string.IsNullOrEmpty(Model.ProductPrice.OfferText))
-        {
-        <p class="sale-price  m-0">@Html.Raw(offerText)</p> }
-        <h4 class="price actual-price">
-            @(
-                        !string.IsNullOrEmpty(Model.ProductPrice.OldPrice) ? Model.ProductPrice.OldPrice : Model.ProductPrice.Price
-                        )
-        </h4>}}}
+                @if (!string.IsNullOrEmpty(Model.ProductPrice.MembershipPrice))
+                {
+                    <h4 aria-label="Regular price @(!string.IsNullOrEmpty(Model.ProductPrice.OldPrice)
+                                            ? Model.ProductPrice.OldPrice : Model.ProductPrice.Price).
+    Membership price @Model.ProductPrice.MembershipPrice"
+                class="price actual-price">
+                @T("Label.RegularPrice")@(!string.IsNullOrEmpty(Model.ProductPrice.OldPrice) ? Model.ProductPrice.OldPrice : Model.ProductPrice.Price)
+            </h4>
+            <h5 class="price old-price">@T("Label.MembershipPrice")@Model.ProductPrice.MembershipPrice</h5>
+                        }
+                else
+                {
+                    @if (Model.ProductPrice.OldPriceValue > 0 && Model.ProductPrice.PriceValue > 0 && Model.ProductPrice.OldPrice != Model.ProductPrice.Price)
+                    {
+                        if (!string.IsNullOrEmpty(Model.ProductPrice.OfferText))
+                        {
+                            <p class="sale-price  m-0">@Html.Raw(offerText)</p>
+                        }
+                        <h4 class="price actual-price"
+                            aria-label="Sale price @Model.ProductPrice.Price.
+                           Regular price @Model.ProductPrice.OldPrice">
+                            <p class="sale-price">@Model.ProductPrice.Price<span class="suggested-price">@Model.ProductPrice.OldPrice</span></p>
+                        </h4>
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(Model.ProductPrice.OfferText))
+                        {
+                            <p class="sale-price  m-0">@Html.Raw(offerText)</p>
+                        }
+                        <h4 class="price actual-price"
+                            aria-label="Price @(!string.IsNullOrEmpty(Model.ProductPrice.OldPrice) ?
+                                                    Model.ProductPrice.OldPrice : Model.ProductPrice.Price)">
+                            @(
+                                            !string.IsNullOrEmpty(Model.ProductPrice.OldPrice) ? Model.ProductPrice.OldPrice : Model.ProductPrice.Price
+                                            )
+            </h4>
+                        }
+                }
+            }
 
         </div>
 
-        <label class="label-notify-me p-1 m-1">Notify Me When Available</label>
+        <span class="label-notify-me p-1 m-1">Notify Me When Available</span>
         <div class="out-of-stock-message">
             <div class="notify-me row-cols-12">
-                <input type="text" autocomplete="off" id="user-subscription-email-@Model.Id" placeholder="Enter Your Email Address" class="notify-me-input col-11" />
+                <input type="text" autocomplete="off" id="user-subscription-email-@Model.Id"
+                       aria-label="Enter Your Email"
+                placeholder="Enter Your Email Address" class="notify-me-input col-11" />
                 <br />
                 <button class="notify-me-button col-11" onclick="AddEmailToList(@Model.Id)">@T("backinstocksubscriptions.notifyme")</button>
-                <label class="stock-subscription-section dispaly-Status-@Model.Id">
+                <p class="stock-subscription-section dispaly-Status-@Model.Id">
                     <span class="Success" style="display: none; color:green;">@T("Common.Success.Message")</span>
                     <span class="Error" style="display: none; color: red;">@T("Common.Error.Message")</span>
-                </label>
+                </p>
             </div>
         </div>
 

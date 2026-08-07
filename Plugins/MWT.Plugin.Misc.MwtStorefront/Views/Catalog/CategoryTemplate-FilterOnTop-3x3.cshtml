@@ -87,7 +87,7 @@ var pageSize='@Model.CatalogProductsModel.PageSize';
             <li itemprop="itemListElement" class="breadcrumb-item active" itemscope itemtype="http://schema.org/ListItem">
                 @if (isLastCategory)
                 {
-                    <strong class="current-item" itemprop="name">@cat.Name</strong>
+                    <strong tabindex="0" class="current-item" itemprop="name">@cat.Name</strong>
                     <span itemprop="item" itemscope itemtype="http://schema.org/Thing"
                           id="@Url.RouteUrl("Category", new {id=cat.Id,SeName = cat.SeName})">
                     </span>
@@ -157,7 +157,7 @@ var pageSize='@Model.CatalogProductsModel.PageSize';
                     <div class="sub-category-item card-block">
 
                         <div class="picture">
-                            <a container="#cat-@item.Id" title="@item.PictureModel.Title">
+                            <a href="#cat-@item.Id" title="@item.PictureModel.Title">
                                 <img alt="@item.PictureModel.AlternateText" width="450" height="450" class="card-img-top lazy" src="/images/pixel.png" data-src="@item.PictureModel.ImageUrl" title="@item.PictureModel.Title" />
                             </a>
                         </div>
@@ -284,9 +284,9 @@ var pageSize='@Model.CatalogProductsModel.PageSize';
 
 
     }
-    // commented
-    // @await Component.InvokeAsync("BestSellerByCategoryBlock", new { categoryId = Model.Id })
-    // @await Component.InvokeAsync("RelatedSearchTerms", new { entityId = Model.Id, entityType = "Category" })
+ 
+     @await Component.InvokeAsync("BestSellerByCategoryBlock", new { categoryId = Model.Id })
+     @await Component.InvokeAsync("RelatedSearchTerms", new { entityId = Model.Id, entityType = "Category" })
 
 
 
@@ -312,7 +312,7 @@ var pageSize='@Model.CatalogProductsModel.PageSize';
         @*//Related Search*@
 
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBottom, additionalData = Model })
-            @*    @await Component.InvokeAsync("RecommendationProductsBlock", new { categoryId = Model.Id }) *@
+              @await Component.InvokeAsync("RecommendationProductsBlock", new { categoryId = Model.Id }) 
 
         @*recently  products*@
         @await Component.InvokeAsync("Custom_RecentlyViewedProductsBlock")

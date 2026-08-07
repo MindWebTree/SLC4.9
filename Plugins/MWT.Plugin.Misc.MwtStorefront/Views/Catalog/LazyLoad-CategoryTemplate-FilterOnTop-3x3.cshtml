@@ -109,14 +109,14 @@
                     <li itemprop="itemListElement" class="breadcrumb-item active" itemscope itemtype="http://schema.org/ListItem">
                         @if (isLastCategory)
                         {
-                            <strong class="current-item" itemprop="name">@cat.Name</strong>
+                            <strong tabindex="0" class="current-item" itemprop="name">@cat.Name</strong>
                             <span itemprop="item" itemscope itemtype="http://schema.org/Thing"
                                   id="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })">
                             </span>
                         }
                         else
                         {
-                            <a href="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })" title="@cat.Name" itemprop="item">
+                            <a href="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })"   itemprop="item">
                                 <span itemprop="name">@cat.Name</span>
                             </a>
                         }
@@ -152,11 +152,11 @@
         <div class="version1 categorypage-heading-section">
             @if (productId == 0)
             {
-                <h1 class="page-heading" style="display:@(await _categoryService.IsMwtWidgetApplied(PublicWidgetZones.CategoryDetailsTop, Model.Id, "Category", _workcontext.IsMobileDevice()) && productId == 0 ? "none" : "block")">@(Model.Name)</h1>
+                <h1 class="page-heading" id="page-heading-section"  style="display:@(await _categoryService.IsMwtWidgetApplied(PublicWidgetZones.CategoryDetailsTop, Model.Id, "Category", _workcontext.IsMobileDevice()) && productId == 0 ? "none" : "block")">@(Model.Name)</h1>
             }
             else
             {
-                <span class="page-heading" style="display:@(await _categoryService.IsMwtWidgetApplied(PublicWidgetZones.CategoryDetailsTop, Model.Id, "Category", _workcontext.IsMobileDevice()) && productId == 0 ? "none" : "block")">@(Model.Name)</span>
+                <span class="page-heading" id="page-heading-section" style="display:@(await _categoryService.IsMwtWidgetApplied(PublicWidgetZones.CategoryDetailsTop, Model.Id, "Category", _workcontext.IsMobileDevice()) && productId == 0 ? "none" : "block")">@(Model.Name)</span>
 
             }
             @await Component.InvokeAsync("HeadLinks", new
@@ -228,15 +228,21 @@
         @*subcategories*@
         @if (Model.SubCategories.Count > 0)
         {
-            <div class="row subcategories">
+            <div aria-labelledby="page-heading-section" role="region" class="row subcategories">
                 @foreach (var item in Model.SubCategories)
                 {
                     <div class="item-box card col-6 col-sm-3 col-md-4 col-lg-4 col-xl-4">
                         <div class="sub-category-item card-block">
 
                             <div class="picture">
-                                <a container="#cat-@item.Id" title="@item.PictureModel.Title">
-                                    <img alt="@item.PictureModel.AlternateText" width="450" height="450" class="card-img-top lazy" src="/images/pixel.png" data-src="@item.PictureModel.ImageUrl" title="@item.PictureModel.Title" />
+                                <a href="#cat-@item.Id"
+                                   aria-label="@item.PictureModel.Title" 
+                                   >
+                                    <img alt="" width="450" height="450" 
+                                    class="card-img-top lazy"
+                                    src="/images/pixel.png"
+                                    data-src="@item.PictureModel.ImageUrl"
+                            />
                                 </a>
                             </div>
                             <h2 class="title">
