@@ -1,0 +1,54 @@
+﻿@model SpecificationFilterModel
+@{
+    List<int> openTabs = new List<int>();
+    Html.Raw("outside");
+    if (ViewData["openTabs"] != null)
+    {
+        Html.Raw("in");
+        openTabs = (List<int>)ViewData["openTabs"];
+    }
+}
+
+@foreach (var attr in Model.Attributes)
+{
+
+    <div class="card-header @(openTabs.Contains(attr.Id)?"":"collapsed") @(attr.Values.Any(x => !string.IsNullOrEmpty(x.ColorSquaresRgb)) ? "product-spec-color" : null )"
+         data-bs-toggle="collapse" href="#collapse_@attr.Id" id="filter-btn-@attr.Id" data-filter-name="@(attr.Id == -1 ? attr.Sename : attr.Name)">
+        <span class="card-title">
+            <strong>@attr.Name</strong>
+        </span>
+    </div>
+    <div id="collapse_@attr.Id" class="card-body collapse @(openTabs.Contains(attr.Id)?"show":"")">
+        @foreach (var value in attr.Values)
+        {@if (attr.Id == -1)
+            {
+                <input id="attribute-option-@value.Id" type="radio" data-parent-filterId="@attr.Id" data-filter-name="@value.Id"
+                       data-option-id="@value.Id" checked="@value.Selected" class="filtercheckbox popupfilter catpopfilter" />
+            }
+            else
+            {
+                <input id="attribute-option-@value.Id" type="checkbox" data-parent-filterId="@attr.Id" data-filter-name="@value.Sename"
+                       data-option-id="@value.Id" checked="@value.Selected" class="filtercheckbox popupfilter" />
+            }
+            @if (string.IsNullOrEmpty(value.ColorSquaresRgb))
+            {
+                <label for="attribute-option-@value.Id">
+                    @value.Name
+                    <span class="count">(@value.Count)</span>
+                </label>
+            }
+            else
+            {
+                <label for="attribute-option-@value.Id" class="attribute-squares color-squares">
+                    <span class="attribute-square" style="background-color: @(value.ColorSquaresRgb);"></span>
+                    @value.Name
+                </label>
+            }
+            <br />
+        }
+    </div>
+}
+
+
+
+

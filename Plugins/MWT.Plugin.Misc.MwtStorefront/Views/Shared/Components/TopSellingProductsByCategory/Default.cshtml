@@ -1,0 +1,37 @@
+﻿@model Nop.Web.Models.Catalog.CatalogProductsModel
+<div class="container shop-by-category chilcategorysection" id="cat-@Model.CategoryID">
+    <h2 class="page-heading">@Model.CategoryName</h2>
+    <div class="row">
+        <div class="listinggrid col-sm-12 col-lg-12">
+            <div class="row">
+                @{
+                    int counter = 1;
+                    foreach (var product in Model.Products)
+                    {
+          <div class="col-sm-6 col-lg-3 cat-box @(counter==Model.Products.Count?"parent-cat-last-item":"")">
+            @await Html.PartialAsync("_Catgory_ProductBox", product)
+        </div> 
+                        counter ++;
+                    } }
+
+            </div>
+        </div>
+        <div class="listinggrid col-sm-12 col-lg-12">
+            <div class="row">
+                <div class="col-sm-12 col-lg-12 cat-box3">
+                    <div class="cat-img">
+                        <a href="@Url.RouteUrl("Category", new {id=Model.CategoryID, SeName = Model.Sename })" title="@Model.CategoryName">
+                            <div class="parentcategory-text-gray-box">
+
+                                <h5>@T("Categpry.More.Items", @Model.TotalItems)</h5>
+
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

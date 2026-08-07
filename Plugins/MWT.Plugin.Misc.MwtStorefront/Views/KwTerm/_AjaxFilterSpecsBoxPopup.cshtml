@@ -1,0 +1,126 @@
+﻿@model SpecificationFilterModel
+@using System.Linq;
+
+@{
+    int index = 0; int noOfFiltersToShow = 5;
+    List<int> openTabs = new List<int>();
+    if (ViewData["popupOpenTabs"] != null)
+    {
+        openTabs = (List<int>)ViewData["popupOpenTabs"];
+    }
+}
+
+@if (Model.Attributes.Count > noOfFiltersToShow)
+{
+    index = 0;
+
+    @foreach (var attr in Model.Attributes)
+    {
+        index++;
+        @if (attr.Id != -1)
+        {
+            
+            <div class="custom-select">
+                <div class=" subfiltersdrp">
+                    <button class="btn btn-info btn-sm dropdown-toggle btndropdown popupbtn" type="button" id="filter-btn-@attr.Id" data-filter-name="@(
+        attr.Id == -1 ? attr.Sename : attr.Name
+        )">
+                        @attr.Name
+                        <i class="@(openTabs.Contains(attr.Id)?"up-arrow":"down-arrow")"></i>
+                    </button>
+                    @*<div class="card-header collapsed @(attr.Values.Any(x => !string.IsNullOrEmpty(x.ColorSquaresRgb)) ? "product-spec-color" : null )"
+        data-bs-toggle="collapse" href="#collapse_@attr.Id">
+        <span class="card-title">
+        <strong>@attr.Name</strong>
+        </span>
+        </div>*@
+
+                    <ul class="dropdown-menu @(openTabs.Contains(attr.Id)?"show":"")" style="display:@(openTabs.Contains(attr.Id)?"block;":"")">
+                        @foreach (var value in attr.Values)
+                        {
+                            <li>
+                                <div class="radio-btn">
+                                    @if (index > noOfFiltersToShow)
+                                    {
+                                        @if (attr.Id == -1)
+                                        {
+                                            <input id="attribute-option-@value.Id" type="radio" data-parent-filterId="@attr.Id"
+                                            data-filter-name="@value.Id" 
+                                            data-option-id="@value.Id" checked="@value.Selected" class="filtercheckbox popupfilter" />
+                                        }
+                                        else
+                                        {
+                                            <input id="attribute-option-@value.Id" type="checkbox" data-parent-filterId="@attr.Id"
+                                            data-filter-name="@value.Sename"
+                                            data-option-id="@value.Id" checked="@value.Selected" class="filtercheckbox popupfilter" />
+                                        }
+                                        @if (string.IsNullOrEmpty(value.ColorSquaresRgb))
+                                        {
+                                            <label for="attribute-option-@value.Id">
+                                                @value.Name
+                                                <span class="count">@value.Count</span>
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            <label for="attribute-option-@value.Id" class="attribute-squares color-squares">
+                                                <span class="attribute-square" style="background-color: @(value.ColorSquaresRgb);"></span>
+                                                @value.Name
+
+                                            </label>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (attr.Id == -1)
+                                        {
+                                            <input id="attribute-option-@value.Id" type="radio"
+                                            data-parent-filterId="@attr.Id" data-option-id="@value.Id" data-filter-name="@value.Id"
+                                            checked="@value.Selected" class="filtercheckbox" />
+                                        }
+                                        else
+                                        {
+                                            <input id="popup-attribute-option-@value.Id" type="checkbox" data-parent-filterId="@attr.Id"
+                                            popup-data-option-id="@value.Id" data-filter-name="@value.Sename"
+                                            checked="@value.Selected" class="filtercheckbox popupfilter" />
+                                        }
+
+                                        @if (string.IsNullOrEmpty(value.ColorSquaresRgb))
+                                        {
+                                            if (attr.Id == -1)
+                                            {
+                                                <label for="attribute-option-@value.Id">
+                                                    @value.Name
+                                                    <span class="count">@value.Count</span>
+                                                </label>
+                                            }
+                                            else
+                                            {
+                                                <label for="popup-attribute-option-@value.Id">
+                                                    @value.Name
+                                                    <span class="count">@value.Count</span>
+                                                </label>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <label for="popup-attribute-option-@value.Id" class="attribute-squares color-squares">
+                                                <span class="attribute-square" style="background-color: @(value.ColorSquaresRgb);"></span>
+                                                @value.Name
+                                            </label>
+                                        }
+                                    }
+
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+
+    }
+}
+
+
+
