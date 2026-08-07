@@ -1,6 +1,13 @@
 ﻿@using MWT.Nop.Core.Infrastructure
+@inject IThemeContext themeContext
 @{
     Layout = "_Root.Head";
+    var themeName = await themeContext.GetWorkingThemeNameAsync();
+    var controllerName = this.ViewContext.RouteData.Values["controller"].ToString();
+    var action = this.ViewContext.RouteData.Values["action"].ToString();
+    bool isHome = String.Compare(controllerName, "home",
+                 StringComparison.OrdinalIgnoreCase) == 0 && String.Compare(action, "index",
+                 StringComparison.OrdinalIgnoreCase) == 0 ? true : false;
 }
 @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.BodyStartHtmlTagAfter })
 @{ await Html.RenderPartialAsync("_Notifications"); }
@@ -30,7 +37,7 @@
         {
             @RenderSection("Breadcrumb") 
         }
-        <div class="master-column-wrapper container">
+        <div class="master-column-wrapper @(isHome ? "" : "container")">
             @RenderBody()
         </div>
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ContentAfter })

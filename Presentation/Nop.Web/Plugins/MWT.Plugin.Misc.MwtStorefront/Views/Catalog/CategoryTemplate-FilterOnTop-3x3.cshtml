@@ -55,61 +55,57 @@
     #endregion
 }
 <script>
-    var pageSize='@Model.CatalogProductsModel.PageSize';
+var pageSize='@Model.CatalogProductsModel.PageSize';
 </script>
 @*category breadcrumb*@
 @section Breadcrumb
-{
+    {
     @if (Model.DisplayCategoryBreadcrumb)
     {
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb" itemscope itemtype="http://schema.org/BreadcrumbList">
-                @{
-                    int position = 1;
-                }
-                <li class="breadcrumb-item">
-                    <span itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
-                        <a href="@Url.RouteUrl("Homepage")" itemprop="item">
-                            <span itemprop="name">@T("Categories.Breadcrumb.Top")</span>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb" itemscope itemtype="http://schema.org/BreadcrumbList">
+        @{
+            int position = 1;
+        }
+        <li class="breadcrumb-item">
+            <span itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                <a href="@Url.RouteUrl("Homepage")" itemprop="item">
+                    <span  itemprop="name">@T("Categories.Breadcrumb.Top")</span>
 
-                        </a>
-                        <meta itemprop="position" content="@position" />
-                    </span>
-                </li>
+                </a>
+                <meta itemprop="position" content="@position" />
+            </span>
+        </li>
 
 
 
-                @{
-                    position++;
-                }
+        @{position++;}
 
-                @foreach (var cat in Model.CategoryBreadcrumb)
+        @foreach (var cat in Model.CategoryBreadcrumb)
+        {
+            var isLastCategory = cat.Id == Model.Id;
+            <li itemprop="itemListElement" class="breadcrumb-item active" itemscope itemtype="http://schema.org/ListItem">
+                @if (isLastCategory)
                 {
-                    var isLastCategory = cat.Id == Model.Id;
-                    <li itemprop="itemListElement" class="breadcrumb-item active" itemscope itemtype="http://schema.org/ListItem">
-                        @if (isLastCategory)
-                        {
-                            <strong class="current-item" itemprop="name">@cat.Name</strong>
-                            <span itemprop="item" itemscope itemtype="http://schema.org/Thing"
-                                  id="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })">
-                            </span>
-                        }
-                        else
-                        {
-                            <a href="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })" title="@cat.Name" itemprop="item">
-                                <span itemprop="name">@cat.Name</span>
-                            </a>
-                        }
-                        <meta itemprop="position" content="@position" />
-                        @{
-                            position++;
-                        }
-                    </li>
-
+                    <strong class="current-item" itemprop="name">@cat.Name</strong>
+                    <span itemprop="item" itemscope itemtype="http://schema.org/Thing"
+                          id="@Url.RouteUrl("Category", new {id=cat.Id,SeName = cat.SeName})">
+                    </span>
                 }
+                else
+                {
+                    <a href="@Url.RouteUrl("Category", new {id=cat.Id, SeName = cat.SeName })" title="@cat.Name" itemprop="item">
+                        <span itemprop="name">@cat.Name</span>
+                    </a>
+                }
+                <meta itemprop="position" content="@position" />
+                @{position++;}
+            </li>
 
-            </ol>
-        </nav>
+        }
+
+    </ol>
+</nav>
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsAfterBreadcrumb, additionalData = Model })
     }
 }
@@ -117,9 +113,9 @@
 
 
 <div class="page category-page">
-    @section Video{
-        @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsTopVideo, additionalData = Model })
-    }
+ @section Video{
+     @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsTopVideo, additionalData = Model })
+ }
     @section FeaturedProduct{
         @if (productId != 0)
         {
@@ -133,176 +129,173 @@
             {
                 categoryId = Model.Id,
                 catSeName = Url.RouteUrl("Category", new { id = Model.Id, SeName = Model.SeName }),
-                currentPageurl = Url.RouteUrl("Category", new { id = Model.Id, SeName = Model.SeName })
-                })
-    </div>
-        }
+        currentPageurl = Url.RouteUrl("Category", new { id = Model.Id, SeName = Model.SeName })
+            })
+        </div>
+    }
     @*@section QuickFilter{
         @await Component.InvokeAsync("QuickFilter", new { entityId = Model.Id, entityType = "Category", heading = Model.QuickFilterHeading })
     }*@
 
-    <div class="page-body">
+<div class="page-body">
 
 
 
 
-        @section CategoryTopWidget{
-            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsTop, additionalData = Model })
-        }
+    @section CategoryTopWidget{
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsTop, additionalData = Model })
+    }
 
-        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBeforeSubcategories, additionalData = Model })
-        @*subcategories*@
-        @if (Model.SubCategories.Count > 0)
-        {
-            <div class="row subcategories">
-                @foreach (var item in Model.SubCategories)
-                {
-                    <div class="item-box card col-6 col-sm-3 col-md-4 col-lg-4 col-xl-4">
-                        <div class="sub-category-item card-block">
-
-                            <div class="picture">
-                                <a container="#cat-@item.Id" title="@item.PictureModel.Title">
-                                    <img alt="@item.PictureModel.AlternateText" width="450" height="450" class="card-img-top lazy" src="/images/pixel.png" data-src="@item.PictureModel.ImageUrl" title="@item.PictureModel.Title" />
-                                </a>
-                            </div>
-                            <h2 class="title">
-                                <a container="#cat-@item.Id" class="card-title" title="@item.PictureModel.Title">
-                                    @item.Name
-                                </a>
-                            </h2>
-                        </div>
-                    </div>
-                }
-            </div>
-
-            // Top Selling products By Category
+    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBeforeSubcategories, additionalData = Model })
+    @*subcategories*@
+    @if (Model.SubCategories.Count > 0)
+    {
+        <div class="row subcategories">
             @foreach (var item in Model.SubCategories)
             {
-                @await Component.InvokeAsync("TopSellingProductsByCategory", new { categoryId = item.Id, categoryName = item.Name, sename = item.SeName })
-            }
-            // end
-        }
+                <div class="item-box card col-6 col-sm-3 col-md-4 col-lg-4 col-xl-4">
+                    <div class="sub-category-item card-block">
 
-        @if (Model.SubCategories.Count == 0)
-        {
-            @section CatalogFilters {
-                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBeforeFilters, additionalData = Model })
-                @if (_workcontext.IsMobileDevice())
-                {
-                    @await Html.PartialAsync("_CatalogFilters", Model.CatalogProductsModel)
-                }
-                else
-                {
-                    <div class="desktopFilters w-100" style="@(displayFilters ? "" : "display:none;")">
-                        @await Html.PartialAsync("_CatalogFiltersHorizontal", Model.CatalogProductsModel)
-                        @await Html.PartialAsync("_SelectedtFilters", Model.CatalogProductsModel)
-                    </div>
-                }
-            }
-
-
-            @section CatalogSelector {
-                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsAfterFeaturedProducts, additionalData = Model })
-                @await Html.PartialAsync("_CatalogSelectors", Model.CatalogProductsModel)
-            }
-            @if (_workcontext.IsMobileDevice())
-            {
-                @section SelectedtFilters {
-                    @await Html.PartialAsync("_SelectedtFilters", Model.CatalogProductsModel)
-                }
-            }
-
-
-            var catalogProductsViewData = new ViewDataDictionary(ViewData);
-
-            catalogProductsViewData["fetchUrl"] = Html.Raw(Url.Action("GetCategoryProducts", "Catalog", new { categoryId = Model.Id }));
-            catalogProductsViewData["entityId"] = Model.Id;
-            @await Html.PartialAsync("_CatalogProducts-FilterOnTop-3x3", Model.CatalogProductsModel, catalogProductsViewData)
-
-            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBeforeFeaturedProducts, additionalData = Model })
-
-
-            @*Best Seller products*@
-            @if (Model.FeaturedProducts.Count > 0)
-            {
-                // BE
-                <div class="shop-by-category featured-for-you-section">
-                    <h2>
-                        @Html.Raw(string.Format(T("Heading.Featured.byCategory").Text, Model.Name))
-                    </h2>
-                    <div class="featured-for-you">
-                        @foreach (var item in Model.FeaturedProducts)
-                        {
-                            @await Html.PartialAsync("_home_ProductBox", item)
-                        }
+                        <div class="picture">
+                            <a container="#cat-@item.Id" title="@item.PictureModel.Title">
+                                <img alt="@item.PictureModel.AlternateText" width="450" height="450" class="card-img-top lazy" src="/images/pixel.png" data-src="@item.PictureModel.ImageUrl" title="@item.PictureModel.Title" />
+                            </a>
+                        </div>
+                        <h2 class="title">
+                            <a container="#cat-@item.Id" class="card-title" title="@item.PictureModel.Title">
+                                @item.Name
+                            </a>
+                        </h2>
                     </div>
                 </div>
-
-                <script>
-                    document.addEventListener("DOMContentLoaded", function () {
-                        $('.featured-for-you').slick({
-                            dots: true,
-                            infinite: true,
-                            speed: 300,
-                            slidesToShow: 4,
-                            slidesToScroll: 1,
-                            variableWidth: false,
-                            centerMode: false,
-                            centerPadding: '0',
-
-                            prevArrow: '<button class="slide-arrow prev-arrow"><i class="fas fa-chevron-left"></i></button>',
-                            nextArrow: '<button class="slide-arrow next-arrow"><i class="fas fa-chevron-right"></i></button>',
-                            responsive: [
-                                {
-                                    breakpoint: 991,
-                                    settings: {
-                                        centerMode: false,
-                                        centerPadding: '40px',
-                                        slidesToShow: 3
-                                    }
-                                },
-                                {
-                                    breakpoint: 767,
-                                    settings: {
-                                        centerMode: false,
-                                        centerPadding: '40px',
-                                        dots: false,
-                                        slidesToShow: 2
-                                    }
-                                },
-                                {
-                                    breakpoint: 480,
-                                    settings: {
-                                        centerMode: false,
-                                        centerPadding: '40px',
-                                        dots: false,
-                                        slidesToShow: 1
-                                    }
-                                }
-                            ]
-                        });
-                    });
-                </script>
             }
+        </div>
 
-
-
-        }
-        // commented
-        // @await Component.InvokeAsync("BestSellerByCategoryBlock", new { categoryId = Model.Id })
-        // @await Component.InvokeAsync("RelatedSearchTerms", new { entityId = Model.Id, entityType = "Category" })
-
-
-
-        @*description*@
-        @if (!string.IsNullOrWhiteSpace(Model.Description))
+        // Top Selling products By Category
+        @foreach (var item in Model.SubCategories)
         {
-            <div class=" shop-by-category about-buffet">
+            @await Component.InvokeAsync("TopSellingProductsByCategory", new { categoryId = item.Id, categoryName = item.Name, sename = item.SeName })
+        }
+        // end
+    }
 
-                <div class="category-description" @if (Model.Description.Length > 500) {
-                <text> style="height:250px;overflow:hidden" </text>
+    @if (Model.SubCategories.Count == 0)
+    {
+        @section CatalogFilters {
+            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBeforeFilters, additionalData = Model })
+            @if (_workcontext.IsMobileDevice())
+            {
+                @await Html.PartialAsync("_CatalogFilters", Model.CatalogProductsModel)
             }
->
+            else
+            {
+                <div class="desktopFilters w-100" style="@(displayFilters?"":"display:none;")">
+                    @await Html.PartialAsync("_CatalogFiltersHorizontal", Model.CatalogProductsModel)
+                    @await Html.PartialAsync("_SelectedtFilters", Model.CatalogProductsModel)
+                </div>
+            }
+        }
+
+
+        @section CatalogSelector {
+            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsAfterFeaturedProducts, additionalData = Model })
+            @await Html.PartialAsync("_CatalogSelectors", Model.CatalogProductsModel)
+        }
+        @if (_workcontext.IsMobileDevice())
+        {
+            @section SelectedtFilters {
+                @await Html.PartialAsync("_SelectedtFilters", Model.CatalogProductsModel)
+            }
+        }
+
+
+        var catalogProductsViewData = new ViewDataDictionary(ViewData);
+
+        catalogProductsViewData["fetchUrl"] = Html.Raw(Url.Action("GetCategoryProducts", "Catalog", new { categoryId = Model.Id }));
+        catalogProductsViewData["entityId"] = Model.Id;
+        @await Html.PartialAsync("_CatalogProducts-FilterOnTop-3x3", Model.CatalogProductsModel, catalogProductsViewData)
+
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBeforeFeaturedProducts, additionalData = Model })
+
+
+        @*Best Seller products*@
+        @if (Model.FeaturedProducts.Count > 0)
+        {
+            // BE
+            <div class="shop-by-category featured-for-you-section">
+                <h2>
+                    @Html.Raw(string.Format(T("Heading.Featured.byCategory").Text, Model.Name))
+                </h2>
+                <div class="featured-for-you">
+                    @foreach (var item in Model.FeaturedProducts)
+                    {
+                        @await Html.PartialAsync("_home_ProductBox", item)
+                    }
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    $('.featured-for-you').slick({
+                        dots: true,
+                        infinite: true,
+                        speed: 300,
+                        slidesToShow: 4,
+                        slidesToScroll: 1,
+                        variableWidth: false,
+                        centerMode: false,
+                        centerPadding: '0',
+
+                        prevArrow: '<button class="slide-arrow prev-arrow"><i class="fas fa-chevron-left"></i></button>',
+                        nextArrow: '<button class="slide-arrow next-arrow"><i class="fas fa-chevron-right"></i></button>',
+                        responsive: [
+                            {
+                                breakpoint: 991,
+                                settings: {
+                                    centerMode: false,
+                                    centerPadding: '40px',
+                                    slidesToShow: 3
+                                }
+                            },
+                            {
+                                breakpoint: 767,
+                                settings: {
+                                    centerMode: false,
+                                    centerPadding: '40px',
+                                    dots: false,
+                                    slidesToShow: 2
+                                }
+                            },
+                            {
+                                breakpoint: 480,
+                                settings: {
+                                    centerMode: false,
+                                    centerPadding: '40px',
+                                    dots: false,
+                                    slidesToShow: 1
+                                }
+                            }
+                        ]
+                    });
+                });
+            </script>
+        }
+
+
+
+    }
+    // commented
+    // @await Component.InvokeAsync("BestSellerByCategoryBlock", new { categoryId = Model.Id })
+    // @await Component.InvokeAsync("RelatedSearchTerms", new { entityId = Model.Id, entityType = "Category" })
+
+
+
+    @*description*@
+    @if (!string.IsNullOrWhiteSpace(Model.Description))
+    {
+        <div class=" shop-by-category about-buffet">
+
+            <div class="category-description" @if (Model.Description.Length > 500) { <text> style="height:250px;overflow:hidden" </text> }>
                 @Html.Raw(Model.Description)
             </div>
             @if (Model.Description.Length > 500)
@@ -312,20 +305,20 @@
                 </div>
             }
         </div>
-                }
-        @await Component.InvokeAsync("FaqBlock", new { entityId = Model.Id, entityType = "Category" })
+    }
+    @await Component.InvokeAsync("FaqBlock", new { entityId = Model.Id, entityType = "Category" })
 
-        @section categoryBottom {
-            @*//Related Search*@
+    @section categoryBottom {
+        @*//Related Search*@
 
-            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBottom, additionalData = Model })
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBottom, additionalData = Model })
             @*    @await Component.InvokeAsync("RecommendationProductsBlock", new { categoryId = Model.Id }) *@
 
-            @*recently  products*@
-            @await Component.InvokeAsync("Custom_RecentlyViewedProductsBlock")
-        }
+        @*recently  products*@
+        @await Component.InvokeAsync("Custom_RecentlyViewedProductsBlock")
+    }
 
 
 
-    </div>
+</div>
 </div>

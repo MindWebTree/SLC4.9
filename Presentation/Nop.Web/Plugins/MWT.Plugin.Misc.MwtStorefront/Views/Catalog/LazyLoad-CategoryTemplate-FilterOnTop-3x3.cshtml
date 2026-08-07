@@ -252,7 +252,8 @@
             // Top Selling products By Category
             @foreach (var item in Model.SubCategories)
             {
-                      }
+                @await Component.InvokeAsync("TopSellingProductsByCategory", new { categoryId = item.Id, categoryName = item.Name, sename = item.SeName })
+            }
             // end
         }
 
@@ -362,7 +363,9 @@
 
         }
 
-       
+        @await Component.InvokeAsync("BestSellerByCategoryBlock", new { categoryId = Model.Id })
+        @await Component.InvokeAsync("RelatedSearchTerms", new { entityId = Model.Id, entityType = "Category" })
+
 
 
         @*description*@
@@ -391,7 +394,8 @@
             @*//Related Search*@
 
             @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBottom, additionalData = Model })
-      
+            @await Component.InvokeAsync("RecommendationProductsBlock", new { categoryId = Model.Id })
+
             @*recently  products*@
             @await Component.InvokeAsync("Custom_RecentlyViewedProductsBlock")
         }

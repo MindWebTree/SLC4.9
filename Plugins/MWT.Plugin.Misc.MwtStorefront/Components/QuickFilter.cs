@@ -35,13 +35,11 @@ namespace Nop.Web.Components
         /// <returns>A task that represents the asynchronous operation</returns>
         public async Task<IViewComponentResult> InvokeAsync(int entityId, string entityType, string heading)
         {
-            var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(CustomNopCatalogDefaults.QuickFilterCacheKey,
-                entityId, entityType);
+            //var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(CustomNopCatalogDefaults.QuickFilterCacheKey,
+            //    entityId, entityType);
 
-            var filters = await this._staticCacheManager.GetAsync(cacheKey, async () =>
-            {
-                return await _quickFilterModelFactory.PrepareQuickFilterListModelAsync(entityId, entityType);
-            });
+            var filters =  await _quickFilterModelFactory.PrepareQuickFilterListModelAsync(entityId, entityType);
+     
             QuickFilterListModel model = new QuickFilterListModel();
             model.Name = heading;
             model.Filters = filters;

@@ -1,5 +1,5 @@
 ﻿@model CustomCatalogProductsModel
-@inject Nop.Core.IWorkContext _workContext;
+@inject ICustomWorkContext _workContext;
 @if (Model.Products.Count <= 0 &&
 !Model.PriceRangeFilter.Enabled &&
 !Model.SpecificationFilter.Enabled &&

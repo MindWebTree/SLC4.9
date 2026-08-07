@@ -5,6 +5,7 @@ using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Core.Service.Discount;
 using MWT.Nop.Core.Service.FAQModule;
 using MWT.Nop.Core.Service.Zoho;
+using MWT.Nop.Core.Services;
 using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.CategoryCollection;
 using MWT.Nop.Core.Services.Configuration;
@@ -21,6 +22,7 @@ using MWT.Nop.Core.Services.Mandrill;
 using MWT.Nop.Core.Services.Media;
 using MWT.Nop.Core.Services.Message;
 using MWT.Nop.Core.Services.QA;
+using MWT.Nop.Core.Services.QuickFilters;
 using MWT.Nop.Core.Services.Search;
 using MWT.Nop.Core.Services.Search.RewardClaim;
 using MWT.Nop.Core.Services.Seo;
@@ -71,7 +73,7 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<ICategoryCollectionLinkService, CategoryCollectionLinkService>();
             services.AddScoped<ITestimonialService, TestimonialService>();
             services.AddScoped<IRewardClaimService, RewardClaimService>();
-            services.AddScoped<IManageService, ManageService>();
+            services.AddScoped<IManageService, ManageService>(); 
 
 
             services.AddScoped<IIpAddressService, IpAddressService>();
@@ -122,6 +124,11 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<ICustomRecentlyViewedProductsService, CustomRecentlyViewedProductsService>(); 
             services.AddScoped<ISuggestedKeywordsService, SuggestedKeywordsService>(); 
             services.AddScoped<IFuzzySearchService, FuzzySearchService>(); 
+            services.AddScoped<IRelatedSearchService, RelatedSearchService>();
+            #endregion
+            #region QuickFilter
+            services.AddScoped<IQuickFilterService, QuickFilterService>();
+
             #endregion
         }
 

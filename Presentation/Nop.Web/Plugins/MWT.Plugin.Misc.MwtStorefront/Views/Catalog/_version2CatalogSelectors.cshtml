@@ -87,7 +87,7 @@
 
 
        
-            
+            @await Component.InvokeAsync("QuickFilter", new { entityId = Model.CategoryID, entityType = "Category", heading = "" })
        
         @*sorting*@
 

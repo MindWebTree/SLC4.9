@@ -31,6 +31,8 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Infrastructure
             services.AddScoped<ILandingPageModelFactory, LandingPageModelFactory>();
             services.AddScoped<ICustomTopicModelFactory, CustomTopicModelFactory>();
             services.AddScoped<IFaqModelFactory, FaqModelFactory>(); 
+            services.AddScoped<IRelatedSearchModelFactory, RelatedSearchModelFactory>(); 
+            services.AddScoped<IQuickFilterModelFactory, QuickFilterModelFactory>(); 
             services.Configure<RazorViewEngineOptions>(options =>
             { 
                 options.ViewLocationExpanders.Add(new MwtViewLocationExpander());
