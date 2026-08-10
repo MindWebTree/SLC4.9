@@ -1,8 +1,8 @@
-﻿@model List<ProductDetailsModel>
+﻿@model List<CustomProductDetailsModel>
 @using Nop.Core
 @using System.Globalization;
 @using Nop.Core.Domain.Tax
-@inject IWorkContext workContext
+@inject ICustomWorkContext workContext
 @inject Nop.Services.Catalog.IPriceFormatter _priceFormatter
 @inject Nop.Services.Configuration.ISettingService _settingService;
 @{

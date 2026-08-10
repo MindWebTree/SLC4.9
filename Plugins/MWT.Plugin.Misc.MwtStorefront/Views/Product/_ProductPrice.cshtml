@@ -1,10 +1,10 @@
 ﻿@model CustomProductDetailsModel.ProductPriceModel
 @using Nop.Core
 @using Nop.Core.Domain.Tax
-@inject IWorkContext workContext
+@inject ICustomWorkContext workContext
 
 @{ bool isAttributePreselected = true;
-    string offerText = CommonHelper.GetProductOfferText(Model.ProductId, Model.OfferText, Model.OfferPlaceHolder, Model.DiscountAmount, Model.DiscountPercentage, Model.SaleEndDate, true);
+    string offerText = CustomCommonHelper.GetProductOfferText(Model.ProductId, Model.OfferText, Model.OfferPlaceHolder, Model.DiscountAmount, Model.DiscountPercentage, Model.SaleEndDate, true);
     if (ViewData["isAttributePreselected"] != null && ViewData["isAttributePreselected"] != "")
     {
         bool.TryParse(ViewData["isAttributePreselected"].ToString(), out isAttributePreselected);

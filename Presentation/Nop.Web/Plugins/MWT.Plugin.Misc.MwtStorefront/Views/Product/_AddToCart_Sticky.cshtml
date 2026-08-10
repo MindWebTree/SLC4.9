@@ -1,8 +1,8 @@
 ﻿
-@model ProductDetailsModel
+@model CustomProductDetailsModel
 @using Nop.Core.Domain.Orders
 
-@inject Nop.Core.IWorkContext _workContext
+@inject ICustomWorkContext _workContext
 @*Add to cart on top start*@
 @{
     bool isAttributePreselected = true;

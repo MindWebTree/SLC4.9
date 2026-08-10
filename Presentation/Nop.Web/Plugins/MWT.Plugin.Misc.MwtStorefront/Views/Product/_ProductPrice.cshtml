@@ -1,20 +1,20 @@
-﻿@model ProductDetailsModel.ProductPriceModel
+﻿@model CustomProductDetailsModel.ProductPriceModel
 @using Nop.Core
 @using Nop.Core.Domain.Tax
-@inject IWorkContext workContext
+@inject ICustomWorkContext workContext
 
 @{ bool isAttributePreselected = true;
-    string offerText = CommonHelper.GetProductOfferText(Model.ProductId, Model.OfferText, Model.OfferPlaceHolder, Model.DiscountAmount, Model.DiscountPercentage, Model.SaleEndDate, true);
+    string offerText = CustomCommonHelper.GetProductOfferText(Model.ProductId, Model.OfferText, Model.OfferPlaceHolder, Model.DiscountAmount, Model.DiscountPercentage, Model.SaleEndDate, true);
     if (ViewData["isAttributePreselected"] != null && ViewData["isAttributePreselected"] != "")
     {
         bool.TryParse(ViewData["isAttributePreselected"].ToString(), out isAttributePreselected);
 
     }
-    List<ProductDetailsModel.ProductAttributeModel> attributes = new List<ProductDetailsModel.ProductAttributeModel>();
+    List<CustomProductDetailsModel.ProductAttributeModel> attributes = new List<CustomProductDetailsModel.ProductAttributeModel>();
 
     if (ViewData["productAttributes"] != null && ViewData["productAttributes"] != "")
     {
-        attributes = (List<ProductDetailsModel.ProductAttributeModel>)ViewData["productAttributes"];
+        attributes = (List<CustomProductDetailsModel.ProductAttributeModel>)ViewData["productAttributes"];
     } }
 <div class="price-shade-section">
     @if (!Model.CustomerEntersPrice)

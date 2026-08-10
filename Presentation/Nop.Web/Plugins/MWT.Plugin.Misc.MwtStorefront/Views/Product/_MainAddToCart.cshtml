@@ -1,4 +1,4 @@
-﻿@model ProductDetailsModel.AddToCartModel
+﻿@model CustomProductDetailsModel.AddToCartModel
 @using Nop.Core.Domain.Orders
 @{ int variantId = 0;
     if (ViewData["variantId"] != null && ViewData["variantId"] != "")
@@ -6,11 +6,11 @@
         int.TryParse(ViewData["variantId"].ToString(), out variantId);
     }
 
-    ProductDetailsModel.ProductPriceModel priceModel = new ProductDetailsModel.ProductPriceModel();
+    CustomProductDetailsModel.ProductPriceModel priceModel = new CustomProductDetailsModel.ProductPriceModel();
 
     if (ViewData["priceModel"] != null)
     {
-        priceModel = (ProductDetailsModel.ProductPriceModel)ViewData["priceModel"];
+        priceModel = (CustomProductDetailsModel.ProductPriceModel)ViewData["priceModel"];
     }
     else
     {

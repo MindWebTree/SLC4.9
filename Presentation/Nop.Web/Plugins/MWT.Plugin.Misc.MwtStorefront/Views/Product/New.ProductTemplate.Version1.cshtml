@@ -1,5 +1,5 @@
-﻿@model ProductDetailsModel
-@using Nop.Core.Domain.Seo
+﻿@model CustomProductDetailsModel
+@using Nop.Core.Domain.Seo;
 @using Nop.Core
 @inject Nop.Core.IWebHelper webHelper
 @inject SeoSettings seoSettings
@@ -7,8 +7,8 @@
 @inject Nop.Services.Catalog.ISpecificationAttributeService _specificationAttributeService
 @inject Nop.Services.Configuration.ISettingService _settingService
 @inject IThemeContext themeContext
-@inject Nop.Core.IWorkContext _workContext
-@inject Nop.Services.Customers.ICustomerService _customerService
+@inject ICustomWorkContext _workContext
+@inject ICustomCustomerService _customerService
 @{ var themeName = await themeContext.GetWorkingThemeNameAsync();
                 bool isAttributePreselected = true;
                 if (Model.ProductAttributes != null)
@@ -61,48 +61,48 @@
                 var reviewPageSize = await _settingService.GetSettingByKeyAsync<int>("product.reviews.pagesize");
 
                 Layout = "_ColumnsOne";
-                Html.AppendCssFileParts($"~/Themes/{themeName}/Content/css/jcarousel.responsive.css");
-                Html.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/magiczoomplus.js");
-                Html.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/product-gtm.js");
-                Html.AppendCssFileParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/css/magiczoomplus.css");
-                Html.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/jquery.jcarousel.min.js");
-                Html.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/jcarousel.responsive.js");
+                NopHtml.AppendCssFileParts($"~/Themes/{themeName}/Content/css/jcarousel.responsive.css");
+                NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/magiczoomplus.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/product-gtm.js");
+    NopHtml.AppendCssFileParts( $"~/Themes/{themeName}/Content/css/magiczoomplus.css");
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/jquery.jcarousel.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/jcarousel.responsive.js");
                 //title
-                Html.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : name);
+    NopHtml.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : name);
                 //meta
-                Html.AddMetaDescriptionParts(Model.MetaDescription);
-                Html.AddMetaKeywordParts(Model.MetaKeywords);
+    NopHtml.AddMetaDescriptionParts(Model.MetaDescription);
+                NopHtml.AddMetaKeywordParts(Model.MetaKeywords);
                 //page class
-                Html.AppendPageCssClassParts("html-product-details-page");
+    NopHtml.AppendPageCssClassParts("html-product-details-page");
 
                 //canonical URL
                 if (seoSettings.CanonicalUrlsEnabled)
                 {
                     var productUrl = Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
-                    Html.AddCanonicalUrlParts(productUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+        NopHtml.AddCanonicalUrlParts(productUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
                 }
 
                 //open graph META tags
                 if (seoSettings.OpenGraphMetaTags)
                 {
-                    Html.AddHeadCustomParts("<meta property=\"og:type\" content=\"product\" />");
-                    Html.AddHeadCustomParts("<meta property=\"og:title\" content=\"" + Html.Encode(name) + "\" />");
-                    Html.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Html.Encode(Nop.Core.Html.HtmlHelper.StripTags(Model.MetaDescription)) + "\" />");
-                    Html.AddHeadCustomParts("<meta property=\"og:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
-                    Html.AddHeadCustomParts("<meta property=\"og:image:url\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
-                    Html.AddHeadCustomParts("<meta property=\"og:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
-                    Html.AddHeadCustomParts("<meta property=\"og:site_name\" content=\"" + Html.Encode(Model.CurrentStoreName) + "\" />");
+                    NopHtml.AddHeadCustomParts("<meta property=\"og:type\" content=\"product\" />");
+                    NopHtml.AddHeadCustomParts("<meta property=\"og:title\" content=\"" + Html.Encode(name) + "\" />");
+                    NopHtml.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Html.Encode(Nop.Core.Html.HtmlHelper.StripTags(Model.MetaDescription)) + "\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"og:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+                    NopHtml.AddHeadCustomParts("<meta property=\"og:image:url\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+                    NopHtml.AddHeadCustomParts("<meta property=\"og:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"og:site_name\" content=\"" + Html.Encode(Model.CurrentStoreName) + "\" />");
                 }
 
                 //Twitter META tags
                 if (seoSettings.TwitterMetaTags)
                 {
-                    Html.AddHeadCustomParts("<meta property=\"twitter:card\" content=\"summary\" />");
-                    Html.AddHeadCustomParts("<meta property=\"twitter:site\" content=\"" + Html.Encode(Model.CurrentStoreName) + "\" />");
-                    Html.AddHeadCustomParts("<meta property=\"twitter:title\" content=\"" + Html.Encode(name) + "\" />");
-                    Html.AddHeadCustomParts("<meta property=\"twitter:description\" content=\"" + Html.Encode(Nop.Core.Html.HtmlHelper.StripTags(Model.MetaDescription)) + "\" />");
-                    Html.AddHeadCustomParts("<meta property=\"twitter:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
-                    Html.AddHeadCustomParts("<meta property=\"twitter:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"twitter:card\" content=\"summary\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"twitter:site\" content=\"" + Html.Encode(Model.CurrentStoreName) + "\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"twitter:title\" content=\"" + Html.Encode(name) + "\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"twitter:description\" content=\"" + Html.Encode(Nop.Core.Html.HtmlHelper.StripTags(Model.MetaDescription)) + "\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"twitter:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"twitter:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
                 } }
 <!--product breadcrumb-->
 @section Breadcrumb

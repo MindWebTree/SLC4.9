@@ -1,9 +1,9 @@
-@model ProductDetailsModel
-@inject Nop.Core.IWorkContext _workContext
+@model CustomProductDetailsModel
+@inject ICustomWorkContext _workContext
 @inject Nop.Services.Configuration.ISettingService _settingService;
-@inject Nop.Services.Catalog.IProductService _productService
-@inject Nop.Services.Catalog.ISpecificationAttributeService _specificationAttributeService
-@inject Nop.Services.Catalog.ICategoryService _categoryService
+@inject ICustomProductService _productService
+@inject ICustomSpecificationAttributeService _specificationAttributeService
+@inject ICustomCategoryService _categoryService
 @{ int customizationFormTemplateId = Model.CustomizationFormTemplateId;
                 if (customizationFormTemplateId == 0)
                 {

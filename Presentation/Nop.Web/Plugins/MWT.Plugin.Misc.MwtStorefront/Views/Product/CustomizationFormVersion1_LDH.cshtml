@@ -1,8 +1,8 @@
-@model Nop.Web.Models.Customizations.Custom.CustomizationFormModel
+@model CustomizationFormModel
 @inject Nop.Core.IStoreContext _storeContext
-@inject Nop.Core.IWorkContext _workContext
+@inject ICustomWorkContext _workContext
 @inject Nop.Services.Configuration.ISettingService _settingService
-@inject Nop.Services.Localization.ILocalizationService  _localizationService;
+@inject Nop.Services.Localization.ILocalizationService _localizationService;
 @using Nop.Core.Domain.Common;
 @inject Nop.Services.Directory.ICountryService _countryService
 @inject Nop.Services.Common.IAddressService _addressService
