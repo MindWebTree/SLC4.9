@@ -1,11 +1,11 @@
 ﻿@using Nop.Core.Domain.Seo;
 @using System.Linq;
 @using Newtonsoft.Json;
-@model ProductDetailsModel
+@model CustomProductDetailsModel
 @inject Nop.Core.IWebHelper webHelper
 @inject SeoSettings seoSettings
 @inject IThemeContext themeContext
-@inject Nop.Services.Catalog.ISpecificationAttributeService _specificationAttributeService
+@inject ICustomSpecificationAttributeService _specificationAttributeService
 @inject Nop.Services.Configuration.ISettingService _settingService
 
 <script>

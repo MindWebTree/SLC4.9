@@ -1,0 +1,30 @@
+﻿@model ProductDetailsModel.AddToCartModel
+@using Nop.Core.Domain.Orders
+@{
+    string addtoCartFormId = "#product-details-form";
+    if (ViewData["addtocartform"] != null && ViewData["addtocartform"] != "")
+    {
+        addtoCartFormId = ViewData["addtocartform"].ToString();
+    }
+    string refFormId = addtoCartFormId.Replace("#", "").Replace("-", "_").Split('?')[0];
+}
+@if (!Model.DisableWishlistButton)
+{
+    var addToWishlistText = "";
+    if (Model.UpdatedShoppingCartItemId > 0 && Model.UpdateShoppingCartItemType.HasValue && Model.UpdateShoppingCartItemType.Value == ShoppingCartType.Wishlist)
+    {
+        addToWishlistText = T("Products.Wishlist.AddToWishlist.Update").Text;
+    }
+    else
+    {
+        addToWishlistText = T("Products.Wishlist.AddToWishlist").Text;
+    }
+
+    <button data-toggle="tooltip" data-placement="top" title="Add to Wishlist" type="button" aria-label="wishlist" id="add-to-wishlist-button-@Model.ProductId" data-wishlistid="@Model.ProductId"
+            class="btn btn-wishlist" data-productid="@Model.ProductId"
+            onclick="AjaxCart.addproducttocart_details('@Url.RouteUrl("CustomAddProductToCart-Details", new {formId=refFormId,productId = Model.ProductId, shoppingCartTypeId =
+                                                           (int) ShoppingCartType.Wishlist,iswishlist=true})', '@addtoCartFormId');return false;">
+        <i class="far fa-heart"></i>
+    </button>
+
+}

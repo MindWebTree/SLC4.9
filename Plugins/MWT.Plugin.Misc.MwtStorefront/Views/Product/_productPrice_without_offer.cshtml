@@ -1,4 +1,4 @@
-﻿@model ProductDetailsModel.ProductPriceModel
+﻿@model CustomProductDetailsModel.ProductPriceModel
 @using Nop.Core
 @using Nop.Core.Domain.Tax
 @inject IWorkContext workContext
@@ -9,11 +9,11 @@
         bool.TryParse(ViewData["isAttributePreselected"].ToString(), out isAttributePreselected);
 
     }
-    List<ProductDetailsModel.ProductAttributeModel> attributes = new List<ProductDetailsModel.ProductAttributeModel>();
+    List<CustomProductDetailsModel.ProductAttributeModel> attributes = new List<CustomProductDetailsModel.ProductAttributeModel>();
 
     if (ViewData["productAttributes"] != null && ViewData["productAttributes"] != "")
     {
-        attributes = (List<ProductDetailsModel.ProductAttributeModel>)ViewData["productAttributes"];
+        attributes = (List<CustomProductDetailsModel.ProductAttributeModel>)ViewData["productAttributes"];
     } }
 <div class="price-without-offer price-shade-section">
     @if (!Model.CustomerEntersPrice)

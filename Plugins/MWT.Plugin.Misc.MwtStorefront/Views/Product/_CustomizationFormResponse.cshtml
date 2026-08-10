@@ -1,13 +1,13 @@
-@model Nop.Web.Models.Customizations.Custom.CustomizationFormDataModel
-@inject Nop.Services.Localization.ILocalizationService _localizedService;
+@model CustomizationFormDataModel
+@inject ILocalizationService _localizedService;
 
 @{
     var interested_item_label = await _localizedService.GetResourceAsync("customizationform.intereseditems");
 }
 <style>
-.customform_version2 .modal-header,.customform_version1 .modal-header{
-display:none;
-}
+    .customform_version2 .modal-header, .customform_version1 .modal-header {
+        display: none;
+    }
 </style>
 <div class="customization-form-thankyou">
     <div class="container">
@@ -17,7 +17,7 @@ display:none;
             </p>
             <br>
 
-        
+
             <div class="outer-thanks-message">
 
                 <div class="col-sm-5 thanksleft">
@@ -36,12 +36,13 @@ display:none;
                                 <td valign="top" s><span><b>@T("customizationform.fields.phone"):</b></span></td>
                                 <td valign="top"><span>@Model.Phone</span></td>
                             </tr>
-							@if(!string.IsNullOrEmpty(Model.ZipCode)){
-                            <tr>
-                                <td valign="top"><span><b>@T("customizationform.fields.zipcode"):</b></span></td>
-                                <td valign="top"><span>@Model.ZipCode</span></td>
-                            </tr>
-							}
+                            @if (!string.IsNullOrEmpty(Model.ZipCode))
+                            {
+                                <tr>
+                                    <td valign="top"><span><b>@T("customizationform.fields.zipcode"):</b></span></td>
+                                    <td valign="top"><span>@Model.ZipCode</span></td>
+                                </tr>
+                            }
                             @foreach (var prop in Model.customProps)
                             {
                                 if (prop.Key == interested_item_label)
@@ -153,16 +154,16 @@ display:none;
 </div>
 <style>
     @@media print {
-       
-		#product-details-pairwith,#product-details-collection,.complete-collection,.people-viewed-section,.customize-banner,.shop-by-category ,.product-review-block ,footer,.footer-menu ,.header-menu,.header-lower,.navbar ,.admin-header-links,.tariff-banner,header,.col-sm-8.product-image,#productdetail-accordion,.you-may-also-need-section,.stock-subscription-section,.price-without-offer.price-shade-section,.price-shade-section,.producttags,header,.modal-header,#productdetail-accordion,.header-message{
-			display:none !important;
-		}
-		
-		.modal-dialog-centered{
-		align-items: self-start;
-		}
-		
-		        body {
+
+        #product-details-pairwith, #product-details-collection, .complete-collection, .people-viewed-section, .customize-banner, .shop-by-category, .product-review-block, footer, .footer-menu, .header-menu, .header-lower, .navbar, .admin-header-links, .tariff-banner, header, .col-sm-8.product-image, #productdetail-accordion, .you-may-also-need-section, .stock-subscription-section, .price-without-offer.price-shade-section, .price-shade-section, .producttags, header, .modal-header, #productdetail-accordion, .header-message {
+            display: none !important;
+        }
+
+        .modal-dialog-centered {
+            align-items: self-start;
+        }
+
+        body {
             visibility: hidden;
             min-height: 100%;
             float: left;
@@ -174,10 +175,10 @@ display:none;
         #customization-response-content {
             visibility: visible;
         }
-		
+
         #customization-response-content {
-			max-height:500px !important;
-			page-break-inside: avoid; 
+            max-height: 500px !important;
+            page-break-inside: avoid;
         }
     }
 </style>

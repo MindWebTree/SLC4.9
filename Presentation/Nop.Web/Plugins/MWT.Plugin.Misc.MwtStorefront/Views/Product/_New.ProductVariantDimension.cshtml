@@ -1,0 +1,70 @@
+﻿@model ProductDetailsModel
+@using Nop.Core.Domain.Catalog;
+@inject Nop.Core.IStoreContext _storeContext;
+@inject Nop.Services.Configuration.ISettingService _settingService
+@{
+    var dimensionAttributeName = await _settingService.GetSettingByKeyAsync<string>("product.specification.attr.dimension");
+    var attr = Model.ProductAttributes.Where(a => a.Name.Equals(T("product.attr.size").Text, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+
+}
+@if (attr != null)
+{
+  <div id="collapse-dimension" class="card-body" style="">
+            <div class="custom-select">
+
+
+                @{
+                    int selectedId = attr.Values.Where(v => !string.IsNullOrEmpty(v.VariantDimension)).Where(a => a.IsPreSelected).FirstOrDefault()?.Id ?? attr.Values.Where(v => !string.IsNullOrEmpty(v.VariantDimension)).FirstOrDefault()?.Id ?? 0;
+                }
+
+                <select id="attributeDropdown" name="AttributeValues" class="form-control">
+                    <option value="0">@T("Products.ProductAttributes.DropdownList.DefaultItem")</option>
+                    @foreach (var value in attr.Values.Where(v => !string.IsNullOrEmpty(v.VariantDimension)))
+                    {
+                        // Determine if the current value is the first one to set selected
+                        <option value="@value.Id" selected="@(value.Id == selectedId)">@value.Name</option>
+                    }
+                </select>
+            </div>
+            <div id="variant-dimensions-section">
+                @{
+                    var counter = 0;
+                    foreach (var value in attr.Values.Where(v => !string.IsNullOrEmpty(v.VariantDimension)))
+                    {
+                        <div class="dimension-block" data-id="@value.Id" style="display:@(value.Id == selectedId ? "block" : "none");">
+                            @Html.Raw(value.VariantDimension)
+                        </div>
+                        counter++;
+                    }
+                }
+            </div>
+        </div>
+   
+
+    <script asp-location="Footer">
+        $('#attributeDropdown').on('change', function (e) {
+            $('.dimension-block').hide();
+            $(".dimension-block[data-id='" + $(this).val() + "']").show();
+        });
+
+        $(document).on("attribute_changed", function (event) {
+            if ($(`select[id="attributeDropdown"] option[value="${event.changedData.attrId}"]`).length > 0 && event.changedData.attrId > 0) {
+
+                $('select[id="attributeDropdown"]').val(event.changedData.attrId).trigger("change");
+
+                let selectedText = $('#attributeDropdown option:selected').text();
+                let $customOptions = $('#collapse-dimension .select-items > div');
+
+                $customOptions.removeClass('same-as-selected');
+                $customOptions.each(function () {
+                    if ($(this).text().trim() === selectedText.trim()) {
+                        $(this).addClass('same-as-selected');
+                    }
+                });
+
+                $('#collapse-dimension .select-selected').text(selectedText);
+            }
+        });
+  
+    </script>
+}

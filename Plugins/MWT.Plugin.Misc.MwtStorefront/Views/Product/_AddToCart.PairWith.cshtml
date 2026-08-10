@@ -1,7 +1,7 @@
-﻿@model List<ProductDetailsModel>
+﻿@model List<CustomProductDetailsModel>
 @using Nop.Core.Domain.Orders
 @inject Nop.Services.Directory.ICurrencyService _currencyService;
-@inject Nop.Core.IWorkContext _workContext;
+@inject ICustomWorkContext _workContext;
 @{
     var addtoCartFormId = ViewData["addtocartform"].ToString();
     string refFormId = addtoCartFormId.Replace("#", "").Replace("-", "_").Split('?')[0];

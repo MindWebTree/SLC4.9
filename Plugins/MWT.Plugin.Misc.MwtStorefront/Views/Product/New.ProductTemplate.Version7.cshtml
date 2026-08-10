@@ -1,5 +1,5 @@
-﻿@model ProductDetailsModel
-@using Nop.Core.Domain.Seo
+﻿@model CustomProductDetailsModel
+@using Nop.Core.Domain.Seo;
 @using Nop.Core
 @inject Nop.Core.IWebHelper webHelper
 @inject SeoSettings seoSettings
@@ -7,8 +7,8 @@
 @inject Nop.Services.Catalog.ISpecificationAttributeService _specificationAttributeService
 @inject Nop.Services.Configuration.ISettingService _settingService
 @inject IThemeContext themeContext
-@inject Nop.Core.IWorkContext _workContext
-@inject Nop.Services.Customers.ICustomerService _customerService
+@inject ICustomWorkContext _workContext
+@inject ICustomCustomerService _customerService
 @{ var themeName = await themeContext.GetWorkingThemeNameAsync();
                 bool isAttributePreselected = true;
                 if (Model.ProductAttributes != null)

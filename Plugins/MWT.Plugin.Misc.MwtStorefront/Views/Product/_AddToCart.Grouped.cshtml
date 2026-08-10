@@ -1,7 +1,7 @@
-﻿@model ProductDetailsModel
+﻿@model CustomProductDetailsModel
 @using Nop.Core.Domain.Orders
 @inject Nop.Services.Directory.ICurrencyService _currencyService;
-@inject Nop.Core.IWorkContext _workContext;
+@inject ICustomWorkContext _workContext;
 @inject Nop.Services.Configuration.ISettingService _settingService;
 @{
     var addtoCartFormId = ViewData["addtocartform"].ToString();
@@ -19,7 +19,7 @@
 
 
 <script asp-location="Footer">
-    var groupedUrl = '@Url.RouteUrl("CustomAddProductToCart-Collections", new {formId=refFormId,isFbt=false, productIds = productIds, shoppingCartTypeId = (int) ShoppingCartType.ShoppingCart})';
+    var groupedUrl = '@Url.RouteUrl("CustomAddProductToCart-Collections", new { formId = refFormId, isFbt = false, productIds = productIds, shoppingCartTypeId = (int)ShoppingCartType.ShoppingCart })';
      $(".variants select,.variants input").change(function () {
 
          setTimeout( updateCollectionPrice, 400);
@@ -97,7 +97,7 @@
             }
         }
     }
-   
+
     /*setTimeout(updateCollectionPrice, 600);*/
     $(".groupedproduct-addtocart").click(function () {
         var isFormValid = true;

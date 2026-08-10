@@ -1,4 +1,4 @@
-@model Nop.Web.Models.Customizations.Custom.CustomizationFormModel;
+@model CustomizationFormModel;
 @inject Nop.Services.Configuration.ISettingService _settingService
 @{
     string uploadTypes_Expression = await _settingService.GetSettingByKeyAsync<string>("Customizationform.Supported.UploadTypes.Expression");

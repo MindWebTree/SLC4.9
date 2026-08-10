@@ -1,0 +1,592 @@
+﻿@model ProductDetailsModel
+@using Nop.Core.Domain.Seo;
+@using Nop.Core
+@inject Nop.Core.IWebHelper webHelper
+@inject SeoSettings seoSettings
+@inject IThemeContext themeContext
+@inject Nop.Services.Catalog.ISpecificationAttributeService _specificationAttributeService
+@inject Nop.Services.Configuration.ISettingService _settingService
+@inject IThemeContext themeContext
+@inject Nop.Core.IWorkContext _workContext
+@inject Nop.Services.Customers.ICustomerService _customerService
+@{
+    var themeName = await themeContext.GetWorkingThemeNameAsync();
+    bool isAttributePreselected = true;
+    if (Model.ProductAttributes != null)
+        foreach (var attribute in Model.ProductAttributes)
+        {
+            if (attribute.Values != null && !attribute.Values.Where(a => a.IsPreSelected).Any())
+            {
+                isAttributePreselected = false;
+                break;
+            }
+        }
+    bool collectionListingDisplayVertically = Model.CollectionListingDisplayVertically;
+    if (!collectionListingDisplayVertically)
+    {
+        collectionListingDisplayVertically = await _settingService.GetSettingByKeyAsync<bool>("Collection.Listing.Display.Vertically");
+    }
+
+    var productTag = await _settingService.GetSettingByKeyAsync<string>("ThanksGiving.ProductTag.Name");
+    bool isAdmin = await _customerService.IsAdminAsync(await _workContext.GetCurrentCustomerAsync(), true);
+    string name = Model.VariantId > 0 && !string.IsNullOrEmpty(Model.VariantTitle) ? Model.VariantTitle : Model.Name;
+}
+<script>
+     var customizeSizeText = '@Html.Raw(T("Product.Size.Customize.Text").Value.Replace("'", "\\'"))';
+    var shadeAsShow = '@Html.Raw(T("Product.selected.shades").Value.Replace("'", "\\'"))';
+    var priceRangeFormat = '@Html.Raw(T("Price.Range.Product.Format").Value.Replace("'", "\\'"))';
+     var priceRangeWithoutOfferFormat = '@Html.Raw(T("Price.Range.Product.Without.Offer.Format").Value.Replace("'", "\\'"))';
+    var limitedOfferText = '@Model.ProductPrice.OfferText.Replace("'", "\\'"))';
+    var defaulLimitedOfferText = '@CommonHelper.GetProductOfferText(Model.Id,Model.ProductPrice.OfferText,Model.ProductPrice.OfferPlaceHolder,Model.ProductPrice.DiscountAmount,Model.ProductPrice.DiscountPercentage,Model.ProductPrice.SaleEndDate,true).Replace("'", "\\'")';
+    var conversionValue = @Model.ConversionValue;
+    var dimensionIndex = @(await _settingService.GetSettingByKeyAsync<int>("product.Dimension.Image.Index"));
+    dimensionIndex = dimensionIndex === 0 ? 3 : dimensionIndex;
+    var variantLabel= '@T("Products.VariantId").Value.Replace("'", "\\'")';
+</script>
+
+@{ decimal price = 0;
+    if (!string.IsNullOrEmpty(Model.ProductPrice.MembershipPrice))
+    {
+        price = Model.ProductPrice.MembershipPriceValue;
+    }
+    else
+    {
+        price = Model.ProductPrice.PriceValue;
+    } }
+@{ bool hasDimensions = false;
+    foreach (var attribute in Model.ProductAttributes)
+    {
+        var textPrompt = attribute.Name;
+        if (T("Product.Attr.Size").Text == textPrompt && attribute.Values.Count == 1)
+        {
+            hasDimensions = true;
+        }
+    }
+    var reviewPageSize = await _settingService.GetSettingByKeyAsync<int>("product.reviews.pagesize");
+
+    Layout = "_ColumnsOne";
+    Html.AppendCssFileParts($"~/Themes/{themeName}/Content/css/jcarousel.responsive.css");
+    Html.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/magiczoomplus.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/product-gtm.js");
+    Html.AppendCssFileParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/css/magiczoomplus.css");
+    Html.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/jquery.jcarousel.min.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/jcarousel.responsive.js");
+    //title
+    Html.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : name);
+    //meta
+    Html.AddMetaDescriptionParts(Model.MetaDescription);
+    Html.AddMetaKeywordParts(Model.MetaKeywords);
+    //page class
+    Html.AppendPageCssClassParts("html-product-details-page");
+
+    //canonical URL
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        var productUrl = Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
+        Html.AddCanonicalUrlParts(productUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+    }
+
+    //open graph META tags
+    if (seoSettings.OpenGraphMetaTags)
+    {
+        Html.AddHeadCustomParts("<meta property=\"og:type\" content=\"product\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:title\" content=\"" + Html.Encode(name) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Html.Encode(Nop.Core.Html.HtmlHelper.StripTags(Model.MetaDescription)) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:image:url\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:site_name\" content=\"" + Html.Encode(Model.CurrentStoreName) + "\" />");
+    }
+
+    //Twitter META tags
+    if (seoSettings.TwitterMetaTags)
+    {
+        Html.AddHeadCustomParts("<meta property=\"twitter:card\" content=\"summary\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:site\" content=\"" + Html.Encode(Model.CurrentStoreName) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:title\" content=\"" + Html.Encode(name) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:description\" content=\"" + Html.Encode(Nop.Core.Html.HtmlHelper.StripTags(Model.MetaDescription)) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
+    } }
+<!--product breadcrumb-->
+@section Breadcrumb
+    {
+    <div class="row mx-0">
+        @await Html.PartialAsync("_ProductBreadcrumb", Model.Breadcrumb)
+    </div>
+}
+@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsAfterBreadcrumb, additionalData = Model })
+<div class="page product-details-page version2">
+    <div class="page-body">
+
+
+        @Html.HiddenFor(m => m.Id)
+        @Html.HiddenFor(m => m.DefaultVariantId)
+        @Html.Hidden("MainCategoryId", Model.MainCategoryId)
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsTop, additionalData = Model })
+        <form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-form" class="main-addtocart">
+            @if (seoSettings.MicrodataEnabled)
+            {
+                @await Html.PartialAsync("_Microdata", Model)
+            }
+            @{ var dataDictAttributes = new ViewDataDictionary(ViewData);
+                dataDictAttributes.TemplateInfo.HtmlFieldPrefix = $"attributes_{Model.Id}";
+
+                var dataDictPrice = new ViewDataDictionary(ViewData);
+                dataDictPrice.TemplateInfo.HtmlFieldPrefix = $"price_{Model.Id}";
+            }
+            <div data-productid="@Model.Id">
+
+                <div class="row mx-0">
+                    <div class="col-sm-8 product-image">
+                        <div class="product-gallery">
+                            @if (_workContext.IsMobileDevice())
+                            {
+
+                                <div class="producttags">
+                                    @if (Model.ProductTags != null)
+                                    {
+                                        foreach (var tag in Model.ProductTags)
+                                        {
+                                            if (tag.Name.Equals(productTag, StringComparison.InvariantCultureIgnoreCase))
+                                            {
+                                                <span class="@tag.Name">
+                                                    <img src="/images/icons/guaranteeddelivery.png" />
+                                                </span> }
+                                            else
+                                            {
+                                                <span class="@tag.Name">@tag.Name</span>}
+                                            break;
+                                        }
+                                    }
+                                </div>
+                                <h1 itemprop="name" title="@T("Common.CopyContent.Help")">
+                                    @name
+                                </h1>
+
+
+                                @if (!string.IsNullOrEmpty(Model.Sku))
+                                {
+                                    <h2 class="allow-copy-content">
+                                        <span>@T("Products.Sku") # @Model.Sku<span class="allow-copy-content-h1 allow-copy-content" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" aria-label="Copy SKU" data-bs-original-title="@T("Common.CopyContent.sku.Help")"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 115.77 122.88" style="enable-background:new 0 0 115.77 122.88" xml:space="preserve"><g><path class="st0" d="M89.62,13.96v7.73h12.19h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02v0.02 v73.27v0.01h-0.02c-0.01,3.84-1.57,7.33-4.1,9.86c-2.51,2.5-5.98,4.06-9.82,4.07v0.02h-0.02h-61.7H40.1v-0.02 c-3.84-0.01-7.34-1.57-9.86-4.1c-2.5-2.51-4.06-5.98-4.07-9.82h-0.02v-0.02V92.51H13.96h-0.01v-0.02c-3.84-0.01-7.34-1.57-9.86-4.1 c-2.5-2.51-4.06-5.98-4.07-9.82H0v-0.02V13.96v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07V0h0.02h61.7 h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02V13.96L89.62,13.96z M79.04,21.69v-7.73v-0.02h0.02 c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v64.59v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h12.19V35.65 v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07v-0.02h0.02H79.04L79.04,21.69z M105.18,108.92V35.65v-0.02 h0.02c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v73.27v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h61.7h0.02 v0.02c0.91,0,1.75-0.39,2.37-1.01c0.61-0.61,1-1.46,1-2.37h-0.02V108.92L105.18,108.92z" /></g></svg></span></span>
+                                        @if (isAdmin)
+                                        {
+                                            <span class="variantid" style="display:@(Model.VariantId > 0 || Model.DefaultVariantId > 0 ? "inline" : "none")">@T("Products.VariantId")@(Model.VariantId > 0 ? Model.VariantId : Model.DefaultVariantId)<span class="allow-copy-content-h1 allow-copy-content" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" aria-label="Copy VariantId" data-bs-original-title="@T("Common.CopyContent.variantid.Help")"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 115.77 122.88" style="enable-background:new 0 0 115.77 122.88" xml:space="preserve"><g><path class="st0" d="M89.62,13.96v7.73h12.19h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02v0.02 v73.27v0.01h-0.02c-0.01,3.84-1.57,7.33-4.1,9.86c-2.51,2.5-5.98,4.06-9.82,4.07v0.02h-0.02h-61.7H40.1v-0.02 c-3.84-0.01-7.34-1.57-9.86-4.1c-2.5-2.51-4.06-5.98-4.07-9.82h-0.02v-0.02V92.51H13.96h-0.01v-0.02c-3.84-0.01-7.34-1.57-9.86-4.1 c-2.5-2.51-4.06-5.98-4.07-9.82H0v-0.02V13.96v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07V0h0.02h61.7 h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02V13.96L89.62,13.96z M79.04,21.69v-7.73v-0.02h0.02 c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v64.59v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h12.19V35.65 v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07v-0.02h0.02H79.04L79.04,21.69z M105.18,108.92V35.65v-0.02 h0.02c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v73.27v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h61.7h0.02 v0.02c0.91,0,1.75-0.39,2.37-1.01c0.61-0.61,1-1.46,1-2.37h-0.02V108.92L105.18,108.92z" /></g></svg></span></span>
+                                        }
+                                    </h2>
+                                }
+
+                                @if (isAdmin && !string.IsNullOrEmpty(Model.EstimatedDeliveryDate))
+                                {
+                                    <h2>
+                                        @T("Products.Estimated.DeliveryDate")  @Model.EstimatedDeliveryDate
+                                    </h2>
+                                }
+                                ViewData["isAttributePreselected"] = isAttributePreselected;
+                                @await Html.PartialAsync("_ProductPrice", Model.ProductPrice, dataDictPrice)
+
+                                <div class="mobile-share-btn">
+                                    @await Html.PartialAsync("_socialShare", Model)
+                                </div>
+                            }
+                            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsEssentialTop, additionalData = Model })
+                            <!--product pictures-->
+                            @await Html.PartialAsync(!_workContext.IsMobileDevice() ? "_ProductDetailsPictures_VerticalLayout" : "_ProductDetailsPictures", Model)
+                        </div>
+                    </div>
+                    <div class="col-sm-4 product-details">
+
+                        @await Html.PartialAsync("_Discontinued", Model)
+                        @if (!_workContext.IsMobileDevice())
+                        {
+
+                            <div class="producttags">
+                                @if (Model.ProductTags != null)
+                                {
+                                    foreach (var tag in Model.ProductTags)
+                                    {
+                                        if (tag.Name.Equals(productTag, StringComparison.InvariantCultureIgnoreCase))
+                                        {
+                                            <span class="@tag.Name">
+                                                <img src="/images/icons/guaranteeddelivery.png" />
+                                            </span> }
+                                        else
+                                        {
+                                            <span class="@tag.Name">@tag.Name</span>}
+                                        break;
+                                    }
+                                }
+                            </div>
+                            <h1 itemprop="name">
+                                @name
+                                <span class="allow-copy-content-h1 allow-copy-content" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" aria-label="Copy Title" data-bs-original-title="@T("Common.CopyContent.Title.Help")"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 115.77 122.88" style="enable-background:new 0 0 115.77 122.88" xml:space="preserve"><g><path class="st0" d="M89.62,13.96v7.73h12.19h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02v0.02 v73.27v0.01h-0.02c-0.01,3.84-1.57,7.33-4.1,9.86c-2.51,2.5-5.98,4.06-9.82,4.07v0.02h-0.02h-61.7H40.1v-0.02 c-3.84-0.01-7.34-1.57-9.86-4.1c-2.5-2.51-4.06-5.98-4.07-9.82h-0.02v-0.02V92.51H13.96h-0.01v-0.02c-3.84-0.01-7.34-1.57-9.86-4.1 c-2.5-2.51-4.06-5.98-4.07-9.82H0v-0.02V13.96v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07V0h0.02h61.7 h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02V13.96L89.62,13.96z M79.04,21.69v-7.73v-0.02h0.02 c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v64.59v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h12.19V35.65 v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07v-0.02h0.02H79.04L79.04,21.69z M105.18,108.92V35.65v-0.02 h0.02c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v73.27v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h61.7h0.02 v0.02c0.91,0,1.75-0.39,2.37-1.01c0.61-0.61,1-1.46,1-2.37h-0.02V108.92L105.18,108.92z" /></g></svg></span>
+                            </h1>}
+                        @if (!string.IsNullOrEmpty(Model.Sku))
+                        {
+                            <h2>
+                                <span>@T("Products.Sku") # @Model.Sku<span class="allow-copy-content-h1 allow-copy-content" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" aria-label="Copy SKU" data-bs-original-title="@T("Common.CopyContent.sku.Help")"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 115.77 122.88" style="enable-background:new 0 0 115.77 122.88" xml:space="preserve"><g><path class="st0" d="M89.62,13.96v7.73h12.19h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02v0.02 v73.27v0.01h-0.02c-0.01,3.84-1.57,7.33-4.1,9.86c-2.51,2.5-5.98,4.06-9.82,4.07v0.02h-0.02h-61.7H40.1v-0.02 c-3.84-0.01-7.34-1.57-9.86-4.1c-2.5-2.51-4.06-5.98-4.07-9.82h-0.02v-0.02V92.51H13.96h-0.01v-0.02c-3.84-0.01-7.34-1.57-9.86-4.1 c-2.5-2.51-4.06-5.98-4.07-9.82H0v-0.02V13.96v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07V0h0.02h61.7 h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02V13.96L89.62,13.96z M79.04,21.69v-7.73v-0.02h0.02 c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v64.59v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h12.19V35.65 v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07v-0.02h0.02H79.04L79.04,21.69z M105.18,108.92V35.65v-0.02 h0.02c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v73.27v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h61.7h0.02 v0.02c0.91,0,1.75-0.39,2.37-1.01c0.61-0.61,1-1.46,1-2.37h-0.02V108.92L105.18,108.92z" /></g></svg></span></span>
+                                @if (isAdmin)
+                                {
+                                    <span class="variantid" style="display:@(Model.VariantId > 0 || Model.DefaultVariantId > 0 ? "inline" : "none")">@T("Products.VariantId")@(Model.VariantId > 0 ? Model.VariantId : Model.DefaultVariantId)<span class="allow-copy-content-h1 allow-copy-content" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" aria-label="Copy VariantId" data-bs-original-title="@T("Common.CopyContent.variantid.Help")"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 115.77 122.88" style="enable-background:new 0 0 115.77 122.88" xml:space="preserve"><g><path class="st0" d="M89.62,13.96v7.73h12.19h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02v0.02 v73.27v0.01h-0.02c-0.01,3.84-1.57,7.33-4.1,9.86c-2.51,2.5-5.98,4.06-9.82,4.07v0.02h-0.02h-61.7H40.1v-0.02 c-3.84-0.01-7.34-1.57-9.86-4.1c-2.5-2.51-4.06-5.98-4.07-9.82h-0.02v-0.02V92.51H13.96h-0.01v-0.02c-3.84-0.01-7.34-1.57-9.86-4.1 c-2.5-2.51-4.06-5.98-4.07-9.82H0v-0.02V13.96v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07V0h0.02h61.7 h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02V13.96L89.62,13.96z M79.04,21.69v-7.73v-0.02h0.02 c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v64.59v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h12.19V35.65 v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07v-0.02h0.02H79.04L79.04,21.69z M105.18,108.92V35.65v-0.02 h0.02c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v73.27v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h61.7h0.02 v0.02c0.91,0,1.75-0.39,2.37-1.01c0.61-0.61,1-1.46,1-2.37h-0.02V108.92L105.18,108.92z" /></g></svg></span></span>
+                                }
+                            </h2>}
+
+
+                        @if (isAdmin && !string.IsNullOrEmpty(Model.EstimatedDeliveryDate))
+                        {
+                            <h2>
+                                @T("Products.Estimated.DeliveryDate")  @Model.EstimatedDeliveryDate
+                            </h2>
+                        }
+                        @*price section*@
+                        <br />
+                        @if (!_workContext.IsMobileDevice())
+                        {
+                            ViewData["isAttributePreselected"] = isAttributePreselected;
+
+                            @await Html.PartialAsync("_ProductPrice", Model.ProductPrice, dataDictPrice)
+                        }
+
+                        @*color and size*@
+
+
+                        @*<table>
+                            <tbody>
+                            <tr>
+                            <td>Size :</td>
+                            <td>96” L x 22” D x 38” H</td>
+                            </tr>
+                            <tr>
+                            <td>Stain :</td>
+                            <td>
+                            <div class="shade d-flex">
+                            <a href="#" class="active"><img src="images/No 2.png" alt="image"></a>
+                            <a href="#"><img src="images/No 4.png" alt="image"></a>
+                            <a href="#"><img src="images/No 5.png" alt="image"></a>
+                            <a href="#"><img src="images/No 9.png" alt="image"></a>
+                            <a href="#"><img src="images/No 10.png" alt="image"></a>
+                            <a href="#"><img src="images/No 11.png" alt="image"></a>
+                            </div>
+                            </td>
+                            </tr>
+                            </tbody>
+                            </table>*@
+                        @{ ViewData["showSelectedAttributeInFront"] = true; }
+                        @await Html.PartialAsync("_ProductAttributes_Version4", Model, dataDictAttributes)
+
+                        @if (Model.EnableCustomizationModule && Model.UseNewVersionCustomizationAction)
+                        {
+                            @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "product-customization-action" })
+                        }
+                        @{ ViewData["showSelectedAttributeInFront"] = null;
+
+                            ViewData["IsThanksGivingProduct"] = Model.IsThanksGivingProduct; }
+                        @*@await Html.PartialAsync("_productPrice_without_offer", Model.ProductPrice, dataDictPrice)*@
+                        @*// end*@
+
+                        @*old price was here*@
+
+                        @{ ViewData["isAttributePreselected"] = null;
+                            ViewData["IsThanksGivingProduct"] = null; }
+
+
+                        @await Html.PartialAsync("_ProductTierPrices", Model.TierPrices)
+
+                        @*@if (!string.IsNullOrEmpty(Model.ShortDescription))
+                            {
+                            <div class="short-description">
+                            @Html.Raw(Model.ShortDescription)
+                            </div>
+                            }*@
+
+
+                        <!--product reviews-->
+                        @*@await Html.PartialAsync("_ProductReviewOverview", Model.ProductReviewOverview)*@
+                        <!--manufacturers-->
+                        @*@await Html.PartialAsync("_ProductManufacturers", Model.ProductManufacturers)*@
+                        <!--availability-->
+                        @*@await Html.PartialAsync("_Availability", Model)*@
+                        <!--SKU, MAN, GTIN, vendor-->
+                        @*@await Html.PartialAsync("_SKU_Man_GTIN_Ven", Model)*@
+                        <!--delivery-->
+                        @await Html.PartialAsync("_DeliveryInfo", Model)
+                        <!--sample download-->
+                        @await Html.PartialAsync("_DownloadSample", Model)
+                        <!--attributes-->
+                        <!--gift card-->
+                        @{ var dataDictGiftCard = new ViewDataDictionary(ViewData);
+                            dataDictGiftCard.TemplateInfo.HtmlFieldPrefix = $"giftcard_{Model.Id}";
+                            @await Html.PartialAsync("_GiftCardInfo", Model.GiftCard, dataDictGiftCard) }
+                        <!--rental info-->
+                        @{ var dataDictRental = new ViewDataDictionary(ViewData);
+
+                            dataDictRental.TemplateInfo.HtmlFieldPrefix = $"rental_{Model.Id}";
+                            @await Html.PartialAsync("_RentalInfo", Model, dataDictRental) }
+                        <!--price & add to cart & estimate shipping-->
+                        @{ if (Model.TotalInventory > 0 || Model.ManageInventoryMethod == Nop.Core.Domain.Catalog.ManageInventoryMethod.DontManageStock)
+                            {
+                                @if (Model.IsBundleProduct && Model.DisplayBundleConfiguration)
+                                {
+                                    var dataDictAddToCart = new ViewDataDictionary(ViewData);
+                                    dataDictAddToCart.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
+                                    dataDictAddToCart.Add("variantId", Model.DefaultVariantId);
+                                    dataDictAddToCart.Add("IsBundleProduct", Model.IsBundleProduct);
+                                    dataDictAddToCart.Add("DisplayBundleConfiguration", Model.DisplayBundleConfiguration);
+                                    @await Html.PartialAsync("_AddToCart", Model.AddToCart, dataDictAddToCart)
+                                    ViewData["isAttributePreselected"] = isAttributePreselected;
+                                    @await Html.PartialAsync("_AddToCart_Sticky", Model)
+                                    ViewData["isAttributePreselected"] = null;
+                                }
+                                else
+                                {
+                                    ViewData["isAttributePreselected"] = isAttributePreselected;
+                                    var dataDictAddToCart = new ViewDataDictionary(ViewData);
+                                    dataDictAddToCart.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
+                                    dataDictAddToCart.Add("variantId", Model.DefaultVariantId);
+                                    dataDictAddToCart.Add("priceModel", Model.ProductPrice);
+                                    @await Html.PartialAsync("_MainAddToCart", Model.AddToCart, dataDictAddToCart)
+                                    @await Html.PartialAsync("_AddToCart_Sticky", Model)
+                                    ViewData["isAttributePreselected"] = null;
+                                }
+                            }
+
+                            else
+                            {
+                                @await Component.InvokeAsync("BackInStockSubscriptionBlock", new { productId = Model.Id }) } @*@await Html.PartialAsync("_ProductEstimateShipping", Model.ProductEstimateShipping)*@ }
+
+                        @*@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsInsideOverviewButtonsBefore, additionalData = Model })
+                            @{
+                            var dataDictAddToWishlist = new ViewDataDictionary(ViewData);
+                            dataDictAddToWishlist.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
+                            @await Html.PartialAsync("_AddToWishlist", Model.AddToCart, dataDictAddToWishlist)
+                            }
+                            @await Html.PartialAsync("_CompareProductsButton", Model)
+                            @await Html.PartialAsync("_ProductEmailAFriendButton", Model)
+                            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsInsideOverviewButtonsAfter, additionalData = Model })*@
+
+                        @*@await Html.PartialAsync("_ShareButton", Model)
+                            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsOverviewBottom, additionalData = Model })*@
+
+
+
+
+                        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsOverviewTop, additionalData = Model })
+                        @*Coupon section*@
+                        @if (Model.IsThanksGivingProduct)
+                        {
+                            @await Html.PartialAsync("_ThanksGivingTextSection") }
+                        else if (Model.TotalInventory > 0 || Model.ManageInventoryMethod == Nop.Core.Domain.Catalog.ManageInventoryMethod.DontManageStock)
+                        {
+                            @Html.Raw(T("product.coupon.text"))}
+
+
+
+                        @await Html.PartialAsync("_customizationform", Model)
+
+
+
+                        @await Html.PartialAsync("_BuyMoreSaveMore")
+
+                        @await Component.InvokeAsync("Custom_RelatedProductBlock", new { productId = Model.RelatedProductId })
+
+                        @*Estimated Delivery section*@
+                        @*     @if (Model.TotalInventory > 0 || Model.ManageInventoryMethod == Nop.Core.Domain.Catalog.ManageInventoryMethod.DontManageStock)
+                            {
+                                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductExpectedDeliveryDates, additionalData = Model })
+                            } *@
+
+
+
+                    </div>
+
+
+                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsEssentialBottom, additionalData = Model })
+                </div>
+            </div>
+        </form>
+        @*Details Section*@
+        <div class="row">
+            <div class="col-12 detail-section">
+                @{
+                    ViewData["DisplaySpecificationAttributeDimension"] = !Model.DisplayDimensionOfVariant;
+                }
+
+                @if (_workContext.IsMobileDevice())
+                {
+                    <div id="productdetail-accordion" class="accordion">
+
+                        <div class="card-header" data-bs-toggle="collapse" href="#collapse-desc">
+                            <span class="card-title">
+                                @T("Product.Desc.Tab.heading")
+                            </span>
+                        </div>
+                        <div id="collapse-desc" class="card-body description-tab show" style="">
+
+                            <div class="description-content @(Model.FullDescription.Length > 500 ? "hide-content" : "")">
+                                @Html.Raw(Model.FullDescription)
+                                <div class="product-notes">
+                                    @Html.Raw(Model.Notes)
+                                </div>
+                            </div>
+                            @if (Model.FullDescription.Length > 500)
+                            {
+                                <span data-attr-less="@T("Product.show.Less")" data-attr-more="@T("Product.show.More")" class="showmore">@T("Product.Show.More") </span>
+                            }
+                        </div>
+
+                        @if (Model.DisplayDimensionOfVariant)
+                        {
+                            @await Html.PartialAsync("_ProductVariantDimension", Model)
+                        }
+                        @await Html.PartialAsync("_ProductSpecifications", Model.ProductSpecificationModel)
+
+
+
+                        @if (Model.IsThanksGivingProduct)
+                        {
+                            <div class="card-header collapsed" data-bs-toggle="collapse" href="#collapse-thanksgiving">
+                                <span class="card-title">
+                                    @T("Product.Guaranteed.Delivery.Tab.heading")
+                                </span>
+                            </div>
+                            <div id="collapse-thanksgiving" class="card-body collapse" style="">
+                                @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "guaranteed-delivery-by-thanksgiving-2024" })
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    string descriptionTabName = System.Text.RegularExpressions.Regex.Replace(T("Product.Desc.Tab.heading").ToString().Trim().ToLowerInvariant(), @"[^a-z0-9]+", "-").Trim('-');
+                    string dimensionTabName = System.Text.RegularExpressions.Regex.Replace(T("product.specification.attr.dimension").ToString().Trim().ToLowerInvariant(), @"[^a-z0-9]+", "-").Trim('-');
+                    string thanksGiving = System.Text.RegularExpressions.Regex.Replace(T("Product.Guaranteed.Delivery.Tab.heading").ToString().Trim().ToLowerInvariant(), @"[^a-z0-9]+", "-").Trim('-');
+                    <ul class="nav nav-tabs" id="infotab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="tab-@descriptionTabName" data-bs-toggle="tab"
+                                    data-bs-target="#@descriptionTabName" type="button" role="tab">
+                                @T("Product.Desc.Tab.heading")
+                            </button>
+                        </li>
+
+                        @if (Model.DisplayDimensionOfVariant)
+                        {
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="tab-@dimensionTabName" data-bs-toggle="tab"
+                                        data-bs-target="#@dimensionTabName" type="button" role="tab">
+                                    @T("product.specification.attr.dimension")
+                                </button>
+                            </li>
+                        }
+
+                        @await Html.PartialAsync("_ProductSpecifications.Tabs", Model.ProductSpecificationModel)
+                        @if (Model.IsThanksGivingProduct)
+                        {
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="tab-@thanksGiving" data-bs-toggle="tab"
+                                        data-bs-target="#@thanksGiving" type="button" role="tab">
+                                    @T("Product.Guaranteed.Delivery.Tab.heading")
+                                </button>
+                            </li>
+                        }
+                    </ul>
+                    <div class="tab-content border border-top-0 p-3" id="infotabContent">
+                        <div class="tab-pane fade show active" id="@descriptionTabName" role="tabpanel" aria-labelledby="@T("Product.Desc.Tab.heading") tab" tabindex="0">
+                            @Html.Raw(Model.FullDescription)
+                            <div class="product-notes">
+                                @Html.Raw(Model.Notes)
+                            </div>
+                        </div>
+                        @if (Model.DisplayDimensionOfVariant)
+                        {
+                            <div class="tab-pane fade" id="@dimensionTabName" role="tabpanel" aria-labelledby="@T("product.specification.attr.dimension") tab" tabindex="0">
+                                @await Html.PartialAsync("_ProductVariantDimension", Model)
+                            </div>
+                        }
+                        @await Html.PartialAsync("_ProductSpecifications", Model.ProductSpecificationModel)
+                        @if (Model.IsThanksGivingProduct)
+                        {
+                            <div class="tab-pane fade" id="@thanksGiving" role="tabpanel" aria-labelledby="@T("Product.Guaranteed.Delivery.Tab.heading") tab" tabindex="0">
+                                @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "guaranteed-delivery-by-thanksgiving-2024" })
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+
+        @if (_workContext.IsMobileDevice())
+        {
+            <script asp-location="Footer">
+                // Convert .showmore click handler
+                $('.description-tab .showmore').on('click', function () {
+                    const $description = $('.description-content');
+                    $description.toggleClass('hide-content');
+
+                    if ($description.hasClass('hide-content')) {
+                        $description[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        $(this).text($(this).data('attr-more'));
+                    } else {
+                        $(this).text($(this).data('attr-less'));
+                    }
+                });
+
+
+            </script>
+        }
+        <div>
+            @await Component.InvokeAsync("FBTProducts", new { productId = Model.Id })
+        </div>
+
+
+
+
+        <div>
+            <form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-pairwith" class="pairwith">
+                @await Component.InvokeAsync("Custom_PairWithProductsBlock", new { productId = Model.Id })
+            </form>
+        </div>
+
+        <div>
+            @if (!collectionListingDisplayVertically)
+            {
+                @await Component.InvokeAsync("Custom_CollectionProductsBlock", new { productId = Model.Id, parentGroupedProductId = Model.ParentGroupId }) }
+            else
+            {
+                @await Component.InvokeAsync("Custom_CollectionProducts_Vertical_DisplayBlock", new { productId = Model.Id, parentGroupedProductId = Model.ParentGroupId })}
+        </div> @*end*@ @* People Also Viewed*@
+
+
+        <div>
+            @await Component.InvokeAsync("Custom_RelatedProducts", new { productId = Model.Id })
+        </div> @*Thanks Giving Banner Section*@
+
+
+        @if (Model.IsThanksGivingProduct)
+
+        {
+
+            @await Html.PartialAsync("_ThanksGivingBannerSection") } @*Collection module*@ @*Individual products*@
+        <div>
+            @await Component.InvokeAsync("Custom_CrossSellProductsBlock", new { productId = Model.Id })
+        </div> @*Pair With module*@ @*end*@ @*//Related Search*@
+
+        @await Component.InvokeAsync("RelatedSearchTerms", new { entityId = Model.Id, entityType = "Product" }) @*recently  products*@
+
+        @*     @if (Model.ProductReviewOverview.AllowCustomerReviews)
+            {
+             @await Component.InvokeAsync("Custom_FeedBackBlock", new
+             {
+                 productId = Model.Id,
+                 pageSize = reviewPageSize,
+                 sku = (Model.Sku ?? "").Replace("IND", ""),
+                     mainCategoryId = Model.MainCategoryId
+             })
+            } *@
+        @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "product-page-customization-banner" })
+        @await Component.InvokeAsync("FaqBlock", new { entityId = Model.Id, entityType = "Product" })
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsBottom, additionalData = Model })
+        @await Component.InvokeAsync("Custom_RecentlyViewedProductsBlock")
+        @await Html.PartialAsync("_PdfViewerScript")
+    </div>
+</div>
