@@ -1,0 +1,204 @@
+﻿@model CustomProductOverviewModel
+@inject ICustomWorkContext _workcontext
+<script>
+    var priceRangeFormat = '@T("Price.Range.Product.Format")';
+     var conversionValue = @Model.ConversionValue;
+</script>
+
+<div class=" product-details-page  featuredproduct">
+
+    @if (!_workcontext.IsMobileDevice())
+    {
+<form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-form">
+    <div data-productid="@Model.Id">
+        <div class="row mx-0">
+            <div class="col-sm-4 product-image">
+                <div class="product-gallery">
+                    @await Html.PartialAsync("_version2ProductDetailsPictures", Model)
+                </div>
+            </div>
+            <div class="col-sm-4 product-details">
+
+                <h1 itemprop="name">
+                    @(string.IsNullOrEmpty(Model.VariantTitle)? Model.Name: Model.VariantTitle)
+                    <span class="">
+                        @T("Products.Sku") # @Model.Sku
+                    </span>
+                </h1>
+
+                @*color and size*@
+
+                @{ var dataDictAttributes = new ViewDataDictionary(ViewData);
+                                    dataDictAttributes.TemplateInfo.HtmlFieldPrefix = $"attributes_{Model.Id}";
+
+                                    var dataDictPrice = new ViewDataDictionary(ViewData);
+                                    dataDictPrice.TemplateInfo.HtmlFieldPrefix = $"price_{Model.Id}"; }
+
+
+                @*// end*@
+
+                @*price section*@
+
+                @await Html.PartialAsync("_ProductPrice", Model.ProductPrice, dataDictPrice)
+
+
+
+
+                @{ ViewData["showSelectedAttributeInFront"] = false; }
+                @await Html.PartialAsync("_FeaturedProductAttributes", Model, dataDictAttributes)
+                @{ ViewData["showSelectedAttributeInFront"] = null; }
+
+                @*Coupon section*@
+                <!-- @Html.Raw(T("product.coupon.text")) -->
+
+
+            </div>
+           
+            <div class="col-sm-4 product-details feature-right">
+                @{
+                                    <div class="row mt-4 featured-icon-list">
+                                        <div class="col-6">
+                                            <div class="icon-text">
+                                                <img title="Solid Wood" alt="Solid Wood" class="icon" src="/images/uploaded/wood-board-black-outline.svg" />
+
+                                                <span> Solid Wood</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="icon-text">
+                                                <img title="Premium Quality" alt="Premium Quality" class="icon" src="/images/uploaded/premium-product-sticker.svg" />
+
+                                                <span> Premium Quality</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="icon-text">
+                                                <img title="Easy Customisation" alt="Easy Customisation" class="icon" src="/images/uploaded/ruler-and-pencil.svg" />
+
+                                                <span> Easy Customisation</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="icon-text">
+                                                <img title="Artisan Handcrafted" alt="Artisan Handcrafted" class="icon" src="/images/uploaded/Hand.svg" />
+
+                                                <span> Artisan Handcrafted</span>
+                                            </div>
+                                        </div>
+                                    </div> var dataDictAddToCart = new ViewDataDictionary(ViewData);
+                                    dataDictAddToCart.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
+                                    dataDictAddToCart.Add("sename", Model.SeName);
+                                    dataDictAddToCart.Add("DefaultVariantId", Model.DefaultVariantId);
+                                    dataDictAddToCart.Add("VariantId", Model.VariantId);
+                            dataDictAddToCart.Add("VariantSename", Model.VariantSename);
+                    @await Html.PartialAsync("_FeaturedProduct_AddToCart", Model.AddToCart, dataDictAddToCart)
+
+                                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsOverviewTop, additionalData = Model })}
+            </div>
+        </div>
+    </div>
+</form> }
+            else
+            {
+<form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-form">
+    <div data-productid="@Model.Id">
+        <div class="row mx-0">
+            <div class="col-sm-6 product-image">
+                <div class="product-gallery mobile-gallery">
+                    @await Html.PartialAsync("_version2ProductDetailsPictures", Model)
+                </div>
+            </div>
+            <div class="col-sm-6 product-details mobile-details">
+
+                <h1 itemprop="name">
+                    @(string.IsNullOrEmpty(Model.VariantTitle)? Model.Name: Model.VariantTitle)
+                </h1>
+
+                @{ var dataDictAttributes = new ViewDataDictionary(ViewData);
+                                    dataDictAttributes.TemplateInfo.HtmlFieldPrefix = $"attributes_{Model.Id}";
+
+                                    var dataDictPrice = new ViewDataDictionary(ViewData);
+                                    dataDictPrice.TemplateInfo.HtmlFieldPrefix = $"price_{Model.Id}"; }
+                @await Html.PartialAsync("_ProductPrice", Model.ProductPrice, dataDictPrice)
+
+                @{ ViewData["showSelectedAttributeInFront"] = false; }
+                @await Html.PartialAsync("_FeaturedProductAttributes", Model, dataDictAttributes)
+                @{ ViewData["showSelectedAttributeInFront"] = null; }
+
+                @{ if (Model.ProductAttributes.Count > 0)
+                                    {
+                                        var noOfSizeAttr = Model.ProductAttributes.Where(a => a.Name == T("Product.Attr.Size").Text).FirstOrDefault()?.Values.Count() ?? 0;
+                                        var noOfShadeAttr = Model.ProductAttributes.Where(a => a.Name == T("Product.Attr.shades").Text).FirstOrDefault()?.Values.Count() ?? 0;
+                                        var noOfConfigurationAttr = Model.ProductAttributes.Where(a => a.Name == T("Product.Attr.Configuration").Text).FirstOrDefault()?.Values.Count() ?? 0;
+                                        if (noOfSizeAttr > 1 || noOfShadeAttr > 0 || noOfConfigurationAttr > 0)
+                                        {
+                    <p class="shade-size">
+                        <a href="@Url.RouteUrl("Product", new {id=Model.Id, SeName = Model.SeName })">
+                            @if (noOfSizeAttr > 0 && noOfShadeAttr > 0 && noOfConfigurationAttr > 0)
+                            {
+
+    @T("common.label.noof.shade.size.configuration", noOfSizeAttr, noOfShadeAttr, noOfConfigurationAttr) }
+                            else if (noOfSizeAttr > 1 && noOfShadeAttr > 0)
+                            {
+
+    @T("common.label.noof.shade.size", noOfSizeAttr, noOfShadeAttr) }
+                            else if (noOfSizeAttr > 1)
+                            {
+    @T("common.label.noof.size", noOfSizeAttr) }
+                            else if (noOfConfigurationAttr > 1)
+                            {
+    @T("common.label.noof.configuration", noOfConfigurationAttr) }
+                            else
+                            {
+    @T("common.label.noof.shade", noOfShadeAttr)}
+                        </a>
+                    </p> }
+                                    } }
+              
+                @*// end*@
+
+
+            </div>
+            <div class="col-sm-12 specification">
+                <div class="specification-inner">
+                    <div class="icon-text">
+                        <img class="icon" alt="Solid Wood" title="Solid Wood" src="/images/uploaded/wood-board-black-outline.svg" />
+
+                        <span> Solid Wood</span>
+                    </div>
+
+                    <div class="icon-text">
+                        <img class="icon" alt="Premium Quality" title="Premium Quality" src="/images/uploaded/premium-product-sticker.svg" />
+
+                        <span> Premium Quality</span>
+                    </div>
+
+                    <div class="icon-text">
+                        <img class="icon" alt="Easy Customisation" title="Easy Customisation" src="/images/uploaded/ruler-and-pencil.svg" />
+
+                        <span> Easy Customisation</span>
+                    </div>
+
+
+                    <div class="icon-text">
+                        <img class="icon" alt="Artisan Handcrafted" title="Artisan Handcrafted" src="/images/uploaded/Hand.svg" />
+
+                        <span> Artisan Handcrafted</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-12 action-container">
+                @{ var dataDictAddToCart = new ViewDataDictionary(ViewData);
+                    dataDictAddToCart.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
+                    dataDictAddToCart.Add("sename", Model.SeName);
+                    dataDictAddToCart.Add("DefaultVariantId", Model.DefaultVariantId);
+                    dataDictAddToCart.Add("VariantId", Model.VariantId);
+                    dataDictAddToCart.Add("VariantSename", Model.VariantSename);
+            @await Html.PartialAsync("_FeaturedProduct_AddToCart", Model.AddToCart, dataDictAddToCart)
+                            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsOverviewTop, additionalData = Model }) }
+            </div>
+        </div>
+    </div>
+</form>}
+</div>

@@ -514,7 +514,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
 
             if (((isServiceCalled && pictures.Count > 1) || !isServiceCalled) && product.AlternateImageSequence != null && product.AlternateImageSequence > 0)
             {
-                cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(CustomNopModelCacheDefaults.CustomProductDefaultPictureModelKey,
+                cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(NopModelCacheDefaults.ProductDetailsPicturesModelKey,
                     product, pictureSize + "_alternate", true, await _workContext.GetWorkingLanguageAsync(), _webHelper.IsCurrentConnectionSecured(),
                     await _storeContext.GetCurrentStoreAsync());
 

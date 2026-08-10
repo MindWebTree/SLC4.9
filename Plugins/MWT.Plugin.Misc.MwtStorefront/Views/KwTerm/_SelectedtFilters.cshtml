@@ -1,5 +1,5 @@
-﻿@model CatalogProductsModel
-@inject Nop.Core.IWorkContext _workContext;
+﻿@model CustomCatalogProductsModel
+@inject ICustomWorkContext _workContext;
 
 @if (!Model.PriceRangeFilter.Enabled &&
 !Model.SpecificationFilter.Enabled &&

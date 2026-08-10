@@ -153,8 +153,8 @@
                 {
                     <div class="category-card">
                         <div class="card">
-                            <a href="@Url.RouteUrl("Category", new { SeName = item.SeName,id=item.Id  })" title="@item.PictureModel.Title">
-                                    <img aria-label="@item.PictureModel.Title" width="450" height="450" class="card-img-top lazy" src="/images/pixel.png" data-src="@item.PictureModel.ImageUrl" title="@item.PictureModel.Title" />
+                                <a href="@Url.RouteUrl("Category", new { SeName = item.SeName, id = item.Id })" aria-label="@item.PictureModel.Title">
+                                    <img alt="" width="450" height="450" class="card-img-top lazy" src="/images/pixel.png" data-src="@item.PictureModel.ImageUrl" title="@item.PictureModel.Title" />
                             </a>
                             <div class="card-body text-center">
                                 <h2 class="title">

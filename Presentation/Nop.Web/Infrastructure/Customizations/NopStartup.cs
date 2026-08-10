@@ -74,7 +74,7 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<ICategoryCollectionLinkService, CategoryCollectionLinkService>();
             services.AddScoped<ITestimonialService, TestimonialService>();
             services.AddScoped<IRewardClaimService, RewardClaimService>();
-            services.AddScoped<IManageService, ManageService>(); 
+            services.AddScoped<IManageService, ManageService>();
 
 
             services.AddScoped<IIpAddressService, IpAddressService>();
@@ -122,14 +122,18 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<ICustomBackInStockSubscriptionService, CustomBackInStockSubscriptionService>();
             services.AddScoped<ICustomCategoryService, CustomCategoryService>();
             services.AddScoped<ICustomizationFormSerivce, CustomizationFormSerivce>();
-            services.AddScoped<ICustomRecentlyViewedProductsService, CustomRecentlyViewedProductsService>(); 
-            services.AddScoped<ISuggestedKeywordsService, SuggestedKeywordsService>(); 
-            services.AddScoped<IFuzzySearchService, FuzzySearchService>(); 
+            services.AddScoped<ICustomRecentlyViewedProductsService, CustomRecentlyViewedProductsService>();
+            services.AddScoped<ISuggestedKeywordsService, SuggestedKeywordsService>();
+            services.AddScoped<IFuzzySearchService, FuzzySearchService>();
             services.AddScoped<IRelatedSearchService, RelatedSearchService>();
             #endregion
             #region QuickFilter
             services.AddScoped<IQuickFilterService, QuickFilterService>();
 
+            #endregion
+            #region Kw
+            services.AddScoped<IKwTermService, KwTermService>();
+            services.AddScoped<IKwTemplateService, KWTemplateService>();
             #endregion
         }
 

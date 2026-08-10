@@ -1,7 +1,7 @@
-﻿@model CatalogProductsModel
-@inject Nop.Core.IWorkContext _workContext
-@inject Nop.Services.Configuration.ISettingService _settingService;
-@inject Nop.Services.Catalog.ICategoryService _categoryService
+﻿@model CustomCatalogProductsModel
+@inject ICustomWorkContext _workContext
+@inject ISettingService _settingService;
+@inject ICustomCategoryService _categoryService
 @{
     var EnableInfiniteScroll = false;
     int position = 5;
@@ -23,9 +23,9 @@
     else
         kwModel.Id = Model.CategoryID;
    
-    bool hasThirdBanner = await _categoryService.IsMwtWidgetApplied(PublicWidgetZones.CategoryDetailsProductListThirdPosition, kwModel.Id, "KwTerm", _workContext.IsMobileDevice());
-    bool hasNinthBanner = await _categoryService.IsMwtWidgetApplied(PublicWidgetZones.CategoryDetailsProductListNinthPosition, kwModel.Id, "KwTerm", _workContext.IsMobileDevice());
-    bool hasSixthBanner = await _categoryService.IsMwtWidgetApplied(PublicWidgetZones.CategoryDetailsProductListSixthPosition, kwModel.Id, "KwTerm", _workContext.IsMobileDevice());
+    bool hasThirdBanner = await _categoryService.IsMwtWidgetApplied(CustomPublicWidgetZones.CategoryDetailsProductListThirdPosition, kwModel.Id, "KwTerm", _workContext.IsMobileDevice());
+    bool hasNinthBanner = await _categoryService.IsMwtWidgetApplied(CustomPublicWidgetZones.CategoryDetailsProductListNinthPosition, kwModel.Id, "KwTerm", _workContext.IsMobileDevice());
+    bool hasSixthBanner = await _categoryService.IsMwtWidgetApplied(CustomPublicWidgetZones.CategoryDetailsProductListSixthPosition, kwModel.Id, "KwTerm", _workContext.IsMobileDevice());
 
 }
 @if (Model.Products.Count > 0)
@@ -51,10 +51,10 @@
     @{
         int counter = 1;
     }
-    @foreach (var product in Model.Products)
+    @foreach (var product in Model.Products) 
     {
         <div class="col-sm-6 col-lg-4 cat-box">
-            @await Html.PartialAsync(product.Inventory <= 0 ? "_version2Catgory_ProductBox_OutOfStock" : "_version2Catgory_ProductBox", product)
+                @await Html.PartialAsync(product.Inventory <= 0 ? "_Catgory_ProductBox_OutOfStock" : "_Catgory_ProductBox", product)
         </div>
         if (counter == 2)
         {
@@ -65,7 +65,7 @@
             if (hasThirdBanner)
             {
                 <div class="col-sm-6 col-lg-4 cat-box">
-                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsProductListThirdPosition, additionalData = kwModel })
+                        @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsProductListThirdPosition, additionalData = kwModel })
                 </div>
             }
         }
@@ -78,7 +78,7 @@
             if (hasSixthBanner)
             {
                 <div class="col-sm-6 col-lg-4 cat-box">
-                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsProductListSixthPosition, additionalData = kwModel })
+                        @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsProductListSixthPosition, additionalData = kwModel })
                 </div>
             }
         }
@@ -91,13 +91,13 @@
             if (hasNinthBanner)
             {
                 <div class="col-sm-6 col-lg-4 cat-box">
-                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsProductListNinthPosition, additionalData = kwModel })
+                        @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsProductListNinthPosition, additionalData = kwModel })
                 </div>
             }
         }
         if (counter == rowPosition)
         {
-            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsProductListMiddle, additionalData = kwModel })
+                @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsProductListMiddle, additionalData = kwModel })
         }
         counter++;
     }

@@ -1,6 +1,6 @@
-﻿@model CatalogProductsModel
-@inject Nop.Core.IWorkContext _workContext
-@inject Nop.Services.Configuration.ISettingService _settingService;
+﻿@model CustomCatalogProductsModel
+@inject ICustomWorkContext _workContext
+@inject ISettingService _settingService;
 
 @if (!string.IsNullOrEmpty(Model.WarningMessage))
 {
@@ -64,11 +64,11 @@
                 {
                     counter++;
                 }
-                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsProductListThirdPosition, additionalData = catModel })
+                @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsProductListThirdPosition, additionalData = catModel })
             }
             if (counter == rowPosition)
             {
-                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsProductListMiddle, additionalData = catModel })
+                @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsProductListMiddle, additionalData = catModel })
             }
             counter++;
         }

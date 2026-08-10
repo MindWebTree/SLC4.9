@@ -1,5 +1,5 @@
-﻿@model SpecificationFilterModel
-@inject Nop.Core.IWorkContext _workContext
+﻿@model CustomSpecificationFilterModel
+@inject ICustomWorkContext _workContext
 <script>
     var filterAttr = '@string.Join( ",",Model.Attributes.Select(m=>m.Name.ToLower().Trim()).ToArray())';
 

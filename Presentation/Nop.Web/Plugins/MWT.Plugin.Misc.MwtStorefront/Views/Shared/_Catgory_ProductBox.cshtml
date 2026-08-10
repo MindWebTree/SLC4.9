@@ -1,0 +1,158 @@
+﻿@model CustomProductOverviewModel
+@using Nop.Core
+@using Nop.Core.Domain.Catalog
+@using Nop.Core.Domain.Orders
+@using Nop.Core.Domain.Tax
+@inject CatalogSettings catalogSettings
+@inject ICustomWorkContext _workContext
+@{
+    string offerText = CustomCommonHelper.GetProductOfferText(Model.Id, Model.ProductPrice.OfferText, Model.ProductPrice.OfferPlaceHolder, Model.ProductPrice.DiscountAmount, Model.ProductPrice.DiscountPercentage, Model.ProductPrice.SaleEndDate, false);
+    var addtowishlistlink = Url.RouteUrl("AddProductToCart-Catalog", new
+    {
+        productId = Model.Id,
+        shoppingCartTypeId = (int)ShoppingCartType.Wishlist,
+        quantity = 1,
+        iswishlist = true
+    });
+}
+<div data-productid="@Model.Id" data-isSimilarProduct="@Model.IsSimilarProduct">
+    <div class="cat-img">
+        @*Tags*@
+        <div class="Tags">
+            @if (Model.Tags != null)
+            {
+                foreach (var tag in Model.Tags)
+                {
+                    <div class="@tag.Name">@tag.Name</div>
+                    break;
+                }
+            }
+        </div>
+
+        <a href="@Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName })"
+           aria-label="@Model.DefaultPictureModel.Title">
+            <img alt="" src="/images/pixel.png" height="415" width="415"
+                 data-src="@Model.DefaultPictureModel.ImageUrl"
+                 default-pic="@Model.DefaultPictureModel.ImageUrl" alt-pic="@(Model.AlternatePictureModel == null ? "" : Model.AlternatePictureModel.ImageUrl)"
+                 class="lazy" style="width:100%;height:auto;" />
+        </a>
+        <div class="wishlist-icon"
+             role="button" tabindex="0" aria-expanded="false"
+             data-toggle="tooltip" data-placement="top" title="Add to Wishlist" data-wishlistid="@Model.Id" onclick="AjaxCart.addproducttocart_catalog('@addtowishlistlink');return false;">
+            <i class="far fa-heart" alt="Add to Wishlist"></i>
+        </div>
+    </div>
+    @*<div class="shade d-flex">
+        <img src="images/Black.jpg" alt="image">
+        <img src="images/Dark-Natural.jpg" alt="image">
+        <img src="images/Espresso.jpg" alt="image">
+        <img src="images/Mahogany.jpg" alt="image">
+        <img src="images/Natural.jpg" alt="image">
+        </div>*@
+
+    @if (Model.Attribute != null)
+    {
+        @if (Model.Attribute.Count > 0)
+        {
+            <div class="shade d-flex shadesSection">
+                @{
+                    var shadeAttributes = _workContext.IsMobileDevice() ? (Model.Attribute.Count > 4 ? Model.Attribute.Take(4) : Model.Attribute) : Model.Attribute;
+
+                    foreach (var attr in shadeAttributes)
+                    {
+                        if (string.IsNullOrEmpty(attr.PictureUrl))
+                        {
+                            <a href="@Url.RouteUrl("Product", new 
+{ id = Model.Id, SeName = Model.SeName })">
+                                <img src="/images/shades/Squareimage/@(attr.Name).jpg"
+                                     data-id="@Model.Id"
+                                     alt="Available in @attr.Name Shade"
+                                     height="44" width="44">
+                            </a>
+                        }
+                        else
+                        {
+                            <img src="/images/shades/Squareimage/@(attr.Name).jpg"
+                                 tabindex="0" role="button"
+                                 data-id="@Model.Id" pic-url="@(attr.PictureUrl == "" ? Model.DefaultPictureModel.ImageUrl : attr.PictureUrl)"
+                                 alt="Available in @attr.Name Shade" height="44" width="44">
+                        }
+                    }
+                    if (_workContext.IsMobileDevice() && Model.Attribute.Count > 4)
+                    {
+                        <a class="more-stain-btn" href="@Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName })">
+                            +more
+                        </a>
+                    }
+
+                }
+            </div>
+        }
+    }
+    <h3>
+        <a href="@Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName })">@Model.Name</a>
+    </h3>
+    @*Size Shade aggregation*@
+
+    @if (!string.IsNullOrEmpty(Model.SizeShadeMessage))
+    {
+        <h4 class="size-shade-aggregation">
+            @{
+                var attrs = Model.SizeShadeMessage.Split('|', StringSplitOptions.RemoveEmptyEntries);
+                foreach (var attr in attrs)
+                {
+                    <span> @attr</span>
+                }
+            }
+        </h4>
+    }
+
+    @await Html.PartialAsync("_ListingPrice", Model)
+
+</div>
+
+
+
+<script asp-location="Footer">
+         $(".category.product-card.out-of-stock a").click(function (e) {
+             e.preventDefault();
+            })
+    function AddEmailToList(productId) {
+        var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        if (!$("#user-subscription-email-"+productId).val().match(validRegex)) {
+            $("#user-subscription-email-" + productId).focus();
+            return;
+        }
+
+        var _formdata = new URLSearchParams();
+        _formdata.append('ProductId', productId);
+        _formdata.append('email', $('#user-subscription-email-' +productId).val());
+
+        var tokenInput = $('input[name=__RequestVerificationToken]');
+        if (tokenInput.length) {
+            _formdata.append('__RequestVerificationToken', tokenInput.val());
+        }
+        $(".dispaly-Status-" + productId +" .Success").hide();
+        $(".dispaly-Status-" + productId +" .Error").hide();
+
+        $.ajax({
+            url: '@(Url.ActionLink("BackInStockSubscription", "Product"))',
+            type: 'POST',
+            data: _formdata,
+            async: true,
+            processData: false,  // Important! Don't process the data
+            contentType: false,
+            success: function (data) {
+                $("#user-subscription-email-" + productId).val("");
+                $(".dispaly-Status-" + productId + " .Success").show().html(data);
+                $(".dispaly-Status-" + productId + " .Error").hide();
+            },
+            error: function (xhr) {
+                console.log(xhr);
+                $(".dispaly-Status-" + productId +" .Success").hide();
+                $(".dispaly-Status-" + productId + " .Error").show().html(xhr.responseText);
+
+            }
+        });
+    }
+</script>
