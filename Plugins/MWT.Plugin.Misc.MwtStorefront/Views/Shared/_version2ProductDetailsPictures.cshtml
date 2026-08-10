@@ -14,7 +14,7 @@
     });
     var themeName = await themeContext.GetWorkingThemeNameAsync();
     NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/magiczoomplus.js");
-    NopHtml.AppendCssFileParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/css/magiczoomplus.css");
+    NopHtml.AppendCssFileParts($"~/Themes/{themeName}/Content/css/magiczoomplus.css");
 }
 <div class="gallery">
     <div class="row">
@@ -22,13 +22,18 @@
         {
             <div class="col-sm-3">
                 <div class="product-sub-images">
-                    @foreach (var picture in Model.PictureModels)
-                    {
-                        <a class="thumb-item" data-zoom-id="product-magiczoom" href="@picture.FullSizeImageUrl"
-                           data-image="@picture.ImageUrl" alt="@picture.AlternateText" title="@picture.Title">
-                            <img src="@picture.ThumbImageUrl"
-                                 alt="@picture.AlternateText" title="@picture.Title" data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
-                        </a>
+                    @{
+                        int tatalPictures = Model.PictureModels.Count - 1;
+                        int picturesCount = 0;
+                        foreach (var picture in Model.PictureModels)
+                        {
+                            <a class="thumb-item" type="button" role="button" data-zoom-id="product-magiczoom" href="@picture.FullSizeImageUrl"
+                               data-image="@picture.ImageUrl" alt="@picture.AlternateText">
+                                <img src="@picture.ThumbImageUrl"
+                                     alt="@($"{picture.AlternateText} - image {picturesCount} of {tatalPictures}")" data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
+                            </a>
+                            picturesCount++;
+                        }
                     }
                 </div>
 
@@ -40,28 +45,35 @@
             {
                 <div class="col-sm-3">
                     <div class="product-sub-images">
-                        @foreach (var picture in Model.PictureModels)
-                        {
-                            <div class="thumb-item">
-                                <img class="lazy" src="/images/pixel.png" data-src="@picture.ThumbImageUrl" alt="@picture.AlternateText" title="@picture.Title" data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
-                            </div>
+                        @{
+                            int tatalPictures = Model.PictureModels.Count - 1;
+                            int picturesCount = 0;
+                            foreach (var picture in Model.PictureModels)
+                            {
+                                <div class="thumb-item">
+                                    <img class="lazy" src="/images/pixel.png" data-src="@picture.ThumbImageUrl" alt="@($"{picture.AlternateText} - image {picturesCount} of {tatalPictures}")"
+                                         data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
+                                </div>
+                                picturesCount++;
+                            }
                         }
+        s
                     </div>
                 </div>
                 <script asp-location="Footer">
-                $(document).ready(function () {
-                    $('.thumb-item img').on('click', function () {
-                        $('#main-product-img-@Model.Id').attr('src', $(this).attr('data-defaultsize'));
-                        $('#main-product-img-@Model.Id').attr('title', $(this).attr('title'));
-                        $('#main-product-img-@Model.Id').attr('alt', $(this).attr('alt'));
-                        $('#main-product-img-lightbox-anchor-@Model.Id').attr('href', $(this).attr('data-fullsize'));
-                        $('#main-product-img-lightbox-anchor-@Model.Id').attr('title', $(this).attr('title'));
+                    $(document).ready(function () {
+                        $('.thumb-item img').on('click', function () {
+                            $('#main-product-img-@Model.Id').attr('src', $(this).attr('data-defaultsize'));
+
+                            $('#main-product-img-@Model.Id').attr('alt', $(this).attr('alt'));
+                            $('#main-product-img-lightbox-anchor-@Model.Id').attr('href', $(this).attr('data-fullsize'));
+
+                        });
                     });
-                });
                 </script>
             }
         }
-        <div class="@(Model.PictureModels.Count > 1?"col-sm-9":"col-sm-12")">
+        <div class="@(Model.PictureModels.Count > 1 ? "col-sm-9" : "col-sm-12")">
             <div class="picture">
                 @*Tags*@
                 <div class="Tags">
@@ -75,19 +87,19 @@
                     }
                 </div>
                 @if (_mediaSettings.DefaultPictureZoomEnabled)
-                {<div class="wishlist-icon" data-toggle="tooltip" data-placement="top" title="Add to Wishlist" data-wishlistid="@Model.Id" onclick="AjaxCart.addproducttocart_catalog('@addtowishlistlink');return false;">
+                {
+                    <div class="wishlist-icon" tabindex="0" role="button" aria-expanded="false" data-toggle="tooltip" data-placement="top" title="Add to Wishlist" data-wishlistid="@Model.Id" onclick="AjaxCart.addproducttocart_catalog('@addtowishlistlink');return false;">
                         <i class="far fa-heart"></i>
                     </div>
-                    <a href="@Model.DefaultPictureModel.FullSizeImageUrl" title="@Model.DefaultPictureModel.Title" id="product-magiczoom">
+                    <a href="@Model.DefaultPictureModel.FullSizeImageUrl" id="product-magiczoom">
                         <img width="840" height="840" alt="@Model.DefaultPictureModel.AlternateText" src="@Model.DefaultPictureModel.ImageUrl"
-                             title="@Model.DefaultPictureModel.Title"
                              id="main-product-img-@Model.Id" />
                     </a>
 
                 }
                 else
                 {
-                    <img class="lazy" alt="@Model.DefaultPictureModel.AlternateText" src="/images/pixel.png" data-src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" id="main-product-img-@Model.Id" />
+                    <img class="lazy" alt="@Model.DefaultPictureModel.AlternateText" src="/images/pixel.png" data-src="@Model.DefaultPictureModel.ImageUrl" id="main-product-img-@Model.Id" />
                 }
             </div>
         </div>
@@ -100,7 +112,19 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
 
+        $('.product-sub-images').on('init reInit setPosition breakpoint', function () {
+            $(this).find('.prev-arrow').attr({
+                role: 'button',
+                tabindex: '0',
+                'aria-label': 'Previous'
+            });
 
+            $(this).find('.next-arrow').attr({
+                role: 'button',
+                tabindex: '0',
+                'aria-label': 'Next'
+            });
+        });
         $('.product-sub-images').slick({
             dots: true,
             infinite: false,
@@ -111,8 +135,8 @@
             verticalSwiping: true,
             centerPadding: '10',
 
-            prevArrow: '<span class="slide-arrow prev-arrow"><img alt="Move up" title="Move up" src="/images/uploaded/chevron-up.svg"></span>',
-            nextArrow: '<span class="slide-arrow next-arrow"><img alt="Move down" title="Move down" src="/images/uploaded/chevron-down.svg"></span>',
+            prevArrow: '<span class="slide-arrow prev-arrow"><img alt="Move up"  src="/images/uploaded/chevron-up.svg"></span>',
+            nextArrow: '<span class="slide-arrow next-arrow"><img alt="Move down"   src="/images/uploaded/chevron-down.svg"></span>',
             responsive: [
                 {
                     breakpoint: 991,
@@ -160,9 +184,47 @@
 @if (_mediaSettings.DefaultPictureZoomEnabled)
 {
     <script asp-location="Footer">
-        document.addEventListener("DOMContentLoaded", function () {
-            console.log("a");
-            MagicZoom.start('product-magiczoom');
-        });
+            document.addEventListener("DOMContentLoaded", function () {
+                console.log("a");
+                MagicZoom.start('product-magiczoom');
+            });
+
+
+             document.addEventListener("DOMContentLoaded", function () {
+                MagicZoom.start('product-magiczoom');
+            });
+               var mzOptions = {};
+            mzOptions = {
+                onZoomReady: function () {
+                    patchMagicZoomAccessibility(arguments[0]);
+                },
+                onUpdate: function () {
+                    patchMagicZoomAccessibility(arguments[0]);
+                },
+                onZoomIn: function () {
+                },
+                onZoomOut: function () {
+                }
+            };
+
+        function patchMagicZoomAccessibility(zoomObject) {
+            var mainImg = document.querySelector('figure.mz-figure > img');
+            if (mainImg) {
+
+                mainImg.setAttribute('alt', "@(Model.DefaultPictureModel.Title)");
+            }
+                var zoomImgs = document.querySelectorAll('.mz-lens img, .mz-zoom-window img');
+                zoomImgs.forEach(function (img) {
+                    img.setAttribute('alt', '');
+                    img.setAttribute('role', 'presentation');
+                    img.setAttribute('aria-hidden', 'true');
+                });
+
+                var zoomContainers = document.querySelectorAll('.mz-lens, .mz-zoom-window, .mz-loading, .mz-hint');
+                zoomContainers.forEach(function (container) {
+                    container.setAttribute('aria-hidden', 'true');
+                });
+            }
+
     </script>
 }

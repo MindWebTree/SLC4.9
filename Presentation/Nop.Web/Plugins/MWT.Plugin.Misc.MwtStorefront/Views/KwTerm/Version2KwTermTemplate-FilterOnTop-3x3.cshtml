@@ -90,7 +90,7 @@ var pageSize='@Model.CatalogProductsModel.PageSize';
                     <li itemprop="itemListElement" class="breadcrumb-item active" itemscope itemtype="http://schema.org/ListItem">
                         @if (isLastCategory)
                         {
-                            <strong class="current-item" itemprop="name">@cat.Name</strong>
+                            <strong tabindex="0" class="current-item" itemprop="name">@cat.Name</strong>
                             <span itemprop="item" itemscope itemtype="http://schema.org/Thing"
                                   id="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })">
                             </span>
@@ -124,7 +124,7 @@ var pageSize='@Model.CatalogProductsModel.PageSize';
     }
     @section Heading{
         <div class="version1 categorypage-heading-section" style="display:@(await _categoryService.IsMwtWidgetApplied(PublicWidgetZones.CategoryDetailsTop, Model.Id,"KwTerm", _workcontext.IsMobileDevice()) && productId ==0?"none":"block")">
-            <h1 class="page-heading">@(Model.Name)</h1>
+            <h1 id="kwterm-heading-section" class="page-heading">@(Model.Name)</h1>
 
         </div>
     }

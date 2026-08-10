@@ -11,7 +11,7 @@
     {
 <form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-form">
     <div data-productid="@Model.Id">
-        <div class="row mx-0">
+                <div class="row mx-0" role="region" aria-label="Featured Product">
             <div class="col-sm-4 product-image">
                 <div class="product-gallery">
                     @await Html.PartialAsync("_version2ProductDetailsPictures", Model)
@@ -59,28 +59,28 @@
                                     <div class="row mt-4 featured-icon-list">
                                         <div class="col-6">
                                             <div class="icon-text">
-                                                <img title="Solid Wood" alt="Solid Wood" class="icon" src="/images/uploaded/wood-board-black-outline.svg" />
+                                                <img   alt="Solid Wood" class="icon" src="/images/uploaded/wood-board-black-outline.svg" />
 
                                                 <span> Solid Wood</span>
                                             </div>
                                         </div>
                                         <div class="col-6">
                                             <div class="icon-text">
-                                                <img title="Premium Quality" alt="Premium Quality" class="icon" src="/images/uploaded/premium-product-sticker.svg" />
+                                                <img   alt="Premium Quality" class="icon" src="/images/uploaded/premium-product-sticker.svg" />
 
                                                 <span> Premium Quality</span>
                                             </div>
                                         </div>
                                         <div class="col-6">
                                             <div class="icon-text">
-                                                <img title="Easy Customisation" alt="Easy Customisation" class="icon" src="/images/uploaded/ruler-and-pencil.svg" />
+                                                <img   alt="Easy Customisation" class="icon" src="/images/uploaded/ruler-and-pencil.svg" />
 
                                                 <span> Easy Customisation</span>
                                             </div>
                                         </div>
                                         <div class="col-6">
                                             <div class="icon-text">
-                                                <img title="Artisan Handcrafted" alt="Artisan Handcrafted" class="icon" src="/images/uploaded/Hand.svg" />
+                                                <img  alt="Artisan Handcrafted" class="icon" src="/images/uploaded/Hand.svg" />
 
                                                 <span> Artisan Handcrafted</span>
                                             </div>
@@ -102,7 +102,7 @@
             {
 <form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-form">
     <div data-productid="@Model.Id">
-        <div class="row mx-0">
+                <div class="row mx-0" role="region" aria-label="Featured Product">
             <div class="col-sm-6 product-image">
                 <div class="product-gallery mobile-gallery">
                     @await Html.PartialAsync("_version2ProductDetailsPictures", Model)
@@ -162,26 +162,26 @@
             <div class="col-sm-12 specification">
                 <div class="specification-inner">
                     <div class="icon-text">
-                        <img class="icon" alt="Solid Wood" title="Solid Wood" src="/images/uploaded/wood-board-black-outline.svg" />
+                        <img class="icon" alt="Solid Wood"   src="/images/uploaded/wood-board-black-outline.svg" />
 
                         <span> Solid Wood</span>
                     </div>
 
                     <div class="icon-text">
-                        <img class="icon" alt="Premium Quality" title="Premium Quality" src="/images/uploaded/premium-product-sticker.svg" />
+                        <img class="icon" alt="Premium Quality"   src="/images/uploaded/premium-product-sticker.svg" />
 
                         <span> Premium Quality</span>
                     </div>
 
                     <div class="icon-text">
-                        <img class="icon" alt="Easy Customisation" title="Easy Customisation" src="/images/uploaded/ruler-and-pencil.svg" />
+                        <img class="icon" alt="Easy Customisation"   src="/images/uploaded/ruler-and-pencil.svg" />
 
                         <span> Easy Customisation</span>
                     </div>
 
 
                     <div class="icon-text">
-                        <img class="icon" alt="Artisan Handcrafted" title="Artisan Handcrafted" src="/images/uploaded/Hand.svg" />
+                        <img class="icon" alt="Artisan Handcrafted"   src="/images/uploaded/Hand.svg" />
 
                         <span> Artisan Handcrafted</span>
                     </div>

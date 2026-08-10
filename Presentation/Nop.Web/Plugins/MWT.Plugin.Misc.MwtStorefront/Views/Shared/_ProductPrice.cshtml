@@ -34,22 +34,22 @@
                         {
     @if (!string.IsNullOrEmpty(Model.MinMembershipPrice))
     {
-<h3 class="product-price">
+<h2 class="product-price">
     <span>   @T("Product.Label.RegularPrice")</span><span>:</span>
     <span id="price-value-@(Model.ProductId)" class="price-value-@(Model.ProductId)">
         @T("Price.Range",
 !string.IsNullOrEmpty(Model.MinOldPrice) ? Model.MinOldPrice : Model.MinPrice,
 !string.IsNullOrEmpty(Model.MaxOldPrice) ? Model.MaxOldPrice : Model.MaxPrice)
     </span>
-</h3>
-                            <h3 class="membershipPrice-section-@(Model.ProductId)">
+</h2>
+                            <h2 class="membershipPrice-section-@(Model.ProductId)">
                                 <span>
                                     @T("Products.Label.MembershipPrice")
                                 </span><span>:</span>
                                 <span id="membershipPrice-value-@(Model.ProductId)" class="membershipPrice-value-@(Model.ProductId)">
                                     @T("Price.Range", Model.MinMembershipPrice, Model.MaxMembershipPrice)
                                 </span>
-                            </h3> }
+                            </h2> }
                                                     else
                                                     {
 
@@ -59,7 +59,7 @@
                                 {
 <p class="sale-price  m-0 limited-offer-@(Model.ProductId)">@Html.Raw(offerText)</p> }
 
-<h3 class="product-price">
+<h2 class="product-price">
     <span id="price-value-@(Model.ProductId)" class="price-value-@(Model.ProductId)">
         @T("Price.Range.With.Saleprice",
 !string.IsNullOrEmpty(Model.MinPrice) ? Model.MinPrice : Model.MinOldPrice,
@@ -68,41 +68,41 @@
 !string.IsNullOrEmpty(Model.MaxOldPrice) ? Model.MaxOldPrice : Model.MaxPrice
 )
     </span>
-</h3> }
+</h2> }
                             else
                             {
                                 if (!string.IsNullOrEmpty(Model.OfferText))
                                 {
 <p class="sale-price  m-0 limited-offer-@(Model.ProductId)">@Html.Raw(offerText)</p> }
-<h3 class="product-price">
+<h2 class="product-price">
 
     <span id="price-value-@(Model.ProductId)" class="price-value-@(Model.ProductId)">
         @T("Price.Range",
 !string.IsNullOrEmpty(Model.MinOldPrice) ? Model.MinOldPrice : Model.MinPrice,
 !string.IsNullOrEmpty(Model.MaxOldPrice) ? Model.MaxOldPrice : Model.MaxPrice)
     </span>
-</h3>}} }
+</h2>}} }
                         else
                         {
                             if (!string.IsNullOrEmpty(Model.MembershipPrice))
                             {
-    <h3 class="product-price">
+    <h2 class="product-price">
 
         <span>   @T("Product.Label.RegularPrice")</span><span>:</span>
         @*render price*@
         <span id="price-value-@(Model.ProductId)" class="price-value-@(Model.ProductId)">
             @Html.Raw(!string.IsNullOrEmpty(Model.OldPrice) ? Model.OldPrice : Model.Price)
         </span>
-    </h3>
+    </h2>
 
-                                <h3 class="membershipPrice-section-@(Model.ProductId)">
+                                <h2 class="membershipPrice-section-@(Model.ProductId)">
                                     <span>
                                         @T("Products.Label.MembershipPrice")
                                     </span><span>:</span>
                                     <span id="membershipPrice-value-@(Model.ProductId)" class="membershipPrice-value-@(Model.ProductId)">
                                         @Model.MembershipPrice
                                     </span>
-                                </h3> }
+                                </h2> }
                                                         else
                                                         {
                                                             if (Model.OldPriceValue > 0 && Model.PriceValue > 0 && Model.OldPrice != Model.Price)
@@ -110,22 +110,22 @@
                                                                 if (!string.IsNullOrEmpty(Model.OfferText))
                                                                 {
                                 <p class="sale-price  m-0 limited-offer-@(Model.ProductId)">@Html.Raw(offerText)</p> }
-                                <h3 class="product-price">
+                                <h2 class="product-price">
                                     <span id="price-value-@(Model.ProductId)" class="price-value-@(Model.ProductId)">
                                         <span class="sale-price">@Model.Price</span><span class="suggested-price">@Model.OldPrice</span>
                                     </span>
-                                </h3> }
+                                </h2> }
                                                             else
                                                             {
                                                                 if (!string.IsNullOrEmpty(Model.OfferText))
                                                                 {
                                 <p class="sale-price  m-0 limited-offer-@(Model.ProductId)">@Html.Raw(offerText)</p> }
-                                <h3 class="product-price">
+                                <h2 class="product-price">
                                     @*render price*@
                                     <span id="price-value-@(Model.ProductId)" class="price-value-@(Model.ProductId)">
                                         @(!string.IsNullOrEmpty(Model.OldPrice) ? Model.OldPrice : Model.Price)
                                     </span>
-                                </h3>}
+                                </h2>}
                                                         }
                                                     }}
 

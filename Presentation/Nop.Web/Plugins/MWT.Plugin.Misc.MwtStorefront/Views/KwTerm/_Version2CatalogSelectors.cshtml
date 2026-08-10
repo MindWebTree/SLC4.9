@@ -53,7 +53,7 @@
     }
     else
     {
-        <div class="position-relative filterDesktopIcon @(hidefilter?"border-0":"") @(displayFilters?"show":"")">
+        <div aria-labelledby="kwterm-heading-section" role="region" class="position-relative filterDesktopIcon @(hidefilter ? "border-0" : "") @(displayFilters ? "show" : "")">
             <span class="text-filter @(hidefilter?"d-none":"")" data-filter-text="@T("catalog.filter.text")"
                   data-hidefilter-text="@T("catalog.hidefilter.text")">
                 @T(displayFilters ? "catalog.hidefilter.text" : "catalog.filter.text")
@@ -91,7 +91,7 @@
         @await Component.InvokeAsync("QuickFilter", new { entityId = Model.KwTermId, entityType = "KwTerm", heading = "" })
     }
 <div class="sort-by  d-sm-block ">
-    <div id="noofprdDisplay">
+        <div id="noofprdDisplay" tabindex="0">
         @Html.Raw(string.Format(T("Label.Showing").Text, (Model.PageIndex + 1) * Model.PageSize > Model.TotalItems ? Model.TotalItems : (Model.PageIndex + 1) * Model.PageSize, Model.TotalItems))
     </div>
     @if (Model.AllowProductSorting)
