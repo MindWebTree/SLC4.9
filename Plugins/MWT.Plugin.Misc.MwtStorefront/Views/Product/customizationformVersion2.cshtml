@@ -1,0 +1,234 @@
+@model Nop.Web.Models.Customizations.Custom.CustomizationFormModel;
+@inject Nop.Services.Configuration.ISettingService _settingService
+@{
+    string uploadTypes_Expression = await _settingService.GetSettingByKeyAsync<string>("Customizationform.Supported.UploadTypes.Expression");
+}
+<div class="modal-content desktop-customize-form">
+    <button type="button" class="close dialog-close-btn border" data-bs-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <div class="modal-header">
+        <div class="modal-header-text">
+            <h2>@T("Customizationform.Version2.heading")</h2>
+            <p>@T("Customizationform.Version2.Description")</p>
+        </div>
+
+    </div>
+    <div class="modal-body d-flex  customizationformBody">
+        <div class="customization-form-body">
+            <form asp-action="CustomizationForm" asp-controller="Product" id="CustomizationForm" enctype="multipart/form-data">
+                <input type="hidden" asp-for="@Model.ProductId" />
+                <input type="hidden" asp-for="@Model.Dimensions" />
+                <input type="hidden" asp-for="@Model.ProductName" />
+                <input type="hidden" id="DefaultPicture" name="DefaultPicture" value="@Model.DefaultPictureModel.ImageUrl">
+                <div class="row">
+
+                    <div class="col-12 form-group checkasterisk">
+                        <label>@T("Customizationform.label.Name")</label>
+                        <nop-editor asp-for="@Model.FullName" />
+                        <span asp-validation-for="@Model.FullName"></span>
+                    </div>
+                    <div class="col-6 form-group checkasterisk">
+                        <nop-label asp-for="@Model.Email" />*
+                        <nop-editor asp-for="@Model.Email" />
+                        <span asp-validation-for="@Model.Email"></span>
+                    </div>
+                    <div class="col-6 form-group">
+                        <div>
+                            <label>@T("Customizationform.label.mobile")</label>
+                            <nop-editor asp-for="@Model.Phone" id="Phone" />
+                            <span asp-validation-for="@Model.Phone"></span>
+                        </div>
+                    </div>
+                    <div class="col-12 ">
+                        <div class="attachment">
+                            <label>@T("customizationform.fields.attachment")</label>
+                            <label class="image-attachment-error">@T("customizationform.Image.Validity.Error")</label>
+                            <div class="image-upload">
+                                <div class="add-image">
+                                    <svg width="49" height="49" viewBox="0 0 49 49" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="0.00195312" width="49" height="49" rx="4" fill="#F4F4F4" />
+                                        <path d="M32.502 23C32.2367 23 31.9824 23.1054 31.7948 23.2929C31.6073 23.4804 31.502 23.7348 31.502 24V31C31.502 31.2652 31.3966 31.5196 31.2091 31.7071C31.0215 31.8946 30.7672 32 30.502 32H16.502C16.2367 32 15.9824 31.8946 15.7948 31.7071C15.6073 31.5196 15.502 31.2652 15.502 31V23C15.502 22.7348 15.6073 22.4804 15.7948 22.2929C15.9824 22.1054 16.2367 22 16.502 22H18.502C18.72 22.0114 18.9358 21.9511 19.1164 21.8283C19.297 21.7055 19.4324 21.527 19.502 21.32L20.042 19.68C20.109 19.4814 20.2369 19.3089 20.4073 19.1868C20.5778 19.0648 20.7823 18.9995 20.992 19H26.502C26.7672 19 27.0215 18.8946 27.2091 18.7071C27.3966 18.5196 27.502 18.2652 27.502 18C27.502 17.7348 27.3966 17.4804 27.2091 17.2929C27.0215 17.1054 26.7672 17 26.502 17H20.942C20.3135 17.0012 19.7013 17.1997 19.1917 17.5675C18.6822 17.9353 18.301 18.4539 18.102 19.05L17.782 20.05H16.502C15.7063 20.05 14.9432 20.3661 14.3806 20.9287C13.818 21.4913 13.502 22.2544 13.502 23.05V31.05C13.502 31.8456 13.818 32.6087 14.3806 33.1713C14.9432 33.7339 15.7063 34.05 16.502 34.05H30.502C31.2976 34.05 32.0607 33.7339 32.6233 33.1713C33.1859 32.6087 33.502 31.8456 33.502 31.05V24.05C33.5087 23.9145 33.4879 23.7791 33.4407 23.6519C33.3935 23.5248 33.3209 23.4086 33.2273 23.3103C33.1338 23.2121 33.0213 23.134 32.8965 23.0806C32.7718 23.0273 32.6376 22.9998 32.502 23ZM23.502 22C22.7108 22 21.9375 22.2346 21.2797 22.6741C20.6219 23.1136 20.1092 23.7384 19.8064 24.4693C19.5037 25.2002 19.4245 26.0044 19.5788 26.7804C19.7332 27.5563 20.1141 28.269 20.6735 28.8284C21.2329 29.3878 21.9457 29.7688 22.7216 29.9231C23.4975 30.0775 24.3018 29.9983 25.0327 29.6955C25.7636 29.3928 26.3883 28.8801 26.8278 28.2223C27.2674 27.5645 27.502 26.7911 27.502 26C27.502 24.9391 27.0805 23.9217 26.3304 23.1716C25.5802 22.4214 24.5628 22 23.502 22ZM23.502 28C23.1064 28 22.7197 27.8827 22.3908 27.6629C22.0619 27.4432 21.8056 27.1308 21.6542 26.7654C21.5028 26.3999 21.4632 25.9978 21.5404 25.6098C21.6176 25.2219 21.808 24.8655 22.0877 24.5858C22.3674 24.3061 22.7238 24.1156 23.1118 24.0384C23.4997 23.9613 23.9019 24.0009 24.2673 24.1522C24.6328 24.3036 24.9451 24.56 25.1649 24.8889C25.3847 25.2178 25.502 25.6044 25.502 26C25.502 26.5304 25.2912 27.0391 24.9162 27.4142C24.5411 27.7893 24.0324 28 23.502 28ZM34.502 17H33.502V16C33.502 15.7348 33.3966 15.4804 33.2091 15.2929C33.0215 15.1054 32.7672 15 32.502 15C32.2367 15 31.9824 15.1054 31.7948 15.2929C31.6073 15.4804 31.502 15.7348 31.502 16V17H30.502C30.2367 17 29.9824 17.1054 29.7948 17.2929C29.6073 17.4804 29.502 17.7348 29.502 18C29.502 18.2652 29.6073 18.5196 29.7948 18.7071C29.9824 18.8946 30.2367 19 30.502 19H31.502V20C31.502 20.2652 31.6073 20.5196 31.7948 20.7071C31.9824 20.8946 32.2367 21 32.502 21C32.7672 21 33.0215 20.8946 33.2091 20.7071C33.3966 20.5196 33.502 20.2652 33.502 20V19H34.502C34.7672 19 35.0215 18.8946 35.2091 18.7071C35.3966 18.5196 35.502 18.2652 35.502 18C35.502 17.7348 35.3966 17.4804 35.2091 17.2929C35.0215 17.1054 34.7672 17 34.502 17Z" fill="#444444" />
+                                    </svg>
+                                </div>
+                                <div class="multiple_attachment_image">
+                                    <div class="preview-item new">
+                                        <input name="attachment[]" class="form-control-file" multiple accept="@uploadTypes_Expression" type="file" />
+                                    </div>
+                                </div>
+                                <div class="add-image-icon desable">
+                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M0.75 7.5H6V12.75C6 12.9489 6.07902 13.1397 6.21967 13.2803C6.36032 13.421 6.55109 13.5 6.75 13.5C6.94891 13.5 7.13968 13.421 7.28033 13.2803C7.42098 13.1397 7.5 12.9489 7.5 12.75V7.5H12.75C12.9489 7.5 13.1397 7.42098 13.2803 7.28033C13.421 7.13968 13.5 6.94891 13.5 6.75C13.5 6.55109 13.421 6.36032 13.2803 6.21967C13.1397 6.07902 12.9489 6 12.75 6H7.5V0.75C7.5 0.551088 7.42098 0.360322 7.28033 0.21967C7.13968 0.0790178 6.94891 0 6.75 0C6.55109 0 6.36032 0.0790178 6.21967 0.21967C6.07902 0.360322 6 0.551088 6 0.75V6H0.75C0.551088 6 0.360322 6.07902 0.21967 6.21967C0.0790178 6.36032 0 6.55109 0 6.75C0 6.94891 0.0790178 7.13968 0.21967 7.28033C0.360322 7.42098 0.551088 7.5 0.75 7.5Z" fill="#BDBDBD" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-12 ">
+                        <div class="form-group">
+                            <label>@T("Customizationform.label.message")</label>
+                            <nop-textarea asp-for="@Model.Message" placeholder="Add Your Special Notes Here " />
+                            <span asp-validation-for="@Model.Message"></span>
+                        </div>
+                    </div>
+                    <div class="col-12 ">
+                        <div class="customize-form-consent-section">
+                            <input id="consent1" class="custom-control-input" name="consent1" type="checkbox" /> <label class="custom-control-label consent-label gdprconsent" for="consent1">By checking this box, I consent to receive SMS messages from <strong>Sierra Living Concepts</strong> regarding customizations at the phone number provided. Message frequency may vary. Data rates may apply. Text <strong>HELP</strong> to <a href="tel:5109964499">510-996-4499</a> for assistance. Reply <strong>STOP</strong> to opt out.</label>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="customize-submit-btn-captcha">
+                        @if (Model.DisplayCaptcha)
+                        {
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-12 col-sm-8 offset-md-4 offset-lg-4 offset-xl-4">
+                                        <nop-captcha class="g-recaptcha" />
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <button type="submit" name="addtocartbutton" class="btn btn-secondary" id="btnsubmitcustomizationform">
+                            <span> @T("forum.submit")</span>
+                            <svg width="20" height="20" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" class="d-none" style=" width: 20px;">
+                                <g fill="none" fill-rule="evenodd">
+                                    <g transform="translate(1 1)" stroke-width="2">
+                                        <circle stroke-opacity=".5" cx="18" cy="18" r="18" />
+                                        <path d="M36 18c0-9.94-8.06-18-18-18">
+                                            <animateTransform attributeName="transform"
+                                                              type="rotate"
+                                                              from="0 18 18"
+                                                              to="360 18 18"
+                                                              dur="1s"
+                                                              repeatCount="indefinite" />
+                                        </path>
+                                    </g>
+                                </g>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="alert alert-danger d-none" role="alert">
+                    </div>
+</form>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+        const btnId = '#btnsubmitcustomizationform';
+        const form = $("#CustomizationForm");
+
+            $('#CustomizationForm').on('submit', function (e) {
+            e.preventDefault();
+            $.validator.unobtrusive.parse(form);
+            form.validate();
+
+            if (!form.valid()) return;
+            if ($("#consent1").length > 0) {
+                if (!$("#consent1").prop("checked")) {
+                    $(".customize-form-consent-section").addClass("invalid");
+                    $("#consent1").focus();
+                    return;
+                }
+                else {
+
+                    $(".customize-form-consent-section").removeClass("invalid");
+                }
+            }
+            // Clear previous validation errors
+            clearValidationErrors();
+
+            // Custom Validations
+            if (!validateInputs()) return;
+
+            $(btnId).prop("disabled", true).find("span").addClass("d-none");
+            $(btnId).find("svg").removeClass("d-none");
+            $(".customization-form-body .alert-danger").html("").addClass("d-none");
+
+            const formData = new FormData(form[0]);
+
+            $.ajax({
+                url: form.attr("action"),
+                type: 'POST',
+                data: formData,
+                async: true,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    handleSuccess(data);
+                },
+                error: function (xhr) {
+                    handleError(xhr);
+                }
+            });
+        });
+
+        function clearValidationErrors() {
+            const fields = ['Phone'];
+            fields.forEach(field => {
+                $(`#CustomizationForm #${field}`).removeClass("input-validation-error");
+                $(`#CustomizationForm span[data-valmsg-for='${field}']`).html('');
+            });
+        }
+
+        function validateInputs() {
+            const phone = $("#CustomizationForm #Phone").val().trim();
+
+            if (phone && !validatePhoneNumber(phone)) {
+                showValidationError('Phone', '@T("Account.Fields.Phone.NotValid")');
+                return false;
+            }
+            return true;
+        }
+
+        function showValidationError(field, message) {
+            $(`#CustomizationForm #${field}`).addClass("input-validation-error");
+            $(`#CustomizationForm span[data-valmsg-for='${field}']`).addClass("field-validation-error").html(`<span>${message}</span>`);
+        }
+
+        function handleSuccess(data) {
+            if (data.Success) {
+                // Your Google Ads tracking logic here
+                $(".customization-form-body").html(data.content);
+            } else {
+               
+                $(".customization-form-body .alert-danger").removeClass("d-none").html(data.content);
+            }
+            resetButtonState();
+        }
+
+        function handleError(xhr) {
+           
+            $(".customization-form-body .alert-danger").removeClass("d-none").html(xhr);
+            resetButtonState();
+        }
+
+        function resetButtonState() {
+            $(btnId).prop("disabled", false).find("span").removeClass("d-none");
+            $(btnId).find("svg").addClass("d-none");
+        }
+
+        function validatePhoneNumber(phoneNumber) {
+            const regex = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
+            return regex.test(phoneNumber);
+        }
+
+        // Phone Input Masking
+        $("body").on("keyup paste", "#CustomizationForm #Phone", function () {
+            const input = this.value.replace(/[^0-9\(\)\s\-]/g, "");
+            let newval = "";
+
+            const numbers = input.replace(/\D/g, '');
+            for (let i = 0; i < numbers.length; i++) {
+                if (i === 0) newval = numbers[i];
+                else if (i === 3 || i === 6) newval += "-" + numbers[i];
+                else newval += numbers[i];
+            }
+            $(this).val(newval.substring(0, 12));
+        });
+    });
+    </script>
+

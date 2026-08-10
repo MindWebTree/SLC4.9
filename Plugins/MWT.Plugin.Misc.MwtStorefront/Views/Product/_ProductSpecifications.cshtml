@@ -1,0 +1,115 @@
+﻿@model ProductSpecificationModel
+@using Nop.Core.Domain.Catalog;
+@inject Nop.Services.Configuration.ISettingService _settingService
+@inject Nop.Core.IWorkContext _workContext
+@if (Model.Groups.SelectMany(g => g.Attributes).ToList().Count > 0)
+{
+    var displayDimension = ViewData["DisplaySpecificationAttributeDimension"] as bool? ?? true;
+    int counter = 0;
+    @foreach (var group in Model.Groups)
+    {
+        @if (group.Attributes.Count > 0)
+        {
+            @for (int i = 0; i < group.Attributes.Count; i++)
+            {
+                var attr = group.Attributes[i];
+                @if ((!displayDimension && attr.Name.Equals(T("product.specification.attr.dimension").Text, StringComparison.InvariantCultureIgnoreCase)) || attr.Name.Equals(T("product.specification.attr.Mobiledimension").Text, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    continue;
+                }
+
+                if (_workContext.IsMobileDevice())
+                {
+                    <div class="card-header collapsed" aria-controls="collapse-dimension" tabindex="0" role="button" data-bs-toggle="collapse" href="#collapse-@attr.Id">
+                        <span class="card-title">
+                            @attr.Name
+                        </span>
+                    </div>
+                    <div id="collapse-@attr.Id" class="card-body collapse" style="">
+
+                        @{
+                            var values = attr.Values;
+                        }
+                        @if (attr.Name.Equals(T("product.specification.attr.dimension").Text, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            if (group.Attributes.Where(a => a.Name.Equals(T("product.specification.attr.Mobiledimension").Text, StringComparison.InvariantCultureIgnoreCase)).Any())
+                            {
+                                if (group.Attributes.Where(a => a.Name.Equals(T("product.specification.attr.Mobiledimension").Text, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault().Values.Where(v => !string.IsNullOrEmpty(v.ValueRaw)).Any())
+                                {
+                                    values = group.Attributes.Where(a => a.Name.Equals(T("product.specification.attr.Mobiledimension").Text, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault().Values;
+                                }
+                            }
+
+                        }
+
+                        @for (int j = 0; j < values.Count; j++)
+                        {
+                            var value = values[j];
+
+                            @Html.Raw(value.ValueRaw)
+                        }
+
+                    </div>
+                }
+                else
+                {
+                    string tabName = System.Text.RegularExpressions.Regex.Replace(attr.Name.ToString().Trim().ToLowerInvariant(), @"[^a-z0-9]+", "-").Trim('-');
+                    <div class="tab-pane fade" id="@tabName" role="tabpanel" aria-labelledby="@attr.Name tab" tabindex="0">
+
+
+                        @{
+                            var values = attr.Values;
+                        }
+                        @for (int j = 0; j < values.Count; j++)
+                        {
+                            var value = values[j];
+
+                            @Html.Raw(value.ValueRaw)
+                        }
+
+                    </div>
+
+                }
+
+                @if (attr.Name.Equals(T("product.specification.attr.dimension").Text, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    <script asp-location="Footer">
+
+                        var collapseElement = document.getElementById("collapse-@attr.Id");
+
+						 collapseElement.addEventListener('click', function (e) {
+
+     var anchor = e.target.closest('.default-dimension-zoom');
+     if (!anchor) return;
+
+     e.preventDefault();
+     e.stopPropagation();
+     e.stopImmediatePropagation();
+
+ }, true);
+
+                        // Attach event listener for after it opens
+                        collapseElement.addEventListener("shown.bs.collapse", function () {
+                            if (document.querySelector('.default-dimension-zoom')) {
+
+                                var zoomItem = document.querySelector('.default-dimension-zoom');
+                                if (zoomItem) {
+
+                                    if (!zoomItem.classList.contains('mz-initialized')) {
+                                        if (window.MagicZoom) {
+                                            MagicZoom.start(zoomItem); // pass the <a> element, not the <img>
+                                            zoomItem.classList.add('mz-initialized');
+                                        }
+                                    }
+                                }
+                            }
+
+                        });
+                    </script>
+                }
+                counter++;
+            }
+
+        }
+    }
+}

@@ -1,0 +1,90 @@
+﻿@model List<ProductDetailsModel>
+@using Nop.Core
+@using System.Globalization;
+@using Nop.Core.Domain.Tax
+@inject IWorkContext workContext
+@inject Nop.Services.Catalog.IPriceFormatter _priceFormatter
+@inject Nop.Services.Configuration.ISettingService _settingService;
+@{
+    var isMembershipEnabled = await _settingService.GetSettingByKeyAsync<bool>("ismembershipenabled");
+    decimal price = 0;
+    decimal oldPrice = 0;
+    decimal memberShipPrice = 0;
+    bool hasMemberShipPrice = false;
+
+
+    if (isMembershipEnabled)
+    {
+        foreach (var product in Model)
+        {
+            price = price + Decimal.Parse(string.IsNullOrEmpty(product.ProductPrice.OldPrice) ? product.ProductPrice.Price.Replace("\"", "") : product.ProductPrice.OldPrice.Replace("\"", ""), NumberStyles.Currency);
+        
+            if (!string.IsNullOrEmpty(product.ProductPrice.MembershipPrice))
+            {
+                hasMemberShipPrice = true;
+            }
+            memberShipPrice = memberShipPrice + Decimal.Parse(string.IsNullOrEmpty(product.ProductPrice.MembershipPrice) ? (string.IsNullOrEmpty(product.ProductPrice.OldPrice) ? product.ProductPrice.Price.Replace("\"", "") : product.ProductPrice.OldPrice.Replace("\"", "")) : product.ProductPrice.MembershipPrice.Replace("\"", ""), NumberStyles.Currency);
+        }
+        
+
+
+           
+    }
+    else
+    {
+        foreach (var product in Model)
+        {
+            oldPrice = oldPrice + Decimal.Parse(string.IsNullOrEmpty(product.ProductPrice.OldPrice) ?
+            product.ProductPrice.Price.Replace("\"", "") : product.ProductPrice.OldPrice.Replace("\"", ""), NumberStyles.Currency);
+            price = price + Decimal.Parse(string.IsNullOrEmpty(product.ProductPrice.Price) ?
+         product.ProductPrice.OldPrice.Replace("\"", "") : product.ProductPrice.Price.Replace("\"", ""), NumberStyles.Currency);
+        }
+       
+        
+    }
+}
+@if (hasMemberShipPrice)
+{
+    <div class="prices">
+        <h3>
+            <span>@T("Product.Label.fbt.regular.Price")</span>
+            <span class="price-value_@(Model.FirstOrDefault()?.Id)" id="fbt-price-product">
+                @Html.Raw(await _priceFormatter.FormatPriceAsync(price))
+            </span>
+        </h3>
+
+        <h3>
+            <span> @T("Product.Label.fbt.Price")</span>
+            <span class="price-value_@(Model.FirstOrDefault()?.Id)" id="fbt-membershipprice-product">
+                @Html.Raw(await _priceFormatter.FormatPriceAsync(memberShipPrice))
+            </span>
+        </h3>
+    </div>
+}
+else   {
+
+    if (price > 0 && oldPrice > 0 && price != oldPrice)
+    {  <div class="prices">
+        <p class="sale-price  m-0 limited-offer-fbt">@T("Label.LimitedOffer")</p>
+        <h3>
+            <span class="price-value_@(Model.FirstOrDefault()?.Id)" id="fbt-price-product">
+                <span class="sale-price"> @Html.Raw(await _priceFormatter.FormatPriceAsync(price))
+                </span><span class="suggested-price"> @Html.Raw(await _priceFormatter.FormatPriceAsync(oldPrice))</span>
+            </span>
+            </h3>
+        </div>
+    }
+    else
+    {
+
+<div class="prices">
+    <p class="sale-price  m-0 limited-offer-fbt">@T("Label.LimitedOffer")</p>
+    <h3>
+        <span class="price-value_@(Model.FirstOrDefault()?.Id)" id="fbt-price-product">
+            @Html.Raw(await _priceFormatter.FormatPriceAsync(oldPrice == 0 ? price : oldPrice))
+        </span>
+    </h3>
+</div>
+
+    }
+}
