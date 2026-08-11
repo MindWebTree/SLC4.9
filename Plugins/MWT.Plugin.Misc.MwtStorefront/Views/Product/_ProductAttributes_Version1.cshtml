@@ -1,6 +1,7 @@
 ﻿@model CustomProductDetailsModel
 @using Nop.Core.Domain.Catalog
 @using Nop.Core.Domain.Media
+@using MWT.Nop.Core.Infrastructure
 @using System.Text
 @using Nop.Services.Catalog
 @using Nop.Services.Media
@@ -483,8 +484,8 @@
                                     <nop-date-picker asp-day-name="@(controlId + "_day")"
                                                      asp-month-name="@(controlId + "_month")"
                                                      asp-year-name="@(controlId + "_year")"
-                                                     asp-begin-year="@(DateTime.Now.Year)"
-                                                     asp-end-year="@(DateTime.Now.Year + catalogSettings.CountDisplayedYearsDatePicker)"
+                                                     asp-begin-year="@(DateTime.UtcNow)"
+                                                     asp-end-year="@(DateTime.UtcNow.AddYears(catalogSettings.CountDisplayedYearsDatePicker))"
                                                      asp-selected-day="@(attribute.SelectedDay)"
                                                      asp-selected-month="@(attribute.SelectedMonth)"
                                                      asp-selected-year="@(attribute.SelectedYear)" />
@@ -532,11 +533,11 @@
 
 
 
-                                    Html.AddCssFileParts(ResourceLocation.Footer, "~/lib/fineuploader/fine-uploader.min.css");
+                                    NopHtml.AddCssFileParts("~/lib/fineuploader/fine-uploader.min.css");
 
 
 
-                                    Html.AddScriptParts(ResourceLocation.Footer, "~/lib/fineuploader/jquery.fine-uploader.min.js");
+                                    NopHtml.AddScriptParts(ResourceLocation.Footer, "~/lib/fineuploader/jquery.fine-uploader.min.js");
 
 
 
@@ -1145,7 +1146,7 @@
 
 
 
-        Html.AddScriptParts(ResourceLocation.Footer, "~/js/public.combinationsbehavior.js");
+        NopHtml.AddScriptParts(ResourceLocation.Footer, "~/js/public.combinationsbehavior.js");
 
         <script asp-location="Footer">
             var combinationsBehavior_@(Model.Id);
@@ -2218,5 +2219,5 @@
 
 @if (Model.IsBundleProduct && Model.DisplayBundleConfiguration)
 {
-    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductConfigurationBundle, additionalData = Model })
+    @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.ProductConfigurationBundle, additionalData = Model })
 }

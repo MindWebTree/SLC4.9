@@ -1,4 +1,4 @@
-﻿@model IList<CustomProductDetailsModel.TierPriceModel>
+﻿@model IList<Nop.Web.Models.Catalog.ProductDetailsModel.TierPriceModel>
 @{
     //When there is just one tier (with  qty 1), there are no actual savings in the list.
     var displayTierPrices = Model.Count > 0 && !(Model.Count == 1 && Model[0].Quantity <= 1);

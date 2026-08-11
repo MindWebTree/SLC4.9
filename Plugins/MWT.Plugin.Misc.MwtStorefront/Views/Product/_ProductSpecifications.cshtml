@@ -1,7 +1,7 @@
-﻿@model CustomProductSpecificationModel
+﻿@model ProductSpecificationModel
 @using Nop.Core.Domain.Catalog;
 @inject Nop.Services.Configuration.ISettingService _settingService
-@inject Nop.Core.IWorkContext _workContext
+@inject ICustomWorkContext _workContext
 @if (Model.Groups.SelectMany(g => g.Attributes).ToList().Count > 0)
 {
     var displayDimension = ViewData["DisplaySpecificationAttributeDimension"] as bool? ?? true;

@@ -1,0 +1,61 @@
+@model BackInStockSubscribeModel
+<div class="col-md-12 col-sm-6 stock-subscription-section">
+    <div class="centered-text">
+        <h3>
+            @T("OutOfStock.Heading")
+        </h3>
+        <p class="exc-offer">
+            @T("OutOfStock.SubHeading")
+        </p>
+        <div class="search-area col-xs-12 n-search-area-product">
+            <input id="user-subscription-email" placeholder="@T("Common.Email.PlaceHolder")" type="text">
+            <span class="AddEmailToList" onclick="AddEmailToList(@Model.ProductId);">
+                <i class="fas fa-chevron-right"></i>
+            </span>
+        </div>
+        <p class="message-error"></p>
+
+        <p class="Success">
+            @T("Common.Success.Message")
+        </p>
+        <p class="exc-shrt-description">
+            @T("OutOfStock.shortdescription")
+        </p>
+        @if (Model.CategoryId != 0)
+        {
+<a id="SeeMore" href="@Url.RouteUrl("Category", new {id=Model.CategoryId, SeName = Model.SeName })">
+    @T("OutOfStock.Similar.Heading")
+</a>}
+    </div>
+</div>
+
+<script asp-location="Footer">
+    function AddEmailToList(productId){
+          var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        if (!$("#user-subscription-email").val().match(validRegex)) {
+            $("#user-subscription-email").focus();
+            return;
+        }
+        var _formdata = new URLSearchParams();
+        _formdata.append(`ProductId`, @Model.ProductId);
+        _formdata.append(`email`, $('#user-subscription-email').val());
+        var tokenInput = $('input[name=__RequestVerificationToken]');
+        if (tokenInput.length) {
+            _formdata += "&__RequestVerificationToken=" + tokenInput.val();
+        }
+        $(".stock-subscription-section .Success").hide();
+        $(".stock-subscription-section .Error").hide();
+      $.ajax({
+            url: '@(Url.ActionLink("BackInStockSubscription", "Product"))',
+            type: 'POST', data: _formdata, async: true, success: function (data) {
+                $(".stock-subscription-section .message-error").hide();
+                $(".stock-subscription-section .Success").show().html(data);
+            },
+          error: function (xhr) {
+              $(".stock-subscription-section .Success").hide();
+              $(".stock-subscription-section .message-error").show().html(xhr.responseText);
+            }
+        });
+
+    }
+</script>

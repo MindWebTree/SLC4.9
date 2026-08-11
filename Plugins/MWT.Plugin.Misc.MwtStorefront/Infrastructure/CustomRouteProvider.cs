@@ -101,7 +101,7 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Infrastructure
 
             endpointRouteBuilder.MapControllerRoute(name: "CustomizationForm",
         pattern: $"customizationform/{{productId:min(0)}}",
-        defaults: new { controller = "Product", action = "CustomizationForm" });
+        defaults: new { controller = "CustomizationForm", action = "CustomizationForm" });
 
             endpointRouteBuilder.MapControllerRoute(name: "CustomOrderDetails",
     pattern: $"{lang}/orderdetails/{{orderId:min(0)}}",

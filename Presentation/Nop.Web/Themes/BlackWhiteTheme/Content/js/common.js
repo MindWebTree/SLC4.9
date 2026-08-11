@@ -441,8 +441,7 @@ $(document).ready(function () {
         $lastClickedWishlistIcon = $(this);
     });
 
-    $(document).on('click', '.close', function () {
-		debugger;
+    $(document).on('click', '.close', function () { 
         if ($lastClickedWishlistIcon && $lastClickedWishlistIcon.length > 0) {
             
             $lastClickedWishlistIcon.focus();

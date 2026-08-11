@@ -1,0 +1,474 @@
+@model CustomizationFormModel
+@inject Nop.Core.IStoreContext _storeContext
+@inject IWorkContext _workContext
+@inject Nop.Services.Configuration.ISettingService _settingService; 
+@inject Nop.Services.Localization.ILocalizationService  _localizationService;
+@using Nop.Core.Domain.Common;
+@inject Nop.Services.Directory.ICountryService _countryService
+@inject Nop.Services.Common.IAddressService _addressService
+
+@{
+    string uploadTypes_Expression = await _settingService.GetSettingByKeyAsync<string>("Customizationform.Supported.UploadTypes.Expression");
+    var store = _storeContext.GetCurrentStore();
+    var mail = await _settingService.GetSettingByKeyAsync<string>("store.email");
+    var sizeASttr = await _localizationService.GetResourceAsync("Product.Attr.Size");
+    Address shippingAddress = new Address();
+    Address billingAddress = new Address();
+    var customer = await _workContext.GetCurrentCustomerAsync();
+    string shippingCountry = "";
+    string billingCountry = "";
+    if (customer != null)
+    {
+        if (customer.ShippingAddressId.HasValue && customer.ShippingAddressId.Value > 0)
+        {
+            shippingAddress = await _addressService.GetAddressByIdAsync(customer.ShippingAddressId.Value);
+            if (shippingAddress.CountryId.HasValue && shippingAddress.CountryId.Value > 0)
+            {
+                shippingCountry = (await _countryService.GetCountryByIdAsync(shippingAddress.CountryId.Value))?.Name ?? "";
+            }
+        }
+
+        if (customer.BillingAddressId.HasValue && customer.BillingAddressId.Value > 0)
+        {
+            billingAddress = await _addressService.GetAddressByIdAsync(customer.BillingAddressId.Value);
+            if (billingAddress.CountryId.HasValue && billingAddress.CountryId.Value > 0)
+            {
+                billingCountry = (await _countryService.GetCountryByIdAsync(billingAddress.CountryId.Value))?.Name ?? "";
+            }
+        }
+    }
+}
+
+
+
+
+
+
+<div class="modal-content desktop-customize-form">
+    <button type="button" class="close dialog-close-btn border" data-bs-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <img class="customization-form-header-image" src="/images/uploaded/customization-form-header-1.png" style="width: 100%;" height="100px" alt="image" />
+    <div class="modal-header">
+        <div class="modal-header-text">
+            <h2>@T("Customizationform.heading")</h2>
+            <p>@T("Customizationform.Description")</p>
+        </div>
+
+    </div>
+    <div class="modal-body d-flex  customizationformBody">
+        <div class="customization-form-body">
+            <form asp-action="CustomizationForm" asp-controller="CustomizationForm" id="CustomizationForm" enctype="multipart/form-data">
+
+
+                <div class="customize-left desktop-customize-form">
+                    <div class="customize-box-left">
+                        <div class="col-5 border-end">
+
+                            <div class="customize-img">
+                                <div class="product-info-heading">@Model.ProductName</div>
+                                <img class="main-customization-image" src="@Model.DefaultPictureModel.ImageUrl" alt="image" />
+                                <div class="customization-product-sub-images jcarousel">
+                                    <ul>
+                                        @{
+                                            var imgCount = 0;
+                                            foreach (var picture in Model.PictureModels)
+                                            {
+                                                <li>
+                                                    <a class="thumb-item @(imgCount==0?"img-selected":"")" data-zoom-id="product-magiczoom" href="@picture.FullSizeImageUrl"
+                                                       data-image="@picture.ImageUrl" alt="@picture.AlternateText" title="@picture.Title">
+
+                                                        <img class="lazy" src="/images/pixel.png" data-src="@picture.ThumbImageUrl"
+                                                             alt="@picture.AlternateText" title="@picture.Title" data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
+                                                    </a>
+                                                </li>
+                                                imgCount++;
+                                            }
+                                        }
+                                    </ul>
+                                    <a href="#" class="jcarousel-control-prev">&lsaquo;</a>
+                                    <a href="#" class="jcarousel-control-next">&rsaquo;</a>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-7">
+                            <h3>@T("customizationform.heading.requirement")</h3>
+                            @{
+                                var dataDictAttributes = new ViewDataDictionary(ViewData);
+                                dataDictAttributes.TemplateInfo.HtmlFieldPrefix = $"CustomizationForm_attributes_{Model.ProductId}";
+
+                                var dataDictPrice = new ViewDataDictionary(ViewData);
+                                dataDictPrice.TemplateInfo.HtmlFieldPrefix = $"CustomizationForm_price_{Model.ProductId}";
+                            }
+                            <ul>
+                                @await Html.PartialAsync("_CustomizationFormProductAttributes", Model, dataDictAttributes)
+
+                                @if (!string.IsNullOrEmpty(Model.Dimensions) && !Model.ProductAttributes.Where(a => a.Name == sizeASttr).Any())
+                                {
+                                    <li>@T("customizationform.field.dimension") @Model.Dimensions</li>
+                                }
+                            </ul>
+
+                            @if (Model.LstInteresedIn.Count > 0)
+                            {
+                                <div class="form-group form-check">
+                                    <h3 class="request-type-heading">@T("customizationform.form.Requesttype.heading")</h3>
+                                    <div class="check-customize">
+                                        @{
+                                            int counter = 0;
+                                            foreach (var interestedItem in Model.LstInteresedIn)
+                                            {
+                                                counter++;
+                                                <div>
+                                                    <input type="checkbox" class="form-check-input" id="InteresedIn_@counter" name="InteresedItems" value="@interestedItem">
+                                                    <label class="form-check-label" for="InteresedIn_@counter">@interestedItem</label>
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            <div class="customize-form-section-messgae-attachemnt">
+
+                                <div class="attachment">
+
+                                    <div class="attachment">
+                                        <nop-label asp-for="@Model.Attachment" />
+                                        <img src="/images/uploaded/upload-icon.png">
+                                        <input name="attachment" class="form-control-file" accept="@uploadTypes_Expression" type="file" />
+                                        <span class="attachment_image"></span>
+                                    </div>
+
+                                </div>
+                                <div class="form-group message">
+
+                                    <nop-textarea asp-for="@Model.Message" placeholder="Please let us know about your requirement here." />
+                                    <span asp-validation-for="@Model.Message"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="DefaultPicture" name="DefaultPicture" value="@Model.DefaultPictureModel.ImageUrl">
+                    <input type="hidden" asp-for="@Model.ProductId" />
+                    <input type="hidden" asp-for="@Model.Dimensions" />
+                    <input type="hidden" asp-for="@Model.ProductName" />
+                    <div class="request-type-border"><hr></div>
+                    <h2 class="product-info-heading-contact">@T("customizationform.form.Contactinfo.heading")</h2>
+                    <div class="customize-form-section">
+                        <div class="form-group checkasterisk">
+
+
+                            <nop-editor asp-for="@Model.FullName" placeholder="Full Name" />
+
+                            <span asp-validation-for="@Model.FullName"></span>
+
+                        </div>
+                        <div class="form-group checkasterisk">
+
+
+                            <nop-editor asp-for="@Model.Email" placeholder="Email" />
+
+
+                            <span asp-validation-for="@Model.Email"></span>
+                        </div>
+                        <div class="merge-form-group">
+                            <div class="form-group">
+
+                                <nop-editor asp-for="@Model.Phone" placeholder="Phone" />
+                                <span asp-validation-for="@Model.Phone"></span>
+                            </div>
+                            <div class="form-group checkasterisk">
+
+
+                                <nop-editor asp-for="@Model.ZipCode" placeholder="Zip Code" />
+                                <span id="zipCodeValidationMsg" style="color: red;"></span>
+                                <span asp-validation-for="@Model.ZipCode"></span>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+                    <div class="customize-submit-btn-captcha">
+                        @if (Model.DisplayCaptcha)
+                        {
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-12 col-sm-8 offset-md-4 offset-lg-4 offset-xl-4">
+                                        <nop-captcha class="g-recaptcha" />
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        <button type="submit" name="addtocartbutton" class="btn btn-secondary" id="btnsubmitcustomizationform">
+                            <span> @T("forum.submit")</span>
+                            <svg width="20" height="20" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" class="d-none" style=" width: 20px;">
+                                <g fill="none" fill-rule="evenodd">
+                                    <g transform="translate(1 1)" stroke-width="2">
+                                        <circle stroke-opacity=".5" cx="18" cy="18" r="18" />
+                                        <path d="M36 18c0-9.94-8.06-18-18-18">
+                                            <animateTransform attributeName="transform"
+                                                              type="rotate"
+                                                              from="0 18 18"
+                                                              to="360 18 18"
+                                                              dur="1s"
+                                                              repeatCount="indefinite" />
+                                        </path>
+                                    </g>
+                                </g>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="alert alert-danger d-none" role="alert">
+
+                    </div>
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $(".customization-product-sub-images a").click(function (e) {
+            $(".main-customization-image").attr("src", $(this).attr("data-image"));
+            e.preventDefault();
+        })
+       
+        $('.customization-product-sub-images.jcarousel').jcarousel({
+            wrap: 'circular' // Allow infinite scrolling
+        });
+        $('.customization-product-sub-images.jcarousel').on('jcarousel:visiblein', 'li', function (event, carousel) {
+            $(this).addClass('visible');
+        });
+
+        $('.customization-product-sub-images.jcarousel').on('jcarousel:visibleout', 'li', function (event, carousel) {
+            $(this).removeClass('visible');
+        });
+
+        $('.customization-product-sub-images .jcarousel-control-prev').click(function () {
+            $('.jcarousel').jcarousel('scroll', '-=1');
+            return false;
+        });
+        $('.customization-product-sub-images .jcarousel-control-next').click(function () {
+            $('.jcarousel').jcarousel('scroll', '+=1');
+            return false;
+        });
+            $.validator.unobtrusive.parse("#CustomizationForm");
+            $('.attributes input,.attributes select').each(function () {
+                console.log($(this).prop("nodeName"));
+                if ($(this).val() != 0 && $(this).prop("nodeName") == "SELECT") {
+                    console.log($('#custom_' + $(this).attr("id")));
+                    $('#custom_' + $(this).attr("id")).val($(this).val()).change();
+                }
+                else {
+                    if ($(this).prop('checked')) {
+                        $('#custom_' + $(this).attr("id")).click();
+                    }
+                }
+            })
+
+
+            x = $(".customform-attributes .custom-select");
+            l = x.length;
+            for (i = 0; i < l; i++) {
+                customDropDown(x[i]);
+            }
+        });
+
+
+    $(function () {
+        var btnId = '#btnsubmitcustomizationform';
+        $('#CustomizationForm').on('submit', function (e) {
+            console.log("aaaa");
+            e.preventDefault();
+            var _form = $("#CustomizationForm");
+            $.validator.unobtrusive.parse(_form);
+            $(_form).validate();
+            if (!$(_form).valid())
+                return;
+            $("#CustomizationForm #Phone span[data-valmsg-for='Phone']").removeClass("field-validation-error");
+            $("#CustomizationForm span[data-valmsg-for='Phone']").html('<span id="field-validation-error" class=""></span>');
+            if ($("#CustomizationForm #Phone").val().trim().length > 0) {
+                if (!validatePhoneNumber($("#CustomizationForm #Phone").val())) {
+                    $("#CustomizationForm #Phone").addClass("input-validation-error");
+                    $("#CustomizationForm span[data-valmsg-for='Phone']").removeClass("field-validation-valid");
+                    $("#CustomizationForm span[data-valmsg-for='Phone']").addClass("field-validation-error");
+                    $("#CustomizationForm span[data-valmsg-for='Phone']").html('<span id="field-validation-error" class="">'
+                        + '@T("Account.Fields.Phone.NotValid")' + '</span>');
+                    return;
+                }
+            }
+            if (!ValidateZipCode($("#CustomizationForm #ZipCode").val())) {
+                $("#CustomizationForm #ZipCode").addClass("input    -validation-error");
+                $("#CustomizationForm span[data-valmsg-for='ZipCode']").removeClass("field-validation-valid");
+                $("#CustomizationForm span[data-valmsg-for='ZipCode']").addClass("field-validation-error");
+                $("#CustomizationForm span[data-valmsg-for='ZipCode']").html('<span id="field-validation-error" class="">'
+                        + '@T("Account.Fields.Zipcode.NotValid")' + '</span>');
+                    return;
+            }
+            $(btnId).prop("disabled", true);
+            $(btnId + " span").addClass("d-none");
+            $(btnId + " svg").removeClass("d-none");
+            $(".customization-form-body .alert-danger").html("");
+            $(".customization-form-body .alert-danger").addClass("d-none");
+
+            var formData = new FormData($("#CustomizationForm")[0]);
+
+            $.ajax({
+                url: _form.attr("action"),
+                type: 'POST',
+                data: formData,
+                async: true,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if (data.Success) {
+                        // advamce google ads data
+
+                        var email = $(".customizationformBody #Email").val();
+                        var phoneNumber = $(".customizationformBody #Phone").val();
+                        var zipCode = $(".customizationformBody #ZipCode").val();
+                        var name = $(".customizationformBody #FullName").val();
+                        phoneNumber = phoneNumber.replace(/ /g, "").replace(/-/g, "");
+                        phoneNumber = "+1" + phoneNumber;
+                        var firstName = name.split(' ')[0];
+
+                        var lastName = name.split(' ').length > 1 ? name.split(' ').slice(1).join(' '):"";
+
+                        var addresses = [];
+
+
+                            addresses.push({
+                                "first_name": firstName, "last_name": lastName, "street": '@shippingAddress?.Address1'
+                                , "city": '@shippingAddress?.City', "region": '@shippingAddress?.County',
+                                "postal_code": zipCode, "country": '@shippingCountry'});
+
+                           if (@(billingAddress?.Id??0) > 0) {
+
+                            addresses.push({
+                                "first_name": '@billingAddress?.FirstName', "last_name": '@billingAddress?.LastName',
+                                "street": '@billingAddress?.Address1'
+                                , "city": '@billingAddress?.City', "region": '@billingAddress?.County',
+                                "postal_code": '@billingAddress?.ZipPostalCode', "country": '@billingCountry'});
+                        }
+
+                        //if (gtag) {
+                        //    gtag('set', 'user_data', {
+                        //        "email": email,
+                        //        "phone_number": phoneNumber,
+                        //        "address": addresses
+                        //    });
+                        //}
+                        // end
+                        if (typeof gtag_TTT_CustomProduct_report_conversion === "function") {
+                            gtag_TTT_CustomProduct_report_conversion({
+                                "email": email,
+                                "phone_number": phoneNumber,
+                                "address": addresses
+                            });
+                        }
+                        if (window.uetq) {
+                            window.uetq = window.uetq || [];
+                            window.uetq.push('event', 'submit_lead_form', {});
+                        }
+                        $(".customization-form-body").html(data.content);
+                    }
+                    else {
+                    
+                        $(".customization-form-body .alert-danger").removeClass("d-none");
+                        $(".customization-form-body .alert-danger").html(data.content);
+                    }
+                    $(btnId).prop("disabled", false);
+                    $(btnId + " span").removeClass("d-none");
+                    $(btnId + " svg").addClass("d-none");
+                },
+                error: function (xhr) {
+                  
+                    $(".customization-form-body .alert-danger").removeClass("d-none");
+                    $(".customization-form-body .alert-danger").html(xhr);
+                    $(btnId).prop("disabled", false);
+                    $(btnId + " span").removeClass("d-none");
+                    $(btnId + " svg").addClass("d-none");
+                }
+            });
+
+
+        });
+
+    });
+
+    function validatePhoneNumber(phoneNumber) {
+        var regex = new RegExp("^[0-9]{3}-[0-9]{3}-[0-9]{4}$");
+        return regex.test(phoneNumber);
+    }
+    $(document).ready(function () {
+        setTimeout(function () {
+
+            if ($("#zsiq_maintitle").text().toLowerCase().indexOf("online") > 0) {
+                try {
+                    if ($("#zsiq_maintitle").text().toLowerCase().indexOf("online") > 0)
+                        $(".chatdiv").addClass("online-user");
+                }
+                catch (ex) { }
+            }
+        }, 4000);
+        $("body").on("keyup paste", "#CustomizationForm #Phone", function (e)   {
+            $("#CustomizationForm #Phone span[data-valmsg-for='Phone']").removeClass("field-validation-error");
+            $("#CustomizationForm #Phone").removeClass("input-validation-error");
+            // Remove invalid chars from the input
+            var input = this.value.replace(/[^0-9\(\)\s\-]/g, "");
+            var inputlen = input.length;
+            // Get just the numbers in the input
+            var numbers = this.value.replace(/\D/g, '');
+            var numberslen = numbers.length;
+            // Value to store the masked input
+            var newval = "";
+
+            // Loop through the existing numbers and apply the mask
+            for (var i = 0; i < numberslen; i++) {
+                if (i == 0) newval = numbers[i];
+                else if (i == 3) newval += "-" + numbers[i];
+                else if (i == 6) newval += "-" + numbers[i];
+                else newval += numbers[i];
+            }
+
+            // Re-add the non-digit characters to the end of the input that the user entered and that match the mask.
+            if (inputlen >= 1 && numberslen == 0 && input[0] == "-") newval = "";
+            else if (inputlen >= 6 && numberslen == 3 && input[4] == ")" && input[5] == " ") newval += "";
+            else if (inputlen >= 5 && numberslen == 3 && input[4] == ")") newval += "-";
+            else if (inputlen >= 6 && numberslen == 3 && input[5] == " ") newval += " ";
+            else if (inputlen >= 10 && numberslen == 6 && input[9] == "-") newval += "-";
+
+            $(this).val(newval.substring(0, 12));
+        });
+    });
+
+    function ValidateZipCode(zipcode) {
+  return zipcode.length > 7 || zipcode.length < 5 ? false : true;
+    }
+
+    $("body").on('change', ".attachment input", function () {
+
+        if ($(this).val()) {
+
+            var filename = $(this).val().split("\\");
+  filename = filename[filename.length - 1];
+
+            $('.attachment_image').text(filename);
+        }
+    });
+</script>
+
