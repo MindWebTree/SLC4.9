@@ -135,7 +135,7 @@
                         @Html.Raw(T("product.coupon.text"))
 
 
-                        @await Html.PartialAsync("_customizationform", Model)
+                        @await Html.PartialAsync("_customizationform.cshtml", Model)
 
                         @*Estimated Delivery section*@
                         @*                         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductExpectedDeliveryDates, additionalData = Model }) *@

@@ -288,6 +288,7 @@
                             </table>*@
                         @{
                             ViewData["showSelectedAttributeInFront"] = true;
+                            dataDictAttributes.Add("Layout", Model.UseNewVersionOfTemplate ? true : false);
                         }
                         @await Html.PartialAsync("_ProductAttributes_Rugs", Model, dataDictAttributes)
 
@@ -548,6 +549,50 @@
 
 
             </script>
+        }
+        @if (@Model.UseNewVersionOfTemplate)
+        {
+            @if (_customworkContext.IsMobileDevice())
+            {
+                <script asp-location="Footer">
+                    $(document).ready(function () {
+                        $(document).on('click', '.cta-tab', function () {
+                            var collapseHeader = document.querySelector('[aria-controls="collapse-dimension"]');
+
+                            if (collapseHeader) {
+                                collapseHeader.click();
+                            }
+
+                            collapseHeader?.scrollIntoView({
+                                behavior: 'smooth'
+                            });
+                        });
+                    });
+                </script>
+            }
+            else
+            {
+                <script asp-location="Footer">
+                                     $(document).ready(function () {
+                        $(document).on('click', '.cta-tab', function () {
+
+                            if (document.getElementById('dimensions-tab')) {
+                                document.getElementById('dimensions-tab').click();
+                                document.getElementById('infotab')?.scrollIntoView({
+                                    behavior: 'smooth'
+                                });
+                            }
+                            else if (document.getElementById('tab-dimensions')) {
+                                document.getElementById('tab-dimensions').click();
+                                document.getElementById('tab-dimensions')?.scrollIntoView({
+                                    behavior: 'smooth'
+                                });
+                            }
+
+                        });
+                    });
+                </script>
+            }
         }
 
         @foreach (var section in Model.TemplateSections.OrderBy(s => s.SortOrder))

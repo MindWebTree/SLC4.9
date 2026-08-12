@@ -62,6 +62,8 @@
 
             @{
                 int counter = 0;
+                 var layout = ViewData["Layout"] as bool? ?? false;
+
             }
             @foreach (var attribute in Model.ProductAttributes)
 
@@ -308,6 +310,14 @@
                                             });
                                         </script>
                                     </div>
+                                    @if (layout && T("Product.Attr.Size").Text == textPrompt)
+                                    {
+                                        <div class="dimention-details-link">
+                                            <span class="cta-tab" data-target="#dimensions-tab">
+                                                @T("Product.specification.attr.dimension.Details")
+                                            </span>
+                                        </div>
+                                    }
                                 }
 
 
@@ -839,7 +849,14 @@
                                             </div>
                                         </div>
                                     }
-
+                                    @if ( layout && T("Product.Attr.Size").Text == textPrompt)
+                                    {
+                                        <div class="dimention-details-link">
+                                            <span class="cta-tab" data-target="#dimensions-tab">
+                                                @T("Product.specification.attr.dimension.Details")
+                                            </span>
+                                        </div>
+                                    }
 
                                     <script asp-location="Footer">
                                         $(document).ready(function () {
