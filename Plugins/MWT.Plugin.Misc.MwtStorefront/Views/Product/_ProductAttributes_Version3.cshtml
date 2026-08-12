@@ -91,7 +91,7 @@
                                 <span class="@textPrompt">
                                     @if (T("Product.Attr.shades").Text == @textPrompt)
                                     {
-                                        @Html.Raw(T("Product.selected.shades", CommonHelper.StripUnwantedPrefixFromShade(selectedAttrs)))
+                                        @Html.Raw(T("Product.selected.shades", CustomCommonHelper.StripUnwantedPrefixFromShade(selectedAttrs)))
                                     }
                                     else
                                     {
@@ -246,8 +246,8 @@
                                     <nop-date-picker asp-day-name="@(controlId + "_day")"
                                                      asp-month-name="@(controlId + "_month")"
                                                      asp-year-name="@(controlId + "_year")"
-                                                     asp-begin-year="@(DateTime.Now.Year)"
-                                                     asp-end-year="@(DateTime.Now.Year + catalogSettings.CountDisplayedYearsDatePicker)"
+                                                     asp-begin-year="@(DateTime.UtcNow)"
+                                                     asp-end-year="@(DateTime.UtcNow.AddYears(catalogSettings.CountDisplayedYearsDatePicker))"
                                                      asp-selected-day="@(attribute.SelectedDay)"
                                                      asp-selected-month="@(attribute.SelectedMonth)"
                                                      asp-selected-year="@(attribute.SelectedYear)" />
@@ -262,8 +262,8 @@
                                     }
 
                                     //register CSS and JS
-                                    Html.AddCssFileParts(ResourceLocation.Footer, "~/lib/fineuploader/fine-uploader.min.css");
-                                    Html.AddScriptParts(ResourceLocation.Footer, "~/lib/fineuploader/jquery.fine-uploader.min.js");
+                                    NopHtml.AddCssFileParts("~/lib/fineuploader/fine-uploader.min.css");
+                                    NopHtml.AddScriptParts(ResourceLocation.Footer, "~/lib/fineuploader/jquery.fine-uploader.min.js");
 
                                     //ex. ['jpg', 'jpeg', 'png', 'gif'] or []
                                     var allowedFileExtensions = string.Join(", ", attribute.AllowedFileExtensions.Select(x => "'" + x.Trim() + "'").ToList());
@@ -410,7 +410,7 @@
                                                     if (T("Product.Attr.shades").Text == @textPrompt)
                                                     {
                                                         <li data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected && !attributeValue.Hide ? @Html.Raw(" class=\"selected-value\"") : null) lass="@(attributeValue.Hide ? "unavailable-swatch" : "")">
-                                                            <label for="@(controlId)_@(attributeValue.Id)" attr-is-show="@(attributeValue.IsPreSelected?"true":"false")" class="custom-shade-control @(attribute.EnableHoverImpact?"attributevalue-section":"")" data-attr-name="@CommonHelper.StripUnwantedPrefixFromShade(attributeValue.Name)" data-attr-img="/images/shades/large/@(attributeValue.Name).jpg">
+                                                            <label for="@(controlId)_@(attributeValue.Id)" attr-is-show="@(attributeValue.IsPreSelected?"true":"false")" class="custom-shade-control @(attribute.EnableHoverImpact?"attributevalue-section":"")" data-attr-name="@CustomCommonHelper.StripUnwantedPrefixFromShade(attributeValue.Name)" data-attr-img="/images/shades/large/@(attributeValue.Name).jpg">
                                                                 <img width="200" height="200" class="lazy" src="/images/pixel.png" data-src="/images/shades/large/@(attributeValue.Name).jpg" alt="@attributeValue.Name">
                                                                 <input id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)"
                                                                        value="@attributeValue.Id" checked="@attributeValue.IsPreSelected"  @(attributeValue.Hide ? "disabled=\"disabled\"" : null)
@@ -423,7 +423,7 @@
                                                     else
                                                     {
                                                         <li data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected && !attributeValue.Hide ? @Html.Raw(" class=\"selected-value\"") : null)  class="@(attributeValue.Hide ? "unavailable-swatch" : "")">
-                                                            <label for="@(controlId)_@(attributeValue.Id)" data-attr-name="@CommonHelper.StripUnwantedPrefixFromShade(attributeValue.Name)" data-attr-img="/images/shades/large/@(attributeValue.Name).jpg" class="@(attribute.EnableHoverImpact?"attributevalue-section":"")">
+                                                            <label for="@(controlId)_@(attributeValue.Id)" data-attr-name="@CustomCommonHelper.StripUnwantedPrefixFromShade(attributeValue.Name)" data-attr-img="/images/shades/large/@(attributeValue.Name).jpg" class="@(attribute.EnableHoverImpact?"attributevalue-section":"")">
                                                                 <span class="attribute-square-container" title="@attributeName">
                                                                     <span class="attribute-square" style="background-color:@(attributeValue.ColorSquaresRgb);">&nbsp;</span>
                                                                 </span>
@@ -500,7 +500,7 @@
                                                 if (T("Product.Attr.shades").Text == @textPrompt)
                                                 {
                                                     <li data-index="@attributeValue.Name" data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected && !attributeValue.Hide ? @Html.Raw(" class=\"selected-value\"") : null) class="@(attributeValue.Hide ? "unavailable-swatch" : "")">
-                                                        <label for="@(controlId)_@(attributeValue.Id)" data-attr-name="@CommonHelper.StripUnwantedPrefixFromShade(attributeLabelName)" data-attr-img="@attributeValue.ImageSquaresPictureModel.FullSizeImageUrl" class="@(attribute.EnableHoverImpact ? "attributevalue-section" : "")">
+                                                        <label for="@(controlId)_@(attributeValue.Id)" data-attr-name="@CustomCommonHelper.StripUnwantedPrefixFromShade(attributeLabelName)" data-attr-img="@attributeValue.ImageSquaresPictureModel.FullSizeImageUrl" class="@(attribute.EnableHoverImpact ? "attributevalue-section" : "")">
                                                             <span class="attribute-square-container">
                                                                 <span class="attribute-square" style="background: url('@(attributeValue.ImageSquaresPictureModel.FullSizeImageUrl)') 50% 50% no-repeat;background-size: cover;">&nbsp;</span>
                                                             </span>
@@ -726,7 +726,7 @@
     </div>
     if (Model.AllowAddingOnlyExistingAttributeCombinations && catalogSettings.AttributeValueOutOfStockDisplayType == AttributeValueOutOfStockDisplayType.Disable)
     {
-        Html.AddScriptParts(ResourceLocation.Footer, "~/js/public.combinationsbehavior.js");
+        NopHtml.AddScriptParts(ResourceLocation.Footer, "~/js/public.combinationsbehavior.js");
 
         <script asp-location="Footer">
             var combinationsBehavior_@(Model.Id);
@@ -1602,5 +1602,5 @@
 
 @if (Model.IsBundleProduct && Model.DisplayBundleConfiguration)
 {
-    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductConfigurationBundle, additionalData = Model })
+    @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.ProductConfigurationBundle, additionalData = Model })
 }

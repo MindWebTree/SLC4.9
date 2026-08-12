@@ -135,6 +135,11 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<IKwTermService, KwTermService>();
             services.AddScoped<IKwTemplateService, KWTemplateService>();
             #endregion
+
+            #region Template
+            services.AddScoped<IProductTemplateSectionService, ProductTemplateSectionService>();
+
+            #endregion
         }
 
     }

@@ -71,6 +71,6 @@ namespace Nop.Core.Domain.Catalog
         public bool EnableNewATCLayout { get; set; }
         public bool DisplayBundleConfiguration { get; set; }
 
-        public int VideoThumnailDisplayOrder { get; set; }
+        public int VideoThumnailDisplayOrder { get; set; } 
     }
 }

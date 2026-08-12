@@ -40,6 +40,7 @@ using Nop.Services.Shipping.Date;
 using Nop.Services.Stores;
 using Nop.Services.Tax;
 using Nop.Services.Vendors;
+using Nop.Web.Areas.Admin.Infrastructure.Mapper.Extensions;
 using Nop.Web.Factories;
 using Nop.Web.Infrastructure.Cache;
 using Nop.Web.Models.Catalog;
@@ -71,6 +72,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
         private readonly IGroupedProductConfigurationService _groupedProductConfigurationService;
         private readonly IRepository<ProductPicture> _productPictureRepository;
         private readonly ICommonService _commonService;
+        private readonly IProductTemplateSectionService _productTemplateSectionService;
+
 
         public CustomProductModelFactory(CaptchaSettings captchaSettings,
             CatalogSettings catalogSettings, CustomerSettings customerSettings,
@@ -99,7 +102,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
             ICustomSpecificationAttributeService customSpecificationAttributeService,
             IActionContextAccessor actionContextAccessor, IUrlHelperFactory urlHelperFactory, ICustomProductAttributeFormatter customProductAttributeFormatter,
             TagAutomationSettings tagAutomationSettings, IStoreWideDiscountService storeWideDiscountService, IGroupedProductConfigurationService groupedProductConfigurationService,
-            IRepository<ProductPicture> productPictureRepository, ICommonService commonService
+            IRepository<ProductPicture> productPictureRepository, ICommonService commonService,
+            IProductTemplateSectionService productTemplateSectionService
             ) : base(captchaSettings,
                 catalogSettings, customerSettings, categoryService, currencyService, customerService,
                 customWishlistService, dateRangeService, dateTimeHelper, downloadService,
@@ -125,6 +129,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
             _groupedProductConfigurationService = groupedProductConfigurationService;
             _productPictureRepository = productPictureRepository;
             _commonService = commonService;
+            _productTemplateSectionService = productTemplateSectionService;
         }
 
         #region Methods
@@ -624,6 +629,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
             }
             model.ConversionValue = model.ConversionValue <= 0 ? 15 : model.ConversionValue;
 
+            model.Template = await this.PrepareProductTemplateasync(product);
+            model.TemplateSections = await this.PrepareProductTemplateSectionsByTemplateIdAsync(model.Template.Id);
 
             model.EstimatedDeliveryDate = await this.GetProductEstimatedDeliveryDate(product.Id, model.VariantId == 0 ? model.DefaultVariantId : model.VariantId, product.EstimatedDeliveryDate ?? string.Empty);
             //automatically generate product description?
@@ -1012,7 +1019,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
             model.MaxPriceValue = CustomCommonHelper.FormatPriceWithoutDecimal(model.MaxPriceValue);
             model.MaxOldPrice = CustomCommonHelper.FormatCurrencyPriceWithoutDecimal(model.MaxOldPrice);
             model.MaxOldPriceValue = CustomCommonHelper.FormatPriceWithoutDecimal(model.MaxOldPriceValue);
-            (model.OfferText, model.OfferPlaceHolder, model.DiscountAmount, model.DiscountPercentage, model.SaleStartDate, model.SaleEndDate) = 
+            (model.OfferText, model.OfferPlaceHolder, model.DiscountAmount, model.DiscountPercentage, model.SaleStartDate, model.SaleEndDate) =
                 await _customProductService.GetProductSaleOfferInfo(product, model.OldPriceValue, model.PriceValue);
 
 
@@ -1293,7 +1300,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
 
                         //calculate price for the maximum quantity if we have tier prices, and choose minimal
                         tmpMinPossiblePrice = Math.Min(tmpMinPossiblePrice,
-                            (await _priceCalculationService.GetFinalPriceAsync(associatedProduct, await _workContext.GetCurrentCustomerAsync(), quantity: int.MaxValue,store:store)).Item1);
+                            (await _priceCalculationService.GetFinalPriceAsync(associatedProduct, await _workContext.GetCurrentCustomerAsync(), quantity: int.MaxValue, store: store)).Item1);
                     }
 
                     if (minPossiblePrice.HasValue && tmpMinPossiblePrice >= minPossiblePrice.Value)
@@ -3845,7 +3852,29 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
             }
             return sku;
         }
+
+
+        protected async Task<IList<ProductTemplateSectionModel>> PrepareProductTemplateSectionsByTemplateIdAsync(int templateId)
+        {
+            var productTemplateSections = await _productTemplateSectionService.GetProductTemplateSectionsByTemplateIdAsync(templateId);
+            return productTemplateSections
+          .Select(x => x.ToModel<ProductTemplateSectionModel>())
+          .ToList();
+
+        }
+
+        public virtual async Task<ProductTemplateModel> PrepareProductTemplateasync(Product product)
+        {
+            ArgumentNullException.ThrowIfNull(product);
+
+            var template = (await _productTemplateService.GetProductTemplateByIdAsync(product.ProductTemplateId) ??
+                            (await _productTemplateService.GetAllProductTemplatesAsync()).FirstOrDefault()) ?? throw new Exception("No default template could be loaded");
+
+            return template.ToModel<ProductTemplateModel>();
+        }
         #endregion
+
+
 
         #region Api Factory Methods
 

@@ -1,7 +1,9 @@
 ﻿@inject Nop.Core.IWorkContext _workContext;
 @inject Nop.Core.IStoreContext _store;
-@inject Nop.Services.Customers.ICustomerService  _customerService;
+@inject ICustomCustomerService  _customerService;
 @inject Nop.Core.IWebHelper _webHelper;
+@using MWT.Nop.Core.Services
+@using MWT.Nop.Core.Services.Customers
 @using Microsoft.Extensions.Primitives;
 @inject Nop.Services.Orders.IShoppingCartService _shoppingCartService ;
 @model MegaMenuWidgetModel

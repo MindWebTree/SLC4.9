@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using MWT.Nop.Core.Domain.Catalog;
 using MWT.Plugin.Misc.MwtStorefront.Models.Catalog;
 using MWT.Plugin.Misc.MwtStorefront.Models.Media;
 using MWTNop.Core.Domain.Catalog;
@@ -157,6 +158,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Models.Catalog
         public bool EnableConditionalAttributes { get; set; }
         public bool IsBundleProduct { get; set; }
         public bool DisplayBundleConfiguration { get; set; }
+        public ProductTemplateModel Template { get; set; }
+        public IList<ProductTemplateSectionModel> TemplateSections { get; set; } = new List<ProductTemplateSectionModel>();
 
         #region Nested Classes
         public record ProductPriceModel : BaseNopModel

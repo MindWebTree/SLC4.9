@@ -7,7 +7,8 @@
 @inject ICustomSpecificationAttributeService _specificationAttributeService
 @inject Nop.Services.Configuration.ISettingService _settingService
 @inject IThemeContext themeContext
-@inject ICustomWorkContext _workContext
+@inject ICustomWorkContext _customWorkContext
+@inject IWorkContext _workContext
 @inject ICustomCustomerService _customerService
 @{
     var themeName = await themeContext.GetWorkingThemeNameAsync();
@@ -38,7 +39,7 @@
     var priceRangeFormat = '@Html.Raw(T("Price.Range.Product.Format").Value.Replace("'", "\\'"))';
     var priceRangeWithoutOfferFormat = '@Html.Raw(T("Price.Range.Product.Without.Offer.Format").Value.Replace("'", "\\'"))';
     var limitedOfferText = '@Model.ProductPrice.OfferText.Replace("'", "\\'"))';
-       var defaulLimitedOfferText = '@CommonHelper.GetProductOfferText(Model.Id,Model.ProductPrice.OfferText,Model.ProductPrice.OfferPlaceHolder,Model.ProductPrice.DiscountAmount,Model.ProductPrice.DiscountPercentage,Model.ProductPrice.SaleEndDate,true).Replace("'", "\\'")';
+       var defaulLimitedOfferText = '@CustomCommonHelper.GetProductOfferText(Model.Id,Model.ProductPrice.OfferText,Model.ProductPrice.OfferPlaceHolder,Model.ProductPrice.DiscountAmount,Model.ProductPrice.DiscountPercentage,Model.ProductPrice.SaleEndDate,true).Replace("'", "\\'")';
     var conversionValue = @Model.ConversionValue;
     var dimensionIndex = @(await _settingService.GetSettingByKeyAsync<int>("product.Dimension.Image.Index"));
     dimensionIndex = dimensionIndex === 0 ? 3 : dimensionIndex;
@@ -95,7 +96,7 @@
     {
         NopHtml.AddHeadCustomParts("<meta property=\"og:type\" content=\"product\" />");
         NopHtml.AddHeadCustomParts("<meta property=\"og:title\" content=\"" + Html.Encode(name) + "\" />");
-        NopHtml.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Html.Encode(Nop.Core.Html.HtmlHelper.StripTags(Model.MetaDescription)) + "\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Html.Encode(_htmlFormatter.StripTags(Model.MetaDescription)) + "\" />");
         NopHtml.AddHeadCustomParts("<meta property=\"og:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
         NopHtml.AddHeadCustomParts("<meta property=\"og:image:url\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
         NopHtml.AddHeadCustomParts("<meta property=\"og:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
@@ -108,7 +109,7 @@
         NopHtml.AddHeadCustomParts("<meta property=\"twitter:card\" content=\"summary\" />");
         NopHtml.AddHeadCustomParts("<meta property=\"twitter:site\" content=\"" + Html.Encode(Model.CurrentStoreName) + "\" />");
         NopHtml.AddHeadCustomParts("<meta property=\"twitter:title\" content=\"" + Html.Encode(name) + "\" />");
-        NopHtml.AddHeadCustomParts("<meta property=\"twitter:description\" content=\"" + Html.Encode(Nop.Core.Html.HtmlHelper.StripTags(Model.MetaDescription)) + "\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"twitter:description\" content=\"" + Html.Encode(_htmlFormatter.StripTags(Model.MetaDescription)) + "\" />");
         NopHtml.AddHeadCustomParts("<meta property=\"twitter:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
         NopHtml.AddHeadCustomParts("<meta property=\"twitter:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
     }
@@ -146,7 +147,7 @@
                 <div class="row mx-0">
                     <div class="col-sm-8 product-image">
                         <div class="product-gallery">
-                            @if (_workContext.IsMobileDevice())
+                            @if (_customWorkContext.IsMobileDevice())
                             {
 
                                 <div class="producttags">
@@ -199,13 +200,13 @@
                             }
                             @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsEssentialTop, additionalData = Model })
                             <!--product pictures-->
-                            @await Html.PartialAsync(!_workContext.IsMobileDevice() ? "_ProductDetailsPictures_VerticalLayout" : "_ProductDetailsPictures", Model)
+                            @await Html.PartialAsync(!_customWorkContext.IsMobileDevice() ? "_ProductDetailsPictures_VerticalLayout" : "_ProductDetailsPictures", Model)
                         </div>
                     </div>
                     <div class="col-sm-4 product-details">
 
                         @await Html.PartialAsync("_Discontinued", Model)
-                        @if (!_workContext.IsMobileDevice())
+                        @if (!_customWorkContext.IsMobileDevice())
                         {
 
                             <div class="producttags">
@@ -254,7 +255,7 @@
 
                         @*price section*@
                         <br />
-                        @if (!_workContext.IsMobileDevice())
+                        @if (!_customWorkContext.IsMobileDevice())
                         {
                             ViewData["isAttributePreselected"] = isAttributePreselected;
 
@@ -426,7 +427,7 @@
                     ViewData["DisplaySpecificationAttributeDimension"] = !Model.DisplayDimensionOfVariant;
                 }
 
-                @if (_workContext.IsMobileDevice())
+                @if (_customWorkContext.IsMobileDevice())
                 {
                     <div id="productdetail-accordion" class="accordion">
 
@@ -529,7 +530,7 @@
             </div>
         </div>
 
-        @if (_workContext.IsMobileDevice())
+        @if (_customWorkContext.IsMobileDevice())
         {
             <script asp-location="Footer">
                 // Convert .showmore click handler
@@ -549,64 +550,93 @@
             </script>
         }
 
-        <div>
-            @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "Product.Rugs.Info" })
-        </div>
-
-        <div>
-            @await Component.InvokeAsync("FBTProducts", new { productId = Model.Id })
-        </div>
-
-
-
-
-        <div>
-            <form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-pairwith" class="pairwith">
-                @await Component.InvokeAsync("Custom_PairWithProductsBlock", new { productId = Model.Id })
-            </form>
-        </div>
-
-        <div>
-            @if (!collectionListingDisplayVertically)
-            {
-                @await Component.InvokeAsync("Custom_CollectionProductsBlock", new { productId = Model.Id, parentGroupedProductId = Model.ParentGroupId })
-            }
-            else
-            {
-                @await Component.InvokeAsync("Custom_CollectionProducts_Vertical_DisplayBlock", new { productId = Model.Id, parentGroupedProductId = Model.ParentGroupId })
-            }
-        </div> @*end*@ @* People Also Viewed*@
-
-        <div>
-            @await Component.InvokeAsync("Custom_RelatedProducts", new { productId = Model.Id })
-        </div> @*Thanks Giving Banner Section*@
-
-
-
-        @if (Model.IsThanksGivingProduct)
-
+        @foreach (var section in Model.TemplateSections.OrderBy(s => s.SortOrder))
         {
-
-            @await Html.PartialAsync("_ThanksGivingBannerSection")
-        } @*Collection module*@ @*Individual products*@
-        <div>
-            @await Component.InvokeAsync("Custom_CrossSellProductsBlock", new { productId = Model.Id })
-        </div> @*Pair With module*@ @*end*@ @*//Related Search*@
-
-        @await Component.InvokeAsync("RelatedSearchTerms", new { entityId = Model.Id, entityType = "Product" }) @*recently  products*@
-
-
-        @await Component.InvokeAsync("Custom_FeedBackBlock", new
+            if (!section.IsVisible)
             {
-                productId = Model.Id,
-                pageSize = reviewPageSize,
-                sku = (Model.Sku ?? "").Replace("IND", ""),
-                mainCategoryId = Model.MainCategoryId
-            })
-        @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "product-page-customization-banner-rugs" })
-        @await Component.InvokeAsync("FaqBlock", new { entityId = Model.Id, entityType = "Product" })
-        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsBottom, additionalData = Model })
-        @await Component.InvokeAsync("Custom_RecentlyViewedProductsBlock")
+                continue;
+            }
+
+            switch (section.SectionKey)
+            {
+                case "RugInfo":
+                    <div>
+                        @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "Product.Rugs.Info" })
+                    </div>
+                    break;
+                case "FBTProducts":
+                    <div>
+                        @await Component.InvokeAsync("FBTProducts", new { productId = Model.Id })
+                    </div>
+                    break;
+
+                case "PairWithProducts":
+                    <div>
+                        <form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-pairwith" class="pairwith">
+                            @await Component.InvokeAsync("Custom_PairWithProductsBlock", new { productId = Model.Id })
+                        </form>
+                    </div>
+                    break;
+
+                case "CollectionProducts":
+                    <div>
+                        @if (!collectionListingDisplayVertically)
+                        {
+                            @await Component.InvokeAsync("Custom_CollectionProductsBlock", new { productId = Model.Id, parentGroupedProductId = Model.ParentGroupId })
+                        }
+                        else
+                        {
+                            @await Component.InvokeAsync("Custom_CollectionProducts_Vertical_DisplayBlock", new { productId = Model.Id, parentGroupedProductId = Model.ParentGroupId })
+                        }
+                    </div> @*end*@ @* People Also Viewed*@
+                    break;
+
+                case "RelatedProducts":
+                    <div>
+                        @await Component.InvokeAsync("Custom_RelatedProducts", new { productId = Model.Id })
+                    </div> @*Thanks Giving Banner Section*@
+                    break;
+
+                case "ThanksGiving":
+                    if (Model.IsThanksGivingProduct)
+                    {
+                        @await Html.PartialAsync("_ThanksGivingBannerSection")
+                    }
+                    break;
+
+                case "CrossSell":
+                    <div>
+                        @await Component.InvokeAsync("Custom_CrossSellProductsBlock", new { productId = Model.Id })
+                    </div> @*Pair With module*@ @*end*@ @*//Related Search*@
+                    break;
+
+                case "RelatedSearch":
+                    @await Component.InvokeAsync("RelatedSearchTerms", new { entityId = Model.Id, entityType = "Product" }) @*recently  products*@
+                    break;
+
+                case "CustomizatioBanner":
+                    @Html.Raw("CustomizatioBanner")
+                    @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "product-page-customization-banner" })
+                    break;
+
+                case "Faq":
+                    @await Component.InvokeAsync("FaqBlock", new { entityId = Model.Id, entityType = "Product" })
+                    break;
+
+                case "ProductDetailBottom":
+                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsBottom, additionalData = Model })
+                    break;
+
+                case "RecentlyViewed":
+                    @await Component.InvokeAsync("Custom_RecentlyViewedProductsBlock")
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+
         @await Html.PartialAsync("_PdfViewerScript")
     </div>
 </div>

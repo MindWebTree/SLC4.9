@@ -41,13 +41,13 @@
     NopHtml.AddMetaDescriptionParts(Model.MetaDescription);
     NopHtml.AddMetaKeywordParts(Model.MetaKeywords);
     //page class
-    Html.AppendPageCssClassParts("html-product-details-page");
+    NopHtml.AppendPageCssClassParts("html-product-details-page");
 
     //canonical URL
     if (seoSettings.CanonicalUrlsEnabled)
     {
         var productUrl = Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
-        Html.AddCanonicalUrlParts(productUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+        NopHtml.AddCanonicalUrlParts(productUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
     }
 
     //open graph META tags
@@ -55,7 +55,7 @@
     {
         NopHtml.AddHeadCustomParts("<meta property=\"og:type\" content=\"product\" />");
         NopHtml.AddHeadCustomParts("<meta property=\"og:title\" content=\"" + Html.Encode(Model.Name) + "\" />");
-        NopHtml.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Html.Encode(Nop.Core.Html.HtmlHelper.StripTags(Model.MetaDescription)) + "\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Html.Encode(_htmlFormatter.StripTags(Model.MetaDescription)) + "\" />");
         NopHtml.AddHeadCustomParts("<meta property=\"og:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
         NopHtml.AddHeadCustomParts("<meta property=\"og:image:url\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
         NopHtml.AddHeadCustomParts("<meta property=\"og:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
@@ -69,7 +69,7 @@
         NopHtml.AddHeadCustomParts("<meta property=\"twitter:site\" content=\"" + Html.Encode(Model.CurrentStoreName) + "\" />");
         NopHtml.AddHeadCustomParts("<meta property=\"twitter:title\" content=\"" + Html.Encode(Model.Name) + "\" />");
         NopHtml.AddHeadCustomParts("<meta property=\"twitter:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
-        NopHtml.AddHeadCustomParts("<meta property=\"twitter:description\" content=\"" + Html.Encode(Nop.Core.Html.HtmlHelper.StripTags(Model.MetaDescription)) + "\" />");
+        NopHtml.AddHeadCustomParts("<meta property=\"twitter:description\" content=\"" + Html.Encode(_htmlFormatter.StripTags(Model.MetaDescription)) + "\" />");
         NopHtml.AddHeadCustomParts("<meta property=\"twitter:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
     }
     var defaultConfiguration = Model.AssociatedProductsConfiguration?.Where(c => c.ProductAttributeOptionId == 0).FirstOrDefault(); }
@@ -135,7 +135,7 @@
                         @Html.Raw(T("product.coupon.text"))
 
 
-                        @await Html.PartialAsync("_customizationform.cshtml", Model)
+                        @await Html.PartialAsync("_customizationform", Model)
 
                         @*Estimated Delivery section*@
                         @*                         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductExpectedDeliveryDates, additionalData = Model }) *@

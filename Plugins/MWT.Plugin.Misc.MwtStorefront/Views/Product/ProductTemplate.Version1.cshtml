@@ -7,7 +7,7 @@
 @inject Nop.Services.Catalog.ISpecificationAttributeService _specificationAttributeService
 @inject Nop.Services.Configuration.ISettingService _settingService
 @inject IThemeContext themeContext
-@inject ICustomWorkContext _customworkContext 
+@inject ICustomWorkContext _customworkContext
 @inject IWorkContext _workContext
 @inject ICustomCustomerService _customerService
 @{
@@ -39,7 +39,7 @@
     var priceRangeFormat = '@Html.Raw(T("Price.Range.Product.Format").Value.Replace("'", "\\'"))';
     var priceRangeWithoutOfferFormat = '@Html.Raw(T("Price.Range.Product.Without.Offer.Format").Value.Replace("'", "\\'"))';
     var limitedOfferText = '@Model.ProductPrice.OfferText.Replace("'", "\\'"))';
-    var defaulLimitedOfferText = '@CustomCommonHelper.GetProductOfferText(Model.Id,Model.ProductPrice.OfferText,Model.ProductPrice.OfferPlaceHolder,Model.ProductPrice.DiscountAmount,Model.ProductPrice.DiscountPercentage,Model.ProductPrice.SaleEndDate,true).Replace("'", "\\'")';
+    var defaulLimitedOfferText = '@CustomCommonHelper.GetProductOfferText(Model.Id, Model.ProductPrice.OfferText, Model.ProductPrice.OfferPlaceHolder, Model.ProductPrice.DiscountAmount, Model.ProductPrice.DiscountPercentage, Model.ProductPrice.SaleEndDate, true).Replace("'", "\\'")';
     var conversionValue = @Model.ConversionValue;
     var dimensionIndex = @(await _settingService.GetSettingByKeyAsync<int>("product.Dimension.Image.Index"));
     dimensionIndex = dimensionIndex === 0 ? 3 : dimensionIndex;
@@ -122,7 +122,7 @@
     </div>
 }
 @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsAfterBreadcrumb, additionalData = Model })
-<div class="page product-details-page version1">
+<div class="page product-details-page @Model.Template.ConatinerClass">
     <div class="page-body">
 
 
@@ -158,7 +158,7 @@
                                             if (tag.Name.Equals(productTag, StringComparison.InvariantCultureIgnoreCase))
                                             {
                                                 <span class="@tag.Name">
-                                                    <img src="/images/icons/guaranteeddelivery.png" />
+                                                    <img src="/images/icons/guaranteeddelivery.png" alt="guaranteed delivery badge" />
                                                 </span>
                                             }
                                             else
@@ -177,7 +177,7 @@
                                 @if (!string.IsNullOrEmpty(Model.Sku))
                                 {
                                     <h2 class="allow-copy-content">
-                                        <span>@T("Products.Sku") # @Model.Sku<span class="allow-copy-content-h1 allow-copy-content" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" aria-label="Copy SKU" data-bs-original-title="@T("Common.CopyContent.sku.Help")"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 115.77 122.88" style="enable-background:new 0 0 115.77 122.88" xml:space="preserve"><g><path class="st0" d="M89.62,13.96v7.73h12.19h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02v0.02 v73.27v0.01h-0.02c-0.01,3.84-1.57,7.33-4.1,9.86c-2.51,2.5-5.98,4.06-9.82,4.07v0.02h-0.02h-61.7H40.1v-0.02 c-3.84-0.01-7.34-1.57-9.86-4.1c-2.5-2.51-4.06-5.98-4.07-9.82h-0.02v-0.02V92.51H13.96h-0.01v-0.02c-3.84-0.01-7.34-1.57-9.86-4.1 c-2.5-2.51-4.06-5.98-4.07-9.82H0v-0.02V13.96v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07V0h0.02h61.7 h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02V13.96L89.62,13.96z M79.04,21.69v-7.73v-0.02h0.02 c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v64.59v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h12.19V35.65 v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07v-0.02h0.02H79.04L79.04,21.69z M105.18,108.92V35.65v-0.02 h0.02c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v73.27v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h61.7h0.02 v0.02c0.91,0,1.75-0.39,2.37-1.01c0.61-0.61,1-1.46,1-2.37h-0.02V108.92L105.18,108.92z" /></g></svg></span></span>
+                                        <span>@T("Products.Sku") # @Model.Sku<span class="allow-copy-content-h1 allow-copy-content" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" aria-label="Copy SKU" aria-hidden="true" data-bs-original-title="@T("Common.CopyContent.sku.Help")"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 115.77 122.88" style="enable-background:new 0 0 115.77 122.88" xml:space="preserve"><g><path class="st0" d="M89.62,13.96v7.73h12.19h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02v0.02 v73.27v0.01h-0.02c-0.01,3.84-1.57,7.33-4.1,9.86c-2.51,2.5-5.98,4.06-9.82,4.07v0.02h-0.02h-61.7H40.1v-0.02 c-3.84-0.01-7.34-1.57-9.86-4.1c-2.5-2.51-4.06-5.98-4.07-9.82h-0.02v-0.02V92.51H13.96h-0.01v-0.02c-3.84-0.01-7.34-1.57-9.86-4.1 c-2.5-2.51-4.06-5.98-4.07-9.82H0v-0.02V13.96v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07V0h0.02h61.7 h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02V13.96L89.62,13.96z M79.04,21.69v-7.73v-0.02h0.02 c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v64.59v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h12.19V35.65 v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07v-0.02h0.02H79.04L79.04,21.69z M105.18,108.92V35.65v-0.02 h0.02c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v73.27v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h61.7h0.02 v0.02c0.91,0,1.75-0.39,2.37-1.01c0.61-0.61,1-1.46,1-2.37h-0.02V108.92L105.18,108.92z" /></g></svg></span></span>
                                         @if (isAdmin)
                                         {
                                             <span class="variantid" style="display:@(Model.VariantId > 0 || Model.DefaultVariantId > 0 ? "inline" : "none")">@T("Products.VariantId")@(Model.VariantId > 0 ? Model.VariantId : Model.DefaultVariantId)<span class="allow-copy-content-h1 allow-copy-content" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" aria-label="Copy VariantId" data-bs-original-title="@T("Common.CopyContent.variantid.Help")"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 115.77 122.88" style="enable-background:new 0 0 115.77 122.88" xml:space="preserve"><g><path class="st0" d="M89.62,13.96v7.73h12.19h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02v0.02 v73.27v0.01h-0.02c-0.01,3.84-1.57,7.33-4.1,9.86c-2.51,2.5-5.98,4.06-9.82,4.07v0.02h-0.02h-61.7H40.1v-0.02 c-3.84-0.01-7.34-1.57-9.86-4.1c-2.5-2.51-4.06-5.98-4.07-9.82h-0.02v-0.02V92.51H13.96h-0.01v-0.02c-3.84-0.01-7.34-1.57-9.86-4.1 c-2.5-2.51-4.06-5.98-4.07-9.82H0v-0.02V13.96v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07V0h0.02h61.7 h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02V13.96L89.62,13.96z M79.04,21.69v-7.73v-0.02h0.02 c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v64.59v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h12.19V35.65 v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07v-0.02h0.02H79.04L79.04,21.69z M105.18,108.92V35.65v-0.02 h0.02c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v73.27v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h61.7h0.02 v0.02c0.91,0,1.75-0.39,2.37-1.01c0.61-0.61,1-1.46,1-2.37h-0.02V108.92L105.18,108.92z" /></g></svg></span></span>
@@ -230,7 +230,7 @@
                             </div>
                             <h1 itemprop="name">
                                 @name
-                                <span class="allow-copy-content-h1 allow-copy-content" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" aria-label="Copy Title" data-bs-original-title="@T("Common.CopyContent.Title.Help")"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 115.77 122.88" style="enable-background:new 0 0 115.77 122.88" xml:space="preserve"><g><path class="st0" d="M89.62,13.96v7.73h12.19h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02v0.02 v73.27v0.01h-0.02c-0.01,3.84-1.57,7.33-4.1,9.86c-2.51,2.5-5.98,4.06-9.82,4.07v0.02h-0.02h-61.7H40.1v-0.02 c-3.84-0.01-7.34-1.57-9.86-4.1c-2.5-2.51-4.06-5.98-4.07-9.82h-0.02v-0.02V92.51H13.96h-0.01v-0.02c-3.84-0.01-7.34-1.57-9.86-4.1 c-2.5-2.51-4.06-5.98-4.07-9.82H0v-0.02V13.96v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07V0h0.02h61.7 h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02V13.96L89.62,13.96z M79.04,21.69v-7.73v-0.02h0.02 c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v64.59v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h12.19V35.65 v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07v-0.02h0.02H79.04L79.04,21.69z M105.18,108.92V35.65v-0.02 h0.02c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v73.27v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h61.7h0.02 v0.02c0.91,0,1.75-0.39,2.37-1.01c0.61-0.61,1-1.46,1-2.37h-0.02V108.92L105.18,108.92z" /></g></svg></span>
+                                <span class="allow-copy-content-h1 allow-copy-content" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" aria-hidden="true" aria-label="Copy Title" data-bs-original-title="@T("Common.CopyContent.Title.Help")"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 115.77 122.88" style="enable-background:new 0 0 115.77 122.88" xml:space="preserve"><g><path class="st0" d="M89.62,13.96v7.73h12.19h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02v0.02 v73.27v0.01h-0.02c-0.01,3.84-1.57,7.33-4.1,9.86c-2.51,2.5-5.98,4.06-9.82,4.07v0.02h-0.02h-61.7H40.1v-0.02 c-3.84-0.01-7.34-1.57-9.86-4.1c-2.5-2.51-4.06-5.98-4.07-9.82h-0.02v-0.02V92.51H13.96h-0.01v-0.02c-3.84-0.01-7.34-1.57-9.86-4.1 c-2.5-2.51-4.06-5.98-4.07-9.82H0v-0.02V13.96v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07V0h0.02h61.7 h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02V13.96L89.62,13.96z M79.04,21.69v-7.73v-0.02h0.02 c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v64.59v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h12.19V35.65 v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07v-0.02h0.02H79.04L79.04,21.69z M105.18,108.92V35.65v-0.02 h0.02c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v73.27v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h61.7h0.02 v0.02c0.91,0,1.75-0.39,2.37-1.01c0.61-0.61,1-1.46,1-2.37h-0.02V108.92L105.18,108.92z" /></g></svg></span>
                             </h1>
 
 
@@ -239,11 +239,11 @@
                         {
                             <h2>
                                 <span>
-                                    @T("Products.Sku") # @Model.Sku<span class="allow-copy-content-h1 allow-copy-content" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" aria-label="Copy SKU" data-bs-original-title="@T("Common.CopyContent.sku.Help")"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 115.77 122.88" style="enable-background:new 0 0 115.77 122.88" xml:space="preserve"><g><path class="st0" d="M89.62,13.96v7.73h12.19h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02v0.02 v73.27v0.01h-0.02c-0.01,3.84-1.57,7.33-4.1,9.86c-2.51,2.5-5.98,4.06-9.82,4.07v0.02h-0.02h-61.7H40.1v-0.02 c-3.84-0.01-7.34-1.57-9.86-4.1c-2.5-2.51-4.06-5.98-4.07-9.82h-0.02v-0.02V92.51H13.96h-0.01v-0.02c-3.84-0.01-7.34-1.57-9.86-4.1 c-2.5-2.51-4.06-5.98-4.07-9.82H0v-0.02V13.96v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07V0h0.02h61.7 h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02V13.96L89.62,13.96z M79.04,21.69v-7.73v-0.02h0.02 c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v64.59v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h12.19V35.65 v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07v-0.02h0.02H79.04L79.04,21.69z M105.18,108.92V35.65v-0.02 h0.02c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v73.27v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h61.7h0.02 v0.02c0.91,0,1.75-0.39,2.37-1.01c0.61-0.61,1-1.46,1-2.37h-0.02V108.92L105.18,108.92z" /></g></svg></span>
+                                    @T("Products.Sku") # @Model.Sku<span class="allow-copy-content-h1 allow-copy-content" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" aria-hidden="true" aria-label="Copy SKU" data-bs-original-title="@T("Common.CopyContent.sku.Help")"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 115.77 122.88" style="enable-background:new 0 0 115.77 122.88" xml:space="preserve"><g><path class="st0" d="M89.62,13.96v7.73h12.19h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02v0.02 v73.27v0.01h-0.02c-0.01,3.84-1.57,7.33-4.1,9.86c-2.51,2.5-5.98,4.06-9.82,4.07v0.02h-0.02h-61.7H40.1v-0.02 c-3.84-0.01-7.34-1.57-9.86-4.1c-2.5-2.51-4.06-5.98-4.07-9.82h-0.02v-0.02V92.51H13.96h-0.01v-0.02c-3.84-0.01-7.34-1.57-9.86-4.1 c-2.5-2.51-4.06-5.98-4.07-9.82H0v-0.02V13.96v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07V0h0.02h61.7 h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02V13.96L89.62,13.96z M79.04,21.69v-7.73v-0.02h0.02 c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v64.59v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h12.19V35.65 v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07v-0.02h0.02H79.04L79.04,21.69z M105.18,108.92V35.65v-0.02 h0.02c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v73.27v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h61.7h0.02 v0.02c0.91,0,1.75-0.39,2.37-1.01c0.61-0.61,1-1.46,1-2.37h-0.02V108.92L105.18,108.92z" /></g></svg></span>
                                 </span>
                                 @if (isAdmin)
                                 {
-                                    <span class="variantid" style="display:@(Model.VariantId > 0 || Model.DefaultVariantId > 0 ? "inline" : "none")">@T("Products.VariantId")@(Model.VariantId > 0 ? Model.VariantId : Model.DefaultVariantId)<span class="allow-copy-content-h1 allow-copy-content" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" aria-label="Copy VariantId" data-bs-original-title="@T("Common.CopyContent.variantid.Help")"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 115.77 122.88" style="enable-background:new 0 0 115.77 122.88" xml:space="preserve"><g><path class="st0" d="M89.62,13.96v7.73h12.19h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02v0.02 v73.27v0.01h-0.02c-0.01,3.84-1.57,7.33-4.1,9.86c-2.51,2.5-5.98,4.06-9.82,4.07v0.02h-0.02h-61.7H40.1v-0.02 c-3.84-0.01-7.34-1.57-9.86-4.1c-2.5-2.51-4.06-5.98-4.07-9.82h-0.02v-0.02V92.51H13.96h-0.01v-0.02c-3.84-0.01-7.34-1.57-9.86-4.1 c-2.5-2.51-4.06-5.98-4.07-9.82H0v-0.02V13.96v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07V0h0.02h61.7 h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02V13.96L89.62,13.96z M79.04,21.69v-7.73v-0.02h0.02 c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v64.59v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h12.19V35.65 v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07v-0.02h0.02H79.04L79.04,21.69z M105.18,108.92V35.65v-0.02 h0.02c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v73.27v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h61.7h0.02 v0.02c0.91,0,1.75-0.39,2.37-1.01c0.61-0.61,1-1.46,1-2.37h-0.02V108.92L105.18,108.92z" /></g></svg></span></span>
+                                    <span class="variantid" style="display:@(Model.VariantId > 0 || Model.DefaultVariantId > 0 ? "inline" : "none")">@T("Products.VariantId")@(Model.VariantId > 0 ? Model.VariantId : Model.DefaultVariantId)<span class="allow-copy-content-h1 allow-copy-content" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" aria-hidden="true" aria-hidden="true" aria-label="Copy VariantId" data-bs-original-title="@T("Common.CopyContent.variantid.Help")"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 115.77 122.88" style="enable-background:new 0 0 115.77 122.88" xml:space="preserve"><g><path class="st0" d="M89.62,13.96v7.73h12.19h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02v0.02 v73.27v0.01h-0.02c-0.01,3.84-1.57,7.33-4.1,9.86c-2.51,2.5-5.98,4.06-9.82,4.07v0.02h-0.02h-61.7H40.1v-0.02 c-3.84-0.01-7.34-1.57-9.86-4.1c-2.5-2.51-4.06-5.98-4.07-9.82h-0.02v-0.02V92.51H13.96h-0.01v-0.02c-3.84-0.01-7.34-1.57-9.86-4.1 c-2.5-2.51-4.06-5.98-4.07-9.82H0v-0.02V13.96v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07V0h0.02h61.7 h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02V13.96L89.62,13.96z M79.04,21.69v-7.73v-0.02h0.02 c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v64.59v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h12.19V35.65 v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07v-0.02h0.02H79.04L79.04,21.69z M105.18,108.92V35.65v-0.02 h0.02c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v73.27v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h61.7h0.02 v0.02c0.91,0,1.75-0.39,2.37-1.01c0.61-0.61,1-1.46,1-2.37h-0.02V108.92L105.18,108.92z" /></g></svg></span></span>
                                 }
                             </h2>
                         }
@@ -289,7 +289,7 @@
                         @{
                             ViewData["showSelectedAttributeInFront"] = true;
                         }
-                        @await Html.PartialAsync("_ProductAttributes_Version1", Model, dataDictAttributes)
+                        @await Html.PartialAsync(Model.UseNewVersionOfTemplate ?$"_New{Model.Template.ProductAttributeViewName}" : $"{Model.Template.ProductAttributeViewName}", Model, dataDictAttributes)
 
                         @if (Model.EnableCustomizationModule && Model.UseNewVersionCustomizationAction)
                         {
@@ -382,7 +382,8 @@
                             else
                             {
                                 @await Component.InvokeAsync("BackInStockSubscriptionBlock", new { productId = Model.Id })
-                            } @*@await Html.PartialAsync("_ProductEstimateShipping", Model.ProductEstimateShipping)*@
+                            }
+     @*@await Html.PartialAsync("_ProductEstimateShipping", Model.ProductEstimateShipping)*@
                         }
 
                         @*@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsInsideOverviewButtonsBefore, additionalData = Model })
@@ -450,7 +451,7 @@
                     <div id="productdetail-accordion" class="accordion">
 
                         <div class="card-header" data-bs-toggle="collapse" href="#collapse-desc">
-                            <span class="card-title">
+                            <span class="card-title" tabindex="0" role="button">
                                 @T("Product.Desc.Tab.heading")
                             </span>
                         </div>
@@ -568,63 +569,134 @@
 
             </script>
         }
-        <div>
-            @await Component.InvokeAsync("FBTProducts", new { productId = Model.Id })
-        </div>
-
-
-
-
-        <div>
-            <form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-pairwith" class="pairwith">
-                @await Component.InvokeAsync("Custom_PairWithProductsBlock", new { productId = Model.Id })
-            </form>
-        </div>
-
-        <div>
-            @if (!collectionListingDisplayVertically)
-            {
-                @await Component.InvokeAsync("Custom_CollectionProductsBlock", new { productId = Model.Id, parentGroupedProductId = Model.ParentGroupId })
-            }
-            else
-            {
-                @await Component.InvokeAsync("Custom_CollectionProducts_Vertical_DisplayBlock", new { productId = Model.Id, parentGroupedProductId = Model.ParentGroupId })
-            }
-        </div> @*end*@ @* People Also Viewed*@
-
-        <div>
-            @await Component.InvokeAsync("Custom_RelatedProducts", new { productId = Model.Id })
-        </div> @*Thanks Giving Banner Section*@
-
-
-
-        @if (Model.IsThanksGivingProduct)
-
+        @foreach (var section in Model.TemplateSections.OrderBy(s => s.SortOrder))
         {
-
-            @await Html.PartialAsync("_ThanksGivingBannerSection")
-        } @*Collection module*@ @*Individual products*@
-        <div>
-            @await Component.InvokeAsync("Custom_CrossSellProductsBlock", new { productId = Model.Id })
-        </div> @*Pair With module*@ @*end*@ @*//Related Search*@
-
-        @await Component.InvokeAsync("RelatedSearchTerms", new { entityId = Model.Id, entityType = "Product" }) @*recently  products*@
-        @*  @if (Model.ProductReviewOverview.AllowCustomerReviews)
+            if (!section.IsVisible)
             {
+                continue;
+            }
 
-             @await Component.InvokeAsync("Custom_FeedBackBlock", new
-                 {
-                     productId = Model.Id,
-                     pageSize = reviewPageSize,
-                     sku = (Model.Sku ?? "").Replace("IND", ""),
-                     mainCategoryId = Model.MainCategoryId
-                 })
-              } *@
-        @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "product-page-customization-banner" })
+            switch (section.SectionKey)
+            {
+                case "FBTProducts":
+                    <div>
+                        @await Component.InvokeAsync("FBTProducts", new { productId = Model.Id })
+                    </div>
+                    break;
 
-        @await Component.InvokeAsync("FaqBlock", new { entityId = Model.Id, entityType = "Product" })
-        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsBottom, additionalData = Model })
-        @await Component.InvokeAsync("Custom_RecentlyViewedProductsBlock")
+                case "PairWithProducts":
+                    <div>
+                        <form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-pairwith" class="pairwith">
+                            @await Component.InvokeAsync("Custom_PairWithProductsBlock", new { productId = Model.Id })
+                        </form>
+                    </div>
+                    break;
+
+                case "CollectionProducts":
+                    <div>
+                        @if (!collectionListingDisplayVertically)
+                        {
+                            @await Component.InvokeAsync("Custom_CollectionProductsBlock", new { productId = Model.Id, parentGroupedProductId = Model.ParentGroupId })
+                        }
+                        else
+                        {
+                            @await Component.InvokeAsync("Custom_CollectionProducts_Vertical_DisplayBlock", new { productId = Model.Id, parentGroupedProductId = Model.ParentGroupId })
+                        }
+                    </div> @*end*@ @* People Also Viewed*@
+                    break;
+
+                case "RelatedProducts":
+                    <div>
+                        @await Component.InvokeAsync("Custom_RelatedProducts", new { productId = Model.Id })
+                    </div> @*Thanks Giving Banner Section*@
+                    break;
+
+                case "ThanksGiving":
+                    if (Model.IsThanksGivingProduct)
+                    {
+                        @await Html.PartialAsync("_ThanksGivingBannerSection")
+                    }
+                    break;
+
+                case "CrossSell":
+                    <div>
+                        @await Component.InvokeAsync("Custom_CrossSellProductsBlock", new { productId = Model.Id })
+                    </div> @*Pair With module*@ @*end*@ @*//Related Search*@
+                    break;
+
+                case "RelatedSearch":
+                    @await Component.InvokeAsync("RelatedSearchTerms", new { entityId = Model.Id, entityType = "Product" }) @*recently  products*@
+                    break;
+
+                case "CustomizatioBanner":
+                    @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "product-page-customization-banner" })
+                    break;
+
+                case "Faq":
+                    @await Component.InvokeAsync("FaqBlock", new { entityId = Model.Id, entityType = "Product" })
+                    break;
+
+                case "ProductDetailBottom":
+                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsBottom, additionalData = Model })
+                    break;
+
+                case "RecentlyViewed":
+                    @await Component.InvokeAsync("Custom_RecentlyViewedProductsBlock")
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+
+
+
+
+
+     
+
         @await Html.PartialAsync("_PdfViewerScript")
     </div>
 </div>
+
+<script asp-location="Footer">
+    function handleMagicZoomKeyboard(e) {
+           if (e.key === 'Enter' || e.key === ' ') {
+               e.preventDefault();
+
+               // Create genuine mouse events that bypass standard JS framework filters
+               var mouseDownEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window });
+               var mouseUpEvent = new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window });
+               var clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true, view: window });
+
+               // Fire them in sequential order directly on the element
+               this.dispatchEvent(mouseDownEvent);
+               this.dispatchEvent(mouseUpEvent);
+               this.dispatchEvent(clickEvent);
+           }
+       }
+       //   Register MagicZoom Callbacks
+       MagicZoom.registerCallback('onExpandOpen', function (instanceId) {
+           const closeBtn = document.querySelector('.mz-button-close');
+           const prevBtn = document.querySelector('.mz-button-prev');
+           const nextBtn = document.querySelector('.mz-button-next');
+           const interactiveElements = [closeBtn, prevBtn, nextBtn].filter(Boolean);
+
+           // Inject focus accessibility indicators dynamically
+           interactiveElements.forEach(btn => {
+               if (!btn.hasAttribute('tabindex')) {
+                   btn.setAttribute('tabindex', '0');
+               }
+               if (!btn.dataset.hasKeyboardBound) {
+                   btn.addEventListener('keydown', handleMagicZoomKeyboard);
+                   btn.dataset.hasKeyboardBound = "true"; // Mark it as registered
+               }
+           });
+           const modalContainer = document.querySelector('.mz-expand');
+           if (modalContainer) {
+               closeBtn.focus();
+
+           }
+       });
+</script>

@@ -56,7 +56,7 @@ namespace MWT.Nop.Core.Service.Catalog
         private readonly IRepository<VariantCombinationLog> _variantCombinationLogRepository;
         private readonly IRepository<CollectionProduct> _collectionRepository;
         private readonly IRepository<PairWithProduct> _pairwithRepository;
-        private readonly IRepository<FBTProduct> _fbtProductepository;
+        private readonly IRepository<FBTProduct> _fbtProductepository; 
         private readonly IPriceFormatter _priceFormatter;
         private readonly IStoreContext _storeContext;
         private readonly ILogger _loggerService;
@@ -3316,6 +3316,7 @@ namespace MWT.Nop.Core.Service.Catalog
 
 
         #endregion
+       
 
     }
 }

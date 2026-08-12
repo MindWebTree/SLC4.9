@@ -51,7 +51,7 @@ public partial class CustomTopicController : BasePublicController
 
     #region Methods
 
-    public virtual async Task<IActionResult> CustomTopicDetails(int topicId)
+    public virtual async Task<IActionResult> TopicDetails(int topicId)
     {
         var topic = await _topicService.GetTopicByIdAsync(topicId);
 

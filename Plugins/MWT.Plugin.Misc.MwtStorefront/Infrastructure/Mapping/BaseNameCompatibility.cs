@@ -35,6 +35,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Infrastructure.Mapping
                     { typeof(CategorySuggestedKeyword), "Category_SuggestedKeyword_Mapping" },
                       { typeof(ProductQuestionAnswer), "Product_QuestionAnswer_Mapping" },
                                { typeof(CategoryUserMapping), "Category_User_Mapping" },
+                               { typeof(ProductTemplateSection), "Product_Template_Section_Mapping" },
                                { typeof(CategoryKwTerm), "Category_KwTerm_Mapping" }
         };
 
