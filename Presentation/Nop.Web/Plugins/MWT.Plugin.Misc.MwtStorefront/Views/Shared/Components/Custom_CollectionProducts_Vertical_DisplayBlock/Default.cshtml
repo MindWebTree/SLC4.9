@@ -1,15 +1,15 @@
 ﻿@model CollectionDetailProductModel
-@inject Nop.Services.Catalog.ISpecificationAttributeService _specificationAttributeService
+@inject ICustomSpecificationAttributeService _specificationAttributeService
 @{
     var mainCollectionProduct = Model.MainCollection;
 }
 @if (Model.Products.Count > 0)
 {
     <form asp-route="Product" asp-route-sename="" method="post" id="product-details-collection" class="pairwith">
-        <div class="shop-by-category collectionmodule-section @(mainCollectionProduct != null  ? "complete-your-collection" : "pick-product-you-like")">
-            <h2>@Html.Raw(T((mainCollectionProduct != null  ? "Products.CollectionModule.Heading" : "Products.CollectionModule.Main.Heading")))</h2>
+        <div aria-labelledby="collectionmodule-section-heading" class="shop-by-category collectionmodule-section @(mainCollectionProduct != null ? "complete-your-collection" : "pick-product-you-like")">
+            <h2 id="collectionmodule-section-heading" >@Html.Raw(T((mainCollectionProduct != null ? "Products.CollectionModule.Heading" : "Products.CollectionModule.Main.Heading")))</h2>
         </div>
-        <div class="collection-products-vertical variants">
+        <div   class="collection-products-vertical variants">
 
             @foreach (var variant in Model.Products)
             {
@@ -119,9 +119,9 @@
 
 @if (mainCollectionProduct != null)
 {
-    <div class="row-mx-0 section-2">
+    <div aria-labelledby="Main.Heading.Collection" role="region" class="row-mx-0 section-2">
         <div class="container complete-collection shop-by-category">
-            <h2>@T("Products.BuyCompleteCollection.Heading")</h2>
+            <h2 id="Main.Heading.Collection">@T("Products.BuyCompleteCollection.Heading")</h2>
             <div class="row" data-main-catid="@await _specificationAttributeService.GetMainCategoryOfProduct(mainCollectionProduct.Id)">
                 <div class="col-md-3">
                     <a href="@Url.RouteUrl("Product", new {id=mainCollectionProduct.Id,SeName = mainCollectionProduct.SeName})" alt="@mainCollectionProduct.Name" title="@mainCollectionProduct.Name">

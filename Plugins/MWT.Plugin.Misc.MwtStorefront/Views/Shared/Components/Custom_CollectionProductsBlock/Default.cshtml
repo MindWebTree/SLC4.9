@@ -6,8 +6,8 @@
 }
 @if (sibilingProducts.Count > 0)
 {
-    <div class="shop-by-category collectionmodule-section @(mainCollectionProduct != null  ? "complete-your-collection" : "pick-product-you-like")">
-        <h2>@Html.Raw(T((mainCollectionProduct != null ? "Products.CollectionModule.Heading" : "Products.CollectionModule.Main.Heading")))</h2>
+    <div aria-labelledby="CollectionModule.Main.Heading" role="region" class="shop-by-category collectionmodule-section @(mainCollectionProduct != null ? "complete-your-collection" : "pick-product-you-like")">
+        <h2 id="CollectionModule.Main.Heading">@Html.Raw(T((mainCollectionProduct != null ? "Products.CollectionModule.Heading" : "Products.CollectionModule.Main.Heading")))</h2>
         <div class="collection-products">
 
 
@@ -67,18 +67,18 @@
 
 @if (mainCollectionProduct != null)
 {
-    <div class="row-mx-0 section-2">
+    <div aria-labelledby="Main.Heading.Collection" role="region" class="row-mx-0 section-2">
         <div class="container complete-collection shop-by-category">
-            <h2>@T("Products.BuyCompleteCollection.Heading")</h2>
+            <h2 id="Main.Heading.Collection">@T("Products.BuyCompleteCollection.Heading")</h2>
             <div class="row" data-main-catid="@await _specificationAttributeService.GetMainCategoryOfProduct(mainCollectionProduct.Id)">
                 <div class="col-md-3" >
-                    <a href="@Url.RouteUrl("Product", new {id=mainCollectionProduct.Id,SeName = mainCollectionProduct.SeName})" alt="@mainCollectionProduct.Name" title="@mainCollectionProduct.Name">
+                    <a href="@Url.RouteUrl("Product", new {id=mainCollectionProduct.Id,SeName = mainCollectionProduct.SeName})" alt="@mainCollectionProduct.Name"  >
                         <img width="840" height="840" style="width:100%; height:auto;" data-src="@mainCollectionProduct.DefaultPictureModel.ImageUrl" src="/images/pixel.png" alt="@mainCollectionProduct.DefaultPictureModel.AlternateText" class="w-100 lazy" />
                     </a>
                 </div>
                 <div class="col-md-9">
                     <div class="completecollection-box">
-                        <a href="@Url.RouteUrl("Product", new {id=mainCollectionProduct.Id,SeName = mainCollectionProduct.SeName})" alt="@mainCollectionProduct.Name" title="@mainCollectionProduct.Name">
+                        <a href="@Url.RouteUrl("Product", new {id=mainCollectionProduct.Id,SeName = mainCollectionProduct.SeName})" alt="@mainCollectionProduct.Name"  >
                             <h2>@mainCollectionProduct.Name</h2>
                         </a>
                         @if (!string.IsNullOrEmpty(mainCollectionProduct.CollectionMessage))
@@ -90,12 +90,12 @@
                         }
                         @if (!string.IsNullOrEmpty(mainCollectionProduct.SizeShadeMessage))
                         {
-                            <h4>@mainCollectionProduct.SizeShadeMessage.Replace("|", ", ").Trim().TrimEnd(',')</h4>
+                            <h3>@mainCollectionProduct.SizeShadeMessage.Replace("|", ", ").Trim().TrimEnd(',')</h3>
                         }
 
                         <h3>@string.Format(T("products.buycompletecollection.price.text").Value, mainCollectionProduct.ProductPrice.Price)</h3>
 
-                        <a class="explore-btn" href="@Url.RouteUrl("Product", new {id=mainCollectionProduct.Id,SeName = mainCollectionProduct.SeName})" alt="@mainCollectionProduct.Name" title="@mainCollectionProduct.Name">explore this collection</a>
+                        <a class="explore-btn" href="@Url.RouteUrl("Product", new {id=mainCollectionProduct.Id,SeName = mainCollectionProduct.SeName})" alt="@mainCollectionProduct.Name"  >explore this collection</a>
                     </div>
                 </div>
             </div>

@@ -1,7 +1,7 @@
 ﻿@model List<CustomProductDetailsModel>
 
-<div class="variants">
-    <h2>@T("products.group.pairwith.heading")</h2>
+<div class="variants" aria-labelledby="collection-product-heading" role="region">
+    <h2 id="collection-product-heading" >@T("products.group.pairwith.heading")</h2>
     @foreach (var variant in Model)
     {
         <div class="row mx-0">
@@ -9,10 +9,10 @@
                 <div class="custom-left">
                     @if (!string.IsNullOrWhiteSpace(variant.DefaultPictureModel.ImageUrl))
                     {
-                        <div class="variant-picture">
+                        <div class="variant-picture" aria-hidden="true" tabindex="-1">
                             <a href="@(Url.RouteUrl("Product", new { id=variant.Id, SeName=variant.SeName }))" title="@variant.DefaultPictureModel.Title">
                                 <img alt="@variant.DefaultPictureModel.AlternateText" src="@variant.DefaultPictureModel.ImageUrl"
-                             title="@variant.DefaultPictureModel.Title" id="main-product-img-@variant.Id" />
+                              id="main-product-img-@variant.Id" />
                             </a>
                         </div>
                     }

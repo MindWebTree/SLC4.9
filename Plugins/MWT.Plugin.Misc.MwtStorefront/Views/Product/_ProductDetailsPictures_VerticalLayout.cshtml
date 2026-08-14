@@ -4,6 +4,7 @@
 
 
 <div class="gallery desktop">
+    <div id="sr-zoom-announcer" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
     <div class="row">
         @if (Model.PictureModels.Count > 1)
 
@@ -14,19 +15,21 @@
                 <div class="vertical_layout product-sub-images jcarousel">
                     <ul>
                         @{
-                            var imgCount = 0;
+                            int imgCount = 0;
+                            int picturesCount = 0;
+                            int tatalPictures = Model.PictureModels.Count - 1;
+
 
                             foreach (var picture in Model.PictureModels)
-
                             {
 
                                 @if (!string.IsNullOrEmpty(Model.VideoUrl) && (imgCount + 1) == Model.VideoThumnailDisplayOrder)
                                 {
                                     <li>
                                         <a class="thumb-Video" data-zoom-id="product-video-magiczoom" href="@picture.FullSizeImageUrl"
-                                           data-image="@picture.ImageUrl" alt="@picture.AlternateText" title="@picture.Title">
+                                           data-image="@picture.ImageUrl" alt="Play product video for @picture.AlternateText" title="Play product video for @picture.Title" type="button" aria-pressed="false" role="button">
                                             <img data-index="@imgCount" class="lazy" width="100" height="100" src="/images/pixel.png" data-src="@Model.PictureModels[0].ThumbImageUrl"
-                                                 alt="@picture.AlternateText" title="@picture.Title" data-video="@Model.VideoUrl" />
+                                                 aria-label="Play product video for @Model.Name" alt="@($"Play {Model.Name} - video 1 of 1")" title="@picture.Title" data-video="@Model.VideoUrl" />
                                             <!-- Add a play icon overlay for video thumbnails -->
                                             <div class="video-play-overlay">
                                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
@@ -39,24 +42,26 @@
 
                                 }
                                 <li>
-                                    <a class="thumb-item @(imgCount==0?" img-selected":"") @(picture.IsDimensionImage?"dimension-image":"")" data-zoom-id="product-magiczoom" href="@picture.FullSizeImageUrl"
-                                       data-image="@picture.ImageUrl" alt="@picture.AlternateText" title="@picture.Title">
+                                    <a class="thumb-item @(imgCount == 0 ? " img-selected" : "") 
+@(picture.IsDimensionImage ? "dimension-image" : "")" data-zoom-id="product-magiczoom" href="@picture.FullSizeImageUrl"
+                                       data-image="@picture.ImageUrl" alt="@($"{picture.AlternateText} - image {picturesCount} of {tatalPictures}")" title="@($"{picture.AlternateText} - image {picturesCount} of {tatalPictures}")" type="button" aria-pressed="false" role="button">
                                         <img data-index="@imgCount" class="lazy" width="100" height="100" src="/images/pixel.png" data-src="@picture.ThumbImageUrl"
-                                             alt="@picture.AlternateText" title="@picture.Title" data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
+                                             alt="@($"{picture.AlternateText} - image {picturesCount} of {tatalPictures}")" data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
                                     </a>
 
                                 </li>
                                 imgCount++;
-
+                                picturesCount++;
                             }
+
                         }
                     </ul>
-                    <a href="#" class="jcarousel-control-prev">
+                    <a href="#" aria-label="Previous slide" class="jcarousel-control-prev">
                         <svg width="22" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M11.0092 12.9844C10.7413 12.9848 10.4837 12.8781 10.2948 12.6883L0.22686 2.61565C-0.110617 2.1743 -0.0269527 1.54305 0.4144 1.20558C0.775379 0.929674 1.27595 0.929674 1.63693 1.20558L11.0092 10.5544L20.3674 1.19148C20.8087 0.854002 21.44 0.937665 21.7774 1.37902C22.0534 1.74 22.0534 2.24057 21.7774 2.60155L11.7236 12.6883C11.5347 12.8781 11.2771 12.9848 11.0092 12.9844Z" fill="#4A4A4A" />
                         </svg>
                     </a>
-                    <a href="#" class="jcarousel-control-next">
+                    <a href="#" aria-label="Next slide" class="jcarousel-control-next">
                         <svg width="22" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M11.0092 12.9844C10.7413 12.9848 10.4837 12.8781 10.2948 12.6883L0.22686 2.61565C-0.110617 2.1743 -0.0269527 1.54305 0.4144 1.20558C0.775379 0.929674 1.27595 0.929674 1.63693 1.20558L11.0092 10.5544L20.3674 1.19148C20.8087 0.854002 21.44 0.937665 21.7774 1.37902C22.0534 1.74 22.0534 2.24057 21.7774 2.60155L11.7236 12.6883C11.5347 12.8781 11.2771 12.9848 11.0092 12.9844Z" fill="#4A4A4A" />
                         </svg>
@@ -142,6 +147,7 @@
                               <video
                                 class="auto-video-iframe"
                                 src="${videoUrl}"
+                                  aria-label="Play product video for @Model.Name"
                                 autoplay
                                 muted
                                 playsinline
@@ -207,8 +213,29 @@
                                     }
                                 }
                             }
+                                        $('.thumb-item, .thumb-Video').attr('aria-pressed', 'false');
+                            $clicked.attr('aria-pressed', 'true');
+                            console.log($clicked);
+                        });
+                        $(document).on('keydown', '.thumb-Video, .thumb-item', function (e) {
+
+                            if (e.key === ' ' || e.key === 'Enter') {
+                                e.preventDefault();
+                                $(this).trigger('click');
+                            }
                         });
 
+                                  $(document).on('click', '.thumb-item', function (e) {
+                            var mainContainer = $('#product-magiczoom');
+
+                            if (mainContainer.find('video, iframe, .auto-video-container').length === 0) {
+                                var imageUrl = $(this).data('image');
+                                var fullSizeUrl = $(this).attr('href');
+                                if (typeof MagicZoom !== 'undefined' && imageUrl) {
+                                    MagicZoom.update('product-magiczoom', fullSizeUrl, imageUrl);
+                                }
+                            }
+                        });
                     });
 
 
@@ -252,7 +279,18 @@
                             $(this).parent().addClass("mz-thumb-selected");
                             $(this).parent().addClass("img-selected");
                         });
+                              $('.product-sub-images img').on('keydown', function (e) {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault(); // Prevent the spacebar from scrolling the page
+
+                                $(".thumb-item").removeClass("img-selected mz-thumb-selected");
+
+                                $(this).parent().addClass("mz-thumb-selected");
+                                $(this).parent().addClass("img-selected");
+                            }
+                        });
                     });
+                        
 
                     $("#openFullscreen").click(function (event) {
                         var $img = $('.mz-figure');
@@ -317,8 +355,7 @@
                                 View in 3D
                             </div>
                         }
-                        <img alt="@Model.DefaultPictureModel.AlternateText" height="840" width="840" src="@Model.DefaultPictureModel.ImageUrl"
-                             title="@Model.DefaultPictureModel.Title"
+                        <img alt="@Model.DefaultPictureModel.AlternateText" height="840" width="840" src="@Model.DefaultPictureModel.ImageUrl" 
                              id="main-product-img-@Model.Id" />
                         <div class="overlay-text">
                             @T("Product.Dimension.Overlay.Text")
@@ -330,7 +367,9 @@
                 else
 
                 {
-                    <img class="lazy" alt="@Model.DefaultPictureModel.AlternateText" height="840" width="840" src="/images/pixel.png" data-src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" id="main-product-img-@Model.Id" />
+                    <img class="lazy" alt="@Model.DefaultPictureModel.AlternateText" 
+                    height="840" width="840" src="/images/pixel.png" 
+                    data-src="@Model.DefaultPictureModel.ImageUrl"   id="main-product-img-@Model.Id" />
                 }
             </div>
 
@@ -351,6 +390,48 @@
         document.addEventListener("DOMContentLoaded", function () {
             MagicZoom.start('product-magiczoom');
         });
+
+             var mzOptions = {};
+            mzOptions = {
+                onZoomReady: function () {
+                    patchMagicZoomAccessibility(arguments[0]);
+                },
+                onUpdate: function () {
+                    patchMagicZoomAccessibility(arguments[0]);
+                },
+                onZoomIn: function () {
+                },
+                onZoomOut: function () {
+                }
+            };
+
+        function patchMagicZoomAccessibility(zoomObject) {
+            var mainImg = document.querySelector('figure.mz-figure > img');
+            if (mainImg) {
+
+                mainImg.setAttribute('alt', "@(Model.DefaultPictureModel.Title)");
+                var activeThumb = document.querySelector('.thumb-item.mz-thumb-selected');
+                    var titleToAnnounce = activeThumb ? (activeThumb.getAttribute('title') || activeThumb.getAttribute('alt')) : "@(Model.DefaultPictureModel.Title)";
+
+                    var srAnnouncer = document.getElementById('sr-zoom-announcer');
+                    if (srAnnouncer) {
+                        srAnnouncer.textContent = "Now viewing: " + titleToAnnounce;
+                    }
+            }
+                var zoomImgs = document.querySelectorAll('.mz-lens img, .mz-zoom-window img');
+                zoomImgs.forEach(function (img) {
+                    img.setAttribute('alt', '');
+                    img.setAttribute('role', 'presentation');
+                    img.setAttribute('aria-hidden', 'true');
+
+                });
+
+                var zoomContainers = document.querySelectorAll('.mz-lens, .mz-zoom-window, .mz-loading, .mz-hint');
+                zoomContainers.forEach(function (container) {
+                    container.setAttribute('aria-hidden', 'true');
+                });
+            }
+
     </script>
 }
 @if (!string.IsNullOrEmpty(Model.ARImageUrl))

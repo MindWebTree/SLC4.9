@@ -3,11 +3,11 @@
 @model CustomProductOverviewModel
 @if (Model != null)
 {
-    string offerText = CommonHelper.GetProductOfferText(Model.Id, Model.ProductPrice.OfferText, Model.ProductPrice.OfferPlaceHolder, Model.ProductPrice.DiscountAmount, Model.ProductPrice.DiscountPercentage, Model.ProductPrice.SaleEndDate, false);
+    string offerText = CustomCommonHelper.GetProductOfferText(Model.Id, Model.ProductPrice.OfferText, Model.ProductPrice.OfferPlaceHolder, Model.ProductPrice.DiscountAmount, Model.ProductPrice.DiscountPercentage, Model.ProductPrice.SaleEndDate, false);
 
 
-<div class="you-may-also-need-section">
-    <h2>@T("product.YouMayAlsoNeed")</h2>
+    <div aria-labelledby="related-product-heading" class="you-may-also-need-section">
+        <h2 id="related-product-heading">@T("product.YouMayAlsoNeed")</h2>
     <div class="inner-sec-need">
         <div class="product-image"><img alt="@Model.DefaultPictureModel.AlternateText" src="/images/pixel.png" data-src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" class="lazy" /></div>
         <div class="product-details">

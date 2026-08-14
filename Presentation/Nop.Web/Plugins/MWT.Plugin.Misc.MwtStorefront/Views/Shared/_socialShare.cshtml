@@ -73,7 +73,7 @@
 </style>
 <div class="ssf-outer">
 <div class="ssf-background ssf-bg-count">
-    <i class="ssf-share-trigger ssf-multi-08c5s9yquvy6 a-declarative" title="Share" role="img" aria-label="Share"
+    <i class="ssf-share-trigger ssf-multi-08c5s9yquvy6 a-declarative"  role="img" aria-label="Share"
     tabindex="0" data-share="{&quot;background&quot;:true}"
        style="height: 24px; width: 24px; background-image: url(&quot;/images/icons/share-std.svg&quot;);"> <span class="hidden-xs">Share</span></i>
 </div>
@@ -103,7 +103,7 @@
             <span class="tw-label">Twitter</span>
         </a>
     </div><div class="ssf-channel-v">
-        <a target="_blank"  class="ssf-channel copy a-color-base" id="copyLink" title="Copy Link" data-key="copy" data-attr="@(url)">
+        <a target="#"  class="ssf-channel copy a-color-base" id="copyLink"   data-key="copy" data-attr="@(url)">
             <span class="a-spinner a-spinner-small a-align-center aok-hidden"></span>
             <i role="img" aria-label="Copy Link" style="background-image: url(/images/icons/link-circular.svg)"></i>
             <span class="copy-label">Copy Link</span>
@@ -162,4 +162,10 @@
         else
             $("#a-popover-content-3").addClass("show");
     })
+      $("body").on("keydown", ".ssf-share-trigger", function (e) {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            $(this).trigger("click");
+        }
+    });
 </script>

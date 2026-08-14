@@ -71,7 +71,7 @@
                             <td>
                                 <div class="input-group">
                                     <span class="input-group-btn">
-                                        <button type="button" class="quantity-left-minus btn  btn-number" data-type="minus" data-field="">
+                                        <button type="button" aria-label="Decrease quantity" class="quantity-left-minus btn  btn-number" data-type="minus" data-field="">
                                             <svg width="9" height="8" viewBox="0 0 9 8" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <g clip-path="url(#clip0_10687_17062)">
                                                     <g clip-path="url(#clip1_10687_17062)">
@@ -99,7 +99,7 @@
                                     <input asp-for="EnteredQuantity" data-max-qty="@Model.AllowedQuantities.Count" id="product_enteredQuantity_@Model.ProductId" class="qty-input" type="text" aria-label="@T("Products.Qty.AriaLabel")" value="@Model.EnteredQuantity" />
 
                                     <span class="input-group-btn">
-                                        <button type="button" class="quantity-right-plus btn  btn-number" data-type="plus" data-field="">
+                                        <button type="button" aria-label="Increase quantity" class="quantity-right-plus btn  btn-number" data-type="plus" data-field="">
                                             <svg width="9" height="8" viewBox="0 0 9 8" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <g clip-path="url(#clip0_10687_17072)">
                                                     <g clip-path="url(#clip1_10687_17072)">
