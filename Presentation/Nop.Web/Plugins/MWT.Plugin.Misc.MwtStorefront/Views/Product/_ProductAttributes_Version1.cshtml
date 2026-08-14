@@ -58,7 +58,7 @@
 
     string refFormId = addtoCartFormId.Replace("#", "").Replace("-", "_").Split('?')[0];
     <div class="attributes">
-        <table>
+        <dl>
 
             @{
                 int counter = 0;
@@ -138,8 +138,8 @@
 
 
                 }
-                <tr data-attr-name="@(label.Trim().ToLower())" class=" @(!attribute.Values.Any(val => !val.Hide) ? "all-unavailable" : "") @(textPrompt.Trim().ToLower())-attrname   @(T("Product.Attr.shades").Text == @customTextPrompt ? "shade-section" : T("Product.Attr.Size").Text == @customTextPrompt?(attribute.Values.Count == 1 ? "size-section single-attr-container" : "size-section"):@customTextPrompt+"-section") attribute-craousel">
-                    <td id="@($"{NopCatalogDefaults.ProductAttributePrefix}label_{attribute.Id}")" class="control-label  @(counter>1?"accordion-header":string.Empty) @(counter>1 && !attribute.IsExpanded?"active":string.Empty)">
+                <div data-attr-name="@(label.Trim().ToLower())" class="attribute-row @(!attribute.Values.Any(val => !val.Hide) ? "all-unavailable" : "") @(textPrompt.Trim().ToLower())-attrname   @(T("Product.Attr.shades").Text == @customTextPrompt ? "shade-section" : T("Product.Attr.Size").Text == @customTextPrompt?(attribute.Values.Count == 1 ? "size-section single-attr-container" : "size-section"):@customTextPrompt+"-section") attribute-craousel">
+                    <dt id="@($"{NopCatalogDefaults.ProductAttributePrefix}label_{attribute.Id}")" class="control-label  @(counter>1?"accordion-header":string.Empty) @(counter>1 && !attribute.IsExpanded?"active":string.Empty)">
                         <label class="text-prompt col-form-label">
 
                             @label&nbsp;:
@@ -225,8 +225,8 @@
                                 </span>
                             </div>
                         }
-                    </td>
-                    <td id="@($"{NopCatalogDefaults.ProductAttributePrefix}input_{attribute.Id}")" class="attribute_value_wrapper @(attribute.AttributeControlType==AttributeControlType.DropdownList?"control_type_dropdown":string.Empty) @(counter>1 && !attribute.IsExpanded?"active":string.Empty)">
+                    </dt>
+                    <dd id="@($"{NopCatalogDefaults.ProductAttributePrefix}input_{attribute.Id}")" class="attribute_value_wrapper @(attribute.AttributeControlType==AttributeControlType.DropdownList?"control_type_dropdown":string.Empty) @(counter>1 && !attribute.IsExpanded?"active":string.Empty)">
                         @switch (attribute.AttributeControlType)
 
 
@@ -1008,10 +1008,10 @@
                                 @T("Product.Custom.Shade.Message")
                             </div>
                         }
-                    </td>
-                </tr>
+                    </dd>
+                </div>
             }
-        </table>
+        </dl>
         <script asp-location="Footer">
             function hidNextPreviousCraouselButtons(carouselRef) {
                 var $carousel = $(`${carouselRef} .jcarousel`);
@@ -2045,7 +2045,7 @@
             function updateAttributeAvailability() {
 
 
-                var attributeContainers = $('@addtoCartFormId .attributes tr .attribute_value_wrapper');
+                var attributeContainers = $('@addtoCartFormId .attributes .attribute_value_wrapper');
                 var currentSelections = {};
 
                 attributeContainers.each(function () {
@@ -2071,7 +2071,7 @@
                 // 2. UI Update Loop
                 attributeContainers.each(function (index) {
                     var $container = $(this);
-                    var $parentRow = $container.closest('tr');
+                          var $parentRow = $container.closest('.attribute-row');
                     var currentContainerId = $container.attr('id');
 
                     var otherSelectedIds = [];
