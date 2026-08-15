@@ -138,6 +138,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controller
             return NotFound();
         }
         #region Categories
+
+        [SaveLastContinueShoppingPage]
         public virtual async Task<IActionResult> CustomCategory(int id, string SeName, CustomCatalogProductsCommand command)
         {
             var category = await _categoryService.GetCategoryByIdAsync(id);
@@ -194,6 +196,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controller
             return View(templateViewPath, model);
         }
 
+        [SaveLastContinueShoppingPage]
         public virtual async Task<IActionResult> CustomCategoryModern(int categoryId, CustomCatalogProductsCommand command)
         {
             var category = await _categoryService.GetCategoryByIdAsync(categoryId);

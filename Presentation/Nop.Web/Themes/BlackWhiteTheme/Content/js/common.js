@@ -441,8 +441,7 @@ $(document).ready(function () {
         $lastClickedWishlistIcon = $(this);
     });
 
-    $(document).on('click', '.close', function () {
-		debugger;
+    $(document).on('click', '.close', function () { 
         if ($lastClickedWishlistIcon && $lastClickedWishlistIcon.length > 0) {
             
             $lastClickedWishlistIcon.focus();
@@ -1214,8 +1213,16 @@ $(document).ajaxStop(function () {
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 });
 
+//$(".subcategories a").click(function () {
+//    var id = $(this).attr("href");
+//    $('html,body').animate({
+//        scrollTop: $(id).offset().top,
+
+//    },
+//        'slow');
+//});
 $(".subcategories a").click(function () {
-    var id = $(this).attr("href");
+    var id = $(this).attr("container");
     $('html,body').animate({
         scrollTop: $(id).offset().top,
 

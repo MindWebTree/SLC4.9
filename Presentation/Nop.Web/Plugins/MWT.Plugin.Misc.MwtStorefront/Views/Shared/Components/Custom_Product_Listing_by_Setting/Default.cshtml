@@ -32,7 +32,7 @@
   dots: false,
                 responsive: [
 				{
-                    breakpoint: 1200,
+                          breakpoint: 1199,
                     settings: {
                         centerMode: false,
                         centerPadding: '40px',
@@ -44,7 +44,7 @@
                         settings: {
                             centerMode: false,
                             centerPadding: '40px',
-                            slidesToShow: 2
+                            slidesToShow: 3
                         }
                     },
                     {
@@ -72,30 +72,7 @@
                 $(this).find('.slick-prev').attr('aria-label', 'Previous');
                 $(this).find('.slick-next').attr('aria-label', 'Next');
             });
-$slider.on('wheel', function(e) {
-    let deltaX = e.originalEvent.deltaX;
-    let deltaY = e.originalEvent.deltaY;
-
-    // 👉 Ignore if vertical scroll is dominant
-    if (Math.abs(deltaY) > Math.abs(deltaX)) {
-        return;
-    }
-
-    e.preventDefault();
-
-    if (isScrolling) return;
-    isScrolling = true;
-
-    if (deltaX > 10) {
-        $slider.slick('slickNext');
-    } else if (deltaX < -10) {
-        $slider.slick('slickPrev');
-    }
-
-    setTimeout(function() {
-        isScrolling = false;
-    }, 50);
-});
+    
         });
     </script>
 }

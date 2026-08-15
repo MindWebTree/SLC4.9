@@ -1,18 +1,18 @@
-﻿@model CategoryModel
+﻿@model CustomCategoryModel
 @using Nop.Core.Domain.Common
 @using Nop.Core.Domain.Seo
-@inject Nop.Core.IWebHelper webHelper
+@inject IWebHelper webHelper
 @inject SeoSettings seoSettings
 @inject CommonSettings commonSettings
-@inject Nop.Core.IWorkContext _workcontext
+@inject ICustomWorkContext _workcontext
 @{
     Layout = "_parentCategoryTemplate_sidebar";
 
     //title
-    Html.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    NopHtml.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
     //meta
-    Html.AddMetaDescriptionParts(Model.MetaDescription);
-    Html.AddMetaKeywordParts(Model.MetaKeywords);
+    NopHtml.AddMetaDescriptionParts(Model.MetaDescription);
+    NopHtml.AddMetaKeywordParts(Model.MetaKeywords);
     //page class
     string featuredString = Context.Request.Query["featuredid"];
     int variantId = 0;
@@ -27,12 +27,12 @@
             int.TryParse(parts[1], out variantId);
         }
     }
-    Html.AppendPageCssClassParts("html-category-page");
+    NopHtml.AppendPageCssClassParts("html-category-page");
 
     if (seoSettings.CanonicalUrlsEnabled)
     {
         var categoryUrl = Url.RouteUrl("Category", new { id = Model.Id, SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
-        Html.AddCanonicalUrlParts(categoryUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+        NopHtml.AddCanonicalUrlParts(categoryUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
     }
 
     var breadcrumbDelimiter = commonSettings.BreadcrumbDelimiter;
@@ -89,7 +89,7 @@
                     <li itemprop="itemListElement" class="breadcrumb-item active" itemscope itemtype="http://schema.org/ListItem">
                         @if (isLastCategory)
                         {
-                            <strong class="current-item" itemprop="name">@cat.Name</strong>
+                            <strong tabindex="0" class="current-item" itemprop="name">@cat.Name</strong>
                             <span itemprop="item" itemscope itemtype="http://schema.org/Thing"
                                   id="@Url.RouteUrl("Category", new {id=cat.Id,SeName = cat.SeName})">
                             </span>
@@ -116,7 +116,7 @@
 
 
 
-<div class="page category-page">
+<div role="region" class="page category-page">
     @section FeaturedProduct {
         @if (productId != 0)
         {
@@ -125,7 +125,7 @@
     }
     @section Heading {
         <div class="categorypage-heading-section">
-            <h1 class="page-heading">@(Model.Name)</h1>
+            <h1 id="categorypage-heading" class="page-heading">@(Model.Name)</h1>
             @await Component.InvokeAsync("HeadLinks", new
                 {
                     categoryId = Model.Id,
@@ -148,19 +148,19 @@
     @if (Model.SubCategories.Count > 0)
     {
         @section SubCategories {
-            <div id="category-slider" class="slick-slider position-relative">
+                <div aria-labelledby="categorypage-heading" role="region" id="category-slider" class="slick-slider position-relative">
                 @foreach (var item in Model.SubCategories)
                 {
                     <div class="category-card">
                         <div class="card">
-                            <a href="@Url.RouteUrl("Category", new { SeName = item.SeName,id=item.Id  })" title="@item.PictureModel.Title">
-                                <img alt="@item.PictureModel.AlternateText" width="450" height="450" class="card-img-top lazy" src="/images/pixel.png" data-src="@item.PictureModel.ImageUrl" title="@item.PictureModel.Title" />
+                                <a href="@Url.RouteUrl("Category", new { SeName = item.SeName, id = item.Id })" aria-label="@item.PictureModel.Title">
+                                    <img alt="" width="450" height="450" class="card-img-top lazy" src="/images/pixel.png" data-src="@item.PictureModel.ImageUrl" title="@item.PictureModel.Title" />
                             </a>
                             <div class="card-body text-center">
                                 <h2 class="title">
-                                    <a href="@Url.RouteUrl("Category", new { SeName = item.SeName,id=item.Id  })" class="card-title" title="@item.PictureModel.Title">
-                                        @item.Name
-                                    </a>
+                                        <span class="card-title" title="@item.PictureModel.Title">
+                                            @item.Name
+                                        </span>
                                 </h2>
                             </div>
                         </div>
@@ -219,7 +219,12 @@
                                 }
                             }
                         ]
+
                     });
+                                $('#category-slider').on('init reInit setPosition breakpoint', function () {
+                                $(this).find('.slick-prev').attr('aria-label', 'Previous');
+                                $(this).find('.slick-next').attr('aria-label', 'Next');
+                            });
                 });
             </script>
 

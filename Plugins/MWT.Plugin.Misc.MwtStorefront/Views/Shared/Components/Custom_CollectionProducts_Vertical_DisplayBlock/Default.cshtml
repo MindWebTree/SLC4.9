@@ -1,0 +1,156 @@
+﻿@model CollectionDetailProductModel
+@inject ICustomSpecificationAttributeService _specificationAttributeService
+@{
+    var mainCollectionProduct = Model.MainCollection;
+}
+@if (Model.Products.Count > 0)
+{
+    <form asp-route="Product" asp-route-sename="" method="post" id="product-details-collection" class="pairwith">
+        <div aria-labelledby="collectionmodule-section-heading" class="shop-by-category collectionmodule-section @(mainCollectionProduct != null ? "complete-your-collection" : "pick-product-you-like")">
+            <h2 id="collectionmodule-section-heading" >@Html.Raw(T((mainCollectionProduct != null ? "Products.CollectionModule.Heading" : "Products.CollectionModule.Main.Heading")))</h2>
+        </div>
+        <div   class="collection-products-vertical variants">
+
+            @foreach (var variant in Model.Products)
+            {
+                <div class="row mx-0">
+                    <div class="product-details collection-product-variant" data-productid="@variant.Id">
+                        <div class="custom-left">
+                            @if (!string.IsNullOrWhiteSpace(variant.DefaultPictureModel.ImageUrl))
+                            {
+                                <div class="variant-picture">
+                                    <a href="@(Url.RouteUrl("Product", new { id=variant.Id, SeName=variant.SeName }))" title="@variant.DefaultPictureModel.Title">
+                                        <img alt="@variant.DefaultPictureModel.AlternateText" src="@variant.DefaultPictureModel.ImageUrl" width="415" height="415"
+                                             title="@variant.DefaultPictureModel.Title" id="main-product-img-@variant.Id" />
+                                    </a>
+                                </div>
+                            }
+                         
+                        </div>
+                        <div class="variant-overview custom-right">
+                            @if (!string.IsNullOrWhiteSpace(variant.Name))
+                            {
+                                <div class="variant-name">
+                                    <a href="@(Url.RouteUrl("Product", new { id=variant.Id, SeName=variant.SeName }))" title="@variant.DefaultPictureModel.Title">
+
+                                        <h2>  @variant.Name</h2>
+                                    </a>
+                                </div>
+                            }
+
+
+                            @if (!string.IsNullOrEmpty(variant.Sku))
+                            {
+                                <h3 class="sku-pair">
+                                    @T("Products.Sku") # @variant.Sku
+                                </h3>
+                            }
+                            @await Html.PartialAsync("_DownloadSample", variant)
+
+                            <!--price & add to cart-->
+                            @{
+                                var dataDictPrice = new ViewDataDictionary(ViewData);
+                                dataDictPrice.TemplateInfo.HtmlFieldPrefix = $"price_{variant.Id}";
+                                @await Html.PartialAsync("_ProductPrice", variant.ProductPrice, dataDictPrice)
+                            }
+                            <!--price breaks-->
+                            @await Html.PartialAsync("_ProductTierPrices", variant.TierPrices)
+                            <!--attributes-->
+                            @{
+                                if (ViewData["addtocartform"] == null || ViewData["addtocartform"] == "")
+                                {
+                                    ViewData.Add("addtocartform", "#product-details-collection");
+                                }
+                                else
+                                {
+                                    ViewData["addtocartform"] = "#product-details-collection";
+                                }
+                                ViewData["showSelectedAttributeInFront"] = true;
+                                var dataDictAttributes = new ViewDataDictionary(ViewData);
+                                dataDictAttributes.TemplateInfo.HtmlFieldPrefix = $"attributes_{variant.Id}";
+                                @await Html.PartialAsync("_Collection_ProductAttributes", variant, dataDictAttributes)
+                                ViewData["showSelectedAttributeInFront"] = null;
+                            }
+
+
+                        </div>
+
+                        <div class="variant-description description">
+                            <div class="product-more-details-link">
+                                <a href="@(Url.RouteUrl("Product", new { id=variant.Id,sename=variant.SeName}))">@T("common.moredetails")</a>
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3.33203 8H12.6654" stroke="black" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M8 3.33203L12.6667 7.9987L8 12.6654" stroke="black" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </div>
+                            <!--gift card-->
+                            @{
+                                var dataDictGiftCard = new ViewDataDictionary(ViewData);
+                                dataDictGiftCard.TemplateInfo.HtmlFieldPrefix = $"giftcard_{variant.Id}";
+                                @await Html.PartialAsync("_GiftCardInfo", variant.GiftCard, dataDictGiftCard)
+                            }
+                            <!--rental info-->
+                            @{
+                                var dataDictRental = new ViewDataDictionary(ViewData);
+                                dataDictRental.TemplateInfo.HtmlFieldPrefix = $"rental_{variant.Id}";
+                                @await Html.PartialAsync("_RentalInfo", variant, dataDictRental)
+                            }
+
+                            @{
+
+                                var dataDictAddToCart = new ViewDataDictionary(ViewData);
+
+                                dataDictAddToCart.TemplateInfo.HtmlFieldPrefix = $"addtocart_{variant.Id}";
+                                dataDictAddToCart.Add("variantId", variant.DefaultVariantId);
+                                @await Html.PartialAsync("_AddToCart", variant.AddToCart, dataDictAddToCart)
+                            }
+                            @Html.Raw(T("product.coupon.text"))
+                            <!--wishlist-->
+
+                        </div>
+
+                    </div>
+                </div>
+            }
+        </div>
+
+    </form>
+}
+
+@if (mainCollectionProduct != null)
+{
+    <div aria-labelledby="Main.Heading.Collection" role="region" class="row-mx-0 section-2">
+        <div class="container complete-collection shop-by-category">
+            <h2 id="Main.Heading.Collection">@T("Products.BuyCompleteCollection.Heading")</h2>
+            <div class="row" data-main-catid="@await _specificationAttributeService.GetMainCategoryOfProduct(mainCollectionProduct.Id)">
+                <div class="col-md-3">
+                    <a href="@Url.RouteUrl("Product", new {id=mainCollectionProduct.Id,SeName = mainCollectionProduct.SeName})" alt="@mainCollectionProduct.Name" title="@mainCollectionProduct.Name">
+                        <img width="840" height="840" style="width:100%; height:auto;" data-src="@mainCollectionProduct.DefaultPictureModel.ImageUrl" src="/images/pixel.png" alt="@mainCollectionProduct.DefaultPictureModel.AlternateText" class="w-100 lazy" />
+                    </a>
+                </div>
+                <div class="col-md-9">
+                    <div class="completecollection-box">
+                        <a href="@Url.RouteUrl("Product", new {id=mainCollectionProduct.Id,SeName = mainCollectionProduct.SeName})" alt="@mainCollectionProduct.Name" title="@mainCollectionProduct.Name">
+                            <h2>@mainCollectionProduct.Name</h2>
+                        </a>
+                        @if (!string.IsNullOrEmpty(mainCollectionProduct.CollectionMessage))
+                        {
+                            <h3>@T("Products.BuyCompleteCollection.Included.heading")</h3>
+                            <ul class="collectiondetails">
+                                @Html.Raw(mainCollectionProduct.CollectionMessage)
+                            </ul>
+                        }
+                        @if (!string.IsNullOrEmpty(mainCollectionProduct.SizeShadeMessage))
+                        {
+                            <h4>@mainCollectionProduct.SizeShadeMessage.Replace("|", ", ").Trim().TrimEnd(',')</h4>
+                        }
+
+                        <h3>@string.Format(T("products.buycompletecollection.price.text").Value, mainCollectionProduct.ProductPrice.Price)</h3>
+
+                        <a class="explore-btn" href="@Url.RouteUrl("Product", new {id=mainCollectionProduct.Id,SeName = mainCollectionProduct.SeName})" alt="@mainCollectionProduct.Name" title="@mainCollectionProduct.Name">explore this collection</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

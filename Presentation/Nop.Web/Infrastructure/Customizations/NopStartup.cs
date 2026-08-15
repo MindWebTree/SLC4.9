@@ -5,11 +5,13 @@ using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Core.Service.Discount;
 using MWT.Nop.Core.Service.FAQModule;
 using MWT.Nop.Core.Service.Zoho;
+using MWT.Nop.Core.Services;
 using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.CategoryCollection;
 using MWT.Nop.Core.Services.Configuration;
 using MWT.Nop.Core.Services.Custom;
 using MWT.Nop.Core.Services.Customers;
+using MWT.Nop.Core.Services.ElasticSearch;
 using MWT.Nop.Core.Services.FeedBack;
 using MWT.Nop.Core.Services.IPLite;
 using MWT.Nop.Core.Services.KW;
@@ -21,6 +23,7 @@ using MWT.Nop.Core.Services.Media;
 using MWT.Nop.Core.Services.Message;
 using MWT.Nop.Core.Services.Orders;
 using MWT.Nop.Core.Services.QA;
+using MWT.Nop.Core.Services.QuickFilters;
 using MWT.Nop.Core.Services.Search;
 using MWT.Nop.Core.Services.Search.RewardClaim;
 using MWT.Nop.Core.Services.Seo;
@@ -47,9 +50,9 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<ICustomProductAttributeParser, CustomProductAttributeParser>();
             services.AddScoped<ICustomProductAttributeService, CustomProductAttributeService>();
 
-            services.AddScoped<IStoreWideDiscountService,StoreWideDiscountService>();
-            services.AddScoped<ICustomizationFormSerivce,CustomizationFormSerivce>();
-            services.AddScoped<IFeedService,FeedService>();
+            services.AddScoped<IStoreWideDiscountService, StoreWideDiscountService>();
+            services.AddScoped<ICustomizationFormSerivce, CustomizationFormSerivce>();
+            services.AddScoped<IFeedService, FeedService>();
             services.AddScoped<ICustomSpecificationAttributeService, CustomSpecificationAttributeService>();
             services.AddScoped<IPictureExtendedService, PictureExtendedService>();
             services.AddScoped<IShoppingCartExtendedCartService, ShoppingCartExtendedCartService>();
@@ -114,6 +117,29 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<ICustomNewsLetterSubscriptionService, CustomNewsLetterSubscriptionService>();
             #endregion
 
+            #region ElasticSearch
+            services.AddScoped<IElasticSearchHelpService, ElasticSearchHelpService>();
+            services.AddScoped<ICustomBackInStockSubscriptionService, CustomBackInStockSubscriptionService>();
+            services.AddScoped<ICustomCategoryService, CustomCategoryService>();
+            services.AddScoped<ICustomizationFormSerivce, CustomizationFormSerivce>();
+            services.AddScoped<ICustomRecentlyViewedProductsService, CustomRecentlyViewedProductsService>();
+            services.AddScoped<ISuggestedKeywordsService, SuggestedKeywordsService>();
+            services.AddScoped<IFuzzySearchService, FuzzySearchService>();
+            services.AddScoped<IRelatedSearchService, RelatedSearchService>();
+            #endregion
+            #region QuickFilter
+            services.AddScoped<IQuickFilterService, QuickFilterService>();
+
+            #endregion
+            #region Kw
+            services.AddScoped<IKwTermService, KwTermService>();
+            services.AddScoped<IKwTemplateService, KWTemplateService>();
+            #endregion
+
+            #region Template
+            services.AddScoped<IProductTemplateSectionService, ProductTemplateSectionService>();
+
+            #endregion
         }
 
     }

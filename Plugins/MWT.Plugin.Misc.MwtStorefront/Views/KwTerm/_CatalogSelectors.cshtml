@@ -1,5 +1,5 @@
-﻿@model CatalogProductsModel
-@inject Nop.Core.IWorkContext _workContext;
+﻿@model CustomCatalogProductsModel
+@inject ICustomWorkContext _workContext;
 @if (Model.Products.Count <= 0 &&
 !Model.PriceRangeFilter.Enabled &&
 !Model.SpecificationFilter.Enabled &&
@@ -29,7 +29,7 @@
     }
     else
     {
-        <div class="position-relative filterDesktopIcon @(displayFilters?"show":"") hide">
+        <div aria-label="Filters for @Model.CategoryName" class="position-relative filterDesktopIcon @(displayFilters ? "show" : "") hide">
           
         </div>
     }
@@ -43,7 +43,7 @@
     @*sorting*@
   
 <div class="sort-by  d-sm-block ">
-    <div id="noofprdDisplay">
+        <div id="noofprdDisplay" tabindex="0">
         @Html.Raw(string.Format(T("Label.Showing").Text, (Model.PageIndex + 1) * Model.PageSize > Model.TotalItems ? Model.TotalItems : (Model.PageIndex + 1) * Model.PageSize, Model.TotalItems))
     </div>
     @if (Model.AllowProductSorting)

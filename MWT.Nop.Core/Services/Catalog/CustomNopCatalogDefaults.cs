@@ -32,7 +32,7 @@ namespace MWT.Nop.Core.Service.Catalog
         public static CacheKey PairWithProductsIdsCacheKey => new CacheKey("Nop.pairwithproduct.byproduct.{0}-{1}.ids");
 
         public static CacheKey ProductDiscountCacheKey => new CacheKey("Nop.totals.productprice.{0}-{1}-{2}-{3}-{4}-{5}-{6}-{7}" );
-
+        public static CacheKey ProductTemplateSectionsCacheKey => new CacheKey("Nop.product.Template.Sections.{0}");
         /// <summary>
         /// Gets a key pattern to clear cache
         /// </summary>

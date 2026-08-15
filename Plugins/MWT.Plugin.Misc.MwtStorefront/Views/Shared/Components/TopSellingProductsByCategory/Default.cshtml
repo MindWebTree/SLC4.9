@@ -1,6 +1,6 @@
-﻿@model Nop.Web.Models.Catalog.CatalogProductsModel
-<div class="container shop-by-category chilcategorysection" id="cat-@Model.CategoryID">
-    <h2 class="page-heading">@Model.CategoryName</h2>
+﻿@model CustomCatalogProductsModel
+<div aria-labelledby="page-main-@Model.CategoryID-heading" role="region" class="container shop-by-category chilcategorysection" id="cat-@Model.CategoryID">
+    <h2 id="page-main-@Model.CategoryID-heading" class="page-heading">@Model.CategoryName</h2>
     <div class="row">
         <div class="listinggrid col-sm-12 col-lg-12">
             <div class="row">

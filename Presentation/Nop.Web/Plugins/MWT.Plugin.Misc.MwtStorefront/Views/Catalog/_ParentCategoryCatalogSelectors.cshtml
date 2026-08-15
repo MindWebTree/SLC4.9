@@ -1,5 +1,5 @@
-﻿@model CatalogProductsModel
-@inject Nop.Core.IWorkContext _workContext;
+﻿@model CustomCatalogProductsModel
+@inject ICustomWorkContext _workContext;
 @if (Model.Products.Count <= 0 &&
 !Model.PriceRangeFilter.Enabled &&
 !Model.SpecificationFilter.Enabled &&
@@ -57,7 +57,8 @@
         }
         else
         {
-            <div class="position-relative filterDesktopIcon @(hidefilter?"border-0":"") @(displayFilters?"show":"")">
+            <div tabindex="0" role="button" aria-label="Filters for @Model.CategoryName" 
+            class="position-relative filterDesktopIcon @(hidefilter ? "border-0" : "") @(displayFilters ? "show" : "")">
                 <span class="text-filter @(hidefilter?"d-none":"")" data-filter-text="@T("catalog.filter.text")"
                       data-hidefilter-text="@T("catalog.hidefilter.text")">
                     @T(displayFilters ? "catalog.hidefilter.text" : "catalog.filter.text")
@@ -93,7 +94,7 @@
         <div class="sort-by  d-sm-block  @(_workContext.IsMobileDevice()?"hide":"")">
             @if (!_workContext.IsMobileDevice())
             {
-                <div id="noofprdDisplay">
+                <div id="noofprdDisplay" tabindex="0">
                     @Html.Raw(string.Format(T("Label.Showing").Text, (Model.PageIndex + 1) * Model.PageSize > Model.TotalItems ? Model.TotalItems : (Model.PageIndex + 1) * Model.PageSize, Model.TotalItems))
                 </div>
             }

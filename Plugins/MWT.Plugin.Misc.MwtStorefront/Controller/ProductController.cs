@@ -176,19 +176,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controller
             //model
             var model = await _productModelFactory.PrepareCustomProductDetailsModelAsync(product, updatecartitem, false, variantId);
 
+     model.IsMainProduct = true;
 
-
-
-            //template
-            var productTemplateViewPath = await _productModelFactory.PrepareProductTemplateViewPathAsync(product);
-
-            if (model.UseNewVersionOfTemplate)
-            {
-                productTemplateViewPath = "New." + productTemplateViewPath;
-            }
-            model.IsMainProduct = true;
-
-            return View(productTemplateViewPath, model);
+            return View(model.Template.ViewPath, model);
         }
         public virtual async Task<IActionResult> CustomProductDetailsWithVariantId(string productId, string SeName, int updatecartitemid = 0)
         {
@@ -294,13 +284,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controller
 
 
             //template
-            var productTemplateViewPath = await _productModelFactory.PrepareProductTemplateViewPathAsync(product);
-            if (model.UseNewVersionOfTemplate)
-            {
-                productTemplateViewPath = "New." + productTemplateViewPath;
-            }
+           
             model.IsMainProduct = true;
-            return View(productTemplateViewPath, model);
+            return View(model.Template.ViewPath, model);
         }
         public virtual async Task<IActionResult> CustomProductDetailsModern(int productId, int updatecartitemid = 0)
         {
@@ -379,9 +365,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controller
             //model
             var model = await _productModelFactory.PrepareCustomProductDetailsModelAsync(product, updatecartitem, false);
             //template
-            var productTemplateViewPath = await _productModelFactory.PrepareProductTemplateViewPathAsync(product);
+       
 
-            return View(productTemplateViewPath, model);
+            return View(model.Template.ViewPath, model);
         }
         [CheckLanguageSeoCode(true)]
         /// <returns>A task that represents the asynchronous operation</returns>

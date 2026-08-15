@@ -1,18 +1,18 @@
-﻿@model Nop.Web.Models.Catalog.CategoryModel
+﻿@model CustomCategoryModel
 @using Nop.Core.Domain.Common
 @using Nop.Core.Domain.Seo
 @inject Nop.Core.IWebHelper webHelper
 @inject SeoSettings seoSettings
 @inject CommonSettings commonSettings
-@inject Nop.Core.IWorkContext _workcontext
+@inject ICustomWorkContext _workcontext
 @{
     Layout = "_categoryTemplate_sidebar";
 
     //title
-    Html.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    NopHtml.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
     //meta
-    Html.AddMetaDescriptionParts(Model.MetaDescription);
-    Html.AddMetaKeywordParts(Model.MetaKeywords);
+    NopHtml.AddMetaDescriptionParts(Model.MetaDescription);
+    NopHtml.AddMetaKeywordParts(Model.MetaKeywords);
     //page class
     string featuredString = Context.Request.Query["featuredid"];
     int variantId = 0;
@@ -28,12 +28,12 @@
         }
     }
 
-    Html.AppendPageCssClassParts("html-category-page");
+    NopHtml.AppendPageCssClassParts("html-category-page");
 
     if (seoSettings.CanonicalUrlsEnabled)
     {
         var categoryUrl = Url.RouteUrl("Category", new { id = Model.Id, SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
-        Html.AddCanonicalUrlParts(categoryUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+        NopHtml.AddCanonicalUrlParts(categoryUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
     }
 
     var breadcrumbDelimiter = commonSettings.BreadcrumbDelimiter;
@@ -88,7 +88,7 @@ var pageSize='@Model.CatalogProductsModel.PageSize';
             <li itemprop="itemListElement" class="breadcrumb-item active" itemscope itemtype="http://schema.org/ListItem">
                 @if (isLastCategory)
                 {
-                    <strong class="current-item" itemprop="name">@cat.Name</strong>
+                    <strong tabindex="0" class="current-item" itemprop="name">@cat.Name</strong>
                     <span itemprop="item" itemscope itemtype="http://schema.org/Thing"
                           id="@Url.RouteUrl("Category", new {id=cat.Id,SeName = cat.SeName})">
                     </span>
@@ -152,7 +152,7 @@ var pageSize='@Model.CatalogProductsModel.PageSize';
                         <div class="sub-category-item card-block">
 
                             <div class="picture">
-                                <a container="#cat-@item.Id" title="@item.PictureModel.Title">
+                                <a href="#cat-@item.Id" title="@item.PictureModel.Title">
                                     <img alt="@item.PictureModel.AlternateText" class="card-img-top lazy" src="/images/pixel.png" data-src="@item.PictureModel.ImageUrl" title="@item.PictureModel.Title" />
                                 </a>
                             </div>

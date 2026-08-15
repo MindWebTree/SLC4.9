@@ -185,6 +185,14 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
                         Name = await _localizationService.GetLocalizedAsync(catBr, x => x.Name),
                         SeName = await _urlRecordService.GetSeNameAsync(catBr)
                     }).ToListAsync();
+
+                if (_seoSettings.MicrodataEnabled)
+                {
+                    var categoryBreadcrumb = model.CategoryBreadcrumb.Select(c => new CategorySimpleModel { Id = c.Id, Name = c.Name, SeName = c.SeName }).ToList();
+                    var jsonLdModel = await _jsonLdModelFactory.PrepareJsonLdCategoryBreadcrumbAsync(categoryBreadcrumb);
+                    model.JsonLd = JsonConvert
+                        .SerializeObject(jsonLdModel, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+                }
             }
 
             var currentStore = await _storeContext.GetCurrentStoreAsync();

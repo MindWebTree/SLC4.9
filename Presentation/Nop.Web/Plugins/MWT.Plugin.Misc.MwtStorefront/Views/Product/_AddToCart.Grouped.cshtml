@@ -1,0 +1,148 @@
+﻿@model CustomProductDetailsModel
+@using Nop.Core.Domain.Orders
+@inject Nop.Services.Directory.ICurrencyService _currencyService;
+@inject ICustomWorkContext _workContext;
+@inject Nop.Services.Configuration.ISettingService _settingService;
+@{
+    var addtoCartFormId = ViewData["addtocartform"].ToString();
+    string refFormId = addtoCartFormId.Replace("#", "").Replace("-", "_").Split('?')[0];
+    var isMembershipEnabled = await _settingService.GetSettingByKeyAsync<bool>("ismembershipenabled");
+    string productIds = "";
+    foreach (var product in Model.AssociatedProducts)
+    {
+        productIds += "-" + product.Id;
+    }
+}
+<div class="add-to-cart">
+    <button type="button" id="add-to-cart-button-@Model.Id" class="button-2 btn btn-primary add-to-cart-button btn btn-secondary groupedproduct-addtocart" data-productid="@Model.Id">@T("ShoppingCart.BuyNow.Collection")</button>
+</div>
+
+
+<script asp-location="Footer">
+    var groupedUrl = '@Url.RouteUrl("CustomAddProductToCart-Collections", new { formId = refFormId, isFbt = false, productIds = productIds, shoppingCartTypeId = (int)ShoppingCartType.ShoppingCart })';
+     $(".variants select,.variants input").change(function () {
+
+         setTimeout( updateCollectionPrice, 400);
+    });
+    function updateCollectionPrice() {
+        var grpPrice = 0;
+        var grpOldPrice = 0;
+        var grpMembershipPrice = 0;
+        var hasMembership = false;
+        var onSale = false;
+        $(".grpvariants .product-price").each(function (index, element) {
+            if ('@isMembershipEnabled' == 'True' && $("#grouped-membershipprice-product").length > 0) {
+                hasMembership = true;
+                grpPrice = isNaN(grpPrice) ? 0 : grpPrice;
+                grpMembershipPrice = isNaN(grpMembershipPrice) ? 0 : grpMembershipPrice;
+                grpPrice += Number($(element).find("span:last-child").text().replace(/[^0-9.-]+/g, ""), "");
+                var spanId = $(element).find("span:last-child").attr("id");
+                var productId = spanId.replace("price-value-", "");
+                var quantity = $(".grpvariants .collection-product-variant #product_enteredQuantity_" + productId).val();
+
+                spanid = "#" + spanId.replace("price-value-", "membershipPrice-value-");
+                if ($(spanid).length > 0)
+                    grpMembershipPrice += quantity * Number($(spanid).text().replace(/[^0-9.-]+/g, ""), "");
+                else
+                    grpMembershipPrice += quantity * Number($(element).find("span").text().replace(/[^0-9.-]+/g, ""), "");
+            }
+            else {
+
+                var container = $(this).find("span:last-child");
+                var productId=container.attr("id").replace("price-value-","");
+
+                var quantity = $(".grpvariants .collection-product-variant #product_enteredQuantity_" + productId).val();
+                if ($(container).find(".saleprice").length > 0 || $(container).find(".sale-price").length > 0) {
+                    var objClass= $(container).find(".saleprice").length > 0 ? ".saleprice" : ".sale-price";
+                    onSale = true;
+                    grpPrice = isNaN(grpPrice) ? 0 : grpPrice;
+                    grpOldPrice = isNaN(grpOldPrice) ? 0 : grpOldPrice;
+                    grpPrice += quantity * Number($(container).find(objClass).text().replace(/[^0-9.-]+/g, ""), "");
+                    grpOldPrice += quantity * Number($(container).find(".suggested-price").text().replace(/[^0-9.-]+/g, ""), "");
+
+                }
+                else {
+                    grpPrice = isNaN(grpPrice) ? 0 : grpPrice;
+                    grpOldPrice = isNaN(grpOldPrice) ? 0 : grpOldPrice;
+                    grpOldPrice += quantity * Number($(container).text().replace(/[^0-9.-]+/g, ""), "");
+                    grpPrice += quantity * Number($(container).text().replace(/[^0-9.-]+/g, ""), "");
+
+                }
+            }
+        });
+        console.log(grpPrice);
+        console.log(grpOldPrice);
+        if (!isNaN(grpPrice) && !isNaN(grpMembershipPrice) && hasMembership) {
+            $("#grouped-price-product").html("$" + grpPrice.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,"));
+            $("#grouped-membershipprice-product").html("$" + grpMembershipPrice.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,"));
+        }
+        else {
+            if (!isNaN(grpPrice) && !isNaN(grpOldPrice)) {
+                if (onSale) {
+                    var content = priceRangeFormat;
+                    content = content.replace("{0}", "$" + grpPrice.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,"));
+                    content = content.replace("{1}", "$" + grpOldPrice.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,"));
+                    $("#grouped-price-product").html(content);
+                    if ($(".limited-offer-grpd")) {
+                        $(".limited-offer-grpd").show();
+                    }
+                    else {
+                        $('<p class="sale-price  m-0 limited-offer-grpd">' + defaulLimitedOfferText  + '</p>').parent().insertBefore($('#grouped-price-product'));
+                    }
+                }
+                else {
+                    $("#grouped-price-product").html("$" + grpOldPrice.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,"));
+                    $(".limited-offer-grpd").show();
+                }
+            }
+        }
+    }
+
+    /*setTimeout(updateCollectionPrice, 600);*/
+    $(".groupedproduct-addtocart").click(function () {
+        var isFormValid = true;
+        $(".grpvariants select,.grpvariants input").each(function (index, element) {
+
+            var elementselected = false;
+
+            if ($(element).prop('nodeName') == "INPUT" && $(element).attr('type') == "radio") {
+
+                if ($("input[name='" + $(element).attr("name") + "']:checked").length > 0) {
+                    elementselected = true;
+
+                }
+
+            }
+            else if ($(element).prop('nodeName') == "INPUT" && ($(element).attr('type') == "text" || $(element).attr('type') == "number")) {
+
+                if ($(element).val() != "") {
+                    elementselected = true;
+
+                }
+
+            }
+            else if ($(element).val() != "" && $(element).val() != "0") {
+                elementselected = true;
+            }
+            else {
+                console.log($(element));
+            }
+
+            if (!elementselected) {
+                isFormValid = false;
+
+                var top = $(element).parent().offset().top;
+
+                $('html, body').animate({
+                    scrollTop: top
+                }, 2000);
+                return false;
+            }
+        });
+        if (isFormValid) {
+            processGroupedProductInfo();
+            AjaxCart.addproducttocart_details(groupedUrl, '#product-details-form');
+        }
+    });
+
+</script>

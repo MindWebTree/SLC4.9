@@ -35,7 +35,7 @@
     {
 <h3 class="product-price">
     <span>   @T("Product.Label.RegularPrice")</span><span>:</span>
-    <span id="price-value-@(Model.ProductId)" class="price-value-@(Model.ProductId)">
+    <span id="price-value-@(Model.ProductId)" class="price-value-@(Model.ProductId)" >
         @T("Price.Range",
 !string.IsNullOrEmpty(Model.MinOldPrice) ? Model.MinOldPrice : Model.MinPrice,
 !string.IsNullOrEmpty(Model.MaxOldPrice) ? Model.MaxOldPrice : Model.MaxPrice)
@@ -59,7 +59,10 @@
 <p class="sale-price  m-0 limited-offer-@(Model.ProductId)">@Html.Raw(offerText)</p> }
 
 <h3 class="product-price">
-    <span id="price-value-@(Model.ProductId)" class="price-value-@(Model.ProductId)">
+<span id="price-value-@(Model.ProductId)" class="price-value-@(Model.ProductId)" aria-label="Sale price @(!string.IsNullOrEmpty(Model.MinPrice) ? Model.MinPrice : Model.MinOldPrice) to
+                                             @(!string.IsNullOrEmpty(Model.MaxPrice) ? Model.MaxPrice : Model.MaxOldPrice),
+                                             regular price @(!string.IsNullOrEmpty(Model.MinOldPrice) ? Model.MinOldPrice : Model.MinPrice)
+                                             to @(!string.IsNullOrEmpty(Model.MaxOldPrice) ? Model.MaxOldPrice : Model.MaxPrice)">
         @T("Price.Range.With.Saleprice",
 !string.IsNullOrEmpty(Model.MinPrice) ? Model.MinPrice : Model.MinOldPrice,
 !string.IsNullOrEmpty(Model.MaxPrice) ? Model.MaxPrice : Model.MaxOldPrice,
@@ -75,7 +78,8 @@
 <p class="sale-price  m-0 limited-offer-@(Model.ProductId)">@Html.Raw(offerText)</p> }
 <h3 class="product-price">
 
-    <span id="price-value-@(Model.ProductId)" class="price-value-@(Model.ProductId)">
+<span id="price-value-@(Model.ProductId)" class="price-value-@(Model.ProductId)" aria-label="Sale price @(!string.IsNullOrEmpty(Model.MinOldPrice) ? Model.MinOldPrice : Model.MinPrice)
+                                            to @(!string.IsNullOrEmpty(Model.MaxOldPrice) ? Model.MaxOldPrice : Model.MaxPrice)">
         @T("Price.Range",
 !string.IsNullOrEmpty(Model.MinOldPrice) ? Model.MinOldPrice : Model.MinPrice,
 !string.IsNullOrEmpty(Model.MaxOldPrice) ? Model.MaxOldPrice : Model.MaxPrice)
@@ -110,7 +114,7 @@
                                                                 {
                                 <p class="sale-price  m-0 limited-offer-@(Model.ProductId)">@Html.Raw(offerText)</p> }
                                 <h3 class="product-price">
-                                    <span id="price-value-@(Model.ProductId)" class="price-value-@(Model.ProductId)">
+                                <span id="price-value-@(Model.ProductId)" class="price-value-@(Model.ProductId)" aria-label="Sale price @Model.Price, regular price @Model  .OldPrice">
                                         <span class="sale-price">@Model.Price</span><span class="suggested-price">@Model.OldPrice</span>
                                     </span>
                                 </h3> }
@@ -121,7 +125,7 @@
                                 <p class="sale-price  m-0 limited-offer-@(Model.ProductId)">@Html.Raw(offerText)</p> }
                                 <h3 class="product-price">
                                     @*render price*@
-                                    <span id="price-value-@(Model.ProductId)" class="price-value-@(Model.ProductId)">
+                                <span id="price-value-@(Model.ProductId)" class="price-value-@(Model.ProductId)" aria-label="Price @(!string.IsNullOrEmpty(Model.OldPrice) ? Model.OldPrice : Model.Price)">
                                         @(!string.IsNullOrEmpty(Model.OldPrice) ? Model.OldPrice : Model.Price)
                                     </span>
                                 </h3>}

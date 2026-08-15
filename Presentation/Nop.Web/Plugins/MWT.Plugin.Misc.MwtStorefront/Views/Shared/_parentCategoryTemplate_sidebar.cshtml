@@ -1,5 +1,7 @@
-﻿@inject Nop.Core.IWorkContext _workContext;
-@inject Nop.Services.Localization.ILocalizationService _localizationService;
+﻿@using MWT.Nop.Core.Infrastructure
+@using Nop.Services.Localization
+@inject ICustomWorkContext _workContext;
+@inject  ILocalizationService _localizationService;
 @{
     Layout = "_Root";
 }

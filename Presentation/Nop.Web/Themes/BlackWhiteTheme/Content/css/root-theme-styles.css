@@ -22,7 +22,9 @@ h5#pdfModalLabel {
     padding: 0 !important;
     letter-spacing: 0 !important
 }
-
+.modal-backdrop.fade.show {
+    display: none;
+}
 #pdfModal button.btn-close {
     color: #444444;
     opacity: 1;

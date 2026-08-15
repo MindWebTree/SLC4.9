@@ -1,0 +1,115 @@
+﻿@model CustomProductDetailsModel
+@using Nop.Core
+@using System.Globalization;
+@using Nop.Core.Domain.Tax
+@inject IWorkContext workContext
+@inject Nop.Services.Catalog.IPriceFormatter _priceFormatter
+@inject Nop.Services.Configuration.ISettingService _settingService;
+@{ var isMembershipEnabled = await _settingService.GetSettingByKeyAsync<bool>("ismembershipenabled");
+                decimal price = 0;
+                decimal memberShipPrice = 0;
+                bool hasMemberShipPrice = false;
+                decimal oldPrice = 0;
+                var defaultConfiguration = Model.AssociatedProductsConfiguration.Where(c => c.ProductAttributeOptionId == 0).FirstOrDefault();
+                if (isMembershipEnabled)
+                {
+                    foreach (var product in Model.AssociatedProducts)
+                    {
+                        var quantity = defaultConfiguration?.Configurations.Where(c => c.ProductId == product.Id).FirstOrDefault()?.Quantity ?? 1;
+                        if (product.AddToCart.AllowedQuantities.Count > 0)
+                        {
+                            if (Convert.ToInt32(product.AddToCart.AllowedQuantities.Max(q => Convert.ToInt32(q.Value))) < quantity)
+                            {
+                                quantity = 1;
+                            }
+                        }
+                        price = price + quantity * (
+                            Decimal.Parse(string.IsNullOrEmpty(product.ProductPrice.OldPrice) ? product.ProductPrice.Price.Replace("\"", "") :
+                            product.ProductPrice.OldPrice.Replace("\"", ""), NumberStyles.Currency));
+
+                        if (!string.IsNullOrEmpty(product.ProductPrice.MembershipPrice))
+                        {
+                            hasMemberShipPrice = true;
+                        }
+                        memberShipPrice = memberShipPrice +
+                        quantity * (
+                            Decimal.Parse(string.IsNullOrEmpty(product.ProductPrice.MembershipPrice) ? (string.IsNullOrEmpty(product.ProductPrice.OldPrice)
+                            ? product.ProductPrice.Price.Replace("\"", "") : product.ProductPrice.OldPrice.Replace("\"", "")) :
+                            product.ProductPrice.MembershipPrice.Replace("\"", ""), NumberStyles.Currency));
+                    }
+
+
+
+                }
+                else
+                {
+
+                    foreach (var product in Model.AssociatedProducts)
+                    {
+                        var quantity = defaultConfiguration?.Configurations.Where(c => c.ProductId == product.Id).FirstOrDefault()?.Quantity ?? 1;
+                        if (product.AddToCart.AllowedQuantities.Count > 0)
+                        {
+                            if (Convert.ToInt32(product.AddToCart.AllowedQuantities.Max(q => Convert.ToInt32(q.Value))) < quantity)
+                            {
+                                quantity = 1;
+                            }
+                        }
+                        oldPrice = oldPrice + quantity * (Decimal.Parse(string.IsNullOrEmpty(product.ProductPrice.OldPrice) ?
+                        product.ProductPrice.Price.Replace("\"", "") : product.ProductPrice.OldPrice.Replace("\"", ""), NumberStyles.Currency));
+                        price = price + quantity * (
+                            Decimal.Parse(string.IsNullOrEmpty(product.ProductPrice.Price) ?
+                     product.ProductPrice.OldPrice.Replace("\"", "") : product.ProductPrice.Price.Replace("\"", ""), NumberStyles.Currency));
+                    }
+                } }
+@if (hasMemberShipPrice)
+{
+<div class="prices">
+    <h3>
+        <span>@T("Product.Label.CollectionPrice")</span>
+        <span>:</span>
+        <span class="price-value-@(Model.Id)" id="grouped-price-product">
+            @Html.Raw(await _priceFormatter.FormatPriceAsync(price))
+        </span>
+
+    </h3>
+
+    <h3>
+        <span> @T(!isMembershipEnabled ? "Product.Label.CollectionPrice" : "Product.Label.MembershipPrice")</span>
+        <span>:</span>
+        <span class="price-value-@(Model.Id)" id="grouped-membershipprice-product">
+            @Html.Raw(await _priceFormatter.FormatPriceAsync(memberShipPrice))
+        </span>
+    </h3>
+</div> }
+            else
+            {
+                if (price > 0 && oldPrice > 0 && price != oldPrice)
+                {
+<div class="prices">
+    @if (!string.IsNullOrEmpty(Model.ProductPrice.OfferText))
+    {
+<p class="sale-price  m-0 limited-offer-grpd">@Html.Raw(Model.ProductPrice.OfferText)</p>}
+    <h3>
+        <span class="price-value_@(Model.Id)" id="grouped-price-product">
+            <span class="sale-price">
+                @Html.Raw(await _priceFormatter.FormatPriceAsync(price))
+            </span><span class="suggested-price"> @Html.Raw(await _priceFormatter.FormatPriceAsync(oldPrice))</span>
+        </span>
+    </h3>
+</div> }
+                else
+                {
+
+<div class="prices">
+    @if (!string.IsNullOrEmpty(Model.ProductPrice.OfferText))
+    {
+<p class="sale-price  m-0 limited-offer-grpd">@Html.Raw(Model.ProductPrice.OfferText)</p>}
+    <h3>
+        <span class="price-value_@(Model.Id)" id="grouped-price-product">
+            @Html.Raw(await _priceFormatter.FormatPriceAsync(oldPrice == 0 ? price : oldPrice))
+        </span>
+    </h3>
+</div>}
+            }
+
+

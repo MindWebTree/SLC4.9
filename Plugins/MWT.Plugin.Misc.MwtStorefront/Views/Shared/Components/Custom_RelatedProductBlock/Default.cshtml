@@ -1,0 +1,236 @@
+﻿
+@using Nop.Core
+@model CustomProductOverviewModel
+@if (Model != null)
+{
+    string offerText = CustomCommonHelper.GetProductOfferText(Model.Id, Model.ProductPrice.OfferText, Model.ProductPrice.OfferPlaceHolder, Model.ProductPrice.DiscountAmount, Model.ProductPrice.DiscountPercentage, Model.ProductPrice.SaleEndDate, false);
+
+
+    <div aria-labelledby="related-product-heading" class="you-may-also-need-section">
+        <h2 id="related-product-heading">@T("product.YouMayAlsoNeed")</h2>
+    <div class="inner-sec-need">
+        <div class="product-image"><img alt="@Model.DefaultPictureModel.AlternateText" src="/images/pixel.png" data-src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" class="lazy" /></div>
+        <div class="product-details">
+            <h3><a href="@Url.RouteUrl("Product", new {id=Model.Id,SeName = Model.SeName})">@Model.Name</a></h3>
+            <div class="price-sec">
+                @if (Model.ProductPrice.IsVariantProduct)
+                {
+
+
+            @if (!string.IsNullOrEmpty(Model.ProductPrice.MinMembershipPrice))
+            {
+            <h4 class="price actual-price">
+                @T("Label.RegularPrice")
+                @T("Price.Range",
+            !string.IsNullOrEmpty(Model.ProductPrice.MinOldPrice) ? Model.ProductPrice.MinOldPrice : Model.ProductPrice.MinPrice,
+            !string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ? Model.ProductPrice.MaxOldPrice : Model.ProductPrice.MaxPrice)
+            </h4>
+                                    <h5 class="price old-price">
+                                        @T("Label.MembershipPrice")
+                                        @T("Price.Range", Model.ProductPrice.MinMembershipPrice, Model.ProductPrice.MaxMembershipPrice)
+                                    </h5> }
+                                else
+                                {
+            @if (Model.ProductPrice.MinOldPriceValue > 0 && Model.ProductPrice.MinPriceValue > 0 && (Model.ProductPrice.MinOldPriceValue != Model.ProductPrice.MinPriceValue || Model.ProductPrice.MaxPriceValue != Model.ProductPrice.MaxOldPriceValue))
+            {
+                if (!string.IsNullOrEmpty(Model.ProductPrice.OfferText))
+                {
+            <p class="sale-price  m-0 offertext-p">@Html.Raw(offerText)</p> }
+
+            <h4 class="price actual-price sale-price">
+                @T("Price.Range.With.Saleprice",
+            !string.IsNullOrEmpty(Model.ProductPrice.MinPrice) ? Model.ProductPrice.MinPrice : Model.ProductPrice.MinOldPrice,
+            !string.IsNullOrEmpty(Model.ProductPrice.MaxPrice) ? Model.ProductPrice.MaxPrice : Model.ProductPrice.MaxOldPrice,
+            !string.IsNullOrEmpty(Model.ProductPrice.MinOldPrice) ? Model.ProductPrice.MinOldPrice : Model.ProductPrice.MinPrice,
+            !string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ? Model.ProductPrice.MaxOldPrice : Model.ProductPrice.MaxPrice
+            )
+            </h4> }
+        else
+        {
+            if (!string.IsNullOrEmpty(Model.ProductPrice.OfferText))
+            {
+            <p class="sale-price  m-0 offertext-p">@Html.Raw(offerText)</p> }
+            <h4 class="price actual-price">
+                @T("Price.Range",
+            !string.IsNullOrEmpty(Model.ProductPrice.MinOldPrice) ? Model.ProductPrice.MinOldPrice : Model.ProductPrice.MinPrice,
+            !string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ? Model.ProductPrice.MaxOldPrice : Model.ProductPrice.MaxPrice)
+            </h4>}} }
+        else
+        {
+            @if (!string.IsNullOrEmpty(Model.ProductPrice.MembershipPrice))
+            {
+            <h4 class="price actual-price">@T("Label.RegularPrice")@(!string.IsNullOrEmpty(Model.ProductPrice.OldPrice) ? Model.ProductPrice.OldPrice : Model.ProductPrice.Price)</h4>
+                                    <h5 class="price old-price">@T("Label.MembershipPrice")@Model.ProductPrice.MembershipPrice</h5> }
+                                else
+                                {
+            @if (Model.ProductPrice.OldPriceValue > 0 && Model.ProductPrice.PriceValue > 0 && Model.ProductPrice.OldPrice != Model.ProductPrice.Price)
+            {
+                if (!string.IsNullOrEmpty(Model.ProductPrice.OfferText))
+                {
+            <p class="sale-price  m-0 offertext-p">@Html.Raw(offerText)</p> }
+            <h4 class="price actual-price">
+                <p class="sale-price">@Model.ProductPrice.Price<span class="suggested-price">@Model.ProductPrice.OldPrice</span></p>
+            </h4> }
+        else
+        {
+            if (!string.IsNullOrEmpty(Model.ProductPrice.OfferText))
+            {
+            <p class="sale-price  m-0 offertext-p">@Html.Raw(offerText)</p> }
+            <h4 class="price actual-price">
+                @(
+                            !string.IsNullOrEmpty(Model.ProductPrice.OldPrice) ? Model.ProductPrice.OldPrice : Model.ProductPrice.Price
+                            )
+            </h4>}}}
+            </div>
+            <a class="view-details" href="@Url.RouteUrl("Product", new {id=Model.Id,SeName = Model.SeName})">View Details</a>
+        </div>
+    </div>
+</div>
+
+}
+
+<style>
+.you-may-also-need-section h3 a {
+margin:0px;
+}
+.you-may-also-need-section h2 {
+    font-size: 16px;
+    color: #444;
+    margin: 0px 0 15px 0 !important;
+    float: left;
+    width: 100%;
+    font-weight: 700;
+}
+    .you-may-also-need-section .inner-sec-need .product-image img {
+        max-width: 128px;
+    }
+.you-may-also-need-section .inner-sec-need {
+    display: flex;
+    gap: 15px;
+    background: #ECECF073;
+    padding: 20px;
+}
+    .you-may-also-need-section .offertext-p {
+        padding-bottom: 10px;
+    }
+ 
+.you-may-also-need-section .inner-sec-need .product-details h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #444;
+    text-align: left !important;
+    line-height: 16px;
+}
+
+.you-may-also-need-section .price-sec {
+      align-items: start;
+    gap: 0;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+    .you-may-also-need-section h4.price.actual-price.sale-price span.saleprice,
+.you-may-also-need-section h4.price.actual-price .sale-price	{
+        font-weight: 400 !important;
+        font-size: 16px !important;
+		padding:0 !important;
+		display: flex;
+    align-items: center;
+    gap: 6px;
+	    margin-bottom: 0;
+    }
+	.you-may-also-need-section p.sale-price.m-0.offertext-p {
+    display: flex;
+    gap: 10px;
+    color: #B80000 !important;
+    font-size: 14px !important;
+    margin: 5px 0 3px 0 !important;
+    padding: 0;
+}
+.you-may-also-need-section h4.price.actual-price {
+       color: #B80000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex;
+    font-weight: 400 !important;
+    font-size: 16px !important;
+    align-items: center;
+    gap: 6px;
+}
+.you-may-also-need-section h4.price.actual-price .suggested-price {
+  margin: 0 !important;
+    padding: 0 !important;
+    font-size: 16px;
+    color: #303030 !important;
+    text-decoration: line-through;
+}
+    .you-may-also-need-section .current-price {
+        color: #B80000;
+        font-size: 16px;
+    }
+.you-may-also-need-section .old-price {
+    font-size: 16px;
+    color: #303030;
+    text-decoration: line-through;
+}
+.you-may-also-need-section .product-details {
+    display: flex;
+    flex-direction: column;
+}
+.you-may-also-need-section .view-details {
+    width: 132px;
+    height: 32px;
+    line-height: 32px;
+    text-decoration: none !important;
+    border: 1px solid #444444;
+    text-align: center;
+    font-size: 14px;
+    text-transform: uppercase;
+    background:#ffffff;
+   color: #444444;
+font-weight:400;
+}
+.you-may-also-need-section .view-details:hover{
+background: #444;
+color:#fff;
+}
+.you-may-also-need-section .inner-sec-need .product-details h3 a{
+margin:0;
+}
+.you-may-also-need-section .inner-sec-need .product-details h3 a {
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+@@media screen and (max-width: 767px) {
+.you-may-also-need-section h4.price.actual-price, .you-may-also-need-section h4.price.actual-price span {
+    flex-direction: column;
+    gap: 0;
+    font-size: 14px !important;
+}
+.you-may-also-need-section p.sale-price.m-0.offertext-p {
+    font-size: 13px !important;
+    gap: 4px;
+    margin: 3px 0 2px 0 !important;
+}
+.you-may-also-need-section .inner-sec-need .product-image img {
+    width: 112px;
+}
+
+.you-may-also-need-section .inner-sec-need {
+    padding: 15px;
+}
+    .you-may-also-need-section h2{
+        display:block;
+		        padding-top: 30px;
+    }
+    .you-may-also-need-section h4.price.actual-price.sale-price span:first-child {
+        font-weight: 400 !important;
+        font-size: 14px !important;
+    }
+}
+</style>

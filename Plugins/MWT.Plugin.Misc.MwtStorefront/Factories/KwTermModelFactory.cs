@@ -33,7 +33,7 @@ using System.Threading.Tasks;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Factories
 {
-    public partial class KwTermModelFactory
+    public partial class KwTermModelFactory : IKwTermModelFactory
     {
 
         #region Fields

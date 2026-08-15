@@ -153,7 +153,7 @@ margin: 0 !important;
 }
 .header-lower {
     position: relative;
-    z-index: 1;
+/*    z-index: 1;*/
     padding: 30px 0 0 0;
 }
 

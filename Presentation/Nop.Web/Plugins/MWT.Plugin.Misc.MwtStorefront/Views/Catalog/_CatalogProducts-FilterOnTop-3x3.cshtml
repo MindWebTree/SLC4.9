@@ -1,11 +1,11 @@
-﻿@model CatalogProductsModel
+﻿@model CustomCatalogProductsModel
 @inject IThemeContext themeContext
 
 @{
     var themeName = await themeContext.GetWorkingThemeNameAsync();
 }
 @{
-    Html.AddScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/public.catalogproducts.js?version=37");
+    NopHtml.AddScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/public.catalogproducts.js?version=37");
 }
 
 <div class="products-container">

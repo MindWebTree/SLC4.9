@@ -1,7 +1,7 @@
-﻿@model CatalogProductsModel
-@inject Nop.Core.IWorkContext _workContext
-@inject Nop.Services.Configuration.ISettingService _settingService;
-@inject Nop.Services.Catalog.ICategoryService _categoryService
+﻿@model CustomCatalogProductsModel
+@inject ICustomWorkContext _workContext
+@inject ISettingService _settingService;
+@inject ICustomCategoryService _categoryService
 @using System.Text.RegularExpressions
 @using Microsoft.AspNetCore.Http
 @inject Nop.Core.IWebHelper webHelper
@@ -41,9 +41,9 @@
         catModel.Id = entityId;
     else
         catModel.Id = Model.CategoryID;
-    bool hasThirdBanner = Model.ShowBanner && await _categoryService.IsMwtWidgetApplied(PublicWidgetZones.CategoryDetailsProductListThirdPosition, catModel.Id, "Category", _workContext.IsMobileDevice());
-    bool hasSixthBanner = Model.ShowBanner && await _categoryService.IsMwtWidgetApplied(PublicWidgetZones.CategoryDetailsProductListSixthPosition, catModel.Id, "Category", _workContext.IsMobileDevice());
-    bool hasNinthBanner = Model.ShowBanner && await _categoryService.IsMwtWidgetApplied(PublicWidgetZones.CategoryDetailsProductListNinthPosition, catModel.Id, "Category", _workContext.IsMobileDevice());
+    bool hasThirdBanner = Model.ShowBanner && await _categoryService.IsMwtWidgetApplied(CustomPublicWidgetZones.CategoryDetailsProductListThirdPosition, catModel.Id, "Category", _workContext.IsMobileDevice());
+    bool hasSixthBanner = Model.ShowBanner && await _categoryService.IsMwtWidgetApplied(CustomPublicWidgetZones.CategoryDetailsProductListSixthPosition, catModel.Id, "Category", _workContext.IsMobileDevice());
+    bool hasNinthBanner = Model.ShowBanner && await _categoryService.IsMwtWidgetApplied(CustomPublicWidgetZones.CategoryDetailsProductListNinthPosition, catModel.Id, "Category", _workContext.IsMobileDevice());
 
 }
 @if (Model.Products.Count > 0)
@@ -72,7 +72,7 @@
         @foreach (var product in Model.Products)
         {
             <div class="col-sm-6 col-lg-4 cat-box">
-                @await Html.PartialAsync(product.Inventory <= 0 ? "_version2Catgory_ProductBox_OutOfStock" : "_version2Catgory_ProductBox", product)
+                @await Html.PartialAsync(product.Inventory <= 0 ? "_Catgory_ProductBox_OutOfStock" : "_Catgory_ProductBox", product)
             </div>
             if (counter == 2)
             {
@@ -83,7 +83,7 @@
                 if (hasThirdBanner)
                 {
                     <div class="col-sm-6 col-lg-4 cat-box">
-                        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsProductListThirdPosition, additionalData = catModel })
+                        @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsProductListThirdPosition, additionalData = catModel })
                     </div>
                 }
             }
@@ -96,7 +96,7 @@
                 if (hasSixthBanner)
                 {
                     <div class="col-sm-6 col-lg-4 cat-box">
-                        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsProductListSixthPosition, additionalData = catModel })
+                        @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsProductListSixthPosition, additionalData = catModel })
                     </div>
                 }
             }
@@ -109,13 +109,13 @@
                 if (hasNinthBanner)
                 {
                     <div class="col-sm-6 col-lg-4 cat-box">
-                        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsProductListNinthPosition, additionalData = catModel })
+                        @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsProductListNinthPosition, additionalData = catModel })
                     </div>
                 }
             }
             if (counter == rowPosition)
             {
-                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsProductListMiddle, additionalData = catModel })
+                @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsProductListMiddle, additionalData = catModel })
             }
             counter++;
         }

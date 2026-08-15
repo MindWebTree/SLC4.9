@@ -1,4 +1,4 @@
-﻿@model SpecificationFilterModel
+﻿@model CustomSpecificationFilterModel
 @{
     List<int> openTabs = new List<int>();
   
@@ -12,7 +12,10 @@
 @foreach (var attr in Model.Attributes)
 {
 
-    <div class="card-header @(openTabs.Contains(attr.Id)?"":"collapsed") @(attr.Values.Any(x => !string.IsNullOrEmpty(x.ColorSquaresRgb)) ? "product-spec-color" : null )"
+    <div role="button"
+         tabindex="0"
+         aria-label="@attr.Name" 
+         class="card-header @(openTabs.Contains(attr.Id) ? "" : "collapsed") @(attr.Values.Any(x => !string.IsNullOrEmpty(x.ColorSquaresRgb)) ? "product-spec-color" : null)"
          data-bs-toggle="collapse" href="#collapse_@attr.Id" id="filter-btn-@attr.Id" data-filter-name="@(attr.Id == -1 ? attr.Sename : attr.Name)">
         <span class="card-title">
             <strong>@attr.Name</strong>

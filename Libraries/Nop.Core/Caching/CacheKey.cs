@@ -31,14 +31,21 @@ public partial class CacheKey
     /// <returns>Cache key</returns>
     public virtual CacheKey Create(Func<object, object> createCacheKeyParameters, params object[] keyObjects)
     {
-        var cacheKey = new CacheKey(Key);
+        try
+        {
+            var cacheKey = new CacheKey(Key);
 
-        if (!keyObjects.Any())
+            if (!keyObjects.Any())
+                return cacheKey;
+
+            cacheKey.Key = string.Format(cacheKey.Key, keyObjects.Select(createCacheKeyParameters).ToArray());
+
             return cacheKey;
-
-        cacheKey.Key = string.Format(cacheKey.Key, keyObjects.Select(createCacheKeyParameters).ToArray());
-
-        return cacheKey;
+        }
+        catch (FormatException ex)
+        {
+            throw new FormatException($"Cache key '{Key}' has invalid format. {ex.Message}", ex);
+        }
     }
 
     #endregion
@@ -49,7 +56,7 @@ public partial class CacheKey
     /// Gets or sets a cache key
     /// </summary>
     public string Key { get; protected set; }
-    
+
     /// <summary>
     /// Gets or sets a cache time in minutes
     /// </summary>

@@ -1,18 +1,18 @@
-﻿@model CategoryModel
+﻿@model CustomCategoryModel
 @using Nop.Core.Domain.Common
 @using Nop.Core.Domain.Seo
-@inject Nop.Core.IWebHelper webHelper
+@inject IWebHelper webHelper
 @inject SeoSettings seoSettings
 @inject CommonSettings commonSettings
-@inject Nop.Core.IWorkContext _workcontext
+@inject ICustomWorkContext _workcontext
 @{
     Layout = "_categoryTemplate";
 
     //title
-    Html.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    NopHtml.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
     //meta
-    Html.AddMetaDescriptionParts(Model.MetaDescription);
-    Html.AddMetaKeywordParts(Model.MetaKeywords);
+    NopHtml.AddMetaDescriptionParts(Model.MetaDescription);
+    NopHtml.AddMetaKeywordParts(Model.MetaKeywords);
     //page class
     string featuredString = Context.Request.Query["featuredid"];
     int variantId = 0;
@@ -27,65 +27,69 @@
             int.TryParse(parts[1], out variantId);
         }
     }
-    Html.AppendPageCssClassParts("html-category-page");
+    NopHtml.AppendPageCssClassParts("html-category-page");
 
     if (seoSettings.CanonicalUrlsEnabled)
     {
         var categoryUrl = Url.RouteUrl("Category", new { id = Model.Id, SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
-        Html.AddCanonicalUrlParts(categoryUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+        NopHtml.AddCanonicalUrlParts(categoryUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
     }
 
     var breadcrumbDelimiter = commonSettings.BreadcrumbDelimiter;
 }
 @*category breadcrumb*@
 @section Breadcrumb
-    {
+{
     @if (Model.DisplayCategoryBreadcrumb)
     {
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb" itemscope itemtype="http://schema.org/BreadcrumbList">
-        @{
-            int position = 1;
-        }
-        <li class="breadcrumb-item">
-            <span itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
-                <a href="@Url.RouteUrl("Homepage")" itemprop="item">
-                    <span  itemprop="name">@T("Categories.Breadcrumb.Top")</span>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" itemscope itemtype="http://schema.org/BreadcrumbList">
+                @{
+                    int position = 1;
+                }
+                <li class="breadcrumb-item">
+                    <span itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                        <a href="@Url.RouteUrl("Homepage")" itemprop="item">
+                            <span itemprop="name">@T("Categories.Breadcrumb.Top")</span>
 
-                </a>
-                <meta itemprop="position" content="@position" />
-            </span>
-        </li>
-
-
-
-        @{position++;}
-
-        @foreach (var cat in Model.CategoryBreadcrumb)
-        {
-            var isLastCategory = cat.Id == Model.Id;
-            <li itemprop="itemListElement" class="breadcrumb-item active" itemscope itemtype="http://schema.org/ListItem">
-                @if (isLastCategory)
-                {
-                    <strong class="current-item" itemprop="name">@cat.Name</strong>
-                    <span itemprop="item" itemscope itemtype="http://schema.org/Thing"
-                          id="@Url.RouteUrl("Category", new {id=cat.Id,SeName = cat.SeName})">
+                        </a>
+                        <meta itemprop="position" content="@position" />
                     </span>
+                </li>
+
+
+
+                @{
+                    position++;
                 }
-                else
+
+                @foreach (var cat in Model.CategoryBreadcrumb)
                 {
-                    <a href="@Url.RouteUrl("Category", new {id=cat.Id, SeName = cat.SeName })" title="@cat.Name" itemprop="item">
-                        <span itemprop="name">@cat.Name</span>
-                    </a>
+                    var isLastCategory = cat.Id == Model.Id;
+                    <li itemprop="itemListElement" class="breadcrumb-item active" itemscope itemtype="http://schema.org/ListItem">
+                        @if (isLastCategory)
+                        {
+                            <strong tabindex="0" class="current-item" itemprop="name">@cat.Name</strong>
+                            <span itemprop="item" itemscope itemtype="http://schema.org/Thing"
+                                  id="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })">
+                            </span>
+                        }
+                        else
+                        {
+                            <a href="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })" title="@cat.Name" itemprop="item">
+                                <span itemprop="name">@cat.Name</span>
+                            </a>
+                        }
+                        <meta itemprop="position" content="@position" />
+                        @{
+                            position++;
+                        }
+                    </li>
+
                 }
-                <meta itemprop="position" content="@position" />
-                @{position++;}
-            </li>
 
-        }
-
-    </ol>
-</nav>
+            </ol>
+        </nav>
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsAfterBreadcrumb, additionalData = Model })
     }
 }
@@ -106,10 +110,10 @@
             {
                 categoryId = Model.Id,
                 catSeName = Url.RouteUrl("Category", new { id = Model.Id, SeName = Model.SeName }),
-        currentPageurl = Url.RouteUrl("Category", new { id = Model.Id, SeName = Model.SeName })
-            })
-        </div>
-    }
+                currentPageurl = Url.RouteUrl("Category", new { id = Model.Id, SeName = Model.SeName })
+                })
+    </div>
+        }
     @*@section QuickFilter{
         @await Component.InvokeAsync("QuickFilter", new { entityId = Model.Id, entityType = "Category", heading = Model.QuickFilterHeading })
     }*@
@@ -130,12 +134,12 @@
                         <div class="sub-category-item card-block">
 
                             <div class="picture">
-                                <a container="@Url.RouteUrl("Category", new {id=item.Id, SeName = item.SeName })" title="@item.PictureModel.Title">
+                                <a href="@Url.RouteUrl("Category", new { id = item.Id, SeName = item.SeName })" title="@item.PictureModel.Title">
                                     <img alt="@item.PictureModel.AlternateText" class="card-img-top lazy" src="/images/pixel.png" data-src="@item.PictureModel.ImageUrl" title="@item.PictureModel.Title" />
                                 </a>
                             </div>
                             <h2 class="title">
-                                <a container="@Url.RouteUrl("Category", new {id=item.Id, SeName = item.SeName })" class="card-title" title="@item.PictureModel.Title">
+                                <a container="@Url.RouteUrl("Category", new { id = item.Id, SeName = item.SeName })" class="card-title" title="@item.PictureModel.Title">
                                     @item.Name
                                 </a>
                             </h2>
@@ -265,17 +269,20 @@
         {
             <div class=" shop-by-category about-buffet">
                 <h2>@Html.Raw(string.Format(T("Catalog.description.heading.Description").Text, Model.Name))</h2>
-                <div class="category-description" @if (Model.Description.Length > 500) { <text> style="height:250px;overflow:hidden" </text>  }>
+                <div class="category-description" @if (Model.Description.Length > 500) {
+                <text> style="height:250px;overflow:hidden" </text>
+            }
+>
                     @Html.Raw(Model.Description)
                 </div>
-                @if (Model.Description.Length > 500)
-                {
-                    <div class="w-100 text-right">
-                        <a href="#" id="lessmore" data-more-text="@T("Button.More")" data-less-text="@T("Button.Less")">@T("Button.More")&nbsp;<i class="fas fa-angle-down"></i></a>
-                    </div>
+            @if (Model.Description.Length > 500)
+            {
+                <div class="w-100 text-right">
+                    <a href="#" id="lessmore" data-more-text="@T("Button.More")" data-less-text="@T("Button.Less")">@T("Button.More")&nbsp;<i class="fas fa-angle-down"></i></a>
+                </div>
+            }
+        </div>
                 }
-            </div>
-        }
         @*//Related Search*@
 
         @await Component.InvokeAsync("RelatedSearchTerms", new { entityId = Model.Id, entityType = "Category" })

@@ -1,7 +1,7 @@
-﻿@model CatalogProductsModel
-@inject Nop.Core.IWorkContext _workContext
-@inject Nop.Services.Configuration.ISettingService _settingService;
-@inject Nop.Services.Catalog.ICategoryService _categoryService
+﻿@model CustomCatalogProductsModel
+@inject ICustomWorkContext _workContext
+@inject ISettingService _settingService;
+@inject ICustomCategoryService _categoryService
 @{
     var EnableInfiniteScroll = false;
     bool.TryParse((string)ViewBag.EnableInfiniteScroll, out EnableInfiniteScroll);
@@ -20,7 +20,7 @@
         catModel.Id = entityId;
     else
         catModel.Id = Model.CategoryID;
-    bool hasThirdBanner = await _categoryService.IsMwtWidgetApplied(PublicWidgetZones.CategoryDetailsProductListThirdPosition, catModel.Id, "Category", _workContext.IsMobileDevice());
+    bool hasThirdBanner = await _categoryService.IsMwtWidgetApplied(CustomPublicWidgetZones.CategoryDetailsProductListThirdPosition, catModel.Id, "Category", _workContext.IsMobileDevice());
 
 }
 @if (Model.Products.Count > 0)
@@ -60,13 +60,13 @@
                 if (hasThirdBanner)
                 {
                     <div class="col-sm-6 col-lg-6 cat-box">
-                        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsProductListThirdPosition, additionalData = catModel })
+                        @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsProductListThirdPosition, additionalData = catModel })
                     </div>
                 }
             }
             if (counter == rowPosition)
             {
-                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsProductListMiddle, additionalData = catModel })
+                @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsProductListMiddle, additionalData = catModel })
             }
             counter++;
         }

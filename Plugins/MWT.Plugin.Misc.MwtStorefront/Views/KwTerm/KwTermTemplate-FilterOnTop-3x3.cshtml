@@ -1,28 +1,28 @@
 ﻿@model KwTermModel
 @using Nop.Core.Domain.Common
-@using Nop.Core.Domain.Seo
-@inject Nop.Core.IWebHelper webHelper
+@using Nop.Core.Domain.Seo 
+@inject IWebHelper webHelper
 @inject SeoSettings seoSettings
 @inject CommonSettings commonSettings
-@inject Nop.Core.IWorkContext _workcontext
+@inject ICustomWorkContext _workcontext
 @{
     Layout = "_kwTermTemplate";
 
     //title
-    Html.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    NopHtml.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
     //meta
-    Html.AddMetaDescriptionParts(Model.MetaDescription);
-    Html.AddMetaKeywordParts(Model.MetaKeywords);
+    NopHtml.AddMetaDescriptionParts(Model.MetaDescription);
+    NopHtml.AddMetaKeywordParts(Model.MetaKeywords);
     //page class
 
 
 
-    Html.AppendPageCssClassParts("html-category-page");
+    NopHtml.AppendPageCssClassParts("html-category-page");
 
     if (seoSettings.CanonicalUrlsEnabled)
     {
         var categoryUrl = Url.RouteUrl("KwTerm", new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
-        Html.AddCanonicalUrlParts(categoryUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+        NopHtml.AddCanonicalUrlParts(categoryUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
     }
 
     var breadcrumbDelimiter = commonSettings.BreadcrumbDelimiter;
@@ -77,7 +77,7 @@ var pageSize='@Model.CatalogProductsModel.PageSize';
             <li itemprop="itemListElement" class="breadcrumb-item active" itemscope itemtype="http://schema.org/ListItem">
                 @if (isLastCategory)
                 {
-                    <strong class="current-item" itemprop="name">@cat.Name</strong>
+                            <strong tabindex="0" class="current-item" itemprop="name">@cat.Name</strong>
                     <span itemprop="item" itemscope itemtype="http://schema.org/Thing"
                           id="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })">
                     </span>
@@ -106,7 +106,7 @@ var pageSize='@Model.CatalogProductsModel.PageSize';
 
     @section Heading{
         <div class="version1 categorypage-heading-section">
-            <h1 class="page-heading">@(Model.Name)</h1>
+            <h1 id="kwterm-heading-section" class="page-heading">@(Model.Name)</h1>
            
         </div>
     }

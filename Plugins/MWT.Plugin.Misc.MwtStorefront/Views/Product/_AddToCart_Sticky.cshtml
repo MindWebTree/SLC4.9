@@ -1,0 +1,333 @@
+﻿
+@model CustomProductDetailsModel
+@using Nop.Core.Domain.Orders
+
+@inject ICustomWorkContext _workContext
+@*Add to cart on top start*@
+@{
+    bool isAttributePreselected = true;
+    if (ViewData["isAttributePreselected"] != null && ViewData["isAttributePreselected"] != "")
+    {
+        bool.TryParse(ViewData["isAttributePreselected"].ToString(), out isAttributePreselected);
+
+    }
+    var dataDictAttributes = new ViewDataDictionary(ViewData);
+    dataDictAttributes.TemplateInfo.HtmlFieldPrefix = $"attributes_{Model.Id}";
+
+    var dataDictPrice = new ViewDataDictionary(ViewData);
+    dataDictPrice.TemplateInfo.HtmlFieldPrefix = $"price_{Model.Id}";
+    int variantId = 0;
+    if (ViewData["variantId"] != null && ViewData["variantId"] != "")
+    {
+        int.TryParse(ViewData["variantId"].ToString(), out variantId);
+    }
+
+    string addtoCartFormId = "#product-details-form";
+    if (ViewData["addtocartform"] != null && ViewData["addtocartform"] != "")
+    {
+        addtoCartFormId = ViewData["addtocartform"].ToString();
+    }
+    string refFormId = addtoCartFormId.Replace("#", "").Replace("-", "_").Split('?')[0];
+
+    int quantity = 1;
+    if (ViewBag.Quantity != null)
+        int.TryParse(ViewBag.Quantity.ToString(), out quantity);
+    Model.AddToCart.EnteredQuantity = quantity == 0 ? Model.AddToCart.EnteredQuantity == 0 ? 1 : Model.AddToCart.EnteredQuantity : quantity;
+
+}
+
+<div class="sticky-add-to-cart" id="stickyHeader">
+    <div class="sticky-container">
+
+        <div class="product-info">
+            <div id="sticky-img-@Model.Id">
+                <img class="lazy" alt="@Model.DefaultPictureModel.AlternateText" src="/images/pixel.png" data-src="@Model.PictureModels.FirstOrDefault()?.ThumbImageUrl" title="@Model.DefaultPictureModel.Title" id="sticky-img-@Model.Id" />
+            </div>
+            <div class="product-details">
+                <h3>@Model.Name</h3>
+                <div class="price-shade-section">
+                    <div class="prices">
+                        <p id="display-product-price" class="price-value-sticky-@(Model.Id)">
+                            @if (Model.ProductPrice.IsVariantProduct && !isAttributePreselected)
+                            {
+                                @if (Model.ProductPrice.MinOldPriceValue > 0 && Model.ProductPrice.MinPriceValue > 0 && (Model.ProductPrice.MinOldPriceValue != Model.ProductPrice.MinPriceValue || Model.ProductPrice.MaxPriceValue != Model.ProductPrice.MaxOldPriceValue))
+                                {
+                                    <span id="price-value-sticky-@(Model.Id)" class="price-value-sticky-@(Model.Id)">
+                                        @T("Price.Range.With.Saleprice",
+                                !string.IsNullOrEmpty(Model.ProductPrice.MinPrice) ? Model.ProductPrice.MinPrice : Model.ProductPrice.MinOldPrice,
+                                !string.IsNullOrEmpty(Model.ProductPrice.MaxPrice) ? Model.ProductPrice.MaxPrice : Model.ProductPrice.MaxOldPrice,
+                                !string.IsNullOrEmpty(Model.ProductPrice.MinOldPrice) ? Model.ProductPrice.MinOldPrice : Model.ProductPrice.MinPrice,
+                                !string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ? Model.ProductPrice.MaxOldPrice : Model.ProductPrice.MaxPrice
+                                )
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span id="price-value-sticky-@(Model.ProductPrice.ProductId)" class="price-value-sticky-@(Model.ProductPrice.ProductId)">
+                                        @T("Price.Range",
+                                !string.IsNullOrEmpty(Model.ProductPrice.MinOldPrice) ? Model.ProductPrice.MinOldPrice : Model.ProductPrice.MinPrice,
+                                !string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ? Model.ProductPrice.MaxOldPrice : Model.ProductPrice.MaxPrice)
+                                    </span>
+                                }
+                            }
+                            else
+                            {
+                                if (Model.ProductPrice.OldPriceValue > 0 && Model.ProductPrice.PriceValue > 0 && Model.ProductPrice.OldPrice != Model.ProductPrice.Price)
+                                {
+
+
+                                    <span id="price-value-sticky-@(Model.ProductPrice.ProductId)" class="price-value-sticky-@(Model.ProductPrice.ProductId)">
+                                        <span class="sale-price">@Model.ProductPrice.Price</span>
+                                    </span>
+
+
+                                }
+                                else
+                                {
+
+
+                                    @*render price*@
+                                    <span id="price-value-sticky-@(Model.ProductPrice.ProductId)" class="price-value-sticky-@(Model.ProductPrice.ProductId)">
+                                        @(!string.IsNullOrEmpty(Model.ProductPrice.OldPrice) ? Model.ProductPrice.OldPrice : Model.ProductPrice.Price)
+                                    </span>
+
+                                }
+
+                            }
+
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="cart-button-container">
+
+            <div class="add-to-cart">
+                @{
+                    var addToCartText = "";
+                    if (Model.AddToCart.UpdatedShoppingCartItemId > 0 && Model.AddToCart.UpdateShoppingCartItemType.HasValue && Model.AddToCart.UpdateShoppingCartItemType.Value == ShoppingCartType.ShoppingCart)
+                    {
+                        addToCartText = T("ShoppingCart.AddToCart.Update").Text;
+                    }
+                    else
+                    {
+                        addToCartText = T("ShoppingCart.AddToCart").Text;
+                        if (Model.AddToCart.IsRental)
+                        {
+                            addToCartText = T("ShoppingCart.Rent").Text;
+                        }
+                        if (Model.AddToCart.AvailableForPreOrder)
+                        {
+                            addToCartText = T("ShoppingCart.PreOrder").Text;
+                        }
+                    }
+                    <button type="button" id="add-to-cart-button-top-@Model.AddToCart.ProductId" class="button-2 btn btn-primary add-to-cart-button btn btn-secondary"
+                            data-productid="@Model.AddToCart.ProductId" data-variantId="@variantId" onclick="AjaxCart.addproducttocart_details('@Url.RouteUrl("CustomAddProductToCart-Details",
+new { formId = refFormId, productId = Model.AddToCart.ProductId, shoppingCartTypeId = (int)ShoppingCartType.ShoppingCart })', '@addtoCartFormId');return false;">
+                        @addToCartText
+                    </button>
+                    var dataDictAddToWishlist = new ViewDataDictionary(ViewData);
+                    dataDictAddToWishlist.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.AddToCart.ProductId}";
+                    @await Html.PartialAsync("_AddToWishlist", Model.AddToCart, dataDictAddToWishlist)
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script asp-location="Footer">
+
+
+
+window.addEventListener('scroll', function () {
+    var stickyHeader = document.getElementById('stickyHeader');
+    var originalCart = document.getElementById('add-to-cart-button-@Model.AddToCart.ProductId');
+    var tabContiner = document.getElementById('productdetail-accordion');
+    if (!tabContiner) {
+    
+        tabContiner = document.getElementById('infotab');
+    }
+
+    var footer = document.querySelector('.footer-lower'); // Make sure your footer has the <footer> tag or use a class/id
+		var saveTextOuter = document.querySelector('.save-text-outer');
+
+if (!saveTextOuter) {
+  saveTextOuter = document.querySelector('.campaign-icon');
+}
+    if (originalCart && footer) {
+        const rect = originalCart.getBoundingClientRect();
+		const tabs = tabContiner.getBoundingClientRect();
+        const footerRect = footer.getBoundingClientRect();
+        if (rect.top < 0 && footerRect.top > window.innerHeight) {
+            stickyHeader.classList.add('show');
+			if (window.innerWidth <= 768 && saveTextOuter) {
+				if (saveTextOuter) {
+					stickyHeader.style.bottom = saveTextOuter.offsetHeight + "px";
+					var chat = document.querySelector(".siq_bR");
+					if (chat) {
+						chat.classList.add("chatbottom");
+					}
+					var backToTop = document.querySelector("#btn-back-to-top");
+					if (backToTop) {
+						backToTop.classList.add("backToTopbottom");
+					}
+				}
+			}
+
+
+        } else {
+            stickyHeader.classList.remove('show');
+			if (window.innerWidth <= 768 && saveTextOuter) {
+				stickyHeader.style.bottom = 0;
+				var chat = document.querySelector(".siq_bR");
+				if (chat) {
+					chat.classList.remove("chatbottom");
+				}
+				var backToTop = document.querySelector("#btn-back-to-top");
+					if (backToTop) {
+					backToTop.classList.remove("backToTopbottom");
+				}
+
+			}
+        }
+		if (tabs.top <= 0 && footerRect.top > window.innerHeight) {
+            tabContiner.classList.add('show');
+			tabContiner.style.display = "";
+
+        } else {
+            tabContiner.classList.remove('show');
+			if (footerRect.top <= window.innerHeight) {
+				tabContiner.style.display = "none";
+			} else {
+				tabContiner.style.display = "";
+			}
+        }
+    }
+});
+
+
+
+
+
+
+
+
+
+
+</script>
+
+<style>
+    #productdetail-accordion.show .product-tabs {
+        top: 82px;
+        position: fixed;
+        width: 100%;
+        left: 0;
+        margin: 0 auto;
+        right: 0;
+        z-index: 1;
+        DISPLAY: block;
+        background: #ffffff;
+        border-bottom: 1px solid #eee;
+        box-shadow: 0 1px 3px 0 #eee;
+    }
+
+        #productdetail-accordion.show .product-tabs .card-header.inactive {
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            max-width: 1520px;
+            margin: 0 auto;
+            background: #fff;
+            height: 54px !important;
+            line-height: 54px !important;
+        }
+
+            #productdetail-accordion.show .product-tabs .card-header.inactive span.cta-tab, #productdetail-accordion.show .product-tabs .card-header.inactive .card-title.active, #productdetail-accordion.show .product-tabs .card-header.inactive .card-title {
+                text-transform: capitalize !important;
+                margin: 0;
+            }
+
+            #productdetail-accordion.show .product-tabs .card-header.inactive span.cta-tab {
+                border-bottom: 3px solid transparent;
+            }
+
+
+
+    * {
+        scroll-margin-top: 230px;
+    }
+
+    /*Add to cart on top start*/
+    .product-info img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .product-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .sticky-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+    }
+
+    .sticky-add-to-cart {
+        position: fixed;
+        top: -100px;
+        left: 0;
+        width: 100%;
+        background: white;
+        z-index: 1000;
+        transition: all 0.3s ease;
+        padding: 10px 0;
+    }
+
+        .sticky-add-to-cart.show {
+            top: 0;
+        }
+
+
+    @@media (max-width: 767px) {
+
+        .product-info {
+            display: none;
+        }
+
+
+        .sticky-container {
+            justify-content: center;
+        }
+
+
+        .cart-button-container {
+            width: 100%;
+        }
+
+        .cart-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+        }
+
+
+        .sticky-add-to-cart {
+            top: auto;
+            bottom: -100px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+
+            .sticky-add-to-cart.show {
+                top: auto;
+                bottom: 0;
+                background: none !important;
+                box-shadow: none;
+            }
+    }
+    /*Add to cart on top END*/
+</style>

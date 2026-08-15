@@ -237,5 +237,6 @@ namespace MWT.Nop.Core.Service.Catalog
         Task<IList<Product>> GetNewArrivalProductsAsync(int pageIndex, int pageSize);
 
         #endregion
+         
     }
 }

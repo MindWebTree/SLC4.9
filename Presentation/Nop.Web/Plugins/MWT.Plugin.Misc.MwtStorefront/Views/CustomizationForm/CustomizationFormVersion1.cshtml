@@ -1,0 +1,563 @@
+@model CustomizationFormModel
+@inject Nop.Core.IStoreContext _storeContext
+@inject IWorkContext _workContext
+@inject Nop.Services.Configuration.ISettingService _settingService
+@inject Nop.Services.Localization.ILocalizationService _localizationService;
+@using Nop.Core.Domain.Common;
+@inject Nop.Services.Directory.ICountryService _countryService
+@inject Nop.Services.Common.IAddressService _addressService
+@inject Nop.Core.IStoreContext _storeContext
+
+
+@{
+    var storeEmail = await _settingService.GetSettingByKeyAsync<string>("store.email");
+    string uploadTypes_Expression = await _settingService.GetSettingByKeyAsync<string>("Customizationform.Supported.UploadTypes.Expression");
+    var store = _storeContext.GetCurrentStore();
+    var mail = await _settingService.GetSettingByKeyAsync<string>("store.email");
+    var sizeASttr = await _localizationService.GetResourceAsync("Product.Attr.Size");
+    Address shippingAddress = new Address();
+    Address billingAddress = new Address();
+    var customer = await _workContext.GetCurrentCustomerAsync();
+    string shippingCountry = "";
+    string billingCountry = "";
+    bool displayChat = DateTime.Now.Hour >= 6 && DateTime.Now.Hour < 20;
+    if (customer != null)
+    {
+        if (customer.ShippingAddressId.HasValue && customer.ShippingAddressId.Value > 0)
+        {
+            shippingAddress = await _addressService.GetAddressByIdAsync(customer.ShippingAddressId.Value);
+            if (shippingAddress.CountryId.HasValue && shippingAddress.CountryId.Value > 0)
+            {
+                shippingCountry = (await _countryService.GetCountryByIdAsync(shippingAddress.CountryId.Value))?.Name ?? "";
+            }
+        }
+
+        if (customer.BillingAddressId.HasValue && customer.BillingAddressId.Value > 0)
+        {
+            billingAddress = await _addressService.GetAddressByIdAsync(customer.BillingAddressId.Value);
+            if (billingAddress.CountryId.HasValue && billingAddress.CountryId.Value > 0)
+            {
+                billingCountry = (await _countryService.GetCountryByIdAsync(billingAddress.CountryId.Value))?.Name ?? "";
+            }
+        }
+    }
+}
+
+
+
+
+
+
+<div class="modal-content desktop-customize-form">
+    <button type="button" class="close dialog-close-btn border" data-bs-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <div class="modal-header">
+        <div class="modal-header-text">
+            <h2>@T("Customizationform.heading")</h2>
+            <p>@T("Customizationform.Description")</p>
+        </div>
+
+    </div>
+    <div class="modal-body d-flex  customizationformBody">
+        <div class="customization-form-body">
+            <form asp-action="CustomizationForm" asp-controller="CustomizationForm" id="CustomizationForm" enctype="multipart/form-data">
+
+
+                <div class="customize-left desktop-customize-form">
+                    <div class="customize-box-left">
+                        <div class="col-5 border-end">
+
+                            <div class="customize-img">
+                                <div class="product-info-heading">@Model.ProductName <span> (@T("Products.Sku") #@Model.Sku)</span></div>
+
+                                <img class="main-customization-image" src="@Model.DefaultPictureModel.ImageUrl" alt="image" />
+                                <div class="customization-product-sub-images jcarousel">
+                                    <ul>
+                                        @{
+                                            var imgCount = 0;
+                                            foreach (var picture in Model.PictureModels)
+                                            {
+                                                <li>
+                                                    <a class="thumb-item @(imgCount==0?"img-selected":"")" data-zoom-id="product-magiczoom" href="@picture.FullSizeImageUrl"
+                                                       data-image="@picture.ImageUrl" alt="@picture.AlternateText" title="@picture.Title">
+
+                                                        <img class="lazy" src="/images/pixel.png" data-src="@picture.ThumbImageUrl"
+                                                             alt="@picture.AlternateText" title="@picture.Title" data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
+                                                    </a>
+                                                </li>
+                                                imgCount++;
+                                            }
+
+
+                                        }
+                                    </ul>
+                                    <a href="#" class="jcarousel-control-prev">&lsaquo;</a>
+                                    <a href="#" class="jcarousel-control-next">&rsaquo;</a>
+                                </div>
+                            </div> @if (displayChat)
+                            {
+                                <div class="col-12 row chat-customize-section" id="chatdiv">
+                                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="14" cy="14" r="14" fill="#444444" />
+                                        <g clip-path="url(#clip0_4625_10599)">
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M11.229 12.25C11.229 12.0084 11.4249 11.8125 11.6665 11.8125H16.3332C16.5748 11.8125 16.7707 12.0084 16.7707 12.25C16.7707 12.4916 16.5748 12.6875 16.3332 12.6875H11.6665C11.4249 12.6875 11.229 12.4916 11.229 12.25ZM11.229 14.2917C11.229 14.0501 11.4249 13.8542 11.6665 13.8542H14.8748C15.1165 13.8542 15.3123 14.0501 15.3123 14.2917C15.3123 14.5333 15.1165 14.7292 14.8748 14.7292H11.6665C11.4249 14.7292 11.229 14.5333 11.229 14.2917Z" fill="white" />
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M13.1019 7.72949H14.8978C15.8331 7.72949 16.5663 7.72949 17.1521 7.78518C17.7492 7.84195 18.238 7.95966 18.6691 8.22376C19.1204 8.50033 19.4999 8.87979 19.7764 9.33111C20.0405 9.76209 20.1582 10.251 20.215 10.8481C20.2707 11.4338 20.2707 12.1671 20.2707 13.1023V13.7249C20.2707 14.3906 20.2707 14.9127 20.2419 15.3343C20.2126 15.7633 20.1521 16.1204 20.0153 16.4506C19.6749 17.2724 19.0219 17.9254 18.2001 18.2658C17.7305 18.4603 17.1957 18.5035 16.4634 18.5161C16.2073 18.5205 16.0451 18.5238 15.9214 18.5374C15.8058 18.5503 15.761 18.569 15.7348 18.5843C15.7071 18.6003 15.6695 18.6297 15.6041 18.7194C15.5332 18.8166 15.4533 18.9508 15.3265 19.1651L15.0102 19.6993C14.559 20.4617 13.4407 20.4617 12.9894 19.6993L12.6732 19.1651C12.5464 18.9508 12.4664 18.8166 12.3956 18.7194C12.3302 18.6297 12.2925 18.6003 12.2648 18.5843C12.2386 18.569 12.1938 18.5503 12.0783 18.5374C11.9546 18.5238 11.7924 18.5205 11.5362 18.5161C10.804 18.5035 10.2692 18.4603 9.79959 18.2658C8.97772 17.9254 8.32475 17.2724 7.98432 16.4506C7.84755 16.1204 7.78705 15.7633 7.75777 15.3343C7.729 14.9127 7.729 14.3906 7.729 13.7249V13.1023C7.729 12.1671 7.729 11.4338 7.78469 10.8481C7.84146 10.251 7.95917 9.76209 8.22327 9.33111C8.49984 8.87979 8.8793 8.50033 9.33062 8.22376C9.7616 7.95966 10.2505 7.84195 10.8476 7.78518C11.4333 7.72949 12.1666 7.72949 13.1019 7.72949ZM10.9304 8.65625C10.3974 8.70693 10.0582 8.80413 9.78781 8.96982C9.45422 9.17425 9.17376 9.45471 8.96933 9.7883C8.80364 10.0587 8.70644 10.3979 8.65576 10.9309C8.60446 11.4704 8.604 12.1621 8.604 13.1253V13.7087C8.604 14.3941 8.60424 14.8864 8.63074 15.2747C8.65698 15.6592 8.70747 15.9099 8.79272 16.1157C9.04434 16.7232 9.52697 17.2058 10.1344 17.4574C10.4352 17.5821 10.819 17.6286 11.5513 17.6413L11.5699 17.6416C11.802 17.6456 12.0055 17.649 12.1746 17.6677C12.3563 17.6879 12.534 17.7285 12.7048 17.8279C12.8741 17.9264 12.9962 18.0579 13.1027 18.204C13.2011 18.339 13.3022 18.5098 13.4167 18.7033L13.7424 19.2536C13.8549 19.4436 14.1448 19.4436 14.2572 19.2536L14.5829 18.7033C14.6974 18.5098 14.7985 18.339 14.8969 18.204C15.0034 18.0579 15.1256 17.9264 15.2949 17.8279C15.4657 17.7285 15.6434 17.6879 15.8251 17.6677C15.9942 17.649 16.1976 17.6456 16.4298 17.6416L16.4484 17.6413C17.1807 17.6286 17.5645 17.5821 17.8652 17.4574C18.4727 17.2058 18.9553 16.7232 19.207 16.1157C19.2922 15.9099 19.3427 15.6592 19.369 15.2747C19.3954 14.8864 19.3957 14.3941 19.3957 13.7087V13.1253C19.3957 12.1621 19.3952 11.4704 19.3439 10.9309C19.2932 10.3979 19.1961 10.0587 19.0303 9.7883C18.8259 9.45471 18.5455 9.17425 18.2119 8.96982C17.9415 8.80413 17.6023 8.70693 17.0693 8.65625C16.5298 8.60495 15.838 8.60449 14.8748 8.60449H13.1248C12.1616 8.60449 11.4699 8.60495 10.9304 8.65625Z" fill="white" />
+                                        </g>
+                                        <defs>
+                                            <clipPath id="clip0_4625_10599">
+                                                <rect width="14" height="14" fill="white" transform="translate(7 7)" />
+                                            </clipPath>
+                                        </defs>
+                                    </svg>
+
+                                    <div>
+                                        <h5>@T("customizationform.Chat.Heading")</h5>
+                                        <span>@T("customizationform.Chat.SubHeading")</span>
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                        <div class="col-7">
+                            @{
+                                var dataDictAttributes = new ViewDataDictionary(ViewData);
+                                dataDictAttributes.TemplateInfo.HtmlFieldPrefix = $"CustomizationForm_attributes_{Model.ProductId}";
+
+                                var dataDictPrice = new ViewDataDictionary(ViewData);
+                                dataDictPrice.TemplateInfo.HtmlFieldPrefix = $"CustomizationForm_price_{Model.ProductId}";
+                            }
+                            <ul>
+                                @await Html.PartialAsync("_CustomizationFormProductAttributes_Version1", Model, dataDictAttributes)
+
+                                @if (!string.IsNullOrEmpty(Model.Dimensions) && !Model.ProductAttributes.Where(a => a.Name == sizeASttr).Any())
+                                {
+                                    <li>@T("customizationform.field.dimension") @Model.Dimensions</li>
+                                }
+                            </ul>
+                            <div class="form-group form-check">
+                                <div class="check-customize check-customize-new">
+                                    <div>
+                                        <input type="checkbox" class="form-check-input" id="InteresedInCustomDesign" name="custom_Design" value="CustomDesign">
+                                        <span>
+                                            <label class="form-check-label" for="InteresedInCustomDesign">@T("CustomizationForm.Design.Heading")</label>
+                                            <p>@T("CustomizationForm.Design.Description")</p>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="customize-form-section-messgae-attachemnt">
+                                <div class="special-reference">
+                                    <svg width="103" height="6" viewBox="0 0 103 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M0.113249 3L3 5.88675L5.88675 3L3 0.113249L0.113249 3ZM3 3.5H103V2.5H3V3.5Z" fill="#828282" />
+                                    </svg>
+                                    @T("customizationform.SpecialNotes.Heading")
+                                    <svg width="104" height="6" viewBox="0 0 104 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M103.887 3.00001L101 0.113257L98.1133 3.00001L101 5.88676L103.887 3.00001ZM-4.37114e-08 3.5L101 3.50001L101 2.50001L4.37114e-08 2.5L-4.37114e-08 3.5Z" fill="#828282" />
+                                    </svg>
+                                </div>
+                                <div class="customize-form-section-messgae-attachemnt">
+
+
+
+                                    <div class="attachment">
+                                        <label>@T("customizationform.fields.attachment")</label>
+                                        <label class="image-attachment-error">@T("customizationform.Image.Validity.Error")</label>
+                                        <div class="image-upload">
+                                            <div class="add-image">
+                                                <svg width="49" height="49" viewBox="0 0 49 49" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <rect x="0.00195312" width="49" height="49" rx="4" fill="#F4F4F4" />
+                                                    <path d="M32.502 23C32.2367 23 31.9824 23.1054 31.7948 23.2929C31.6073 23.4804 31.502 23.7348 31.502 24V31C31.502 31.2652 31.3966 31.5196 31.2091 31.7071C31.0215 31.8946 30.7672 32 30.502 32H16.502C16.2367 32 15.9824 31.8946 15.7948 31.7071C15.6073 31.5196 15.502 31.2652 15.502 31V23C15.502 22.7348 15.6073 22.4804 15.7948 22.2929C15.9824 22.1054 16.2367 22 16.502 22H18.502C18.72 22.0114 18.9358 21.9511 19.1164 21.8283C19.297 21.7055 19.4324 21.527 19.502 21.32L20.042 19.68C20.109 19.4814 20.2369 19.3089 20.4073 19.1868C20.5778 19.0648 20.7823 18.9995 20.992 19H26.502C26.7672 19 27.0215 18.8946 27.2091 18.7071C27.3966 18.5196 27.502 18.2652 27.502 18C27.502 17.7348 27.3966 17.4804 27.2091 17.2929C27.0215 17.1054 26.7672 17 26.502 17H20.942C20.3135 17.0012 19.7013 17.1997 19.1917 17.5675C18.6822 17.9353 18.301 18.4539 18.102 19.05L17.782 20.05H16.502C15.7063 20.05 14.9432 20.3661 14.3806 20.9287C13.818 21.4913 13.502 22.2544 13.502 23.05V31.05C13.502 31.8456 13.818 32.6087 14.3806 33.1713C14.9432 33.7339 15.7063 34.05 16.502 34.05H30.502C31.2976 34.05 32.0607 33.7339 32.6233 33.1713C33.1859 32.6087 33.502 31.8456 33.502 31.05V24.05C33.5087 23.9145 33.4879 23.7791 33.4407 23.6519C33.3935 23.5248 33.3209 23.4086 33.2273 23.3103C33.1338 23.2121 33.0213 23.134 32.8965 23.0806C32.7718 23.0273 32.6376 22.9998 32.502 23ZM23.502 22C22.7108 22 21.9375 22.2346 21.2797 22.6741C20.6219 23.1136 20.1092 23.7384 19.8064 24.4693C19.5037 25.2002 19.4245 26.0044 19.5788 26.7804C19.7332 27.5563 20.1141 28.269 20.6735 28.8284C21.2329 29.3878 21.9457 29.7688 22.7216 29.9231C23.4975 30.0775 24.3018 29.9983 25.0327 29.6955C25.7636 29.3928 26.3883 28.8801 26.8278 28.2223C27.2674 27.5645 27.502 26.7911 27.502 26C27.502 24.9391 27.0805 23.9217 26.3304 23.1716C25.5802 22.4214 24.5628 22 23.502 22ZM23.502 28C23.1064 28 22.7197 27.8827 22.3908 27.6629C22.0619 27.4432 21.8056 27.1308 21.6542 26.7654C21.5028 26.3999 21.4632 25.9978 21.5404 25.6098C21.6176 25.2219 21.808 24.8655 22.0877 24.5858C22.3674 24.3061 22.7238 24.1156 23.1118 24.0384C23.4997 23.9613 23.9019 24.0009 24.2673 24.1522C24.6328 24.3036 24.9451 24.56 25.1649 24.8889C25.3847 25.2178 25.502 25.6044 25.502 26C25.502 26.5304 25.2912 27.0391 24.9162 27.4142C24.5411 27.7893 24.0324 28 23.502 28ZM34.502 17H33.502V16C33.502 15.7348 33.3966 15.4804 33.2091 15.2929C33.0215 15.1054 32.7672 15 32.502 15C32.2367 15 31.9824 15.1054 31.7948 15.2929C31.6073 15.4804 31.502 15.7348 31.502 16V17H30.502C30.2367 17 29.9824 17.1054 29.7948 17.2929C29.6073 17.4804 29.502 17.7348 29.502 18C29.502 18.2652 29.6073 18.5196 29.7948 18.7071C29.9824 18.8946 30.2367 19 30.502 19H31.502V20C31.502 20.2652 31.6073 20.5196 31.7948 20.7071C31.9824 20.8946 32.2367 21 32.502 21C32.7672 21 33.0215 20.8946 33.2091 20.7071C33.3966 20.5196 33.502 20.2652 33.502 20V19H34.502C34.7672 19 35.0215 18.8946 35.2091 18.7071C35.3966 18.5196 35.502 18.2652 35.502 18C35.502 17.7348 35.3966 17.4804 35.2091 17.2929C35.0215 17.1054 34.7672 17 34.502 17Z" fill="#444444" />
+                                                </svg>
+                                            </div>
+                                            <div class="multiple_attachment_image">
+                                                <div class="preview-item new">
+                                                    <input name="attachment[]" class="form-control-file" multiple accept="@uploadTypes_Expression" type="file" />
+                                                </div>
+                                            </div>
+                                            <div class="add-image-icon desable">
+                                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M0.75 7.5H6V12.75C6 12.9489 6.07902 13.1397 6.21967 13.2803C6.36032 13.421 6.55109 13.5 6.75 13.5C6.94891 13.5 7.13968 13.421 7.28033 13.2803C7.42098 13.1397 7.5 12.9489 7.5 12.75V7.5H12.75C12.9489 7.5 13.1397 7.42098 13.2803 7.28033C13.421 7.13968 13.5 6.94891 13.5 6.75C13.5 6.55109 13.421 6.36032 13.2803 6.21967C13.1397 6.07902 12.9489 6 12.75 6H7.5V0.75C7.5 0.551088 7.42098 0.360322 7.28033 0.21967C7.13968 0.0790178 6.94891 0 6.75 0C6.55109 0 6.36032 0.0790178 6.21967 0.21967C6.07902 0.360322 6 0.551088 6 0.75V6H0.75C0.551088 6 0.360322 6.07902 0.21967 6.21967C0.0790178 6.36032 0 6.55109 0 6.75C0 6.94891 0.0790178 7.13968 0.21967 7.28033C0.360322 7.42098 0.551088 7.5 0.75 7.5Z" fill="#BDBDBD" />
+                                                </svg>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+                                <div class="form-group message">
+
+                                    <nop-textarea asp-for="@Model.Message" placeholder="Add your custom note here." />
+                                    <span asp-validation-for="@Model.Message"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="DefaultPicture" name="DefaultPicture" value="@Model.DefaultPictureModel.ImageUrl">
+                    <input type="hidden" asp-for="@Model.ProductId" />
+                    <input type="hidden" asp-for="@Model.Dimensions" />
+                    <input type="hidden" asp-for="@Model.ProductName" />
+
+                    <h2 class="product-info-heading-contact">@T("customizationform.form.Contactinfo.heading")</h2>
+                    <p>@T("customizationform.form.Contactinfo.Description")</p>
+                    <div class="customize-form-section">
+                        <div class="form-group checkasterisk">
+
+
+                            <nop-editor asp-for="@Model.FullName" placeholder="Name" />
+
+                            <span asp-validation-for="@Model.FullName"></span>
+
+                        </div>
+                        <div class="form-group checkasterisk">
+
+
+                            <nop-editor asp-for="@Model.Email" placeholder="Email" />
+
+
+                            <span asp-validation-for="@Model.Email"></span>
+                        </div>
+                        <div class="merge-form-group">
+                            <div class="form-group">
+
+                                <nop-editor asp-for="@Model.Phone" placeholder="Phone" />
+                                <span asp-validation-for="@Model.Phone"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                    @*<div class="customize-form-consent-section">
+                        <input id="consent1" class="custom-control-input" name="consent1" type="checkbox" /> <label class="custom-control-label consent-label gdprconsent" for="consent1">By checking this box, I consent to receive SMS messages from <strong>Sierra Living Concepts</strong> regarding customizations at the phone number provided. Message frequency may vary. Data rates may apply. Text <strong>HELP</strong> to <a href="tel:5109964499">510-996-4499</a> for assistance. Reply <strong>STOP</strong> to opt out.</label>
+                    </div>*@
+
+
+
+
+
+                    <div class="customize-submit-btn-captcha">
+                        @if (Model.DisplayCaptcha)
+                        {
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-12 col-sm-8 offset-md-4 offset-lg-4 offset-xl-4">
+                                        <nop-captcha class="g-recaptcha" />
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        <button type="submit" name="addtocartbutton" class="btn btn-secondary" id="btnsubmitcustomizationform">
+                            <span> @T("forum.submit")</span>
+                            <svg width="20" height="20" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" class="d-none" style=" width: 20px;">
+                                <g fill="none" fill-rule="evenodd">
+                                    <g transform="translate(1 1)" stroke-width="2">
+                                        <circle stroke-opacity=".5" cx="18" cy="18" r="18" />
+                                        <path d="M36 18c0-9.94-8.06-18-18-18">
+                                            <animateTransform attributeName="transform"
+                                                              type="rotate"
+                                                              from="0 18 18"
+                                                              to="360 18 18"
+                                                              dur="1s"
+                                                              repeatCount="indefinite" />
+                                        </path>
+                                    </g>
+                                </g>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="alert alert-danger d-none" role="alert">
+
+                    </div>
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+    <div class="row-customize-footer">
+        <div>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="12" fill="#444444" />
+                <g clip-path="url(#clip0_4625_10504)">
+                    <path d="M7.20033 11.9856C7.63833 12.9557 8.38428 14.0066 9.24678 14.8691C10.1667 15.789 11.1816 16.5176 12.1046 16.9202C12.6071 17.1395 13.0566 17.2491 13.4351 17.2491C13.8113 17.2491 14.1171 17.1405 14.3342 16.9233L15.2048 16.053C15.4692 15.7882 15.4455 15.3341 15.1518 15.0402L13.869 13.7573C13.575 13.4636 13.1205 13.44 12.8562 13.7045L12.4568 14.1039C12.3461 14.1867 11.6619 13.976 10.8923 13.2063C10.1222 12.4364 9.91098 11.7517 9.99423 11.6421L10.3941 11.2422C10.6586 10.9776 10.6349 10.5231 10.3412 10.2294L9.05808 8.9466C8.76408 8.6529 8.30988 8.62905 8.04528 8.8938L7.17498 9.7641C6.74043 10.1985 6.74943 10.9875 7.20018 11.9856H7.20033ZM7.59933 10.1883L8.46978 9.318C8.47578 9.312 8.48778 9.3084 8.50323 9.3084C8.53713 9.3084 8.58858 9.32535 8.63403 9.3708L9.91683 10.6536C9.98313 10.7199 9.98883 10.799 9.96978 10.818L9.56988 11.2178C9.07278 11.7152 9.64533 12.8079 10.4679 13.6305C10.8776 14.04 11.328 14.3673 11.7363 14.5517C12.4083 14.8553 12.7418 14.6674 12.8805 14.5284L13.2804 14.1287C13.2996 14.1095 13.3784 14.1153 13.4448 14.1815L14.7275 15.4644C14.7938 15.5307 14.7995 15.6096 14.7804 15.6287L13.91 16.4991C13.6685 16.7408 13.0833 16.6926 12.3446 16.3701C11.4887 15.9968 10.5392 15.3129 9.67098 14.4449C8.85768 13.6316 8.15658 12.645 7.74708 11.7386C7.41618 11.0061 7.36083 10.4267 7.59918 10.1883H7.59933ZM17.1423 12.6506C17.1423 9.39705 14.4953 6.75 11.2418 6.75V7.35C14.1645 7.35 16.5423 9.72795 16.5423 12.6506H17.1423Z" fill="white" />
+                    <path d="M11.3555 8.38867V8.98867C13.436 8.98867 15.1287 10.6813 15.1287 12.7618H15.7287C15.7287 10.3504 13.7667 8.38867 11.3555 8.38867Z" fill="white" />
+                    <path d="M13.6011 12.7618H14.2011C14.2011 11.1928 12.9246 9.91602 11.3555 9.91602V10.516C12.5937 10.516 13.6011 11.5236 13.6011 12.7618Z" fill="white" />
+                </g>
+                <defs>
+                    <clipPath id="clip0_4625_10504">
+                        <rect width="12" height="12" fill="white" transform="translate(6 6)" />
+                    </clipPath>
+                </defs>
+            </svg>
+            <h6>Phone</h6>
+            <a href="tel:@_storeContext.GetCurrentStore().CompanyPhoneNumber" class="slcphone">@_storeContext.GetCurrentStore().CompanyPhoneNumber</a>
+        </div>
+        <div>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="12" fill="#444444" />
+                <path d="M17.2282 8.50457C17.2193 8.481 17.208 8.45838 17.1945 8.43707C17.1891 8.42293 17.1829 8.40916 17.1757 8.39582C17.1408 8.36117 17.1018 8.33094 17.0595 8.30582L16.9957 8.28332H7.10323C7.07705 8.28056 7.05065 8.28056 7.02448 8.28332L6.96073 8.30582C6.94089 8.3166 6.92206 8.32915 6.90448 8.34332C6.88416 8.35767 6.86531 8.374 6.84823 8.39207C6.84109 8.4054 6.83483 8.41918 6.82948 8.43332C6.78982 8.47357 6.76249 8.52431 6.75073 8.57957C6.74976 8.59456 6.74976 8.60959 6.75073 8.62457V15.3746C6.75073 15.474 6.79024 15.5694 6.86056 15.6397C6.93089 15.7101 7.02627 15.7496 7.12573 15.7496H16.8757C16.9752 15.7496 17.0706 15.7101 17.1409 15.6397C17.2112 15.5694 17.2507 15.474 17.2507 15.3746V8.62457C17.2517 8.60959 17.2517 8.59456 17.2507 8.57957C17.2459 8.55386 17.2383 8.52872 17.2282 8.50457ZM15.7732 8.99957L12.0007 11.9021L8.22823 8.99957H15.7732ZM16.5007 14.9996H7.50073V9.37457L11.772 12.6596C11.8375 12.7101 11.918 12.7374 12.0007 12.7374C12.0835 12.7374 12.1639 12.7101 12.2295 12.6596L16.5007 9.37457V14.9996Z" fill="white" />
+            </svg>
+            <h6>Email</h6>
+            <a href="mailto:@storeEmail" class="slcemail">@storeEmail</a>
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $(".customization-product-sub-images a").click(function (e) {
+            $(".main-customization-image").attr("src", $(this).attr("data-image"));
+            e.preventDefault();
+        })
+
+        $('.customization-product-sub-images.jcarousel').jcarousel({
+
+        });
+        $('.customization-product-sub-images.jcarousel').on('jcarousel:visiblein', 'li', function (event, carousel) {
+            $(this).addClass('visible');
+        });
+
+        $('.customization-product-sub-images.jcarousel').on('jcarousel:visibleout', 'li', function (event, carousel) {
+            $(this).removeClass('visible');
+        });
+
+        $('.customization-product-sub-images .jcarousel-control-prev').click(function () {
+            $('.jcarousel').jcarousel('scroll', '-=1');
+            return false;
+        });
+        $('.customization-product-sub-images .jcarousel-control-next').click(function () {
+            $('.jcarousel').jcarousel('scroll', '+=1');
+            return false;
+        });
+            $.validator.unobtrusive.parse("#CustomizationForm");
+            $('.attributes input,.attributes select').each(function () {
+                console.log($(this).prop("nodeName"));
+                if ($(this).val() != 0 && $(this).prop("nodeName") == "SELECT") {
+                    console.log($('#custom_' + $(this).attr("id")));
+                    $('#custom_' + $(this).attr("id")).val($(this).val()).change();
+                }
+                else {
+                    if ($(this).prop('checked')) {
+                        $('#custom_' + $(this).attr("id")).click();
+                    }
+                }
+            })
+
+
+            x = $(".customform-attributes .custom-select");
+            l = x.length;
+            for (i = 0; i < l; i++) {
+                customDropDown(x[i]);
+            }
+        });
+
+
+    $(function () {
+        var btnId = '#btnsubmitcustomizationform';
+        $('#CustomizationForm').on('submit', function (e) {
+            e.preventDefault();
+            var _form = $("#CustomizationForm");
+            $.validator.unobtrusive.parse(_form);
+            $(_form).validate();
+    
+            if (!$(_form).valid())
+                return;
+     
+            if ($("#consent1").length > 0) {
+                if (!$("#consent1").prop("checked")) {
+                    $(".customize-form-consent-section").addClass("invalid");
+                    $("#consent1").focus();
+                    return;
+                }
+                else {
+
+                    $(".customize-form-consent-section").removeClass("invalid");
+                }
+            }
+            $("#CustomizationForm #Phone span[data-valmsg-for='Phone']").removeClass("field-validation-error");
+            $("#CustomizationForm span[data-valmsg-for='Phone']").html('<span id="field-validation-error" class=""></span>');
+            if ($("#CustomizationForm #Phone").val().trim().length > 0) {
+                if (!validatePhoneNumber($("#CustomizationForm #Phone").val())) {
+                    $("#CustomizationForm #Phone").addClass("input-validation-error");
+                    $("#CustomizationForm span[data-valmsg-for='Phone']").removeClass("field-validation-valid");
+                    $("#CustomizationForm span[data-valmsg-for='Phone']").addClass("field-validation-error");
+                    $("#CustomizationForm span[data-valmsg-for='Phone']").html('<span id="field-validation-error" class="">'
+                        + '@T("Account.Fields.Phone.NotValid")' + '</span>');
+                    return;
+                }
+            }
+            if ($("#CustomizationForm #ZipCode").length > 0) {
+                if (!ValidateZipCode($("#CustomizationForm #ZipCode").val())) {
+                    $("#CustomizationForm #ZipCode").addClass("input    -validation-error");
+                    $("#CustomizationForm span[data-valmsg-for='ZipCode']").removeClass("field-validation-valid");
+                    $("#CustomizationForm span[data-valmsg-for='ZipCode']").addClass("field-validation-error");
+                    $("#CustomizationForm span[data-valmsg-for='ZipCode']").html('<span id="field-validation-error" class="">'
+                        + '@T("Account.Fields.Zipcode.NotValid")' + '</span>');
+                    return;
+                }
+            }
+            $(btnId).prop("disabled", true);
+            $(btnId + " span").addClass("d-none");
+            $(btnId + " svg").removeClass("d-none");
+            $(".customization-form-body .alert-danger").html("");
+            $(".customization-form-body .alert-danger").addClass("d-none");
+
+            var formData = new FormData($("#CustomizationForm")[0]);
+            $('.custom.custom-size-tr input').prop('disabled', true);
+            $.ajax({
+                url: _form.attr("action"),
+                type: 'POST',
+                data: formData,
+                async: true,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if (data.Success) {
+                        // advamce google ads data
+
+                        var email = $(".customizationformBody #Email").val();
+                        var phoneNumber = $(".customizationformBody #Phone").val();
+                        var zipCode = $(".customizationformBody #ZipCode").val();
+                        var name = $(".customizationformBody #FullName").val();
+                        phoneNumber = phoneNumber.replace(/ /g, "").replace(/-/g, "");
+                        phoneNumber = "+1" + phoneNumber;
+                        var firstName = name.split(' ')[0];
+
+                        var lastName = name.split(' ').length > 1 ? name.split(' ').slice(1).join(' '):"";
+
+                        var addresses = [];
+
+
+                            addresses.push({
+                                "first_name": firstName, "last_name": lastName, "street": '@shippingAddress?.Address1'
+                                , "city": '@shippingAddress?.City', "region": '@shippingAddress?.County',
+                                "postal_code": zipCode, "country": '@shippingCountry'});
+
+                           if (@(billingAddress?.Id??0) > 0) {
+
+                            addresses.push({
+                                "first_name": '@billingAddress?.FirstName', "last_name": '@billingAddress?.LastName',
+                                "street": '@billingAddress?.Address1'
+                                , "city": '@billingAddress?.City', "region": '@billingAddress?.County',
+                                "postal_code": '@billingAddress?.ZipPostalCode', "country": '@billingCountry'});
+                        }
+
+                        //if (gtag) {
+                        //    gtag('set', 'user_data', {
+                        //        "email": email,
+                        //        "phone_number": phoneNumber,
+                        //        "address": addresses
+                        //    });
+                        //}
+                        // end
+                        if (typeof gtag_TTT_CustomProduct_report_conversion === "function") {
+                            gtag_TTT_CustomProduct_report_conversion({
+                                "email": email,
+                                "phone_number": phoneNumber,
+                                "address": addresses
+                            });
+                        }
+                        if (window.uetq) {
+                            window.uetq = window.uetq || [];
+                            window.uetq.push('event', 'submit_lead_form', {});
+                        }
+                        $(".customization-form-body").html(data.content);
+                    }
+                    else {
+                        // enable
+                         $('.custom.custom-size-tr input').prop('disabled', false);
+                  
+                        $(".customization-form-body .alert-danger").removeClass("d-none");
+                        $(".customization-form-body .alert-danger").html(data.content);
+                    }
+                    $(btnId).prop("disabled", false);
+                    $(btnId + " span").removeClass("d-none");
+                    $(btnId + " svg").addClass("d-none");
+                },
+                error: function (xhr) {
+
+                    $(".customization-form-body .alert-danger").removeClass("d-none");
+                    $(".customization-form-body .alert-danger").html(xhr);
+                    $(btnId).prop("disabled", false);
+                    $(btnId + " span").removeClass("d-none");
+                    $(btnId + " svg").addClass("d-none");
+                }
+            });
+
+
+        });
+
+    });
+
+    function validatePhoneNumber(phoneNumber) {
+        var regex = new RegExp("^[0-9]{3}-[0-9]{3}-[0-9]{4}$");
+        return regex.test(phoneNumber);
+    }
+    $(document).ready(function () {
+        setTimeout(function () {
+
+            if ($("#zsiq_maintitle").text().toLowerCase().indexOf("online") > 0) {
+                try {
+                    if ($("#zsiq_maintitle").text().toLowerCase().indexOf("online") > 0)
+                        $(".chatdiv").addClass("online-user");
+                }
+                catch (ex) { }
+            }
+        }, 4000);
+        $("body").on("keyup paste", "#CustomizationForm #Phone", function (e)   {
+            $("#CustomizationForm #Phone span[data-valmsg-for='Phone']").removeClass("field-validation-error");
+            $("#CustomizationForm #Phone").removeClass("input-validation-error");
+            // Remove invalid chars from the input
+            var input = this.value.replace(/[^0-9\(\)\s\-]/g, "");
+            var inputlen = input.length;
+            // Get just the numbers in the input
+            var numbers = this.value.replace(/\D/g, '');
+            var numberslen = numbers.length;
+            // Value to store the masked input
+            var newval = "";
+
+            // Loop through the existing numbers and apply the mask
+            for (var i = 0; i < numberslen; i++) {
+                if (i == 0) newval = numbers[i];
+                else if (i == 3) newval += "-" + numbers[i];
+                else if (i == 6) newval += "-" + numbers[i];
+                else newval += numbers[i];
+            }
+
+            // Re-add the non-digit characters to the end of the input that the user entered and that match the mask.
+            if (inputlen >= 1 && numberslen == 0 && input[0] == "-") newval = "";
+            else if (inputlen >= 6 && numberslen == 3 && input[4] == ")" && input[5] == " ") newval += "";
+            else if (inputlen >= 5 && numberslen == 3 && input[4] == ")") newval += "-";
+            else if (inputlen >= 6 && numberslen == 3 && input[5] == " ") newval += " ";
+            else if (inputlen >= 10 && numberslen == 6 && input[9] == "-") newval += "-";
+
+            $(this).val(newval.substring(0, 12));
+        });
+    });
+
+    function ValidateZipCode(zipcode) {
+  return zipcode.length > 7 || zipcode.length < 5 ? false : true;
+    }
+
+    $("body").on('change', ".attachment input", function () {
+
+        if ($(this).val()) {
+
+            var filename = $(this).val().split("\\");
+  filename = filename[filename.length - 1];
+
+            $('.attachment_image').text(filename);
+        }
+    });
+
+
+</script>
+

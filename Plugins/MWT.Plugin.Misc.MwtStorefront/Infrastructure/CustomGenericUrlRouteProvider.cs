@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
+using MWT.Plugin.Misc.MwtStorefront.Infrastructure;
 using Nop.Data;
 using Nop.Web.Framework.Mvc.Routing;
 using Nop.Web.Infrastructure;
@@ -40,7 +41,7 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Infrastructure
             //generic routes
             var genericPattern = $"{lang}/{{SeName}}";
 
-            endpointRouteBuilder.MapDynamicControllerRoute<SlugRouteTransformer>(genericPattern);
+            endpointRouteBuilder.MapDynamicControllerRoute<SlugRouteExtendetTransformer>(genericPattern);
 
             endpointRouteBuilder.MapControllerRoute(name: "GenericUrl",
                 pattern: "{genericSeName}",
@@ -88,7 +89,7 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Infrastructure
         /// <remarks>
         /// it should be the last route. we do not set it to -int.MaxValue so it could be overridden (if required)
         /// </remarks>
-        public int Priority => -1100000;
+        public int Priority => -999999;
 
         #endregion
     }

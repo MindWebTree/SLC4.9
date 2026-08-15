@@ -1,27 +1,29 @@
-﻿@model Nop.Web.Models.Catalog.SearchModel
-@inject Nop.Core.IWorkContext _workcontext
-@inject Nop.Services.Configuration.ISettingService _settingService;
-@inject Nop.Services.Localization.ILocalizationService _localizationService;
-@inject Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor;
-@inject Nop.Core.IWebHelper webHelper
-@inject Nop.Core.IStoreContext _storeContext
+﻿@model CustomSearchModel
+@inject ICustomWorkContext _workcontext
+@inject ISettingService _settingService;
+@inject ILocalizationService _localizationService;
+@inject IHttpContextAccessor _httpContextAccessor;
+@inject IWebHelper webHelper
+@inject IStoreContext _storeContext
+
 @using Nop.Core.Domain.Seo
+
 @inject SeoSettings seoSettings
 @{
     bool IsHorizontal = await _settingService.GetSettingByKeyAsync<bool>("Search.IsHorizontal");
     Layout = IsHorizontal ? "_searchTemplate" : "_searchTemplate_sidebar";
 
     //title
-    Html.AddTitleParts(string.Format(await _settingService.GetSettingByKeyAsync<string>("seosettings.SearchTitle"), Model.SearchTerm));
-    Html.AddMetaDescriptionParts(await _settingService.GetSettingByKeyAsync<string>("seosettings.Searchmetadescription"));
-    Html.AddMetaKeywordParts(Model.SearchTerm);
+    NopHtml.AddTitleParts(string.Format(await _settingService.GetSettingByKeyAsync<string>("seosettings.SearchTitle"), Model.SearchTerm));
+    NopHtml.AddMetaDescriptionParts(await _settingService.GetSettingByKeyAsync<string>("seosettings.Searchmetadescription"));
+    NopHtml.AddMetaKeywordParts(Model.SearchTerm);
 
 
 
-    Html.AddCanonicalUrlParts("/search", false);
+    NopHtml.AddCanonicalUrlParts("/search", false);
     ViewBag.EnableInfiniteScroll = "True";
     //page class
-    Html.AppendPageCssClassParts("html-search-page");
+    NopHtml.AppendPageCssClassParts("html-search-page");
     string listingViewPath = await _settingService.GetSettingByKeyAsync<string>("Search.template.listingView");
 
 }
@@ -36,7 +38,7 @@
 
 @*Hidden Variables*@
 
-@section Heading{
+@section Heading {
     @if (Model.CatalogProductsModel.TotalItems > 0)
     {
         if (string.IsNullOrEmpty(_httpContextAccessor.HttpContext.Request.Query["categoryid"].ToString()))
@@ -79,26 +81,26 @@
         {
             @await Html.PartialAsync("_CatalogFilters", Model.CatalogProductsModel)
         }
-}
-else
-{
-    if (IsHorizontal)
-    { @if (Model.CatalogProductsModel.TotalItems > 0)
-        {
-            <div class="desktopFilters w-100" style="display:none;">
-                @await Html.PartialAsync("_CatalogFiltersHorizontal", Model.CatalogProductsModel)
-                @await Html.PartialAsync("_SelectedtFilters", Model.CatalogProductsModel)
-            </div>
-        }
-}
-else
-{
-    @if (Model.CatalogProductsModel.TotalItems > 0)
-    {
-        @await Html.PartialAsync("_CatalogFiltersSideBar", Model.CatalogProductsModel)
     }
-}
-}
+    else
+    {
+        if (IsHorizontal)
+        { @if (Model.CatalogProductsModel.TotalItems > 0)
+            {
+                <div class="desktopFilters w-100" style="display:none;">
+                    @await Html.PartialAsync("_CatalogFiltersHorizontal", Model.CatalogProductsModel)
+                    @await Html.PartialAsync("_SelectedtFilters", Model.CatalogProductsModel)
+                </div>
+            }
+        }
+        else
+        {
+            @if (Model.CatalogProductsModel.TotalItems > 0)
+            {
+                @await Html.PartialAsync("_CatalogFiltersSideBar", Model.CatalogProductsModel)
+            }
+        }
+    }
 }
 @if (!IsHorizontal)
 {
