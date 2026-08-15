@@ -16,14 +16,14 @@ namespace Nop.Web.Components
     public class Custom_CollectionProducts_Vertical_DisplayBlockViewComponent : NopViewComponent
     {
         private readonly ICustomProductModelFactory _productModelFactory;
-        private readonly ICustomProductService _productService;
+        private readonly IProductExtendedService _productService;
         private readonly IStoreContext _storeContext;
         private readonly MediaSettings _mediaSettings;
         private readonly ISettingService _settingService;
 
         public Custom_CollectionProducts_Vertical_DisplayBlockViewComponent(CatalogSettings catalogSettings,
    ICustomProductModelFactory productModelFactory,
-            ICustomProductService productService,
+            IProductExtendedService productService,
              IStoreContext storeContext,
              MediaSettings mediaSettings,
              ISettingService settingService)

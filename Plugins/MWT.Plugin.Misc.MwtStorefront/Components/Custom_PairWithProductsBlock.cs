@@ -18,13 +18,13 @@ namespace Nop.Web.Components
     public class Custom_PairWithProductsBlockViewComponent : NopViewComponent
     {
         private readonly ICustomProductModelFactory _productModelFactory;
-        private readonly ICustomProductService _productService;
+        private readonly IProductExtendedService _productService;
         private readonly IStoreContext _storeContext;
         private readonly MediaSettings _mediaSettings;
 
         public Custom_PairWithProductsBlockViewComponent(CatalogSettings catalogSettings,
    ICustomProductModelFactory productModelFactory,
-            ICustomProductService productService,
+            IProductExtendedService productService,
              IStoreContext storeContext,
              MediaSettings mediaSettings)
         {

@@ -23,7 +23,7 @@ namespace Nop.Web.Components
     {
         private readonly IAclService _aclService;
         private readonly ICustomProductModelFactory _productModelFactory;
-        private readonly ICustomProductService _productService;
+        private readonly IProductExtendedService _productService;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IStoreContext _storeContext;
         private readonly IStoreMappingService _storeMappingService;
@@ -33,7 +33,7 @@ namespace Nop.Web.Components
 
         public Custom_CrossSellProductsBlockViewComponent(IAclService aclService,
             ICustomProductModelFactory productModelFactory,
-            ICustomProductService productService,
+            IProductExtendedService productService,
             IShoppingCartService shoppingCartService,
             IStoreContext storeContext,
             IStoreMappingService storeMappingService,

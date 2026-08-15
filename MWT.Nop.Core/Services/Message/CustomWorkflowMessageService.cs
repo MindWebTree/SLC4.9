@@ -810,7 +810,7 @@ namespace MWT.Nop.Core.Services.Message
                 if (order.LiveOrderNumber != null && order.LiveOrderNumber > 0)
                 {
                     var _order = await _orderService.GetOrderByIdAsync(Convert.ToInt32(order.LiveOrderNumber));
-                    billingAddressId = _order.BillingAddressId == null ? 0 : Convert.ToInt32(_order.BillingAddressId);
+                    billingAddressId =  Convert.ToInt32(_order.BillingAddressId);
                 }
                 else if (order.CustomerId != null && order.CustomerId > 0)
                 {

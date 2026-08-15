@@ -9,7 +9,7 @@ namespace MWT.Nop.Core.Domain.AbandonedCarts
 {
     public class AbandonedCart : BaseEntity
     {
-        public int Id { get; set; }
+
         public string OrderNotes { get; set; }
         public bool? IsOrderConfirmed { get; set; }
         public int? OrderNumber { get; set; }

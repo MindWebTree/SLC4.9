@@ -16,13 +16,13 @@ namespace Nop.Web.Components
     {
         private readonly IAclService _aclService;
         private readonly ICustomProductModelFactory _productModelFactory;
-        private readonly ICustomProductService _productService;
+        private readonly IProductExtendedService _productService;
         private readonly IStoreMappingService _storeMappingService;
         private readonly ISettingService _settingService;
 
         public Custom_RelatedProductsViewComponent(IAclService aclService,
             ICustomProductModelFactory productModelFactory,
-            ICustomProductService productService,
+            IProductExtendedService productService,
             IStoreMappingService storeMappingService,
             ISettingService settingService)
         {

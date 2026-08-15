@@ -9,7 +9,7 @@
 @inject IThemeContext themeContext
 @inject ICustomWorkContext _customworkContext
 @inject IWorkContext _workContext
-@inject ICustomCustomerService _customerService
+@inject ICustomerExtendedService _customerService
 @{
     var themeName = await themeContext.GetWorkingThemeNameAsync();
     bool isAttributePreselected = true;

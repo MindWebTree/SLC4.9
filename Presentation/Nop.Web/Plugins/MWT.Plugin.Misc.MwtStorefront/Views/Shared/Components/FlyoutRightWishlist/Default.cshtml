@@ -1,0 +1,378 @@
+﻿@inject Nop.Services.Configuration.ISettingService _settingServce;
+@using Nop.Core.Domain.Orders
+@inject Nop.Core.IWorkContext _workContext;
+@inject Nop.Services.Customers.ICustomerService _customerService;
+@model MiniShoppingCartModel
+@{
+    var customer = await _workContext.GetCurrentCustomerAsync();
+    var isRegisteredUser = await _customerService.IsRegisteredAsync(customer);
+    var settingValue = await _settingServce.GetSettingByKeyAsync<string>("MarketingSettings.ShowBuymoreSavemoreBanner");
+    bool showBuymoreSavemoreBanner = false;
+    bool.TryParse(settingValue, out showBuymoreSavemoreBanner);
+}
+
+<div class="modal-header">
+    <h4 class="modal-title" id="cartpopuptitle">@T("cart.popup.wishlist.title", Model.TotalProducts)</h4><button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+</div>
+
+<div class="modal-body">
+    @if (Model.Items.Count > 0)
+    {
+
+        <form asp-route="Wishlist" method="post" id="popup-wishlist-items">
+            <div class="wishlist-items">
+
+                @for (var i = 0; i < Model.Items.Count; i++)
+                {
+                    var item = Model.Items[i];
+                    <div class="d-flex product-add-to-cart">
+                        <div>  <input type="checkbox" class="checkbox" id="@(item.Id)" data-parent="@item.ProductId" data-variantId="@item.Variant?.Id??0" name="addtocart" value="@(item.Id)" /></div>
+                        <div class="img-add-to-cart">
+                            <a href="@Url.RouteUrl("Product", new { id = item.ProductId, SeName = item.ProductSeName })" title="@item.Picture.Title">
+                                <img alt="@item.Picture.AlternateText" src="/images/pixel.png" data-src="@item.Picture.ImageUrl" class="lazy" title="@item.Picture.Title" />
+                            </a>
+                        </div>
+                        <div class="deatail-add-to-cart">
+                            <h4>
+                                <a href="@Url.RouteUrl("Product", new { id = item.ProductId, SeName = item.ProductSeName })" title="@item.Picture.Title">
+                                    @item.ProductName
+                                </a>
+                            </h4>
+                            <p>
+                                @if (!string.IsNullOrEmpty(item.AttributeInfo))
+                                {
+                                    @Html.Raw(System.Net.WebUtility.HtmlDecode(item.AttributeInfo))
+                                    @Html.Raw("<br>")
+                                }
+
+                                @T("ShoppingCart.Mini.Quantity") : @item.Quantity
+                            </p>
+                        </div>
+                        <div class="price">
+                            <h4>@item.UnitPrice</h4>
+                            <a href="#" onclick="deleteItem('@item.Id',this,event,'@Url.RouteUrl("CartItem-Delete", new {shoppingCartRecId = item.Id, shoppingCartTypeId = (int) ShoppingCartType.Wishlist})')">
+                                <svg width="14" height="15" viewBox="0 0 14 15" class="deleteItem" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.5" d="M0.9375 13.5938C0.9375 13.9667 1.08566 14.3244 1.34938 14.5881C1.6131 14.8518 1.97079 15 2.34375 15H10.7812C11.1542 15 11.5119 14.8518 11.7756 14.5881C12.0393 14.3244 12.1875 13.9667 12.1875 13.5938V3.75H0.9375V13.5938ZM8.90625 6.09375C8.90625 5.96943 8.95563 5.8502 9.04354 5.7623C9.13145 5.67439 9.25068 5.625 9.375 5.625C9.49932 5.625 9.61855 5.67439 9.70645 5.7623C9.79436 5.8502 9.84375 5.96943 9.84375 6.09375V12.6563C9.84375 12.7806 9.79436 12.8998 9.70645 12.9877C9.61855 13.0756 9.49932 13.125 9.375 13.125C9.25068 13.125 9.13145 13.0756 9.04354 12.9877C8.95563 12.8998 8.90625 12.7806 8.90625 12.6563V6.09375ZM6.09375 6.09375C6.09375 5.96943 6.14313 5.8502 6.23104 5.7623C6.31895 5.67439 6.43818 5.625 6.5625 5.625C6.68682 5.625 6.80605 5.67439 6.89395 5.7623C6.98186 5.8502 7.03125 5.96943 7.03125 6.09375V12.6563C7.03125 12.7806 6.98186 12.8998 6.89395 12.9877C6.80605 13.0756 6.68682 13.125 6.5625 13.125C6.43818 13.125 6.31895 13.0756 6.23104 12.9877C6.14313 12.8998 6.09375 12.7806 6.09375 12.6563V6.09375ZM3.28125 6.09375C3.28125 5.96943 3.33064 5.8502 3.41854 5.7623C3.50645 5.67439 3.62568 5.625 3.75 5.625C3.87432 5.625 3.99355 5.67439 4.08145 5.7623C4.16936 5.8502 4.21875 5.96943 4.21875 6.09375V12.6563C4.21875 12.7806 4.16936 12.8998 4.08145 12.9877C3.99355 13.0756 3.87432 13.125 3.75 13.125C3.62568 13.125 3.50645 13.0756 3.41854 12.9877C3.33064 12.8998 3.28125 12.7806 3.28125 12.6563V6.09375ZM12.6562 0.937505H9.14062L8.86523 0.389653C8.8069 0.272529 8.71703 0.174006 8.60575 0.105169C8.49448 0.0363316 8.3662 -8.87099e-05 8.23535 5.13654e-06H4.88672C4.75616 -0.000496734 4.62811 0.0357877 4.51723 0.104701C4.40634 0.173615 4.31711 0.272371 4.25976 0.389653L3.98437 0.937505H0.46875C0.34443 0.937505 0.225201 0.986891 0.137294 1.0748C0.049386 1.16271 0 1.28193 0 1.40625L0 2.34375C0 2.46807 0.049386 2.5873 0.137294 2.67521C0.225201 2.76312 0.34443 2.8125 0.46875 2.8125H12.6562C12.7806 2.8125 12.8998 2.76312 12.9877 2.67521C13.0756 2.5873 13.125 2.46807 13.125 2.34375V1.40625C13.125 1.28193 13.0756 1.16271 12.9877 1.0748C12.8998 0.986891 12.7806 0.937505 12.6562 0.937505Z" fill="black" />
+                                </svg>
+                                <svg width="14" height="15" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#4D585A" class="minicart-processing" style="display: none; width: 15px;">
+                                    <g fill="none" fill-rule="evenodd">
+                                        <g transform="translate(1 1)" stroke-width="2">
+                                            <circle stroke-opacity=".5" cx="18" cy="18" r="18" />
+                                            <path d="M36 18c0-9.94-8.06-18-18-18">
+                                                <animateTransform attributeName="transform"
+                                                                  type="rotate"
+                                                                  from="0 18 18"
+                                                                  to="360 18 18"
+                                                                  dur="1s"
+                                                                  repeatCount="indefinite" />
+                                            </path>
+                                        </g>
+                                    </g>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+
+                }
+            </div>
+            <div class="d-flex move-to-buttons">
+                <div class="continue product-add-to-buttons move-to-cart">
+                    <button type="button" name="addtocartbutton" class="btn btn-secondary" id="btnmovetocart" disabled>
+                        <span> @T("cart.popup.wishlist.Button.MoveTocart")</span>
+                        <svg width="20" height="20" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#4D585A" class="d-none" style=" width: 20px;">
+                            <g fill="none" fill-rule="evenodd">
+                                <g transform="translate(1 1)" stroke-width="2">
+                                    <circle stroke-opacity=".5" cx="18" cy="18" r="18" />
+                                    <path d="M36 18c0-9.94-8.06-18-18-18">
+                                        <animateTransform attributeName="transform"
+                                                          type="rotate"
+                                                          from="0 18 18"
+                                                          to="360 18 18"
+                                                          dur="1s"
+                                                          repeatCount="indefinite" />
+                                    </path>
+                                </g>
+                            </g>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </form>
+        @if (!isRegisteredUser)
+        {
+            <form id="loginform" asp-action="LoginRegisterPopup" asp-controller="Customer" method="post" autocomplete="off">
+                <div class="signupsection">
+                    <h4>@T("cart.popup.wishlist.Email.Title")</h4>
+                    <p>
+                        @T("cart.popup.wishlist.Email.Description")
+                    </p>
+                    <div class="formsection">
+                        <div class="emailstep">
+                            <input type="email" name="email" class="form-control" id="email" placeholder="@T("cart.popup.wishlist.Email.Placeholder")">
+                            <div class="row" style=" max-width: 450px; margin: 0px auto;">
+                                <div class="col-md-6" style=" padding-left: 0px;">
+                                    <button type="button" class="btn btn-primary" id="btnemailwishlist">
+                                        <span>
+                                            @T("Common.Email.Wishlist")
+                                        </span>
+                                    </button>
+                                </div>
+                                <div class="col-md-6" style=" padding-left: 0px;">
+                                  
+                                    <button type="button" class="btn btn-primary" id="btnwishlistcontinue">@T("common.createaccount")</button>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="passwordsection d-none">
+                    <h4 class="message-existing-user">@T("cart.popup.wishlist.Password.Title")</h4>
+                    <p>
+                        @T("cart.popup.wishlist.Password.Description")
+                    </p>
+                    <div class="formsection">
+                        <div class="emailstep">
+                            <input type="password" class="form-control" name="password" id="password" placeholder="@T("cart.popup.wishlist.password.Placeholder")">
+                            <button type="button" class="btn btn-primary" id="btnwishlistlogin">
+                                <span class="wishlist-actionbtn-text">
+                                    @T("common.login")
+                                </span>
+                                <svg width="20" height="20" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#4D585A" class="d-none" style=" width: 20px;">
+                                    <g fill="none" fill-rule="evenodd">
+                                        <g transform="translate(1 1)" stroke-width="2">
+                                            <circle stroke-opacity=".5" cx="18" cy="18" r="18" />
+                                            <path d="M36 18c0-9.94-8.06-18-18-18">
+                                                <animateTransform attributeName="transform"
+                                                                  type="rotate"
+                                                                  from="0 18 18"
+                                                                  to="360 18 18"
+                                                                  dur="1s"
+                                                                  repeatCount="indefinite" />
+                                            </path>
+                                        </g>
+                                    </g>
+                                </svg>
+                            </button>
+
+                            <button type="button" class="btn btn-primary" id="btnwishlistback">@T("common.back")</button>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="error">
+                    <p></p>
+                </div>
+            </form>
+        }
+    }
+    else
+    {
+        <div class="empty">
+            <svg width="56" viewBox="0 0 65 74" xmlns="http://www.w3.org/2000/svg">
+                <g fill-rule="nonzero" fill="none">
+                    <path d="M64.407 9.856L53.605 0H11.371L.569 9.856A1.548 1.548 0 00.1 11.603c.235.619.843 1.031 1.524 1.031h61.727a1.62 1.62 0 001.522-1.031 1.545 1.545 0 00-.467-1.747z" fill="#C4C4C4"></path>
+                    <path d="M63.351 9.927H1.624C.728 9.927 0 10.644 0 11.529v59.267C0 72.566 1.454 74 3.249 74h58.478c1.795 0 3.249-1.434 3.249-3.204V11.53c0-.885-.728-1.602-1.625-1.602z" fill="#E4E4E4"></path>
+                    <path d="M32.488 45.122c-7.963 0-14.44-6.447-14.44-14.37v-4.79a1.6 1.6 0 011.605-1.596 1.6 1.6 0 011.604 1.596v4.79c0 6.163 5.04 11.177 11.23 11.177 6.192 0 11.231-5.014 11.231-11.177v-4.79a1.6 1.6 0 011.604-1.596 1.6 1.6 0 011.605 1.596v4.79c0 7.923-6.477 14.37-14.44 14.37z" fill="#6D6D6D"></path>
+                </g>
+            </svg><p>
+                @T("shoppingcart.wishlistemty")
+            </p>
+        </div>
+    }
+</div>
+
+
+
+<script type="text/javascript">
+
+    $("body").off("change","input[class=checkbox]", function () { });
+    $('body').on('change', 'input[class=checkbox]', function () {
+        if ($('input[class=checkbox]:checked').length > 0) {
+            $("#btnmovetocart").prop("disabled", false);
+        }
+        else
+            $("#btnmovetocart").prop("disabled", true);
+
+    });
+    $("body").off("click", "#btnmovetocart");
+    $('body').on('click', '#btnmovetocart', moveItemsToCart);
+
+    function moveItemsToCart() {
+        if ($('#popup-wishlist-items')){
+        $('#popup-wishlist-items input[type = "checkbox"]').each(function () {
+            if ($(this).is(":checked")) {
+                $("[data-wishlist='" + $(this).val() + "']").removeClass("active");
+                $("[data-wishlist='" + $(this).val() + "']").removeAttr("data-wishlist");
+            }
+        });
+        }
+        var btnId = "#btnmovetocart";
+        $(btnId).prop("disabled", true);
+        $(btnId + " span").addClass("d-none");
+        $(btnId + " svg").removeClass("d-none");
+        var data = $("#popup-wishlist-items").serialize();
+        addAntiForgeryToken(data);
+        $.ajax({
+            type: "POST",
+            url: '/ShoppingCart/CustomAddItemsToCartFromWishlist',
+            data: data,
+            dataType: "json",
+            success: function (result) {
+                if (result.success) {
+
+                    if (result.updatetopcartsectionhtml) {
+                        $(AjaxCart.topcartselector).html(result.updatetopcartsectionhtml);
+                    }
+                    if (result.updatetopwishlistsectionhtml) {
+                        $(AjaxCart.topwishlistselector).html(result.updatetopwishlistsectionhtml);
+                    }
+                    if (result.updateFlyoutWishlistPopupSectionHtml) {
+                        $(AjaxCart.flyoutwishlistpopupselector).html(result.updateFlyoutWishlistPopupSectionHtml);
+                    }
+                    $(AjaxCart.flyoutcartselector).html(result.updateFlyoutCartSectionHtml);
+                    $(AjaxCart.flylayoutWishlistModel).modal('hide');
+                    $(".ico-cart").click();
+
+
+                    // display html
+
+                }
+                else {
+                    $(btnId + " span").removeClass("d-none");
+                    $(btnId + " svg").addClass("d-none");
+                }
+                $(btnId).prop("disabled", false);
+            },
+            error: function (result) {
+                $(btnId).prop("disabled", false);
+                $(btnId + " span").removeClass("d-none");
+                $(btnId + " svg").addClass("d-none");
+            }
+        });
+    }
+    function deleteItem(cartId, obj, event, url) {
+        event.preventDefault();
+        $(obj).find(".deleteItem").hide();
+        $(obj).find(".minicart-processing").show();
+        AjaxCart.deleteCartItem(url, '#product-details-form');
+        return false;
+    }
+    function postData(data, btnId) {
+        $(btnId).prop("disabled", true);
+        $(btnId + " span").addClass("d-none");
+        $(btnId + " svg").removeClass("d-none");
+        $("#wishlistpopupmodel .error p").html("");
+        addAntiForgeryToken(data);
+        $("#wishlistpopupmodel .error p").html("");
+        $("#wishlistpopupmodel .error p").removeClass("success");
+        $.ajax({
+            type: "POST",
+            url: '/customer/LoginRegisterPopup',
+            data: data,
+            dataType: "json",
+            success: function (result) {
+                if (result.statusCode == 200) {
+                    setTimeout(function () {
+                        window.location = window.location.href;
+                    }, 1000);
+                    // display html
+
+                }
+                else {
+                    $("#wishlistpopupmodel .error p").html(result.message);
+                    $(btnId + " span").removeClass("d-none");
+                    $(btnId + " svg").addClass("d-none");
+                }
+                $(btnId).prop("disabled", false);
+            },
+            error: function (result) {
+                $(btnId).prop("disabled", false);
+                $(btnId + " span").removeClass("d-none");
+                $(btnId + " svg").addClass("d-none");
+            }
+        });
+    }
+    $('body').on('show.bs.modal', '#wishlistpopupmodel', function () {
+        lazyloadimages();
+    });
+    $('body').on('click', '#btnwishlistlogin', function () {
+        if ($("#password").val().trim() == "") {
+            $("#wishlistpopupmodel .error p").html("@T("cart.popup.wishlist.Password.required")");
+        }
+        else
+            postData($("#loginform").serialize(),"#btnwishlistlogin");
+    });
+    $('body').on('click', '#btnwishlistback', function () {
+        $(".signupsection").removeClass("d-none");
+        $(".passwordsection").addClass("d-none");
+        $("#wishlistpopupmodel .error p").html("");
+    })
+
+    $('body').on('click', '#btnemailwishlist', function () {
+        $("#wishlistpopupmodel .error p").html("");
+        $("#wishlistpopupmodel .error p").removeClass("success");
+        if (ValidateEmail($("#email").val())) {
+            $.ajax({
+                type: "POST",
+                url: '/ShoppingCart/EmailWishlistPopup',
+                data: $("#loginform").serialize(),
+                dataType: "json",
+                success: function (result) {
+                    if (result.statusCode == 400) {
+                        $("#wishlistpopupmodel .error p").html(result.message);
+                    }
+                    else {
+                        $("#wishlistpopupmodel .error p").addClass("success");
+                        $("#wishlistpopupmodel .error p").html(result.message)
+                    }
+                },
+                error: function (result) {
+                    $("#wishlistpopupmodel .error p").html(result);
+                }
+            });
+         }
+        else {
+            $("#wishlistpopupmodel .error p").html("@T("cart.popup.wishlist.Email.required")");
+        }
+    });
+    $('body').on('click', '#btnwishlistcontinue', function () {
+        if (ValidateEmail($("#email").val())) {
+            $("#wishlistpopupmodel .error p").html("");
+            $("#wishlistpopupmodel .error p").removeClass("success");
+            $.ajax({
+                type: "POST",
+                url: '/customer/ValidateCustomer',
+                data: $("#loginform").serialize(),
+                dataType: "json",
+                success: function (result) {
+                    if (result.message == "") {
+                        $(".message-existing-user").hide();
+                    }
+                    else {
+                        $(".message-existing-user").show();
+                    }
+                    $(".wishlist-actionbtn-text").html(result.buttonText);
+                    $("#wishlistpopupmodel .error p").html("");
+                    $(".signupsection").addClass("d-none");
+                    $(".passwordsection").removeClass("d-none");
+                },
+                error: function (result) {
+                    $("#wishlistpopupmodel .error p").html(result);
+                }
+            });
+        }
+        else {
+            $("#wishlistpopupmodel .error p").html("@T("cart.popup.wishlist.Email.required")");
+        }
+    })
+    function ValidateEmail(mail) {
+        if (/^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
+            return (true)
+        }
+        return (false)
+    }
+
+
+</script>

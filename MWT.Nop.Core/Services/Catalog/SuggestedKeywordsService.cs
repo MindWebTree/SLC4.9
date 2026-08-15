@@ -72,7 +72,7 @@ namespace MWT.Nop.Core.Services.Catalog
                           join prdSuggestedKeyWord in this._productSuggestedwordsRepository.Table
                      on keyword.Id equals prdSuggestedKeyWord.SuggestedKeyWordID
                           where prdSuggestedKeyWord.ProductId == productId
-                          && (prdSuggestedKeyWord.IsCustom == null ? false : prdSuggestedKeyWord.IsCustom) == showCustom
+                          && ( prdSuggestedKeyWord.IsCustom) == showCustom
                           select keyword).ToListAsync();
         }
 

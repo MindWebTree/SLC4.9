@@ -18,12 +18,12 @@ namespace Nop.Web.Components
     public class FBTProductsViewComponent : NopViewComponent
     {
         private readonly ICustomProductModelFactory _productModelFactory;
-        private readonly ICustomProductService _productService;
+        private readonly IProductExtendedService _productService;
         private readonly IStoreContext _storeContext;
         private readonly ISettingService _settingService;
         private readonly IStaticCacheManager _staticCacheManager;
         public FBTProductsViewComponent(ICustomProductModelFactory productModelFactory,
-                                                  ICustomProductService productService,
+                                                  IProductExtendedService productService,
                                                   IStoreContext storeContext,
                                                   ISettingService settingService,
                                                   IStaticCacheManager staticCacheManager)

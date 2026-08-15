@@ -480,7 +480,7 @@ namespace MWT.Nop.Core.Services.Message
                 tokens.Add(new Token("Email", customer.Email));
 
 
-            string phone = "";
+     
             if (customer.BillingAddressId.HasValue)
             {
                 var address = await _addressService.GetAddressByIdAsync(Convert.ToInt32(customer.BillingAddressId));

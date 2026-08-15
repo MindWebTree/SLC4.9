@@ -7,7 +7,7 @@
 @inject Nop.Services.Configuration.ISettingService _settingService
 @inject IThemeContext themeContext
 @inject ICustomWorkContext _workContext
-@inject ICustomCustomerService _customerService
+@inject ICustomerExtendedService _customerService
 @{ var themeName = await themeContext.GetWorkingThemeNameAsync();
     bool isAttributePreselected = true;
     if (Model.ProductAttributes != null)

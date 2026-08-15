@@ -1509,7 +1509,7 @@ namespace MWT.Nop.Core.Service.Catalog
             var variantId = 0;
             try
             {
-                var isVariantExist = false;
+           
                 var productAttributeMapping = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(productId);
                 foreach (var attribute in productAttributeMapping)
                 {
