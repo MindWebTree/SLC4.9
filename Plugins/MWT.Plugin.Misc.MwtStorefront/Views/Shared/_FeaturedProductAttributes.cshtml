@@ -259,8 +259,8 @@
                                         </legend>
 
                                         <ul data-attr="@(attribute.Id)" class="option-list attribute-squares color-squares @(attribute.Values.Count>0
-                                                                                                                                                                                && T("Product.Attr.Size").Text == @textPrompt
-                                                                                                                                                                                ? "new-size-box" + (attribute.Values.Count == 1 ? " single" : "") : "shade-box")" id="color-squares-@(attribute.Id)">
+                                                                                                                                                                                                                                                        && T("Product.Attr.Size").Text == @textPrompt
+                                                                                                                                                                                                                                                        ? "new-size-box" + (attribute.Values.Count == 1 ? " single" : "") : "shade-box")" id="color-squares-@(attribute.Id)">
 
                         @foreach (var attributeValue in attributeValues)
                                             {
@@ -525,12 +525,19 @@
                                 else {
                                     $('<p class="sale-price  m-0 limited-offer-@Model.Id">' + data.offerText + '</p>').parent().insertBefore($('@addtoCartFormId .price-value-@Model.Id').parent());
                                 }
+                                  if (typeof updatePriceAriaLabel === "function") {
+                                      updatePriceAriaLabel('@addtoCartFormId .price-value-@Model.Id', data.price, data.oldPrice);
+                                    }
                             }
                             else {
                                 $('@addtoCartFormId .price-value-@Model.Id').text(data.oldPrice ? data.oldPrice : data.price);
                                 $('@addtoCartFormId .price-value-@Model.Id').show();
                                 $('@addtoCartFormId .limited-offer-@Model.Id').show();
                                 $('@addtoCartFormId .limited-offer-@Model.Id').html(data.offerText);
+
+                                   if (typeof updatePriceAriaLabel === "function") {
+                                      updatePriceAriaLabel('@addtoCartFormId .price-value-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
+                                    }
                             }
 
                         }

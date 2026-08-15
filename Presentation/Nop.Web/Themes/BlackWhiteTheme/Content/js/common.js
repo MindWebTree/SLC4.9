@@ -18,15 +18,15 @@ $(document).on('keydown', '.card-header[role="button"]', function (e) {
 });
 $(".wishlist-icon").keydown(function (event) {
     if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault(); 
+        event.preventDefault();
         this.click();
     }
 });
-$(document).ready(function() {
-    $('#product-magiczoom').on('keydown', function(event) {
+$(document).ready(function () {
+    $('#product-magiczoom').on('keydown', function (event) {
         if (event.key === 'Enter' || event.keyCode === 13) {
-            event.preventDefault(); 
-            
+            event.preventDefault();
+
             // Tell the MagicZoom API directly to expand this specific gallery
             if (typeof MagicZoom !== 'undefined') {
                 MagicZoom.expand('product-magiczoom');
@@ -398,7 +398,7 @@ $("body").on("click", ".filter-horizontal .btndropdown,.filter-top .btndropdown"
         $(this).parent().find('button i').addClass('up-arrow');
     }
 });
-    
+
 
 $("body").on("focusout", ".custom-select", function (e) {
     if (!$(this).has(e.relatedTarget).length) {
@@ -409,31 +409,31 @@ $("body").on("focusout", ".custom-select", function (e) {
     }
 });
 
-$('.card-title,.cta-tab').on('keydown', function (event) { 
+$('.card-title,.cta-tab').on('keydown', function (event) {
     if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault(); // Stop the page from scrolling down if Space is pressed
         $(this).click();        // Trigger the normal click event
     }
-}); 
+});
 $(document).ready(function () {
     var lastFocusedFilterId = null;
-     
+
     $(document).on('change', '.filtercheckbox', function () {
         lastFocusedFilterId = $(this).attr('id');
-    }); 
+    });
     $(document).ajaxSuccess(function (event, xhr, settings) {
         if (lastFocusedFilterId) {
             // Put focus back on the checkbox instantly
             var $targetCheckbox = $('#' + lastFocusedFilterId);
             if ($targetCheckbox.length > 0) {
                 $targetCheckbox.focus();
-            } 
+            }
             // Clear tracking so it doesn't fight normal browsing behavior later
             lastFocusedFilterId = null;
         }
     });
 });
- 
+
 $(document).ready(function () {
     var $lastClickedWishlistIcon = null;
 
@@ -441,13 +441,13 @@ $(document).ready(function () {
         $lastClickedWishlistIcon = $(this);
     });
 
-    $(document).on('click', '.close', function () { 
+    $(document).on('click', '.close', function () {
         if ($lastClickedWishlistIcon && $lastClickedWishlistIcon.length > 0) {
-            
+
             $lastClickedWishlistIcon.focus();
-            
+
             // Clear tracking so it doesn't fire accidentally later
-            $lastClickedWishlistIcon = null; 
+            $lastClickedWishlistIcon = null;
         }
     });
 });
@@ -474,15 +474,15 @@ $(document).on('keydown', '.prev-arrow, .next-arrow', function (e) {
         $(this).trigger('click');
     }
 });
- 
-$(".filterDesktopIcon").keydown(function (event) { 
+
+$(".filterDesktopIcon").keydown(function (event) {
     if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault(); 
+        event.preventDefault();
         this.click();
     }
 });
 
- 
+
 $(".filterDesktopIcon").click(function () {
 
     if (!$(".filterDesktopIcon").hasClass("show")) {
@@ -560,7 +560,7 @@ if ($("html").hasClass("html-product-details-page") || $("html").hasClass("html-
                     c.setAttribute("id", "drp-customize");
 
             c.innerHTML = selElmnt.options[j].innerHTML;
- c.setAttribute("aria-label", selElmnt.options[j].innerHTML)
+            c.setAttribute("aria-label", selElmnt.options[j].innerHTML)
             if (selElmnt.options[j].disabled) {
                 c.classList.add("unavailable-swatch");
             }
@@ -618,7 +618,7 @@ if ($("html").hasClass("html-product-details-page") || $("html").hasClass("html-
 
             // FIXED: Added full arrow navigation logic to the options
             c.addEventListener("keydown", function (e) {
-                console.log('KEY:', e.key); 
+                console.log('KEY:', e.key);
                 if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
                     this.click();
@@ -719,7 +719,7 @@ function customDropDown(element) {
             c.innerHTML = selElmnt.options[j].innerHTML;
             c.setAttribute("tabindex", "0"); // ADDED: Makes the individual options focusable
             c.setAttribute("role", "option");
-			 c.setAttribute("aria-label", selElmnt.options[j].innerHTML)
+            c.setAttribute("aria-label", selElmnt.options[j].innerHTML)
             c.addEventListener("click", function (e) {
                 /*when an item is clicked, update the original select box,
                 and the selected item:*/
@@ -1750,5 +1750,14 @@ function setProductBrowserHistory(url, targetId, targetSlug) {
             "",
             newUrl
         );
+    }
+}
+
+function updatePriceAriaLabel(section, saleprice, price) {
+    if (price) {
+        $(section).attr("aria-label", `Sale price ${saleprice} , regular price ${price}`);
+    }
+    else {
+        $(section).attr("aria-label", `Price ${saleprice}`);
     }
 }
