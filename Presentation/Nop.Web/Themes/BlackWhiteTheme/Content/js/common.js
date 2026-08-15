@@ -1745,7 +1745,7 @@ function setProductBrowserHistory(url, targetId, targetSlug) {
             `/product/${targetId}/${targetSlug}`
         );
 
-        window.history.replaceState(
+        window.history.replaceState(s
             { path: newUrl },
             "",
             newUrl
@@ -1755,9 +1755,9 @@ function setProductBrowserHistory(url, targetId, targetSlug) {
 
 function updatePriceAriaLabel(section, saleprice, price) {
     if (price) {
-        $(section).attr("aria-label", `Sale price ${saleprice} , regular price ${price}`);
+        $(section).parent().attr("aria-label", `Sale price ${saleprice} , regular price ${price}`);
     }
     else {
-        $(section).attr("aria-label", `Price ${saleprice}`);
+        $(section).parent().attr("aria-label", `Price ${saleprice}`);
     }
 }

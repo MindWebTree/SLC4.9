@@ -1316,7 +1316,7 @@
                                       $('@addtoCartFormId .limited-offer-@Model.Id').html(data.offerText);
 
                                        if (typeof updatePriceAriaLabel === "function") {
-                                              updatePriceAriaLabel('@addtoCartFormId .price-value-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
                                           updatePriceAriaLabel('@addtoCartFormId .price-value-withoutoffer-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
                                           updatePriceAriaLabel('@addtoCartFormId .price-value-sticky-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
                                       }
