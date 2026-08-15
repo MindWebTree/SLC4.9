@@ -20,10 +20,10 @@ namespace MWT.Nop.Core.Services.Media
     /// <summary>
     /// Picture service
     /// </summary>
-    public partial class CustomPictureService : PictureService, ICustomPictureService
+    public partial class PictureExtendedService : PictureService, IPictureExtendedService
     {
 
-        public CustomPictureService(IDownloadService downloadService, IHttpContextAccessor httpContextAccessor, ILogger logger, INopFileProvider fileProvider, IProductAttributeParser productAttributeParser, IProductAttributeService productAttributeService, IRepository<Picture> pictureRepository, IRepository<PictureBinary> pictureBinaryRepository, IRepository<ProductPicture> productPictureRepository, ISettingService settingService, IThumbService thumbService, IUrlRecordService urlRecordService, IWebHelper webHelper, MediaSettings mediaSettings) : base(downloadService, httpContextAccessor, logger, fileProvider, productAttributeParser, productAttributeService, pictureRepository, pictureBinaryRepository, productPictureRepository, settingService, thumbService, urlRecordService, webHelper, mediaSettings)
+        public PictureExtendedService(IDownloadService downloadService, IHttpContextAccessor httpContextAccessor, ILogger logger, INopFileProvider fileProvider, IProductAttributeParser productAttributeParser, IProductAttributeService productAttributeService, IRepository<Picture> pictureRepository, IRepository<PictureBinary> pictureBinaryRepository, IRepository<ProductPicture> productPictureRepository, ISettingService settingService, IThumbService thumbService, IUrlRecordService urlRecordService, IWebHelper webHelper, MediaSettings mediaSettings) : base(downloadService, httpContextAccessor, logger, fileProvider, productAttributeParser, productAttributeService, pictureRepository, pictureBinaryRepository, productPictureRepository, settingService, thumbService, urlRecordService, webHelper, mediaSettings)
         {
 
         }
@@ -206,7 +206,7 @@ namespace MWT.Nop.Core.Services.Media
                 throw new ArgumentNullException(nameof(picture));
 
             //delete thumbs
-             await this._thumbService.DeletePictureThumbsAsync(picture);
+            await this._thumbService.DeletePictureThumbsAsync(picture);
         }
 
 
@@ -290,6 +290,47 @@ namespace MWT.Nop.Core.Services.Media
             await UpdatePictureAsync(picture);
 
             return picture;
+        }
+
+
+        public virtual async Task<List<Picture>> GetProductAttributePicturesAsync(Product product, string attributesXml)
+        {
+            if (product == null)
+                throw new ArgumentNullException(nameof(product));
+            List<Picture> pictures = new List<Picture>();
+
+            var combination = await _productAttributeParser.FindProductAttributeCombinationAsync(product, attributesXml);
+            if (combination != null)
+            {
+                var combinationPictures = await _productAttributeService.GetProductAttributeCombinationPicturesAsync(((ProductAttributeCombination)combination).Id);
+
+                if (combinationPictures.Any())
+                {
+                    var combinationPicture = await GetPictureByIdAsync(combinationPictures.First().PictureId);
+                    if (combinationPicture != null)
+                        pictures.Add(combinationPicture);
+                }
+            }
+
+            var attributeValues = await _productAttributeParser
+    .ParseProductAttributeValuesAsync(attributesXml);
+
+            foreach (var attributeValue in attributeValues)
+            {
+                var attrValuePictures = await _productAttributeService.GetProductAttributeValuePicturesAsync(attributeValue.Id);
+                if (attrValuePictures.Any())
+                {
+                    var attrValuePicture = await GetPictureByIdAsync(attrValuePictures.First().PictureId);
+                    if (attrValuePicture != null)
+                    {
+                        if (!pictures.Any(pic => pic.Id == attrValuePicture.Id))
+                            pictures.Add(attrValuePicture);
+
+                    }
+                }
+            }
+
+            return pictures;
         }
 
         #region Picture log

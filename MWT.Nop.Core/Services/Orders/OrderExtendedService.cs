@@ -37,7 +37,7 @@ namespace MWT.Nop.Core.Services.Orders
         private readonly IShippingPluginManager _shippingPluginManager;
         private readonly ILogger _logger;
         private readonly IShoppingCartExtendedCartService _shoppingCartService;
-        private readonly ICustomCustomerService _customerService;
+        private readonly ICustomerExtendedService _customerService;
         private readonly IStoreContext _storeContext;
         private readonly ICustomProductAttributeFormatter _productAttributeFormatter;
         private readonly IRepository<Shipment> _shipmentRepository;
@@ -48,7 +48,7 @@ namespace MWT.Nop.Core.Services.Orders
         private readonly IPriceCalculationService _priceCalculationService;
         private readonly ShoppingCartSettings _shoppingCartSettings;
         private readonly ShippingSettings _shippingSettings;
-        private readonly ICustomProductService _productExtendedService;
+        private readonly IProductExtendedService _productExtendedService;
         private readonly IWarehouseService _warehouseService;
         private readonly ICustomProductAttributeParser  _productAttributeExtendedParser;
 
@@ -60,10 +60,10 @@ namespace MWT.Nop.Core.Services.Orders
             IRepository<ProductWarehouseInventory> productWarehouseInventoryRepository, IRepository<RecurringPayment> recurringPaymentRepository,
             IRepository<RecurringPaymentHistory> recurringPaymentHistoryRepository, IShipmentService shipmentService,
             IStaticCacheManager staticCacheManager, ICurrencyService currencyService, IShippingPluginManager shippingPluginManager, ILogger logger,
-            IShoppingCartExtendedCartService shoppingCartService, ICustomCustomerService customerService,
+            IShoppingCartExtendedCartService shoppingCartService, ICustomerExtendedService customerService,
             IStoreContext storeContext, ICustomProductAttributeFormatter productAttributeFormatter, IRepository<Shipment> shipmentRepository,
             IShippingService shippingService, IAddressService addressService, ICountryService countryService, IStateProvinceService stateProvinceService,
-            IPriceCalculationService priceCalculationService, ShoppingCartSettings shoppingCartSettings, ShippingSettings shippingSettings, ICustomProductService productExtendedService, IWarehouseService warehouseService
+            IPriceCalculationService priceCalculationService, ShoppingCartSettings shoppingCartSettings, ShippingSettings shippingSettings, IProductExtendedService productExtendedService, IWarehouseService warehouseService
             , ICustomProductAttributeParser productAttributeExtendedParser) :
             base(htmlFormatter, productService, addressRepository, customerRepository, orderRepository, orderItemRepository, orderNoteRepository, productRepository,
                 productWarehouseInventoryRepository, recurringPaymentRepository, recurringPaymentHistoryRepository, shipmentService)

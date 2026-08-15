@@ -57,7 +57,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controller
         protected readonly INopUrlHelper _nopUrlHelper;
         protected readonly IPermissionService _permissionService;
         protected readonly IProductModelFactory _productModelFactory;
-        protected readonly ICustomProductService _productService;
+        protected readonly IProductExtendedService _productService;
         protected readonly IProductTagService _productTagService;
         protected readonly IStoreContext _storeContext;
         protected readonly IStoreMappingService _storeMappingService;
@@ -88,7 +88,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controller
             INopUrlHelper nopUrlHelper,
             IPermissionService permissionService,
             IProductModelFactory productModelFactory,
-            ICustomProductService productService,
+            IProductExtendedService productService,
             IProductTagService productTagService,
             IStoreContext storeContext,
             IStoreMappingService storeMappingService,

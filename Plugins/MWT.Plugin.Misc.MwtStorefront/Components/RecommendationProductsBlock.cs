@@ -20,7 +20,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
 {
     public class RecommendationProductsBlockViewComponent : NopViewComponent
     {
-        private readonly ICustomProductService _productService;
+        private readonly IProductExtendedService _productService;
         private readonly ICustomProductModelFactory _productModelFactory;
         private readonly IStoreContext _storeContext;
         private readonly IStaticCacheManager _staticCacheManager;
@@ -28,7 +28,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IWorkContext _workContext;
         private readonly ISettingService _settingService;
-        public RecommendationProductsBlockViewComponent(ICustomProductService productService,
+        public RecommendationProductsBlockViewComponent(IProductExtendedService productService,
         ICustomProductModelFactory productModelFactory,
         IStoreContext storeContext,
         IStaticCacheManager staticCacheManager,

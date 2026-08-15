@@ -47,7 +47,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
     {
         #region Fields
         private readonly ICustomProductModelFactory _customProductModelFactory;
-        private readonly ICustomProductService _customProductService;
+        private readonly IProductExtendedService _customProductService;
         private readonly ICustomSpecificationAttributeService _customSpecificationAttributeService;
         private readonly ICustomWorkContext _customWorkContext;
         private readonly ISettingService _settingService;
@@ -67,7 +67,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
             IProductService productService, IProductTagService productTagService, ISearchTermService searchTermService, ISpecificationAttributeService specificationAttributeService,
             IStaticCacheManager staticCacheManager, IStoreContext storeContext, IUrlRecordService urlRecordService, IVendorService vendorService, IWebHelper webHelper,
             IWorkContext workContext, MediaSettings mediaSettings, SeoSettings seoSettings, VendorSettings vendorSettings,
-            ICustomProductModelFactory customProductModelFactory, ICustomProductService customProductService, ICustomSpecificationAttributeService customSpecificationAttributeService,
+            ICustomProductModelFactory customProductModelFactory, IProductExtendedService customProductService, ICustomSpecificationAttributeService customSpecificationAttributeService,
             ICustomWorkContext customWorkContext, ISettingService settingService, IElasticSearchHelpService elasticSearchHelpService,
             ILogger logger, ICustomCategoryService customCategoryService, IFiltersMappingByEntityService filtersMappingByEntityService
             ) : base(catalogSettings, customerSettings,

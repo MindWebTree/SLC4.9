@@ -18,10 +18,10 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
     public class Custom_Product_Listing_by_SettingViewComponent : NopViewComponent
     {
         private readonly ICustomProductModelFactory _customproductModelFactory;
-        private ICustomProductService _customproductService;
+        private IProductExtendedService _customproductService;
         private readonly IStaticCacheManager _staticCacheManager;
         public Custom_Product_Listing_by_SettingViewComponent(ICustomProductModelFactory customproductModelFactory,
-                                          ICustomProductService customproductService, IStaticCacheManager staticCacheManager)
+                                          IProductExtendedService customproductService, IStaticCacheManager staticCacheManager)
         {
             _customproductModelFactory = customproductModelFactory;
             _customproductService = customproductService;

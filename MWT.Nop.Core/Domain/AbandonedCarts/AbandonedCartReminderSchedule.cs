@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MWT.Nop.Core.Domain.AbandonedCart
+namespace MWT.Nop.Core.Domain.AbandonedCarts
 {
     public partial class AbandonedCartReminderSchedule : BaseEntity
     {

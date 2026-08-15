@@ -1,0 +1,122 @@
+@model WishlistModel
+@using Nop.Core
+@using Nop.Core.Domain.Tax
+@using Nop.Core.Domain.Seo
+@inject IWebHelper webHelper
+@inject IWorkContext _workContext
+@inject SeoSettings seoSettings
+@inject Nop.Services.Configuration.ISettingService _settingService;
+@inject Nop.Services.Customers.ICustomerService   _customerService
+
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    Html.AddTitleParts(T("PageTitle.Wishlist").Text);
+    //page class
+    Html.AppendPageCssClassParts("html-wishlist-page");
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        Html.AddCanonicalUrlParts(Url.RouteUrl("Wishlist", null, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant(), false);
+    }
+    Html.AddMetaDescriptionParts(await _settingService.GetSettingByKeyAsync<string>("seosettings.Wishlistmetadescription"));
+
+    var customer = await _workContext.GetCurrentCustomerAsync();
+    bool isAuthenticated = await _customerService.IsRegisteredAsync(customer);
+}
+<div class="page wishlist-page">
+    <div class="page-title">
+        <h1>
+            @if (Model.IsEditable || string.IsNullOrEmpty(Model.CustomerFullname))
+            {
+                @T("Wishlist")
+            }
+            else
+            {
+                @string.Format(T("Wishlist.WishlistOf").Text, Model.CustomerFullname)
+            }
+        </h1>
+    </div>
+
+    @if (!isAuthenticated && Model.Items.Count > 0)
+    {
+        var returnUrl = Context.Request.Query.TryGetValue("returnUrl", out var url) && !StringValues.IsNullOrEmpty(url.ToString().Trim())
+   ? url.ToString()
+   : webHelper.GetRawUrl(Context.Request);
+
+<div class="row wishlist signin">
+    <div class="col-12">
+        <div>
+            <p>  @T("Wishlist.Authentication.heading")</p>
+            <p> @Html.Raw(T("Wishlist.Authentication.Message", Url.RouteUrl("Login", new { returnUrl }), @Url.RouteUrl("Register", new { returnUrl })))</p>
+        </div>
+    </div>
+</div>
+}
+    <div class="page-body">
+        @if (Model.Items.Count > 0)
+        {
+            <div class="wishlist-content">
+                @if (Model.Warnings.Count > 0)
+                {
+                    <div class="message-error">
+                        <ul>
+                            @foreach (var warning in Model.Warnings)
+                            {
+                                <li>@warning</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <div class="row wishlist Heading">
+                    <div class="col-12">
+                        <h2>  @T("Wishlist.Subheading", Model.Items.Count)</h2>
+                    </div>
+                </div>
+                <div class="products-wrapper" bis_skin_checked="1">
+                    <div class="row" bis_skin_checked="1">
+                        @foreach (var item in Model.Items)
+                        {
+
+                            @await Html.PartialAsync("_Wishlist_ProductBox", item)
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="no-data">
+                @T("Wishlist.CartIsEmpty")
+            </div>
+        }
+        @*@if (Model.IsEditable && Model.Items.Count > 0)
+            {
+                var wishlistUrl = Url.RouteUrl("Wishlist", new { customerGuid = Model.CustomerGuid }, webHelper.GetCurrentRequestProtocol());
+                <div class="share-info">
+                    <span class="share-label">@T("Wishlist.YourWishlistURL"):</span>
+                    <a href="@wishlistUrl" class="share-link">@wishlistUrl</a>
+                </div>
+            }*@
+
+        @if (Model.IsEditable && Model.Items.Count > 0)
+        {
+            <form asp-route="Wishlist" method="post">
+
+                @foreach (var item in Model.Items)
+                {
+                    <input type="hidden" name="addtocart" value="@item.Id" />
+                }
+
+                <!-- Add All to Cart Button --> <div class="row">
+                    <div class="col-12">
+                        <button type="submit" name="addtocartbutton">
+                            @T("Wishlist.Button.Move.All.Cart")
+                        </button>
+                    </div>
+                </div>
+            </form>
+        }
+    </div>
+</div>

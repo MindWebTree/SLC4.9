@@ -11,7 +11,7 @@ using Nop.Services.Catalog;
 
 namespace MWT.Nop.Core.Service.Catalog
 {
-    public partial interface ICustomProductService : IProductService
+    public partial interface IProductExtendedService : IProductService
     {
 
         #region Products

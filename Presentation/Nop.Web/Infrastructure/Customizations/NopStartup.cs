@@ -43,7 +43,7 @@ namespace Nop.Web.Infrastructure.Customizations
         {
             services.AddScoped<ViewComponentRenderHelper>();
             services.AddScoped<ISearchLogService, SearchLogService>();
-            services.AddScoped<ICustomProductService, CustomProductService>();
+            services.AddScoped<IProductExtendedService, ProductExtendedService>();
             services.AddScoped<ICustomProductAttributeParser, CustomProductAttributeParser>();
             services.AddScoped<ICustomProductAttributeService, CustomProductAttributeService>();
 
@@ -51,7 +51,7 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<ICustomizationFormSerivce,CustomizationFormSerivce>();
             services.AddScoped<IFeedService,FeedService>();
             services.AddScoped<ICustomSpecificationAttributeService, CustomSpecificationAttributeService>();
-            services.AddScoped<ICustomPictureService, CustomPictureService>();
+            services.AddScoped<IPictureExtendedService, PictureExtendedService>();
             services.AddScoped<IShoppingCartExtendedCartService, ShoppingCartExtendedCartService>();
             services.AddScoped<ICustomProductAttributeFormatter, CustomProductAttributeFormatter>();
             services.AddScoped<IGroupedProductConfigurationService, GroupedProductConfigurationService>();
@@ -64,7 +64,7 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<ICustomCategoryService, CustomCategoryService>();
             services.AddScoped<ICustomWorkContext, CustomWorkContext>();
             services.AddScoped<IKwTemplateService, KWTemplateService>();
-            services.AddScoped<ICustomCustomerService, CustomCustomerService>();
+            services.AddScoped<ICustomerExtendedService, CustomerExtendedService>();
             services.AddScoped<ILandingPageService, LandingPageService>();
             services.AddScoped<ICustomFormService, CustomFormService>();
             services.AddScoped<IFeedbackService, FeedbackService>();

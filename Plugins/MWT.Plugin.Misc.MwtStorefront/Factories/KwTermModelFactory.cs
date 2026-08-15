@@ -48,7 +48,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
         private readonly IPictureService _pictureService;
         private readonly IPriceFormatter _priceFormatter;
         private readonly ICustomProductModelFactory _productModelFactory;
-        private readonly ICustomProductService _productService;
+        private readonly IProductExtendedService _productService;
         private readonly IProductTagService _productTagService;
         private readonly ICustomSpecificationAttributeService _specificationAttributeService;
         private readonly IStaticCacheManager _staticCacheManager;
@@ -78,7 +78,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
             IPictureService pictureService,
             IPriceFormatter priceFormatter,
             ICustomProductModelFactory productModelFactory,
-            ICustomProductService productService,
+            IProductExtendedService productService,
             IProductTagService productTagService,
             ICustomSpecificationAttributeService specificationAttributeService,
             IStaticCacheManager staticCacheManager,

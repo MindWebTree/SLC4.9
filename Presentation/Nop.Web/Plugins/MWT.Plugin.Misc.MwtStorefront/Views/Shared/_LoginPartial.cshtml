@@ -1,0 +1,155 @@
+﻿@model Nop.Web.Models.Customer.LoginModel
+@inject Nop.Core.Domain.Security.CaptchaSettings _captchaSettings;
+@inject Nop.Core.Domain.Customers.CustomerSettings _customerSettings;
+<div class="modal fade cart-login-process" id="accountsignin" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered main-partial-customer-login">
+        <div class="modal-content">
+            <div class="modal-content-border">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 1L19 19" stroke="#010101" stroke-width="1.59081" stroke-miterlimit="10" />
+                        <path d="M1 19L19 1" stroke="#010101" stroke-width="1.59081" stroke-miterlimit="10" />
+                    </svg>
+                </button>
+                <div class="modal-login-header">
+                    <h5 id="exampleModalLabel">@T("Checkout.Signin.Option.Heading")</h5>
+                </div>
+                <p class="option-info">@T("Checkout.Signin.Option.Info")</p>
+                <div class="partial-customer-login">
+
+                    <div class="checkout-social-login">
+                        <p class="quick-sign-in">@T("Checkout.quick-sign-in")</p>
+                        <div class="gap-2">
+                            @await Component.InvokeAsync("ExternalMethods", "ExternalAuthentication")
+                        </div>
+                       
+                    </div>
+
+                    <div class="customer-login-divider">
+                        <div class="customer-login-divider-border"></div>
+                        <div class="customer-login-divider-or">Or</div>
+                        <div class="customer-login-divider-border"></div>
+                    </div>
+
+                    <div class="modal-body">
+                        <p class="sign-in-with-email">@T("Checkout.Signin.with.email")</p>
+                        <form id="loginForm">
+                            @Html.AntiForgeryToken()
+                            <div class="errormessage">
+
+                            </div>
+                            <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                            <div id="loginModalBody" hidden>
+                                <!-- Error message will be injected here -->
+                            </div>
+
+                            @if (_customerSettings.UsernamesEnabled)
+                            {
+                                <div class="form-group">
+                                    <input id="email" asp-for="Username" placeholder="Username" class="form-control" />
+                                    <div class="checkout-label">
+                                        <label asp-for="Username"></label>
+                                        <span class="required">*</span>
+                                    </div>
+                                    <span asp-validation-for="Username" class="text-danger"></span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="form-group">
+                                    <input id="Email" asp-for="Email" placeholder="Email" class="form-control" />
+                                    <div class="checkout-label">
+                                        <label asp-for="Email"></label>
+                                        <span class="required">*</span>
+                                    </div>
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                            }
+
+                            <div class="form-group">
+                                <input asp-for="Password" placeholder="Password" id="Password" class="form-control" type="password" />
+                                <div class="checkout-label">
+                                    <label asp-for="Password"></label>
+                                    <span class="required">*</span>
+                                </div>
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                            @if (_captchaSettings.Enabled && _captchaSettings.ShowOnLoginPage)
+                            {
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-12 col-sm-8 offset-md-3 offset-lg-3 offset-xl-3">
+                                                <nop-captcha class="g-recaptcha" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="form-check">
+                                    <input id="RememberMe" class="form-check-input" asp-for="RememberMe" />
+                                    <label class="form-check-label" asp-for="RememberMe"></label>
+                                </div>
+                                <a href="#" class="text-muted text-decoration-none" data-bs-toggle="modal" data-bs-target="#forgot-password-default">
+                                    @T("account.login.forgotpassword")
+                                </a>
+                            </div>
+
+                            <button type="submit" class="btn btn-signin">@T("checkout.button.signin") </button>
+                        </form>
+                        <div class="footer-modal-content">
+                            @T("Account.Create.Info")
+                            <a href="#" class="btn-link" data-bs-toggle="modal" data-bs-target="#new-create-account">@T("Account.Create.Text")</a>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+<!-- Modal script to handle success or failure -->
+
+<script asp-location="Footer">
+    $(document).ready(function () {
+        $('#loginForm').on('submit', function (e) {
+                            if (!$(this).valid()) {
+                                return;
+                            }
+
+                            e.preventDefault();
+
+
+                        var token = $('input[name="__RequestVerificationToken"]').val();
+
+            $.ajax({
+                            url: '@Url.Action("CustomSignIn", "Customer")', // Action method to handle login
+                method: 'POST',
+                data: $(this).serialize(),
+            headers: {
+                                'RequestVerificationToken': token
+                },
+                success: function (data) {
+
+                                if (data.statusCode === 200) {
+                                    window.location.href = data.redirectUrl || '/cart';
+         } else {
+
+                                    $('#loginForm .errormessage').html('<div class="alert alert-danger">' + data.message + '</div>').removeAttr('hidden');
+                   }
+                },
+                error: function (xhr, status, error) {
+                    $('#loginForm .errormessage').html('@T("Common.Error")');
+                }, complete: function () {
+                  
+                }
+            });
+        });
+    });
+
+</script>

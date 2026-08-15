@@ -17,14 +17,14 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
         private readonly CatalogSettings _catalogSettings;
         private readonly IAclService _aclService;
         private readonly ICustomProductModelFactory _productModelFactory;
-        private readonly ICustomProductService _productService;
+        private readonly IProductExtendedService _productService;
         private readonly IRecentlyViewedProductsService _recentlyViewedProductsService;
         private readonly IStoreMappingService _storeMappingService;
 
         public Custom_RecentlyViewedProductsBlockViewComponent(CatalogSettings catalogSettings,
             IAclService aclService,
             ICustomProductModelFactory productModelFactory,
-            ICustomProductService productService,
+            IProductExtendedService productService,
             IRecentlyViewedProductsService recentlyViewedProductsService,
             IStoreMappingService storeMappingService)
         {

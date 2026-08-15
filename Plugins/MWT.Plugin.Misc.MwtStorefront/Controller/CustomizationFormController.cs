@@ -35,7 +35,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controller
     public partial class CustomizationFormController : BasePublicController
     {
         #region Fields
-        private readonly ICustomProductService _productService;
+        private readonly IProductExtendedService _productService;
         private readonly CatalogSettings _catalogSettings;
         private readonly IAclService _aclService;
         private readonly IStoreMappingService _storeMappingService;
@@ -58,7 +58,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controller
         private readonly ICustomWorkflowMessageService _workflowMessageService;
 
         #endregion
-        public CustomizationFormController(ICustomProductService productService, CatalogSettings catalogSettings, IAclService aclService, IStoreMappingService storeMappingService,
+        public CustomizationFormController(IProductExtendedService productService, CatalogSettings catalogSettings, IAclService aclService, IStoreMappingService storeMappingService,
             IPermissionService permissionService, IUrlRecordService urlRecordService, ShoppingCartSettings shoppingCartSettings,
             IShoppingCartService shoppingCartService, IWorkContext workContext, IStoreContext storeContext, ICustomRecentlyViewedProductsService recentlyViewedProductsService,
             ICustomerActivityService customerActivityService, ILocalizationService localizationService, ICustomProductModelFactory productModelFactory, IWebHelper webHelper,

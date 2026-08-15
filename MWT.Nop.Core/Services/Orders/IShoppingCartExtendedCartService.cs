@@ -1,4 +1,5 @@
-﻿using Nop.Core.Domain.Catalog;
+﻿using MWT.Nop.Core.Data.Discounts;
+using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Discounts;
 using Nop.Core.Domain.Orders;
@@ -57,5 +58,8 @@ bool includeDiscounts);
         Task<bool> IsSurchargeApplicable(IList<ShoppingCartItem> cart);
 
         Task<string> GetBuyMoreSaveMoreDiscountConfiguration();
+        Task<(CustomDiscountType discountType, decimal buyMoreDiscount, int notEligibleCartItemId)> 
+            GetBuyMoreSaveMoreDiscountDetailsAsync(IList<ShoppingCartItem> cart, decimal subTotal);
+
     }
 }

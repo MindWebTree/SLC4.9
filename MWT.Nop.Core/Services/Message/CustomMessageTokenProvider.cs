@@ -55,24 +55,24 @@ namespace MWT.Nop.Core.Services.Message
     /// </summary>
     public partial class CustomMessageTokenProvider : MessageTokenProvider, ICustomMessageTokenProvider
     {
-        private readonly ICustomCustomerService _customCustomerService;
-        private readonly ICustomPictureService _pictureService;
+        private readonly ICustomerExtendedService _customCustomerService;
+        private readonly IPictureExtendedService _pictureService;
         private readonly MediaSettings _mediaSettings;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IWebHelper _webHelper;
         private readonly ICustomProductAttributeFormatter _productAttributeFormatter;
         private readonly IShoppingCartExtendedCartService _shoppingCartService;
-        private readonly ICustomProductService _customProductService;
+        private readonly IProductExtendedService _customProductService;
         private readonly ITaxService _taxService;
         private readonly ICategoryService _categoryService;
         private readonly IEncryptionService _encryptionService;
         public CustomMessageTokenProvider(CatalogSettings catalogSettings, CurrencySettings currencySettings, IActionContextAccessor actionContextAccessor, IAddressService addressService, IAttributeFormatter<AddressAttribute,
             AddressAttributeValue> addressAttributeFormatter, IAttributeFormatter<CustomerAttribute, CustomerAttributeValue> customerAttributeFormatter, IAttributeFormatter<VendorAttribute, VendorAttributeValue> vendorAttributeFormatter, IBlogService blogService, ICountryService countryService, ICurrencyService currencyService, ICustomerService customerService, IDateTimeHelper dateTimeHelper, IEventPublisher eventPublisher, IGenericAttributeService genericAttributeService, IGiftCardService giftCardService, IHtmlFormatter htmlFormatter, ILanguageService languageService, ILocalizationService localizationService, ILogger logger, INewsService newsService, IOrderService orderService, IPaymentPluginManager paymentPluginManager, IPaymentService paymentService, IPriceFormatter priceFormatter, IProductService productService, IRewardPointService rewardPointService, IShipmentService shipmentService, IStateProvinceService stateProvinceService, IStoreContext storeContext, IStoreService storeService, IUrlHelperFactory urlHelperFactory, IUrlRecordService urlRecordService, IWorkContext workContext, MessageTemplatesSettings templatesSettings, PaymentSettings paymentSettings, StoreInformationSettings storeInformationSettings,
-            TaxSettings taxSettings, ICustomCustomerService customCustomerService,
-            ICustomPictureService pictureService, MediaSettings mediaSettings,
+            TaxSettings taxSettings, ICustomerExtendedService customCustomerService,
+            IPictureExtendedService pictureService, MediaSettings mediaSettings,
             IHttpContextAccessor httpContextAccessor, IWebHelper webHelper,
             ICustomProductAttributeFormatter productAttributeFormatter, IShoppingCartExtendedCartService shoppingCartService,
-            ITaxService taxService, ICategoryService categoryService, IEncryptionService encryptionService, ICustomProductService customProductService) : base(catalogSettings, currencySettings, actionContextAccessor, addressService, addressAttributeFormatter, customerAttributeFormatter, vendorAttributeFormatter, blogService, countryService, currencyService, customerService, dateTimeHelper, eventPublisher, genericAttributeService, giftCardService, htmlFormatter, languageService, localizationService, logger, newsService, orderService, paymentPluginManager, paymentService, priceFormatter, productService, rewardPointService, shipmentService, stateProvinceService, storeContext, storeService, urlHelperFactory, urlRecordService, workContext, templatesSettings, paymentSettings, storeInformationSettings, taxSettings)
+            ITaxService taxService, ICategoryService categoryService, IEncryptionService encryptionService, IProductExtendedService customProductService) : base(catalogSettings, currencySettings, actionContextAccessor, addressService, addressAttributeFormatter, customerAttributeFormatter, vendorAttributeFormatter, blogService, countryService, currencyService, customerService, dateTimeHelper, eventPublisher, genericAttributeService, giftCardService, htmlFormatter, languageService, localizationService, logger, newsService, orderService, paymentPluginManager, paymentService, priceFormatter, productService, rewardPointService, shipmentService, stateProvinceService, storeContext, storeService, urlHelperFactory, urlRecordService, workContext, templatesSettings, paymentSettings, storeInformationSettings, taxSettings)
         {
             _customCustomerService = customCustomerService;
             _pictureService = pictureService;

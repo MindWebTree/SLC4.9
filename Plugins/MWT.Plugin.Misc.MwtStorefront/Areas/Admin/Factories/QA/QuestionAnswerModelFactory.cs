@@ -36,7 +36,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.QA
         private readonly IDiscountSupportedModelFactory _discountSupportedModelFactory;
         private readonly ILocalizationService _localizationService;
         private readonly ILocalizedModelFactory _localizedModelFactory;
-        private readonly ICustomProductService _productService;
+        private readonly IProductExtendedService _productService;
         private readonly IStoreMappingSupportedModelFactory _storeMappingSupportedModelFactory;
         private readonly IUrlRecordService _urlRecordService;
         private readonly IQuestionAnswerService _questionAnswerService;
@@ -53,7 +53,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.QA
             IDiscountSupportedModelFactory discountSupportedModelFactory,
             ILocalizationService localizationService,
             ILocalizedModelFactory localizedModelFactory,
-            ICustomProductService productService,
+            IProductExtendedService productService,
             IStoreMappingSupportedModelFactory storeMappingSupportedModelFactory,
             IUrlRecordService urlRecordService,
             IQuestionAnswerService questionAnswersService,

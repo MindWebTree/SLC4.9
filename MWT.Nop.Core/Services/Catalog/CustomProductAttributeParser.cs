@@ -27,6 +27,7 @@ namespace MWT.Nop.Core.Services.Catalog
         }
 
 
+        #region Methods
         public virtual async Task<Dictionary<string, List<int>>> CustomGenerateAllCombinationsAsync(Product product)
         {
             if (product == null)
@@ -159,6 +160,90 @@ namespace MWT.Nop.Core.Services.Catalog
             return keys;
         }
 
+        public virtual string CustomAddProductAttribute(string attributesXml, ProductAttributeMapping productAttributeMapping, string value, int? quantity = null)
+        {
+            var result = string.Empty;
+            try
+            {
+                var xmlDoc = new XmlDocument();
+                if (string.IsNullOrEmpty(attributesXml))
+                {
+                    var element1 = xmlDoc.CreateElement("Attributes");
+                    xmlDoc.AppendChild(element1);
+                }
+                else
+                {
+                    xmlDoc.LoadXml(attributesXml);
+                }
+
+                var rootElement = (XmlElement)xmlDoc.SelectSingleNode(@"//Attributes");
+
+                XmlElement attributeElement = null;
+                //find existing
+                var nodeList1 = xmlDoc.SelectNodes(@"//Attributes/ProductAttribute");
+                foreach (XmlNode node1 in nodeList1)
+                {
+                    if (node1.Attributes?["ID"] == null)
+                        continue;
+
+                    var str1 = node1.Attributes["ID"].InnerText.Trim();
+                    if (!int.TryParse(str1, out var id))
+                        continue;
+
+                    if (id != productAttributeMapping.Id)
+                        continue;
+
+                    attributeElement = (XmlElement)node1;
+                    break;
+                }
+
+                //create new one if not found
+                if (attributeElement == null)
+                {
+                    attributeElement = xmlDoc.CreateElement("ProductAttribute");
+                    attributeElement.SetAttribute("ID", productAttributeMapping.Id.ToString());
+                    rootElement.AppendChild(attributeElement);
+                }
+
+                var attributeValueElement = xmlDoc.CreateElement("ProductAttributeValue");
+                attributeElement.AppendChild(attributeValueElement);
+
+                var attributeValueValueElement = xmlDoc.CreateElement("Value");
+                attributeValueValueElement.InnerText = value;
+                attributeValueElement.AppendChild(attributeValueValueElement);
+
+                //the quantity entered by the customer
+                if (quantity.HasValue)
+                {
+                    var attributeValueQuantity = xmlDoc.CreateElement("Quantity");
+                    attributeValueQuantity.InnerText = quantity.ToString();
+                    attributeValueElement.AppendChild(attributeValueQuantity);
+                }
+
+                result = xmlDoc.OuterXml;
+            }
+            catch (Exception exc)
+            {
+                Debug.Write(exc.ToString());
+            }
+
+            return result;
+        }
+        public virtual async Task<string> CustomParseProductAttributesAsync(Product product, IFormCollection form, List<string> errors, string formId)
+        {
+            if (product == null)
+                throw new ArgumentNullException(nameof(product));
+            if (form == null)
+                throw new ArgumentNullException(nameof(form));
+
+            //product attributes
+            var attributesXml = await GetCustomProductAttributesXmlAsync(product, form, errors, formId);
+
+            //gift cards
+            AddGiftCardsAttributesXml(product, form, ref attributesXml);
+
+            return attributesXml;
+        }
         public IList<Tuple<string, string>> CustomParseValuesWithQuantity(string attributesXml, int productAttributeMappingId)
         {
             var selectedValues = new List<Tuple<string, string>>();
@@ -195,8 +280,43 @@ namespace MWT.Nop.Core.Services.Catalog
             return selectedValues;
         }
 
-        #region Utilties
+        public virtual async Task<IList<int>> CustomParseProductAttributeValuesAsync(string attributesXml, int productAttributeMappingId = 0)
+        {
+            var values = new List<int>();
+            if (string.IsNullOrEmpty(attributesXml))
+                return values;
 
+            var attributes = await ParseProductAttributeMappingsAsync(attributesXml);
+
+            //to load values only for the passed product attribute mapping
+            if (productAttributeMappingId > 0)
+                attributes = attributes.Where(attribute => attribute.Id == productAttributeMappingId).ToList();
+
+            foreach (var attribute in attributes)
+            {
+                if (!attribute.ShouldHaveValues())
+                    continue;
+
+                foreach (var attributeValue in ParseValuesWithQuantity(attributesXml, attribute.Id))
+                {
+                    if (string.IsNullOrEmpty(attributeValue.Item1) || !int.TryParse(attributeValue.Item1, out var attributeValueId))
+                        continue;
+
+
+                    if (attributeValueId == 0)
+                        continue;
+
+
+                    values.Add(attributeValueId);
+                }
+            }
+
+            return values;
+        }
+
+        #endregion
+
+        #region Utilities
         protected virtual IList<IList<T>> CustomCreateCombination<T>(IList<T> elements)
         {
             var rez = new List<IList<T>>();
@@ -225,6 +345,7 @@ namespace MWT.Nop.Core.Services.Catalog
 
             return rez;
         }
+
         protected virtual async Task<string> GetCustomProductAttributesXmlAsync(Product product, IFormCollection form, List<string> errors, string formId)
         {
             var attributesXml = string.Empty;
@@ -358,77 +479,6 @@ namespace MWT.Nop.Core.Services.Catalog
             }
             return attributesXml;
         }
-        public virtual string CustomAddProductAttribute(string attributesXml, ProductAttributeMapping productAttributeMapping, string value, int? quantity = null)
-        {
-            var result = string.Empty;
-            try
-            {
-                var xmlDoc = new XmlDocument();
-                if (string.IsNullOrEmpty(attributesXml))
-                {
-                    var element1 = xmlDoc.CreateElement("Attributes");
-                    xmlDoc.AppendChild(element1);
-                }
-                else
-                {
-                    xmlDoc.LoadXml(attributesXml);
-                }
-
-                var rootElement = (XmlElement)xmlDoc.SelectSingleNode(@"//Attributes");
-
-                XmlElement attributeElement = null;
-                //find existing
-                var nodeList1 = xmlDoc.SelectNodes(@"//Attributes/ProductAttribute");
-                foreach (XmlNode node1 in nodeList1)
-                {
-                    if (node1.Attributes?["ID"] == null)
-                        continue;
-
-                    var str1 = node1.Attributes["ID"].InnerText.Trim();
-                    if (!int.TryParse(str1, out var id))
-                        continue;
-
-                    if (id != productAttributeMapping.Id)
-                        continue;
-
-                    attributeElement = (XmlElement)node1;
-                    break;
-                }
-
-                //create new one if not found
-                if (attributeElement == null)
-                {
-                    attributeElement = xmlDoc.CreateElement("ProductAttribute");
-                    attributeElement.SetAttribute("ID", productAttributeMapping.Id.ToString());
-                    rootElement.AppendChild(attributeElement);
-                }
-
-                var attributeValueElement = xmlDoc.CreateElement("ProductAttributeValue");
-                attributeElement.AppendChild(attributeValueElement);
-
-                var attributeValueValueElement = xmlDoc.CreateElement("Value");
-                attributeValueValueElement.InnerText = value;
-                attributeValueElement.AppendChild(attributeValueValueElement);
-
-                //the quantity entered by the customer
-                if (quantity.HasValue)
-                {
-                    var attributeValueQuantity = xmlDoc.CreateElement("Quantity");
-                    attributeValueQuantity.InnerText = quantity.ToString();
-                    attributeValueElement.AppendChild(attributeValueQuantity);
-                }
-
-                result = xmlDoc.OuterXml;
-            }
-            catch (Exception exc)
-            {
-                Debug.Write(exc.ToString());
-            }
-
-            return result;
-        }
-
-
         #endregion
     }
 }

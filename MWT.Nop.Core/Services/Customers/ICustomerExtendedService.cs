@@ -12,7 +12,7 @@ namespace MWT.Nop.Core.Services.Customers
     /// <summary>
     /// Customer service
     /// </summary>
-    public partial interface ICustomCustomerService: ICustomerService
+    public partial interface ICustomerExtendedService: ICustomerService
     {
         Task<bool> IsCustomerEligibleForMemberShipDiscount(Customer customer);
 

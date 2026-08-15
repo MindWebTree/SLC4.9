@@ -21,7 +21,7 @@ namespace MWT.Nop.Core.Services.KW
         #region Fields
 
         private readonly IAclService _aclService;
-        private readonly ICustomCustomerService _customerService;
+        private readonly ICustomerExtendedService _customerService;
         private readonly ILocalizationService _localizationService;
         private readonly IRepository<KwTerm> _kwTermRepository;
         private readonly IRepository<Product> _productRepository;
@@ -39,7 +39,7 @@ namespace MWT.Nop.Core.Services.KW
 
         public KwTermService(
             IAclService aclService,
-            ICustomCustomerService customerService,
+            ICustomerExtendedService customerService,
             ILocalizationService localizationService,
             IRepository<KwTerm> kwTermRepository,
             IRepository<Product> productRepository,

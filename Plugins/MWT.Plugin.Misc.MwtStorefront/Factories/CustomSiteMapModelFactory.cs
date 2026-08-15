@@ -43,13 +43,13 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
         private readonly INewsService _newsService;
         private readonly ICategoryService _categoryService;
         private readonly IManufacturerService _manufacturerService;
-        private readonly ICustomProductService _customProductService;
+        private readonly IProductExtendedService _customProductService;
         private readonly IProductTagService _productTagService;
         public CustomSiteMapModelFactory(BlogSettings blogSettings, ForumSettings forumSettings, IBlogService blogService, ICategoryService categoryService, ICustomerService customerService, IEventPublisher eventPublisher, IHttpContextAccessor httpContextAccessor, ILanguageService languageService, ILocalizationService localizationService, ILocker locker, IManufacturerService manufacturerService, INewsService newsService, INopFileProvider nopFileProvider, INopUrlHelper nopUrlHelper, IProductService productService, IProductTagService productTagService, IStaticCacheManager staticCacheManager, IStoreContext storeContext, ITopicService topicService, IWebHelper webHelper, IWorkContext workContext, LocalizationSettings localizationSettings, NewsSettings newsSettings, SitemapSettings sitemapSettings,
             SitemapXmlSettings sitemapXmlSettings,
    
            IUrlRecordService urlRecordService ,
- ICustomProductService customProductService
+ IProductExtendedService customProductService
  
             ) : base(blogSettings, forumSettings, blogService, categoryService, customerService, eventPublisher, httpContextAccessor, languageService, localizationService, locker, manufacturerService, newsService, nopFileProvider, nopUrlHelper, productService, productTagService, staticCacheManager, storeContext, topicService, webHelper, workContext, localizationSettings, newsSettings, sitemapSettings, sitemapXmlSettings)
         {

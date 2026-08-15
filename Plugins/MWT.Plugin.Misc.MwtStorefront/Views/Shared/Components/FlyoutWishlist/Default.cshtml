@@ -1,7 +1,5 @@
-﻿@using MWT.Nop.Core.Services
-@using MWT.Nop.Core.Services.Customers
-@inject Nop.Services.Configuration.ISettingService _settingServce;
-@inject ICustomCustomerService _customerService;
+﻿@inject Nop.Services.Configuration.ISettingService _settingServce;
+@inject Nop.Services.Customers.ICustomerService _customerService;
 @inject Nop.Core.IWorkContext _workContext;
 @inject Nop.Core.IWebHelper webHelper
 @{
@@ -46,14 +44,14 @@
                         @if (Model.ShowProductImages)
                         {
                             <div class="picture">
-
-                                <img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" />
-
+                                <a href="@Url.RouteUrl("Product", new {id=item.ProductId, SeName = item.ProductSeName })" title="@item.Picture.Title">
+                                    <img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" />
+                                </a>
                             </div>
                         }
                         <div class="product">
                             <div class="name">
-                                <a href="@Url.RouteUrl("Product", new { id = item.ProductId, SeName = item.ProductSeName })">@item.ProductName</a>
+                                <a href="@Url.RouteUrl("Product", new {id=item.ProductId, SeName = item.ProductSeName })">@item.ProductName</a>
                             </div>
                             @if (!string.IsNullOrEmpty(item.AttributeInfo))
                             {

@@ -10,19 +10,18 @@ namespace MWT.Nop.Core.Services.Media
     /// <summary>
     /// Picture service
     /// </summary>
-    public partial interface ICustomPictureService : IPictureService
+    public partial interface IPictureExtendedService : IPictureService
     {
         Task<Picture> GetproductListingimage(int productId, bool isCategoryPage);
-
         Task<IList<Picture>> CustomGetPicturesOfProducAsync(int productId, int recordsToReturn = 0);
         Task<(int displayOnCategoryPagePictureId, int displayOnListingModulesPictureId, List<Picture> pictures)> CustomGetPicturesByProductIdAsync(int productId, int recordsToReturn = 0);
         Task<IList<CustomPicture>> CustomGetPicturesOfProducWithDimensionImageAsync(int productId, int recordsToReturn = 0);
-
         Task SaveStainImage(byte[] pictureBinary, string mimeType, string fileName);
         Task DeletePictureExcludeImagesAsync(Picture picture);
         Task DeletePictureImagesAsync(Picture picture);
-
         Task<Picture> UpdatePictureAsync(int pictureId, IFormFile formFile, string defaultFileName = "", string virtualPath = "");
+        Task<List<Picture>> GetProductAttributePicturesAsync(Product product, string attributesXml);
+
 
         #region Picture log
         Task InsertPictureLog(LogPicture picture);

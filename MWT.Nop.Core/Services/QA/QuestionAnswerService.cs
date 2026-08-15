@@ -21,7 +21,7 @@ namespace MWT.Nop.Core.Services.QA
         #region Fields
 
         private readonly IAclService _aclService;
-        private readonly ICustomCustomerService _customerService;
+        private readonly ICustomerExtendedService _customerService;
         private readonly ILocalizationService _localizationService;
         private readonly IRepository<QuestionAnswer> _QuestionAnswerRepository;
         private readonly IRepository<RelatedQuestionAnswer> _relatedQuestionAnswerRepository;
@@ -38,7 +38,7 @@ namespace MWT.Nop.Core.Services.QA
 
         public QuestionAnswerService(
             IAclService aclService,
-            ICustomCustomerService customerService,
+            ICustomerExtendedService customerService,
             ILocalizationService localizationService,
             IRepository<QuestionAnswer> QuestionAnswerRepository,
             IRepository<Product> productRepository,

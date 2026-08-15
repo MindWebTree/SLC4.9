@@ -58,10 +58,10 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
     public partial class CustomProductModelFactory : ProductModelFactory, ICustomProductModelFactory
     {
         private readonly ICustomProductAttributeService _customProductAttributeService;
-        private readonly ICustomPictureService _customPictureService;
+        private readonly IPictureExtendedService _customPictureService;
         private readonly ICustomSpecificationAttributeService _customSpecificationAttributeService;
         private readonly IShoppingCartExtendedCartService _customShoppingCartService;
-        private readonly ICustomProductService _customProductService;
+        private readonly IProductExtendedService _customProductService;
         private readonly ISettingService _settingService;
         private readonly IActionContextAccessor _actionContextAccessor;
         private readonly IUrlHelperFactory _urlHelperFactory;
@@ -92,9 +92,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
             ITaxService taxService, IUrlRecordService urlRecordService, IVendorService vendorService,
             IVideoService videoService, IWebHelper webHelper, IWorkContext workContext,
             MediaSettings mediaSettings, OrderSettings orderSettings, SeoSettings seoSettings,
-            ShippingSettings shippingSettings, VendorSettings vendorSettings, ICustomProductAttributeService customProductAttributeService, ICustomPictureService customPictureService,
+            ShippingSettings shippingSettings, VendorSettings vendorSettings, ICustomProductAttributeService customProductAttributeService, IPictureExtendedService customPictureService,
             IShoppingCartExtendedCartService customShoppingCartService,
-            ICustomProductService customProductService,
+            IProductExtendedService customProductService,
             ISettingService settingService,
             ICustomSpecificationAttributeService customSpecificationAttributeService,
             IActionContextAccessor actionContextAccessor, IUrlHelperFactory urlHelperFactory, ICustomProductAttributeFormatter customProductAttributeFormatter,

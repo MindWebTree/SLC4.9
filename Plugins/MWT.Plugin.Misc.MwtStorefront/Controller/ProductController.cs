@@ -33,7 +33,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controller
     [AutoValidateAntiforgeryToken]
     public partial class ProductController : BasePublicController
     {
-        private readonly ICustomProductService _productService;
+        private readonly IProductExtendedService _productService;
         private readonly CatalogSettings _catalogSettings;
         private readonly IAclService _aclService;
         private readonly IStoreMappingService _storeMappingService;
@@ -54,7 +54,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controller
         private readonly ICustomBackInStockSubscriptionService _backInStockSubscriptionService;
         private readonly IMailchimpService _mailchimpService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public ProductController(ICustomProductService productService,CatalogSettings catalogSettings,IAclService aclService,IStoreMappingService storeMappingService,
+        public ProductController(IProductExtendedService productService,CatalogSettings catalogSettings,IAclService aclService,IStoreMappingService storeMappingService,
             IPermissionService permissionService, IUrlRecordService urlRecordService, ShoppingCartSettings shoppingCartSettings,
             IShoppingCartService shoppingCartService, IWorkContext workContext, IStoreContext storeContext, ICustomRecentlyViewedProductsService recentlyViewedProductsService,
             ICustomerActivityService customerActivityService, ILocalizationService localizationService, ICustomProductModelFactory productModelFactory, IWebHelper webHelper,

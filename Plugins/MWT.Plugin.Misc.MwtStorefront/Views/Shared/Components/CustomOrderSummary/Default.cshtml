@@ -1,0 +1,878 @@
+@model ShoppingCartModel
+@using Nop.Core
+@using Nop.Core.Domain.Orders
+@using Nop.Core.Domain.Tax
+@inject IWebHelper webHelper
+@inject IWorkContext workContext
+@inject OrderSettings orderSettings
+@inject Nop.Services.Customers.ICustomerService _customerService
+@inject Nop.Services.Configuration.ISettingService _settingService
+@inject Nop.Services.Catalog.IPriceFormatter _priceFormatter
+@inject Nop.Core.IStoreContext _storeContext
+@inject Nop.Core.IWorkContext _workcontext
+@{
+    bool isMemberShipEnabled = false;
+    decimal memberShipFeeValue = 0;
+    string memberShipFee = "";
+    try
+    {
+        isMemberShipEnabled = await _settingService.GetSettingByKeyAsync<bool>("ismembershipenabled");
+    }
+    catch { }
+
+    try
+    {
+        memberShipFeeValue = await _settingService.GetSettingByKeyAsync<decimal>("MemberShip.Fee");
+    }
+    catch { }
+    memberShipFee = await _priceFormatter.FormatPriceAsync(memberShipFeeValue);
+    var customer = await workContext.GetCurrentCustomerAsync();
+    bool IsMemberShipAddedInCart = false;
+    if (isMemberShipEnabled)
+        IsMemberShipAddedInCart = await _customerService.IsMemberShipAddedInCart(customer);
+
+    bool isAuthenticated = false;
+
+    isAuthenticated = await _customerService.IsRegisteredAsync(customer);
+    var store = await _storeContext.GetCurrentStoreAsync();
+
+    var returnUrl = Context.Request.Query.TryGetValue("returnUrl", out var url) && !StringValues.IsNullOrEmpty(url.ToString().Trim())
+        ? url.ToString()
+        : webHelper.GetRawUrl(Context.Request);
+}
+
+<div class="order-summary-content">
+    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryContentBefore })
+    @await Html.PartialAsync("_OrderReviewData", Model.OrderReviewData)
+    @if (Model.Items.Count > 0)
+    {
+
+        if (Model.Warnings.Count > 0)
+        {
+            <div class="message-error">
+                <ul>
+                    @foreach (var warning in Model.Warnings)
+                    {
+                        <li>@warning</li>
+                    }
+                </ul>
+            </div>
+        } @*we add enctype = "multipart/form-data" because "File upload" attribute control type requires it*@
+        <form asp-route="ShoppingCart" method="post" enctype="multipart/form-data" id="shopping-cart-form">
+
+            @*Membership Section*@
+            @if (isMemberShipEnabled)
+            {
+                if (!await _customerService.IsCustomerPurchasedMembership(customer))
+                {
+                    <div class="membershipSection">
+                        <div class="row">
+                            <div class="col-12">
+                                <p class="membershipHeading">@T("Membership.Section.Heading")</p>
+                                <p class="membershipdetails">@T((IsMemberShipAddedInCart ? "Membership.Section.Joining.Details" : "Membership.Section.Join.Details"), memberShipFee, Model.MemberShipDiscount.Replace("-", ""))</p>
+                                @if (IsMemberShipAddedInCart)
+                                {
+                                    <button type="submit" name="removemembership" value="@T("Membership.Section.Button.Remove")" class="membership-remove">
+                                        @T("Membership.Section.Button.Remove")
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="submit" name="addmembership" value="@T("Membership.Section.Button.Add")" class="membership-remove">
+                                        @T("Membership.Section.Button.Add")
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="membershipSection">
+                        <div class="row">
+                            <div class="col-12">
+                                <p class="membershipHeading">@T("Membership.Section.Heading")</p>
+                                <p class="membershipdetails">@T("Membership.Section.Joined.Details", memberShipFee, Model.MemberShipDiscount.Replace("-", ""))</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            } @*Membership Section End*@
+
+
+
+
+            <div class="row mt-3">
+                <div class="col-12 col-sm-12 col-lg-8">
+
+                    @if (!_workcontext.IsMobileDevice())
+                    {
+                        <div class="cartitems-heading">
+                            <div class="row">
+                                <div class="col-6">
+                                    @T("ShoppingCart.Your.Cart", Model.Items.Count)
+                                </div>
+                                <div class="col-6">
+                                    @if (!isAuthenticated)
+                                    {
+                                        @Html.Raw(T("ShoppingCart.Signin.CreateAccount"))
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-wrapper panel panel-default">
+
+                            <table class="cart table-wrapper table table-responsive">
+                                <colgroup>
+
+                                    <col />
+                                    @if (Model.ShowVendorName)
+                                    {
+                                        <col width="1" />
+                                    }
+                                    <col width="1" />
+                                    <col width="1" />
+                                    <col width="1" />
+
+                                </colgroup>
+                                <thead>
+                                    <tr class="cart-header-row">
+
+
+                                        <th class="product">
+                                            @T("ShoppingCart.Product(s)")
+                                        </th>
+                                        @if (Model.ShowVendorName)
+                                        {
+                                            <th class="vendor">
+                                                @T("ShoppingCart.VendorName")
+                                            </th>
+                                        }
+                                        <th class="quantity">
+                                            @T("ShoppingCart.Quantity")
+                                        </th>
+                                        <th class="unit-price">
+                                            @T("ShoppingCart.UnitPrice")
+                                        </th>
+
+                                        <th class="end subtotal">
+                                            @T("ShoppingCart.ItemTotal")
+                                        </th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Items)
+                                    {
+                                        <tr class="cart-item-row">
+
+                                            <td class="product">
+                                                <div class="shoppping-cart-left-image">
+                                                    <a target="_blank" href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" /></a>
+
+                                                </div>
+                                                <div class="shoppping-cart-right-image">
+                                                    <a target="_blank" href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})" class="product-name">@item.ProductName</a>
+
+                                                    @if (!string.IsNullOrEmpty(item.AttributeInfo))
+                                                    {
+                                                        <div class="attributes">
+
+                                                            @{
+                                                                string[] attrs = item.AttributeInfo.Split(new string[] { "<br />" }, StringSplitOptions.None);
+                                                                foreach (var attr in attrs)
+                                                                {
+                                                                    string[] _attrParts = attr.Split(':');
+                                                                    <strong>@_attrParts[0]:</strong>
+                                                                    @Html.Raw(System.Net.WebUtility.HtmlDecode(string.Join(':', _attrParts.Skip(1))))
+
+
+                                                                    <br>
+                                                                }
+                                                            }
+                                                        </div>
+                                                    }
+
+
+
+
+                                                    @if (!string.IsNullOrEmpty(item.Sku))
+                                                    {
+                                                        <div class="attributes">
+                                                            <strong>  @T("shoppingcart.sku")</strong>  @Html.Raw(item.Sku)
+                                                        </div>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(item.RecurringInfo))
+                                                    {
+                                                        <div class="recurring-info">
+                                                            @Html.Raw(item.RecurringInfo)
+                                                        </div>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(item.RentalInfo))
+                                                    {
+                                                        <div class="rental-info">
+                                                            @Html.Raw(item.RentalInfo)
+                                                        </div>
+                                                    }
+
+
+
+
+
+
+
+
+                                                    @if (item.Warnings.Count > 0)
+                                                    {
+                                                        <div class="message-error">
+                                                            <ul>
+                                                                @foreach (var warning in item.Warnings)
+                                                                {
+                                                                    <li>@Html.Raw(warning)</li>
+                                                                }
+                                                            </ul>
+                                                        </div>
+                                                    }
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <div id="prd-instruction-@item.Id">
+                                                            <div class="card-body p-0">
+
+                                                                <textarea class="form-control desktop ItemNotes " cols="2" name="itemspecialinstructions@(item.Id)"
+                                                                          type="text" id="itemspecialinstructions@(item.Id)"
+                                                                          placeholder="@T("shoppingcart.specialinstructions.PlaceHolder")" rows="2" style="resize:vertical;">@(string.IsNullOrEmpty(item.SpecialInstructions) ? "" : item.SpecialInstructions)</textarea>
+
+
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            @if (Model.ShowVendorName)
+                                            {
+                                                <td class="vendor">
+                                                    <label class="td-title">@T("ShoppingCart.VendorName"):</label>
+                                                    <span class="vendor-name">@item.VendorName</span>
+                                                </td>
+                                            }
+                                            <td class="quantity nobr">
+                                                <label class="td-title" for="itemquantity@(item.Id)">@T("ShoppingCart.Quantity"):</label>
+                                                @if (Model.IsEditable)
+                                                {
+
+
+
+                                                    <button class="quantity-btn desc" type="button">−</button>
+                                                    <input type="text" id="itemquantity@(item.Id)" class="qty-input" name="itemquantity@(item.Id)" aria-label="@T("ShoppingCart.Quantity")" value="@(item.Quantity)">
+                                                    <button class="quantity-btn inc" type="button">+</button>
+                                                }
+                                                else
+                                                {
+                                                    <span class="product-quantity">@item.Quantity</span>
+                                                }
+                                                @if (item.DisableRemoval)
+                                                {
+                                                    <text>&nbsp;</text>
+                                                }
+                                                else
+                                                {
+
+                                                    <a href="@Url.Action("SaveForLater","ShoppingCart",new {cartId=item.Id})" class="ShpSaveForLater"><i class="far fa-heart"></i> @T("shoppingcart.saveforlater") </a>
+                                                    <input type="checkbox" name="removefromcart" id="removefromcart@(item.Id)" value="@(item.Id)" aria-label="@T("ShoppingCart.Remove")" />
+                                                    <button name="customupdatecart" class="remove-btn" onclick="$('#removefromcart@(item.Id)').attr('checked', true);">
+                                                        <i class="far fa-trash-alt"></i>
+                                                        @T("admin.common.remove")
+                                                    </button>
+                                                }
+                                            </td>
+                                            <td class="unit-price nobr">
+                                                <label class="td-title">@T("ShoppingCart.UnitPrice"):</label>
+                                                <span class="product-unit-price">@item.UnitPrice</span>
+                                            </td>
+
+                                            <td class="subtotal nobr end">
+                                                <label class="td-title">@T("ShoppingCart.ItemTotal"):</label>
+                                                <span class="product-subtotal">@item.SubTotal</span>
+
+                                                @if (!string.IsNullOrEmpty(item.MemberShipDiscount))
+                                                {
+
+                                                    <div class="discount">
+                                                        @item.MemberShipDiscount
+                                                        <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.MemberShipDiscount.help")">
+
+                                                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
+                                                                <path d="M8.48658 9.80442C8.44601 9.79305 8.3996 9.80273 8.36841 9.82962C7.50124 10.5994 7.24845 10.694 7.17991 10.6989C7.17131 10.6996 7.15225 10.6916 7.12705 10.6665C7.09539 10.6356 7.07833 10.5951 7.07449 10.5425C7.04806 10.1763 7.29686 9.04559 7.81396 7.1817C8.24824 5.62301 8.28865 5.3069 8.28128 5.20502C8.27037 5.05288 8.19476 4.93471 8.05692 4.85357C7.92568 4.77658 7.74573 4.74585 7.5226 4.76198C7.14641 4.78918 6.69861 4.94731 6.19165 5.23222C6.04673 5.31382 5.89568 5.4114 5.74293 5.52204C5.34 5.81402 5.11902 6.25813 5.1516 6.70977C5.15421 6.74681 5.18325 6.77831 5.22505 6.78999C5.267 6.80151 5.31387 6.79076 5.34384 6.76279C5.74369 6.39106 6.01001 6.16316 6.13571 6.08525C6.26987 6.00227 6.38942 5.95663 6.49146 5.94925C6.52911 5.94648 6.54801 5.9451 6.55247 6.00765C6.55846 6.09078 6.54525 6.19021 6.51328 6.30254C5.75614 8.91358 5.41146 10.5044 5.45909 11.1658C5.47538 11.3906 5.56236 11.5653 5.71788 11.6855C5.87524 11.8074 6.081 11.8602 6.32888 11.8423C6.59888 11.8227 6.92297 11.7036 7.31945 11.4782C7.51015 11.3697 7.75726 11.1944 8.054 10.9571C8.40391 10.6771 8.58801 10.2862 8.55912 9.88448C8.55635 9.84775 8.52807 9.8164 8.48658 9.80442Z" fill="white" />
+                                                                <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
+                                                            </svg>
+
+                                                        </span>
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(item.OfferDiscount))
+                                                {
+                                                    <div class="discount">
+                                                        @Html.Raw(!string.IsNullOrEmpty(item.OfferDiscount) ? item.OfferDiscount : await _priceFormatter.FormatPriceAsync(0))
+
+
+                                                        <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.OfferDiscount.help")">
+
+                                                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
+                                                                <path d="M8.48658 9.80442C8.44601 9.79305 8.3996 9.80273 8.36841 9.82962C7.50124 10.5994 7.24845 10.694 7.17991 10.6989C7.17131 10.6996 7.15225 10.6916 7.12705 10.6665C7.09539 10.6356 7.07833 10.5951 7.07449 10.5425C7.04806 10.1763 7.29686 9.04559 7.81396 7.1817C8.24824 5.62301 8.28865 5.3069 8.28128 5.20502C8.27037 5.05288 8.19476 4.93471 8.05692 4.85357C7.92568 4.77658 7.74573 4.74585 7.5226 4.76198C7.14641 4.78918 6.69861 4.94731 6.19165 5.23222C6.04673 5.31382 5.89568 5.4114 5.74293 5.52204C5.34 5.81402 5.11902 6.25813 5.1516 6.70977C5.15421 6.74681 5.18325 6.77831 5.22505 6.78999C5.267 6.80151 5.31387 6.79076 5.34384 6.76279C5.74369 6.39106 6.01001 6.16316 6.13571 6.08525C6.26987 6.00227 6.38942 5.95663 6.49146 5.94925C6.52911 5.94648 6.54801 5.9451 6.55247 6.00765C6.55846 6.09078 6.54525 6.19021 6.51328 6.30254C5.75614 8.91358 5.41146 10.5044 5.45909 11.1658C5.47538 11.3906 5.56236 11.5653 5.71788 11.6855C5.87524 11.8074 6.081 11.8602 6.32888 11.8423C6.59888 11.8227 6.92297 11.7036 7.31945 11.4782C7.51015 11.3697 7.75726 11.1944 8.054 10.9571C8.40391 10.6771 8.58801 10.2862 8.55912 9.88448C8.55635 9.84775 8.52807 9.8164 8.48658 9.80442Z" fill="white" />
+                                                                <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
+                                                            </svg>
+
+                                                        </span>
+
+                                                    </div>
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.BuyMoreSaveMoreDiscount))
+                                                {
+                                                    <div class="discount">
+                                                        @Html.Raw(!string.IsNullOrEmpty(item.BuyMoreSaveMoreDiscount) ? item.BuyMoreSaveMoreDiscount : await _priceFormatter.FormatPriceAsync(0))
+                                                        <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.BuyMoreSaveMoreDiscount.help")">
+
+                                                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
+                                                                <path d="M8.48658 9.80442C8.44601 9.79305 8.3996 9.80273 8.36841 9.82962C7.50124 10.5994 7.24845 10.694 7.17991 10.6989C7.17131 10.6996 7.15225 10.6916 7.12705 10.6665C7.09539 10.6356 7.07833 10.5951 7.07449 10.5425C7.04806 10.1763 7.29686 9.04559 7.81396 7.1817C8.24824 5.62301 8.28865 5.3069 8.28128 5.20502C8.27037 5.05288 8.19476 4.93471 8.05692 4.85357C7.92568 4.77658 7.74573 4.74585 7.5226 4.76198C7.14641 4.78918 6.69861 4.94731 6.19165 5.23222C6.04673 5.31382 5.89568 5.4114 5.74293 5.52204C5.34 5.81402 5.11902 6.25813 5.1516 6.70977C5.15421 6.74681 5.18325 6.77831 5.22505 6.78999C5.267 6.80151 5.31387 6.79076 5.34384 6.76279C5.74369 6.39106 6.01001 6.16316 6.13571 6.08525C6.26987 6.00227 6.38942 5.95663 6.49146 5.94925C6.52911 5.94648 6.54801 5.9451 6.55247 6.00765C6.55846 6.09078 6.54525 6.19021 6.51328 6.30254C5.75614 8.91358 5.41146 10.5044 5.45909 11.1658C5.47538 11.3906 5.56236 11.5653 5.71788 11.6855C5.87524 11.8074 6.081 11.8602 6.32888 11.8423C6.59888 11.8227 6.92297 11.7036 7.31945 11.4782C7.51015 11.3697 7.75726 11.1944 8.054 10.9571C8.40391 10.6771 8.58801 10.2862 8.55912 9.88448C8.55635 9.84775 8.52807 9.8164 8.48658 9.80442Z" fill="white" />
+                                                                <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
+                                                            </svg>
+
+                                                        </span>
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(item.Discount))
+                                                {
+
+                                                    <div class="discount">
+                                                        @item.Discount
+                                                        <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.Coupon.Discount.help")">
+
+                                                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
+                                                                <path d="M8.48658 9.80442C8.44601 9.79305 8.3996 9.80273 8.36841 9.82962C7.50124 10.5994 7.24845 10.694 7.17991 10.6989C7.17131 10.6996 7.15225 10.6916 7.12705 10.6665C7.09539 10.6356 7.07833 10.5951 7.07449 10.5425C7.04806 10.1763 7.29686 9.04559 7.81396 7.1817C8.24824 5.62301 8.28865 5.3069 8.28128 5.20502C8.27037 5.05288 8.19476 4.93471 8.05692 4.85357C7.92568 4.77658 7.74573 4.74585 7.5226 4.76198C7.14641 4.78918 6.69861 4.94731 6.19165 5.23222C6.04673 5.31382 5.89568 5.4114 5.74293 5.52204C5.34 5.81402 5.11902 6.25813 5.1516 6.70977C5.15421 6.74681 5.18325 6.77831 5.22505 6.78999C5.267 6.80151 5.31387 6.79076 5.34384 6.76279C5.74369 6.39106 6.01001 6.16316 6.13571 6.08525C6.26987 6.00227 6.38942 5.95663 6.49146 5.94925C6.52911 5.94648 6.54801 5.9451 6.55247 6.00765C6.55846 6.09078 6.54525 6.19021 6.51328 6.30254C5.75614 8.91358 5.41146 10.5044 5.45909 11.1658C5.47538 11.3906 5.56236 11.5653 5.71788 11.6855C5.87524 11.8074 6.081 11.8602 6.32888 11.8423C6.59888 11.8227 6.92297 11.7036 7.31945 11.4782C7.51015 11.3697 7.75726 11.1944 8.054 10.9571C8.40391 10.6771 8.58801 10.2862 8.55912 9.88448C8.55635 9.84775 8.52807 9.8164 8.48658 9.80442Z" fill="white" />
+                                                                <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
+                                                            </svg>
+
+                                                        </span>
+                                                    </div>
+                                                    if (item.MaximumDiscountedQty.HasValue)
+                                                    {
+                                                        <div class="discount-additional-info">
+                                                            @T("ShoppingCart.MaximumDiscountedQty", item.MaximumDiscountedQty.Value)
+                                                        </div>
+                                                    }
+                                                }
+
+                                            </td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <div class="cart-options">
+                            @if (Model.IsEditable)
+                            {
+                                <div class="common-buttons">
+                                    @await Component.InvokeAsync("ShoppingCartEstimateShipping")
+                                </div>
+                            }
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="cartitems-heading">
+                            <div class="row">
+                                <div class="col-12">
+                                    @if (!isAuthenticated)
+                                    {
+                                        @T("ShoppingCart.Signin.CreateAccount", Url.RouteUrl("Login", new { returnUrl }), Url.RouteUrl("Register", new { returnUrl }))
+                                    }
+                                </div>
+                            </div>     <div class="row">
+                                <div class="col-12">
+                                    @T("ShoppingCart.Your.Cart", Model.Items.Count)
+                                </div>
+                            </div>
+                        </div>
+                        @foreach (var item in Model.Items)
+                        {
+                            <div class="shopiing-product-details">
+                                <div class="col-md-12">
+                                    <div class="image-section">
+                                        <a target="_blank" href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" /></a>
+                                    </div>
+                                    <div class="desc-section">
+                                        <p class="name">
+                                            <a target="_blank" href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})" class="product-name">@item.ProductName</a>
+                                        </p>
+
+
+                                        @if (!string.IsNullOrEmpty(item.AttributeInfo))
+                                        {
+                                            {
+                                                string[] attrs = item.AttributeInfo.Split(new string[] { "<br />" }, StringSplitOptions.None);
+                                                foreach (var attr in attrs)
+                                                {
+                                                    string[] _attrParts = attr.Split(':');
+                                                    <p><strong>@_attrParts[0]:</strong>  @Html.Raw(System.Net.WebUtility.HtmlDecode(string.Join(':', _attrParts.Skip(1))))</p>
+                                                }
+
+                                            }
+                                        }      @if (!string.IsNullOrEmpty(item.Sku))
+                                        {
+
+                                            <p class="sku"><strong>@T("shoppingcart.sku"):</strong> @Html.Raw(item.Sku)</p>
+                                        }
+                                        @if (item.Warnings.Count > 0)
+                                        {
+                                            <div class="message-error">
+                                                <ul>
+                                                    @foreach (var warning in item.Warnings)
+                                                    {
+                                                        <li>@Html.Raw(warning)</li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        }
+
+                                    </div>
+                                </div>
+                                <div class="col-md-12 price-table">
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <td>@T("ShoppingCart.Quantity")</td>
+                                                <td>@T("ShoppingCart.UnitPrice")</td>
+                                                <td>@T("ShoppingCart.Discount")</td>
+                                                <td>@T("ShoppingCart.ItemTotal")</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="quantity">
+
+                                                    @if (Model.IsEditable)
+                                                    {
+                                                        <button class="quantity-btn desc" type="button">−</button>
+                                                        <input type="text" id="itemquantity@(item.Id)" class="qty-input" name="itemquantity@(item.Id)" aria-label="@T("ShoppingCart.Quantity")" value="@(item.Quantity)">
+                                                        <button class="quantity-btn inc" type="button">+</button>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="product-quantity">@item.Quantity</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <span class="price"> @item.UnitPrice</span>
+                                                </td>
+
+                                                <td>
+                                                    <span class="discont">
+                                                        @if (!string.IsNullOrEmpty(item.Discount))
+                                                        {
+                                                            @item.Discount
+                                                            <br />
+                                                        }
+                                                        @if (!string.IsNullOrEmpty(item.MemberShipDiscount))
+                                                        {
+
+                                                            <div class="checkout-discount">
+                                                                <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.MemberShipDiscount.help")">
+                                                                    @item.MemberShipDiscount
+
+                                                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                        <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
+                                                                        <path d="M8.48658 9.80442C8.44601 9.79305 8.3996 9.80273 8.36841 9.82962C7.50124 10.5994 7.24845 10.694 7.17991 10.6989C7.17131 10.6996 7.15225 10.6916 7.12705 10.6665C7.09539 10.6356 7.07833 10.5951 7.07449 10.5425C7.04806 10.1763 7.29686 9.04559 7.81396 7.1817C8.24824 5.62301 8.28865 5.3069 8.28128 5.20502C8.27037 5.05288 8.19476 4.93471 8.05692 4.85357C7.92568 4.77658 7.74573 4.74585 7.5226 4.76198C7.14641 4.78918 6.69861 4.94731 6.19165 5.23222C6.04673 5.31382 5.89568 5.4114 5.74293 5.52204C5.34 5.81402 5.11902 6.25813 5.1516 6.70977C5.15421 6.74681 5.18325 6.77831 5.22505 6.78999C5.267 6.80151 5.31387 6.79076 5.34384 6.76279C5.74369 6.39106 6.01001 6.16316 6.13571 6.08525C6.26987 6.00227 6.38942 5.95663 6.49146 5.94925C6.52911 5.94648 6.54801 5.9451 6.55247 6.00765C6.55846 6.09078 6.54525 6.19021 6.51328 6.30254C5.75614 8.91358 5.41146 10.5044 5.45909 11.1658C5.47538 11.3906 5.56236 11.5653 5.71788 11.6855C5.87524 11.8074 6.081 11.8602 6.32888 11.8423C6.59888 11.8227 6.92297 11.7036 7.31945 11.4782C7.51015 11.3697 7.75726 11.1944 8.054 10.9571C8.40391 10.6771 8.58801 10.2862 8.55912 9.88448C8.55635 9.84775 8.52807 9.8164 8.48658 9.80442Z" fill="white" />
+                                                                        <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
+                                                                    </svg>
+
+                                                                </span><br />
+                                                            </div>
+                                                        }
+
+                                                        @if (!string.IsNullOrEmpty(item.OfferDiscount))
+                                                        {
+                                                            <div class="checkout-discount">
+                                                                <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.OfferDiscount.help")">
+                                                                    @Html.Raw(!string.IsNullOrEmpty(item.OfferDiscount) ? item.OfferDiscount : await _priceFormatter.FormatPriceAsync(0))
+
+                                                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                        <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
+                                                                        <path d="M8.48658 9.80442C8.44601 9.79305 8.3996 9.80273 8.36841 9.82962C7.50124 10.5994 7.24845 10.694 7.17991 10.6989C7.17131 10.6996 7.15225 10.6916 7.12705 10.6665C7.09539 10.6356 7.07833 10.5951 7.07449 10.5425C7.04806 10.1763 7.29686 9.04559 7.81396 7.1817C8.24824 5.62301 8.28865 5.3069 8.28128 5.20502C8.27037 5.05288 8.19476 4.93471 8.05692 4.85357C7.92568 4.77658 7.74573 4.74585 7.5226 4.76198C7.14641 4.78918 6.69861 4.94731 6.19165 5.23222C6.04673 5.31382 5.89568 5.4114 5.74293 5.52204C5.34 5.81402 5.11902 6.25813 5.1516 6.70977C5.15421 6.74681 5.18325 6.77831 5.22505 6.78999C5.267 6.80151 5.31387 6.79076 5.34384 6.76279C5.74369 6.39106 6.01001 6.16316 6.13571 6.08525C6.26987 6.00227 6.38942 5.95663 6.49146 5.94925C6.52911 5.94648 6.54801 5.9451 6.55247 6.00765C6.55846 6.09078 6.54525 6.19021 6.51328 6.30254C5.75614 8.91358 5.41146 10.5044 5.45909 11.1658C5.47538 11.3906 5.56236 11.5653 5.71788 11.6855C5.87524 11.8074 6.081 11.8602 6.32888 11.8423C6.59888 11.8227 6.92297 11.7036 7.31945 11.4782C7.51015 11.3697 7.75726 11.1944 8.054 10.9571C8.40391 10.6771 8.58801 10.2862 8.55912 9.88448C8.55635 9.84775 8.52807 9.8164 8.48658 9.80442Z" fill="white" />
+                                                                        <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
+                                                                    </svg>
+
+                                                                </span>
+                                                            </div>
+                                                        }
+
+                                                        @if (!string.IsNullOrEmpty(item.BuyMoreSaveMoreDiscount))
+                                                        {
+
+                                                            <div class="checkout-discount">
+                                                                <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.BuyMoreSaveMoreDiscount.help")">
+                                                                    @Html.Raw(!string.IsNullOrEmpty(item.BuyMoreSaveMoreDiscount) ? item.BuyMoreSaveMoreDiscount : await _priceFormatter.FormatPriceAsync(0))
+
+                                                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                        <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
+                                                                        <path d="M8.48658 9.80442C8.44601 9.79305 8.3996 9.80273 8.36841 9.82962C7.50124 10.5994 7.24845 10.694 7.17991 10.6989C7.17131 10.6996 7.15225 10.6916 7.12705 10.6665C7.09539 10.6356 7.07833 10.5951 7.07449 10.5425C7.04806 10.1763 7.29686 9.04559 7.81396 7.1817C8.24824 5.62301 8.28865 5.3069 8.28128 5.20502C8.27037 5.05288 8.19476 4.93471 8.05692 4.85357C7.92568 4.77658 7.74573 4.74585 7.5226 4.76198C7.14641 4.78918 6.69861 4.94731 6.19165 5.23222C6.04673 5.31382 5.89568 5.4114 5.74293 5.52204C5.34 5.81402 5.11902 6.25813 5.1516 6.70977C5.15421 6.74681 5.18325 6.77831 5.22505 6.78999C5.267 6.80151 5.31387 6.79076 5.34384 6.76279C5.74369 6.39106 6.01001 6.16316 6.13571 6.08525C6.26987 6.00227 6.38942 5.95663 6.49146 5.94925C6.52911 5.94648 6.54801 5.9451 6.55247 6.00765C6.55846 6.09078 6.54525 6.19021 6.51328 6.30254C5.75614 8.91358 5.41146 10.5044 5.45909 11.1658C5.47538 11.3906 5.56236 11.5653 5.71788 11.6855C5.87524 11.8074 6.081 11.8602 6.32888 11.8423C6.59888 11.8227 6.92297 11.7036 7.31945 11.4782C7.51015 11.3697 7.75726 11.1944 8.054 10.9571C8.40391 10.6771 8.58801 10.2862 8.55912 9.88448C8.55635 9.84775 8.52807 9.8164 8.48658 9.80442Z" fill="white" />
+                                                                        <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
+                                                                    </svg>
+
+                                                                </span>
+
+                                                            </div>
+                                                        }
+
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="sub-total"> @item.SubTotalIncludeDiscount</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-12 cart-save-later">
+
+                                    @if (!item.DisableRemoval)
+                                    {
+                                        <input type="checkbox" name="removefromcart" id="removefromcart@(item.Id)" value="@(item.Id)" aria-label="@T("ShoppingCart.Remove")" />
+                                        <button name="customupdatecart" class="remove-btn" onclick="$('#removefromcart@(item.Id)').attr('checked', true);">
+                                            <i class="far fa-trash-alt"></i>
+                                            @T("admin.common.remove")
+                                        </button>
+                                        <a href="@Url.Action("SaveForLater","ShoppingCart",new {cartId=item.Id})" class="ShpSaveForLater"><i class="far fa-heart"></i> @T("shoppingcart.saveforlater") </a>
+                                    }
+                                    <a href="#" class="instruc-pop" title="phone" aria-label="phone" data-bs-toggle="modal" data-bs-target="#special-instruction-popup-@item.Id">
+                                        @if (string.IsNullOrEmpty(item.SpecialInstructions) || item.SpecialInstructions.Replace("\n", "").Replace("\r", "").Trim() == "")
+                                        {
+                                            @T("shoppingcart.specialinstructions")
+                                        }
+                                        else
+                                        {
+                                            @item.SpecialInstructions
+                                        }
+                                    </a>
+
+                                    <div class="modal fade" id="special-instruction-popup-@item.Id">
+                                        <div class="modal-dialog special-instruction">
+                                            <div class="modal-content">
+                                                <!-- Modal Header -->
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title">@T("shoppingcart.specialinstructions.Add")</h4>
+                                                    <button class="close" type="button" data-bs-dismiss="modal" aria-label="Close"> <span aria-hidden="true">×</span> </button>
+                                                </div>
+                                                <!-- Modal body -->
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-5">
+                                                            <a href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" /></a>
+                                                        </div>
+                                                        <div class="col-7">
+                                                            <p class="txt-solid">
+                                                                <a href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})" class="product-name">@item.ProductName</a>
+                                                            </p>
+                                                            <p class="txt-spec">
+                                                                @if (!string.IsNullOrEmpty(item.AttributeInfo))
+                                                                {
+                                                                    {
+                                                                        string[] attrs = item.AttributeInfo.Split(new string[] { "<br />" }, StringSplitOptions.None);
+                                                                        foreach (var attr in attrs)
+                                                                        {
+                                                                            string[] _attrParts = attr.Split(':');
+                                                                            <span>@_attrParts[0]  @Html.Raw(string.Join(':', _attrParts.Skip(1)))</span>
+                                                                        }
+
+                                                                    }
+                                                                }
+
+                                                                <span>@T("shoppingcart.sku") @Html.Raw(item.Sku)</span>
+                                                                <span>@T("ShoppingCart.UnitPrice"): @item.SubTotal</span>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="form-group">
+                                                            <textarea class="form-control ItemNotes" cols="2" name="itemspecialinstructions@(item.Id)" value="@(item.SpecialInstructions)"
+                                                                      placeholder="@T("shoppingcart.specialinstructions.PlaceHolder") Instructions" rows="2" style="resize:vertical;">@(string.IsNullOrEmpty(item.SpecialInstructions) ? "" : item.SpecialInstructions)</textarea>
+                                                            <button type="button" data-bs-dismiss="modal" class="btn btn-secondary save-btn custom-cart-instruction">@T("Common.Save")</button>
+                                                            <button type="button" data-bs-dismiss="modal" class="btn btn-secondary custom-cart-instruction-clear-btn" ref-special-instrution="itemspecialinstructions@(item.Id)">@T("Common.Clear")</button>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }               }
+                    <div class="share-info">
+                        <p class="share-label">@T("ShoppingCart.Share.Heading")</p>
+                        <a href="#" class="share-link" onclick="copyCartLink(event)"
+                           data-link="@($"{(await _storeContext.GetCurrentStoreAsync()).Url.TrimEnd('/')}{Url.RouteUrl("Cart-Share", new { customerGuid = customer.CustomerGuid })}")">
+                            Copy Link
+                        </a>
+                    </div>
+                    <script>
+                        function copyCartLink(event) {
+                            event.preventDefault();
+                            const el = event.currentTarget; // store reference
+                            const link = event.currentTarget.getAttribute('data-link');
+                            navigator.clipboard.writeText(link).then(() => {
+                                // Optional: give feedback
+                                el.textContent = "Link copied!";
+                                setTimeout(() => {
+                                    el.textContent = "Copy Link";
+                                }, 2000);
+                            }).catch(err => {
+                                console.error("Failed to copy: ", err);
+                            });
+                        }
+                    </script>
+                </div>
+
+                <div class="col-12 col-lg-4">
+                    <div class="checkout-right-sec">
+
+
+                        <div class="cart-footer">
+                            <div class="row">
+
+                                @if (Model.IsEditable)
+                                {
+
+                                }
+                                <div class="total-section col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+
+                                    <div class="total">
+                                        <p class="headeing-order">@T("checkout.ordersummary", Model.Items.Count)</p>
+                                        <div class="accordion">
+                                            <div class="card" type="button">
+                                                <div class="card-header collapsed" id="heading-discountcodes"
+                                                     data-bs-toggle="collapse" data-bs-target="#collapse-discountcodes"
+                                                     aria-expanded=" @(Model.DiscountBox?.Messages.Count()>0?"false":"true")" aria-controls="collapse-discountcodes">
+                                                    <h2 class="mb-0 text-left text-uppercase">
+                                                        @T("Shoppingcart.SpecialOfferCodes")
+                                                    </h2>
+                                                </div>
+
+                                                <div id="collapse-discountcodes" class="accordion-collapse collapse" aria-labelledby="heading-discountcodes">
+                                                    <div class="card-body">
+                                                        <div class="cart-collaterals col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                                                            <div class="row">
+                                                                <div class="deals col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 p-0">
+                                                                    @await Html.PartialAsync("_DiscountBox", Model.DiscountBox)
+                                                                </div>
+                                                                <div class="deals col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                                                                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryContentDeals })
+                                                                    @await Html.PartialAsync("_GiftCardBox", Model.GiftCardBox)
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            @if (Model.IsEditable)
+                                            {
+                                                @await Html.PartialAsync("_CheckoutAttributes", Model)
+                                            }
+                                            else
+                                            {
+                                                @await Component.InvokeAsync("SelectedCheckoutAttributes")
+                                            }
+
+                                        </div>
+                                        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryTotals })
+                                        @await Component.InvokeAsync("CustomOrderTotals", new { isEditable = Model.IsEditable })
+                                        @if (Model.IsEditable)
+                                        {
+                                            if (!string.IsNullOrEmpty(Model.MinOrderSubtotalWarning))
+                                            {
+                                                <div class="min-amount-warning">
+                                                    @Model.MinOrderSubtotalWarning
+                                                </div>
+                                            }
+                                        }
+                                        @if (Model.IsEditable)
+                                        {
+                                            if (Model.TermsOfServiceOnShoppingCartPage)
+                                            {
+                                                <div id="terms-of-service-warning-box" title="@T("Checkout.TermsOfService")" style="display: none;">
+                                                    <p>@T("Checkout.TermsOfService.PleaseAccept")</p>
+                                                </div>
+                                                <div class="terms-of-service">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" class="custom-control-input" id="termsofservice" name="termsofservice" />
+                                                        <label class="custom-control-label" for="termsofservice">
+                                                            @T("Checkout.TermsOfService.IAccept")
+                                                            @if (Model.TermsOfServicePopup)
+                                                            {
+                                                                <a class="read" id="read-terms">@T("Checkout.TermsOfService.Read")</a>
+                                                                <script asp-location="Footer">
+                                                                    $(document).ready(function () {
+                                                                        $('#read-terms').on('click',
+                                                                            function (e) {
+                                                                                e.preventDefault();
+                                                                                displayPopupContentFromUrl(
+                                                                                    '@Url.RouteUrl("TopicPopup", new { SystemName = "conditionsofuse" })',
+                                                                                    '@T("Checkout.TermsOfService")');
+                                                                            });
+                                                                    });
+                                                                </script>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a class="read" id="read-terms" href="@Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("conditionsofuse") })">@T("Checkout.TermsOfService.Read")</a>
+                                                            }
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            }
+                                            <div class="checkout-buttons">
+                                                @if (string.IsNullOrEmpty(Model.MinOrderSubtotalWarning) && !Model.HideCheckoutButton)
+                                                {
+                                                    <script type="text/javascript" asp-location="Footer">
+                                                        $(document).ready(function () {
+                                                            $('.checkout').on('click', function () {
+                                                                //terms of service
+                                                                var termOfServiceOk = true;
+                                                                if ($('#termsofservice').length > 0) {
+                                                                    //terms of service element exists
+                                                                    if (!$('#termsofservice').is(':checked')) {
+                                                                        $("#terms-of-service-warning-box").dialog();
+                                                                        termOfServiceOk = false;
+                                                                    } else {
+                                                                        termOfServiceOk = true;
+                                                                    }
+                                                                }
+                                                                return termOfServiceOk;
+                                                            });
+                                                        });
+                                                    </script>
+                                                    if (orderSettings.CheckoutDisabled)
+                                                    {
+                                                        <div class="checkout-disabled">
+                                                            @T("Checkout.Disabled")
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        if (!isAuthenticated)
+                                                        {
+                                                            <div>
+                                                                <button type="button" data-bs-toggle="modal" data-bs-target="#guestcheckoutsignin" class="Signin checkout button-2 btn btn-primary checkout-button w-100">
+                                                                    PROCEED TO CHECKOUT
+                                                                </button>
+                                                            </div> @*@if (!IsMemberShipAddedInCart)
+                                        {
+                                        <div class=" w-100 text-center p-2">OR</div>
+                                        <div>
+                                        <button type="button" data-bs-toggle="modal" data-bs-target="#guestcheckoutsignin" class=" checkoutasguest checkout button-2 btn btn-primary checkout-button w-100">
+                                        @T("Checkout.Button.checkoutasguest")
+                                        </button>
+                                        </div>
+                                        }*@ }
+                                                        else
+                                                        {
+
+                                                            <div>
+                                                                <button type="submit" name="customcheckout" value="customcheckout" class="Checkout-Button checkout button-2 btn btn-primary checkout-button w-100">
+                                                                    @T("Checkout.Button")
+                                                                </button>
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+
+                                            </div>
+                                            @await Html.PartialAsync("_Offer")
+                                            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryCartFooter })
+                                            @if (Model.IsEditable)
+                                            {
+                                                <label class="custom-control-label cart-term-service" style="margin: 20px 0 0px;">
+                                                    @T("Checkout.TermsOfService.IAccept")
+                                                </label>
+                                            }
+                                            <div class="addon-buttons">@foreach (var pm in Model.ButtonPaymentMethodViewComponentNames)
+                                                {
+                                                    @await Component.InvokeAsync(pm)
+                                                }</div>
+                                        }
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            @if (Model.IsEditable && Model.Items.Count > 0 && Model.DisplayTaxShippingInfo)
+            {
+                var inclTax = await workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
+                //tax info is already included in the price (incl/excl tax). that's why we display only shipping info here
+                //of course, you can modify appropriate locales to include VAT info there
+                <div class="tax-shipping-info">
+                    @T(inclTax ? "ShoppingCart.TaxShipping.InclTax" : "ShoppingCart.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("shippinginfo") }))
+                </div>
+            } @*@if (Model.IsEditable)
+        {
+        @await Component.InvokeAsync("CrossSellProducts")
+        }*@
+        </form>
+    }
+    else
+    {
+        <div class="no-data">
+            @T(isAuthenticated ? "ShoppingCart.CartIsEmpty" : "ShoppingCart.CartIsEmpty.Guest")
+        </div>
+    }
+    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryContentAfter })
+</div>
+
+<script>
+    window.dataLayer = window.dataLayer || [];
+    @{
+        var currencyCode = (await workContext.GetWorkingCurrencyAsync()).CurrencyCode;
+        var eventId = Guid.NewGuid().ToString();
+        var cartValue = Model.Items.Sum(x => x.Quantity * x.UnitPriceValue);
+    }
+        window.dataLayer.push({
+            'event': 'view_cart',
+            'ecommerce': {
+                'currency': '@currencyCode',
+                'value': @cartValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture),
+                'items': [
+    @foreach (var item in Model.Items)
+    {
+        <text>{
+                            'item_id': '@item.ProductId',
+                            'item_name': '@Html.Raw(JavaScriptEncoder.Default.Encode(item.ProductName))',
+                            'price': @item.UnitPriceValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture),
+                            'quantity': @item.Quantity,
+                            'item_variant': @(item.Variant?.VariantId ?? 0),
+                            'item_category': 'Shopping Cart'
+                            },</text>
+    }
+                ]
+            }
+        });
+</script>
+

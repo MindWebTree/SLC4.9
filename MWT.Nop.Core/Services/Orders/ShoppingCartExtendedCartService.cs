@@ -12,6 +12,7 @@ using Nop.Core.Domain.Discounts;
 using Nop.Core.Domain.Logging;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Stores;
+using Nop.Core.Domain.Tax;
 using Nop.Core.Events;
 using Nop.Core.Infrastructure;
 using Nop.Data;
@@ -37,23 +38,32 @@ namespace MWT.Nop.Core.Services.Orders
     {
         private readonly ICustomSpecificationAttributeService _customSpecificationAttributeService;
         private readonly ICustomProductAttributeFormatter _customProductAttributeFormatter;
-        private readonly ICustomProductService _customProductService;
+        private readonly IProductExtendedService _customProductService;
+        private readonly ISettingService _settingService;
+        private readonly ICategoryService _categoryService;
+        private readonly ISpecificationAttributeService _specificationAttributeService;
+        private readonly TaxSettings _taxSettings;
 
         public ShoppingCartExtendedCartService(CatalogSettings catalogSettings, IAclService aclService, IActionContextAccessor actionContextAccessor, IAttributeParser<CheckoutAttribute,
             CheckoutAttributeValue> checkoutAttributeParser, IAttributeService<CheckoutAttribute, CheckoutAttributeValue> checkoutAttributeService,
-            ICurrencyService currencyService, ICustomerService customerService, IDateRangeService dateRangeService, 
-            IDateTimeHelper dateTimeHelper, IEventPublisher eventPublisher, IGenericAttributeService genericAttributeService, 
+            ICurrencyService currencyService, ICustomerService customerService, IDateRangeService dateRangeService,
+            IDateTimeHelper dateTimeHelper, IEventPublisher eventPublisher, IGenericAttributeService genericAttributeService,
             IGiftCardService giftCardService, ILocalizationService localizationService, IPermissionService permissionService, IPriceCalculationService priceCalculationService,
-            IPriceFormatter priceFormatter, IProductAttributeParser productAttributeParser, IProductAttributeService productAttributeService, IProductService productService, 
-            IRepository<ShoppingCartItem> sciRepository, IShippingService shippingService, IShortTermCacheManager shortTermCacheManager, IStaticCacheManager staticCacheManager, 
-            IStoreContext storeContext, IStoreService storeService, IStoreMappingService storeMappingService, IUrlHelperFactory urlHelperFactory, IUrlRecordService urlRecordService, 
+            IPriceFormatter priceFormatter, IProductAttributeParser productAttributeParser, IProductAttributeService productAttributeService, IProductService productService,
+            IRepository<ShoppingCartItem> sciRepository, IShippingService shippingService, IShortTermCacheManager shortTermCacheManager, IStaticCacheManager staticCacheManager,
+            IStoreContext storeContext, IStoreService storeService, IStoreMappingService storeMappingService, IUrlHelperFactory urlHelperFactory, IUrlRecordService urlRecordService,
             IWorkContext workContext, OrderSettings orderSettings, ShoppingCartSettings shoppingCartSettings, ICustomSpecificationAttributeService customSpecificationAttributeService,
-            ICustomProductAttributeFormatter customProductAttributeFormatter, ICustomProductService customProductService) : base(catalogSettings, aclService, actionContextAccessor, checkoutAttributeParser, 
+            ICustomProductAttributeFormatter customProductAttributeFormatter, IProductExtendedService customProductService,
+            ISettingService settingService, ICategoryService categoryService, ISpecificationAttributeService specificationAttributeService, TaxSettings taxSettings) : base(catalogSettings, aclService, actionContextAccessor, checkoutAttributeParser,
                 checkoutAttributeService, currencyService, customerService, dateRangeService, dateTimeHelper, eventPublisher, genericAttributeService, giftCardService, localizationService, permissionService, priceCalculationService, priceFormatter, productAttributeParser, productAttributeService, productService, sciRepository, shippingService, shortTermCacheManager, staticCacheManager, storeContext, storeService, storeMappingService, urlHelperFactory, urlRecordService, workContext, orderSettings, shoppingCartSettings)
         {
             _customSpecificationAttributeService = customSpecificationAttributeService;
             _customProductAttributeFormatter = customProductAttributeFormatter;
             _customProductService = customProductService;
+            _settingService = settingService;
+            _categoryService = categoryService;
+            _specificationAttributeService = specificationAttributeService;
+            _taxSettings = taxSettings;
         }
 
         public virtual async Task<(decimal unitPrice, decimal oldPrice, decimal msrp, decimal discountAmount, List<Discount> appliedDiscounts)> GetCustomUnitPriceAsync(Product product,
@@ -160,49 +170,44 @@ bool includeDiscounts)
             try
             {
                 var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(CustomNopCatalogDefaults.MemberShipPriceOfProduct, productId);
-
-
-                var _settingService = EngineContext.Current.Resolve<ISettingService>();
-                var _specificationAttributeService = EngineContext.Current.Resolve<ISpecificationAttributeService>();
-                var _categoryService = EngineContext.Current.Resolve<ICategoryService>();
                 discountPercent = await _staticCacheManager.GetAsync(cacheKey, async () =>
-                {
-                    decimal _discountPercent = 0;
-                    var isMembershipEnabled = await _settingService.GetSettingByKeyAsync<bool>("ismembershipenabled");
-                    if (isMembershipEnabled)
-                    {
-                        var mainCategoryId = await _customSpecificationAttributeService.GetMainCategoryOfProduct(productId);
-                        if (mainCategoryId != 0)
-                        {
-                            var category = await _categoryService.GetCategoryByIdAsync(mainCategoryId);
-                            if (category != null)
-                                _discountPercent = category.MembershipDiscount;
-                        }
-                        if (_discountPercent <= 0)
-                        {
-                            var productCategories = await _categoryService.GetProductCategoriesByProductIdAsync(productId);
-                            if (productCategories.Any())
-                            {
-                                var categories = await _categoryService.GetCategoriesByIdsAsync(productCategories.Select(m => m.CategoryId).ToArray());
-                                if (categories.Any())
-                                    _discountPercent = categories.OrderByDescending(m => m.MembershipDiscount).FirstOrDefault().MembershipDiscount;
-                            }
-                        }
+                      {
+                          decimal _discountPercent = 0;
+                          var isMembershipEnabled = await _settingService.GetSettingByKeyAsync<bool>("ismembershipenabled");
+                          if (isMembershipEnabled)
+                          {
+                              var mainCategoryId = await _customSpecificationAttributeService.GetMainCategoryOfProduct(productId);
+                              if (mainCategoryId != 0)
+                              {
+                                  var category = await _categoryService.GetCategoryByIdAsync(mainCategoryId);
+                                  if (category != null)
+                                      _discountPercent = category.MembershipDiscount;
+                              }
+                              if (_discountPercent <= 0)
+                              {
+                                  var productCategories = await _categoryService.GetProductCategoriesByProductIdAsync(productId);
+                                  if (productCategories.Any())
+                                  {
+                                      var categories = await _categoryService.GetCategoriesByIdsAsync(productCategories.Select(m => m.CategoryId).ToArray());
+                                      if (categories.Any())
+                                          _discountPercent = categories.OrderByDescending(m => m.MembershipDiscount).FirstOrDefault().MembershipDiscount;
+                                  }
+                              }
 
-                        if (_discountPercent <= 0)
-                        {
-                            try
-                            {
-                                _discountPercent = await _settingService.GetSettingByKeyAsync<int>("default.Memembership.Discount.Percent");
-                            }
-                            catch { }
-                        }
-                        return _discountPercent;
-                    }
-                    else
-                        return _discountPercent;
+                              if (_discountPercent <= 0)
+                              {
+                                  try
+                                  {
+                                      _discountPercent = await _settingService.GetSettingByKeyAsync<int>("default.Memembership.Discount.Percent");
+                                  }
+                                  catch { }
+                              }
+                              return _discountPercent;
+                          }
+                          else
+                              return _discountPercent;
 
-                });
+                      });
 
                 if (discountPercent > 0 && price > 0)
                     memberShipPrice = price - price * discountPercent / 100;
@@ -638,6 +643,64 @@ bool includeDiscounts)
                 }
             }
             return discount == 0 ? string.Empty : discountType == CustomDiscountType.Percent ? $"{discount}%" : await _priceFormatter.FormatPriceAsync(discount);
+        }
+
+        public async Task<(CustomDiscountType discountType,decimal buyMoreDiscount, int notEligibleCartItemId)> GetBuyMoreSaveMoreDiscountDetailsAsync(IList<ShoppingCartItem> cart,decimal subTotal)
+        {
+            var discountType = CustomDiscountType.Fixed;
+            decimal buyMoreDiscount = 0;
+            int notEligibleForSaveMoreDiscountCartId = 0;
+
+            bool isBuyMoreSaveMoreEnabled = await _settingService
+                .GetSettingByKeyAsync<bool>("MarketingSettings.EnableBuyMoreSaveMoreDiscount");
+
+            if (!isBuyMoreSaveMoreEnabled || !(cart.Count > 1 || cart.Sum(c => c.Quantity) > 1))
+                return (discountType, buyMoreDiscount, notEligibleForSaveMoreDiscountCartId);
+
+            decimal buyMoreSaveMoreSingleItemThreshold = await _settingService
+                .GetSettingByKeyAsync<decimal>("MarketingSettings.ApplyBuyMoreSaveMoreOnSingleItemOverThreshold");
+
+            
+            string buyMoreSaveMoreDiscounts = await _settingService
+                .GetSettingByKeyAsync<string>("MarketingSettings.BuyMoreSaveMoreDiscountConfiguration");
+
+            if (!string.IsNullOrEmpty(buyMoreSaveMoreDiscounts))
+            {
+                string[] discountLevels = buyMoreSaveMoreDiscounts.Split('|', StringSplitOptions.RemoveEmptyEntries);
+                foreach (var level in discountLevels)
+                {
+                    string[] levelConfig = level.Split(new[] { "-" }, StringSplitOptions.RemoveEmptyEntries);
+                    if (levelConfig.Length == 4)
+                    {
+                        decimal.TryParse(levelConfig[3], out var maxTotal);
+                        decimal.TryParse(levelConfig[2], out var minTotal);
+
+                        if (levelConfig[0].Trim() == "%")
+                            discountType = CustomDiscountType.Percent;
+
+                        if (subTotal > minTotal && subTotal <= maxTotal)
+                        {
+                            decimal.TryParse(levelConfig[1], out buyMoreDiscount);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            decimal costlyItemPrice = 0;
+            foreach (var sci in cart)
+            {
+                decimal itemPrice = (await this.GetUnitPriceAsync(sci, false)).unitPrice;
+
+                if (((itemPrice * sci.Quantity) > costlyItemPrice && cart.Count > 1) ||
+                    (cart.Count == 1 && (cart.Sum(c => c.Quantity) == 1 || itemPrice < buyMoreSaveMoreSingleItemThreshold)))
+                {
+                    costlyItemPrice = itemPrice * sci.Quantity;
+                    notEligibleForSaveMoreDiscountCartId = sci.Id;
+                }
+            }
+
+            return (discountType, buyMoreDiscount, notEligibleForSaveMoreDiscountCartId);
         }
     }
 }

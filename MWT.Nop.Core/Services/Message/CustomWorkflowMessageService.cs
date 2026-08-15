@@ -33,7 +33,7 @@ namespace MWT.Nop.Core.Services.Message
         #region Fields
 
         private readonly ICustomMessageTokenProvider _customMessageTokenProvider;
-        private readonly ICustomCustomerService _customCustomerService;
+        private readonly ICustomerExtendedService _customCustomerService;
         private readonly ILogger _logger;
         private readonly IMailchimpService _mailchimpService;
         private readonly IMandrillService _mandrillService;
@@ -48,7 +48,7 @@ namespace MWT.Nop.Core.Services.Message
             IMessageTokenProvider messageTokenProvider, IOrderService orderService, IProductService productService,
             IQueuedEmailService queuedEmailService, IStoreContext storeContext, IStoreService storeService, ITokenizer tokenizer,
             MessagesSettings messagesSettings, ICustomMessageTokenProvider customMessageTokenProvider,
-            ICustomCustomerService customCustomerService, ILogger logger,
+            ICustomerExtendedService customCustomerService, ILogger logger,
             IMailchimpService mailchimpService, IMandrillService mandrillService, ISettingService settingService) : base(commonSettings, emailAccountSettings, addressService, affiliateService, customerService, emailAccountService, eventPublisher, languageService, localizationService, messageTemplateService, messageTokenProvider, orderService, productService, queuedEmailService, storeContext, storeService, tokenizer, messagesSettings)
         {
             _customMessageTokenProvider = customMessageTokenProvider;

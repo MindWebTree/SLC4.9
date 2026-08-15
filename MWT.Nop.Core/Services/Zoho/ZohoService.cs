@@ -37,7 +37,7 @@ namespace MWT.Nop.Core.Service.Zoho
         private readonly IWorkContext _workContext;
         private readonly IIPLiteService _iIPLiteService;
         private readonly IRepository<QueuedZohoCustomer> _queuedZohoCustomerRepository;
-        private readonly ICustomCustomerService _customerService;
+        private readonly ICustomerExtendedService _customerService;
         private readonly IAddressService _addressService;
         private readonly ICountryService _countryService;
         private readonly IStateProvinceService _stateProvinceService;
@@ -51,7 +51,7 @@ namespace MWT.Nop.Core.Service.Zoho
 
         public ZohoService(ISettingService settingService, ILocalizationService localizationService,
             HttpClient httpClient, ILogger logger, IWorkContext workContext, IIPLiteService iIPLiteService,
-             IRepository<QueuedZohoCustomer> queuedZohoCustomerRepository, ICustomCustomerService customerService,
+             IRepository<QueuedZohoCustomer> queuedZohoCustomerRepository, ICustomerExtendedService customerService,
              IAddressService addressService, ICountryService countryService,
         IStateProvinceService stateProvinceService, IGenericAttributeService genericAttributeService,
         IStoreContext storeContext,/* ICustomOrderService customOrderService*/

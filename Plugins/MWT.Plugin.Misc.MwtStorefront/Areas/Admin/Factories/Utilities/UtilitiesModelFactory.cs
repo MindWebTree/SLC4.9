@@ -44,7 +44,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.Customization
         private readonly IWorkContext _workContext;
         private readonly IBaseAdminModelFactory _baseAdminModelFactory;
         private readonly IStoreWideDiscountService _storeWideDiscountService;
-        private readonly ICustomCustomerService _customerService;
+        private readonly ICustomerExtendedService _customerService;
         private readonly ITestimonialService _testimonialService;
         private readonly IOrderService _orderService;
 
@@ -66,7 +66,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.Customization
             IWorkContext workContext,
             IBaseAdminModelFactory baseAdminModelFactory,
             IStoreWideDiscountService storeWideDiscountService,
-            ICustomCustomerService customerService,
+            ICustomerExtendedService customerService,
             ITestimonialService testimonialService,
              IOrderService orderService
             )

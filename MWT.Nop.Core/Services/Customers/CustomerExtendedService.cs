@@ -29,9 +29,9 @@ namespace MWT.Nop.Core.Services.Customers
     /// <summary>
     /// Customer service
     /// </summary>
-    public partial class CustomCustomerService : CustomerService, ICustomCustomerService
+    public partial class CustomerExtendedService : CustomerService, ICustomerExtendedService
     {
-        public CustomCustomerService(CustomerSettings customerSettings, IEventPublisher eventPublisher, IGenericAttributeService genericAttributeService, INopDataProvider dataProvider, IRepository<Address> customerAddressRepository, IRepository<BlogComment> blogCommentRepository, IRepository<Customer> customerRepository, 
+        public CustomerExtendedService(CustomerSettings customerSettings, IEventPublisher eventPublisher, IGenericAttributeService genericAttributeService, INopDataProvider dataProvider, IRepository<Address> customerAddressRepository, IRepository<BlogComment> blogCommentRepository, IRepository<Customer> customerRepository, 
             IRepository<CustomerAddressMapping> customerAddressMappingRepository, IRepository<CustomerCustomerRoleMapping> 
             customerCustomerRoleMappingRepository, IRepository<CustomerPassword> customerPasswordRepository,
             IRepository<CustomerRole> customerRoleRepository, IRepository<ForumPost> forumPostRepository, 
