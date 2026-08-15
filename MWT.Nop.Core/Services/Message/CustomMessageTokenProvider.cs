@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
-using MWT.Nop.Core.Domain.PhoneOrder;
+using MWT.Nop.Core.Domain.CustomOrders;
 using MWT.Nop.Core.Infrastructure;
 using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Core.Services.Catalog;
@@ -821,6 +821,30 @@ namespace MWT.Nop.Core.Services.Message
 
         #endregion
 
+        #region Payment Issue
+        public async Task CustomSupportAddPaymentIssueTokensAsync(IList<Token> tokens, string transactionId, decimal paidAmount, decimal expectedAmount,
+            string paymentMethod)
+        {
+            tokens.Add(new Token("TransactionId", transactionId));
+            tokens.Add(new Token("PaidAmount", (await _priceFormatter.FormatPriceAsync(paidAmount))));
+            tokens.Add(new Token("ExpectedAmount", (await _priceFormatter.FormatPriceAsync(expectedAmount))));
+            tokens.Add(new Token("AmountDifference", (await _priceFormatter.FormatPriceAsync(paidAmount - expectedAmount))));
+            tokens.Add(new Token("TransactionDate", DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss UTC")));
+            tokens.Add(new Token("PaymentMethod", paymentMethod));
+        }
+
+
+        public async Task CustomAddPendingOrderTokens(IList<Token> tokens, string transactionId, string orderId,
+    bool isCustomOrder, int customOrderNumber, string paymentMethod)
+        {
+            tokens.Add(new Token("PendingOrder.TransactionId",
+                string.IsNullOrWhiteSpace(transactionId) ? "Not found" : transactionId));
+            tokens.Add(new Token("PendingOrder.OrderId", orderId ?? string.Empty));
+            tokens.Add(new Token("PendingOrder.IsCustomOrder", isCustomOrder));
+            tokens.Add(new Token("PendingOrder.CustomOrderNumber", customOrderNumber));
+            tokens.Add(new Token("PendingOrder.PaymentMethod", paymentMethod ?? string.Empty));
+        }
+        #endregion
         #region utilities
 
         private async Task<string> CustomProductAddHTMLEmailB(List<Product> products, string utm_params)

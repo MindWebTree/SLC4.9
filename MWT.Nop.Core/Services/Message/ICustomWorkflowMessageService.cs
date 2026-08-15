@@ -1,6 +1,6 @@
 ﻿
 
-using MWT.Nop.Core.Domain.PhoneOrder;
+using MWT.Nop.Core.Domain.CustomOrders;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Orders;
@@ -73,6 +73,28 @@ namespace MWT.Nop.Core.Services.Message
         #region Purchase Journey
         Task<(bool, string)> SendPurchaseJourneyNotificationAsync(Customer customer, List<Product> products, int productId, int categoryId, string templatetype, int messageTemplateId,string utm_params, int languageId);
 
+        #endregion
+
+        #region Payment Issue
+        Task<List<int>> SendSupportOrderTotalMismatchEmailMessage(
+        Customer customer,
+        int[] cartItems,
+        int languageId,
+        string transactionId,
+        decimal paidAmount,
+        decimal expectedAmount,
+        string paymentMethod
+        );
+
+        Task<List<int>> SendSupportPendingOrderEmailMessage(
+     Customer customer,
+     int languageId,
+     string transactionId,
+     string orderId,
+     bool isCustomOrder,
+     int customOrderNumber,
+     string paymentMethod
+     );
         #endregion
     }
 }

@@ -14,6 +14,7 @@ using Nop.Data;
 using Nop.Services.Common;
 using Nop.Services.Configuration;
 using Nop.Services.Customers;
+using Nop.Services.Customizations.CustomOrders;
 using Nop.Services.Directory;
 using Nop.Services.Localization;
 using Nop.Services.Logging;
@@ -43,7 +44,7 @@ namespace MWT.Nop.Core.Service.Zoho
         private readonly IStateProvinceService _stateProvinceService;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IStoreContext _storeContext;
-       // private readonly ICustomOrderService _customOrderService;
+       private readonly ICustomOrderService _customOrderService;
         private readonly IOrderService _orderService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -54,7 +55,7 @@ namespace MWT.Nop.Core.Service.Zoho
              IRepository<QueuedZohoCustomer> queuedZohoCustomerRepository, ICustomerExtendedService customerService,
              IAddressService addressService, ICountryService countryService,
         IStateProvinceService stateProvinceService, IGenericAttributeService genericAttributeService,
-        IStoreContext storeContext,/* ICustomOrderService customOrderService*/
+        IStoreContext storeContext, ICustomOrderService customOrderService
          IOrderService orderService, IHttpContextAccessor httpContextAccessor)
         {
             _settingService = settingService;
@@ -70,7 +71,7 @@ namespace MWT.Nop.Core.Service.Zoho
             _stateProvinceService = stateProvinceService;
             _genericAttributeService = genericAttributeService;
             _storeContext = storeContext;
-         //   _customOrderService = customOrderService;
+          _customOrderService = customOrderService;
             _orderService = orderService;
             _httpContextAccessor = httpContextAccessor;
         }
@@ -555,20 +556,20 @@ namespace MWT.Nop.Core.Service.Zoho
                 string leadCreationDate = null;
                 string leadClosingDate = null;
 
-                // Need to confirm
-                //if (!string.Equals(zohoObj.LeadStatus, "Paid"))
-                //{
-                //    var customOrder = await _customOrderService.GetById(orderNumber);
-                //    if (customOrder != null)
-                //    {
-                //        leadCreationDate = ((DateTime)customOrder.CreatedOn).ToString("yyyy-MM-dd");
-                //    }
-                //}
-                //else
-                //{
-                //    leadClosingDate = (await _orderService.GetOrderByIdAsync(orderNumber))?.CreatedOnUtc.ToString("yyyy-MM-dd") ?? null;
+         
+                if (!string.Equals(zohoObj.LeadStatus, "Paid"))
+                {
+                    var customOrder = await _customOrderService.GetById(orderNumber);
+                    if (customOrder != null)
+                    {
+                        leadCreationDate = ((DateTime)customOrder.CreatedOn).ToString("yyyy-MM-dd");
+                    }
+                }
+                else
+                {
+                    leadClosingDate = (await _orderService.GetOrderByIdAsync(orderNumber))?.CreatedOnUtc.ToString("yyyy-MM-dd") ?? null;
 
-                //}
+                }
                 if (DateTime.Now.AddMinutes(10) >= _ExpiryDate)
                     await GetAuthenticationToken();
                 dynamic obj = new ExpandoObject();

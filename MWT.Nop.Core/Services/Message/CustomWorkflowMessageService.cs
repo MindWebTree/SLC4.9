@@ -1,4 +1,5 @@
-﻿using MWT.Nop.Core.Domain.PhoneOrder;
+﻿using MWT.Nop.Core.Domain.CustomOrders;
+using MWT.Nop.Core.Domain.Messages;
 using MWT.Nop.Core.Services.Customers;
 using MWT.Nop.Core.Services.MailChimp;
 using MWT.Nop.Core.Services.Mandrill;
@@ -70,7 +71,7 @@ namespace MWT.Nop.Core.Services.Message
             var store = await _storeService.GetStoreByIdAsync(order.StoreId) ?? await _storeContext.GetCurrentStoreAsync();
             languageId = await EnsureLanguageIsActiveAsync(languageId, store.Id);
 
-            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateSystemNames.CustomOrderPlacedReceipt, store.Id);
+            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateExtendedSystemNames.CustomOrderPlacedReceipt, store.Id);
             if (!messageTemplates.Any())
                 return "";
 
@@ -107,7 +108,7 @@ namespace MWT.Nop.Core.Services.Message
 
             await this.SendCustomerOrderDeclineMessage(customer, languageId, orderId);
             var store = _storeContext.GetCurrentStore();
-            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateSystemNames.CustomOrderDeclineNotification, store.Id);
+            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateExtendedSystemNames.CustomOrderDeclineNotification, store.Id);
             var _shoppingCartService = EngineContext.Current.Resolve<IShoppingCartService>();
             var cart = await _shoppingCartService.GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart,
                           store.Id);
@@ -145,7 +146,7 @@ namespace MWT.Nop.Core.Services.Message
         {
 
             var store = _storeContext.GetCurrentStore();
-            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateSystemNames.CustomCustomerOrderDeclineNotification, store.Id);
+            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateExtendedSystemNames.CustomCustomerOrderDeclineNotification, store.Id);
             var _shoppingCartService = EngineContext.Current.Resolve<IShoppingCartService>();
             var cart = await _shoppingCartService.GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart,
                           store.Id);
@@ -197,7 +198,7 @@ namespace MWT.Nop.Core.Services.Message
             var store = await _storeService.GetStoreByIdAsync(order.StoreId) ?? await _storeContext.GetCurrentStoreAsync();
             languageId = await EnsureLanguageIsActiveAsync(languageId, store.Id);
 
-            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateSystemNames.CustomOrderPlacedStoreOwnerNotification, store.Id);
+            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateExtendedSystemNames.CustomOrderPlacedStoreOwnerNotification, store.Id);
             if (!messageTemplates.Any())
                 return new List<int>();
 
@@ -236,7 +237,7 @@ namespace MWT.Nop.Core.Services.Message
             var store = await _storeService.GetStoreByIdAsync(order.StoreId) ?? await _storeContext.GetCurrentStoreAsync();
             languageId = await EnsureLanguageIsActiveAsync(languageId, store.Id);
 
-            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateSystemNames.CustomOrderPlacedCustomerNotification, store.Id);
+            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateExtendedSystemNames.CustomOrderPlacedCustomerNotification, store.Id);
             if (!messageTemplates.Any())
                 return new List<int>();
 
@@ -308,7 +309,7 @@ namespace MWT.Nop.Core.Services.Message
             var store = await _storeService.GetStoreByIdAsync(order.StoreId) ?? await _storeContext.GetCurrentStoreAsync();
             languageId = await EnsureLanguageIsActiveAsync(languageId, store.Id);
 
-            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateSystemNames.CustomOrderPlacedVendorNotification, store.Id);
+            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateExtendedSystemNames.CustomOrderPlacedVendorNotification, store.Id);
             if (!messageTemplates.Any())
                 return new List<int>();
 
@@ -349,7 +350,7 @@ namespace MWT.Nop.Core.Services.Message
             var store = await _storeService.GetStoreByIdAsync(order.StoreId) ?? await _storeContext.GetCurrentStoreAsync();
             languageId = await EnsureLanguageIsActiveAsync(languageId, store.Id);
 
-            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateSystemNames.CustomOrderPlacedAffiliateNotification, store.Id);
+            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateExtendedSystemNames.CustomOrderPlacedAffiliateNotification, store.Id);
             if (!messageTemplates.Any())
                 return new List<int>();
 
@@ -384,7 +385,7 @@ namespace MWT.Nop.Core.Services.Message
             var store = await _storeContext.GetCurrentStoreAsync();
             languageId = await EnsureLanguageIsActiveAsync(languageId, store.Id);
 
-            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateSystemNames.CustomizationFormLeads, store.Id);
+            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateExtendedSystemNames.CustomizationFormLeads, store.Id);
             if (!messageTemplates.Any())
                 return new List<int>();
 
@@ -504,7 +505,7 @@ namespace MWT.Nop.Core.Services.Message
 
             languageId = await EnsureLanguageIsActiveAsync(languageId, store.Id);
 
-            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateSystemNames.CustomOrder_InvoiceReceipt, store.Id);
+            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateExtendedSystemNames.CustomOrder_InvoiceReceipt, store.Id);
             if (!messageTemplates.Any())
                 return "";
 
@@ -537,7 +538,7 @@ namespace MWT.Nop.Core.Services.Message
 
             languageId = await EnsureLanguageIsActiveAsync(languageId, store.Id);
 
-            var messageTemplates = await GetActiveMessageTemplatesAsync(order.ParentOrderID > 0 ? MessageTemplateSystemNames.CustomOrder_WGS_Receipt : MessageTemplateSystemNames.CustomOrder_Receipt, store.Id);
+            var messageTemplates = await GetActiveMessageTemplatesAsync(order.ParentOrderID > 0 ? MessageTemplateExtendedSystemNames.CustomOrder_WGS_Receipt : MessageTemplateExtendedSystemNames.CustomOrder_Receipt, store.Id);
             if (!messageTemplates.Any())
                 return "";
 
@@ -570,7 +571,7 @@ namespace MWT.Nop.Core.Services.Message
 
             languageId = await EnsureLanguageIsActiveAsync(languageId, store.Id);
             //var _customOrderService = EngineContext.Current.Resolve<Nop.Services.Customizations.Phone_Order.ICustomOrderService>();
-            var template = MessageTemplateSystemNames.CustomOrder_InvoiceNotification;
+            var template = MessageTemplateExtendedSystemNames.CustomOrder_InvoiceNotification;
             var commonTokens = new List<Token>();
             //#region Additional Service
 
@@ -698,7 +699,7 @@ namespace MWT.Nop.Core.Services.Message
 
             languageId = await EnsureLanguageIsActiveAsync(languageId, store.Id);
             var messageTemplates = await GetActiveMessageTemplatesAsync(order.ParentOrderID > 0 ?
-                                  order.OrderTotal <= 0 ? MessageTemplateSystemNames.CustomOrder_WGS_Complementory_CustomerNotification : MessageTemplateSystemNames.CustomOrder_WGS_CustomerNotification : MessageTemplateSystemNames.CustomOrder_CustomerNotification, store.Id);
+                                  order.OrderTotal <= 0 ? MessageTemplateExtendedSystemNames.CustomOrder_WGS_Complementory_CustomerNotification : MessageTemplateExtendedSystemNames.CustomOrder_WGS_CustomerNotification : MessageTemplateExtendedSystemNames.CustomOrder_CustomerNotification, store.Id);
 
 
             if (!messageTemplates.Any())
@@ -785,7 +786,7 @@ namespace MWT.Nop.Core.Services.Message
 
             languageId = await EnsureLanguageIsActiveAsync(languageId, store.Id);
 
-            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateSystemNames.CustomOrder_PartialOrderInvoiceNotification, store.Id);
+            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateExtendedSystemNames.CustomOrder_PartialOrderInvoiceNotification, store.Id);
             if (!messageTemplates.Any())
                 return new List<int>();
 
@@ -924,7 +925,7 @@ namespace MWT.Nop.Core.Services.Message
                 await _logger.InsertLogAsync(LogLevel.Error, "Estomated Shipping Module toEmail Empty", "Please add Support email to Setting \"stimated.Delivery.Notification.Email\" ");
                 return new List<int>();
             }
-            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateSystemNames.Support_Delivery_Estimation_NotFound_Notification, store.Id);
+            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateExtendedSystemNames.Support_Delivery_Estimation_NotFound_Notification, store.Id);
             if (!messageTemplates.Any())
                 return new List<int>();
 
@@ -1020,7 +1021,7 @@ namespace MWT.Nop.Core.Services.Message
             var store = await _storeContext.GetCurrentStoreAsync();
             languageId = await EnsureLanguageIsActiveAsync(languageId, store.Id);
 
-            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateSystemNames.OldCustomerPasswordRecoveryMessage, store.Id);
+            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateExtendedSystemNames.OldCustomerPasswordRecoveryMessage, store.Id);
             if (!messageTemplates.Any())
                 return new List<int>();
 
@@ -1059,7 +1060,7 @@ namespace MWT.Nop.Core.Services.Message
             var store = await _storeContext.GetCurrentStoreAsync();
             languageId = await EnsureLanguageIsActiveAsync(languageId, store.Id);
 
-            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateSystemNames.CustomWishlistToFriendMessage, store.Id);
+            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateExtendedSystemNames.CustomWishlistToFriendMessage, store.Id);
             if (!messageTemplates.Any())
                 return new List<int>();
 
@@ -1091,7 +1092,7 @@ namespace MWT.Nop.Core.Services.Message
         {
 
             var store = _storeContext.GetCurrentStore();
-            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateSystemNames.CustomSupportAbandonedCartNotification, store.Id);
+            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateExtendedSystemNames.CustomSupportAbandonedCartNotification, store.Id);
             var _shoppingCartService = EngineContext.Current.Resolve<IShoppingCartService>();
             var cart = await _shoppingCartService.GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart,
                           store.Id);
@@ -1215,6 +1216,97 @@ namespace MWT.Nop.Core.Services.Message
 
             return (true, bodyReplaced);
         }
+        #endregion
+
+        #region Payment Issue
+        public async Task<List<int>> SendSupportOrderTotalMismatchEmailMessage(
+        Customer customer,
+        int[] cartItems,
+        int languageId,
+        string transactionId,
+        decimal paidAmount,
+        decimal expectedAmount,
+        string paymentMethod)
+        {
+
+            var store = _storeContext.GetCurrentStore();
+            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateExtendedSystemNames.OrderTotalMismatchSupportNotification, store.Id);
+            var _shoppingCartService = EngineContext.Current.Resolve<IShoppingCartService>();
+            var cart = await _shoppingCartService.GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart,
+                          store.Id);
+            if (!messageTemplates.Any() || customer == null || cart.Count == 0)
+                return new List<int>();
+
+            cart = cart.Where(c => cartItems.Contains(c.Id)).ToList();
+            var commonTokens = new List<Token>();
+            await _customMessageTokenProvider.CustomSupportAddAbandonedCartTokensAsync(commonTokens, customer, cart, languageId);
+            await _customMessageTokenProvider.CustomSupportAddPaymentIssueTokensAsync(commonTokens, transactionId, paidAmount, expectedAmount, paymentMethod);
+            var _settingService = EngineContext.Current.Resolve<ISettingService>();
+            var storeEmail = await _settingService.GetSettingByKeyAsync<string>("store.email");
+            return await messageTemplates.SelectAwait(async messageTemplate =>
+            {
+                //email account
+                var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
+
+                var tokens = new List<Token>(commonTokens);
+                await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
+
+                await _customMessageTokenProvider.AddStoreLogoToken(tokens);
+
+                //event notification
+                await _eventPublisher.MessageTokensAddedAsync(messageTemplate, tokens);
+
+                var toEmail = string.IsNullOrEmpty(storeEmail) ? emailAccount.Email : storeEmail;
+                var toName = emailAccount.DisplayName;
+
+                return await SendNotificationAsync(messageTemplate, emailAccount, languageId, tokens, toEmail, toName);
+            }).ToListAsync();
+
+        }
+
+
+        public async Task<List<int>> SendSupportPendingOrderEmailMessage(
+     Customer customer,
+     int languageId,
+     string transactionId,
+     string orderId,
+     bool isCustomOrder,
+     int customOrderNumber,
+     string paymentMethod
+     )
+        {
+
+            var store = _storeContext.GetCurrentStore();
+            var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateExtendedSystemNames.SupportPendingOrderMessage, store.Id);
+            if (!messageTemplates.Any() || customer == null)
+                return new List<int>();
+
+            var commonTokens = new List<Token>();
+            await _messageTokenProvider.AddCustomerTokensAsync(commonTokens, customer);
+            await _customMessageTokenProvider.CustomAddPendingOrderTokens(commonTokens, transactionId, orderId, isCustomOrder, customOrderNumber, paymentMethod);
+            var _settingService = EngineContext.Current.Resolve<ISettingService>();
+            var storeEmail = await _settingService.GetSettingByKeyAsync<string>("store.email");
+            return await messageTemplates.SelectAwait(async messageTemplate =>
+            {
+                //email account
+                var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
+
+                var tokens = new List<Token>(commonTokens);
+                await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount,languageId);
+
+                await _customMessageTokenProvider.AddStoreLogoToken(tokens);
+
+                //event notification
+                await _eventPublisher.MessageTokensAddedAsync(messageTemplate, tokens);
+
+                var toEmail = string.IsNullOrEmpty(storeEmail) ? emailAccount.Email : storeEmail;
+                var toName = emailAccount.DisplayName;
+
+                return await SendNotificationAsync(messageTemplate, emailAccount, languageId, tokens, toEmail, toName);
+            }).ToListAsync();
+
+        }
+
         #endregion
     }
 }

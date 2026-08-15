@@ -215,7 +215,7 @@
                             }
                                         $('.thumb-item, .thumb-Video').attr('aria-pressed', 'false');
                             $clicked.attr('aria-pressed', 'true');
-                            console.log($clicked);
+                 
                         });
                         $(document).on('keydown', '.thumb-Video, .thumb-item', function (e) {
 
@@ -225,17 +225,7 @@
                             }
                         });
 
-                                  $(document).on('click', '.thumb-item', function (e) {
-                            var mainContainer = $('#product-magiczoom');
-
-                            if (mainContainer.find('video, iframe, .auto-video-container').length === 0) {
-                                var imageUrl = $(this).data('image');
-                                var fullSizeUrl = $(this).attr('href');
-                                if (typeof MagicZoom !== 'undefined' && imageUrl) {
-                                    MagicZoom.update('product-magiczoom', fullSizeUrl, imageUrl);
-                                }
-                            }
-                        });
+                            
                     });
 
 

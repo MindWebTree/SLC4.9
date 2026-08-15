@@ -1,5 +1,5 @@
 ﻿
-using MWT.Nop.Core.Domain.PhoneOrder;
+using MWT.Nop.Core.Domain.CustomOrders;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Orders;
@@ -29,5 +29,11 @@ namespace MWT.Nop.Core.Services.Message
 
         Task WgsAdditionalServiceAddTokenAsync(IList<Token> tokens, CustomOrder customOrder, int languageId, int vendorId = 0);
         Task CustomAddPurchaseJourneyTokenAsync(IList<Token> tokens, Customer customer, List<Product> products, int productId, int categoryId, string templateType,string utm_params);
+
+        Task CustomSupportAddPaymentIssueTokensAsync(IList<Token> tokens, string transactionId, decimal paidAmount, decimal expectedAmount,
+        string PaymentMethod);
+
+        Task CustomAddPendingOrderTokens(IList<Token> tokens, string transactionId, string orderId,
+    bool isCustomOrder, int customOrderNumber, string paymentMethod);
     }
 }
