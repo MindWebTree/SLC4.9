@@ -6,10 +6,10 @@
 @if (Model.Products.Count > 0)
 {
     <form asp-route="Product" asp-route-sename="" method="post" id="product-details-collection" class="pairwith">
-        <div aria-labelledby="collectionmodule-section-heading" class="shop-by-category collectionmodule-section @(mainCollectionProduct != null ? "complete-your-collection" : "pick-product-you-like")">
+        <div  class="shop-by-category collectionmodule-section @(mainCollectionProduct != null ? "complete-your-collection" : "pick-product-you-like")">
             <h2 id="collectionmodule-section-heading" >@Html.Raw(T((mainCollectionProduct != null ? "Products.CollectionModule.Heading" : "Products.CollectionModule.Main.Heading")))</h2>
         </div>
-        <div   class="collection-products-vertical variants">
+        <div aria-labelledby="collectionmodule-section-heading" role="region" class="collection-products-vertical variants">
 
             @foreach (var variant in Model.Products)
             {

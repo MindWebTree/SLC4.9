@@ -28,7 +28,7 @@
       .Id ?? 0;
     string refFormId = addtoCartFormId.Replace("#", "").Replace("-", "_").Split('?')[0];
     <div class="attributes featuredproduct @(_customworkcontext.IsMobileDevice() ? "mobile" : "")">
-        <table role="presentation">
+        <dl role="presentation">
             @foreach (var attribute in Model.ProductAttributes)
             {
 
@@ -40,8 +40,8 @@
                 {
                     customTextPrompt = "Configuration";
                 }
-                <tr role="presentation" @(T("Product.Attr.shades").Text == @customTextPrompt ? "class=shade-section" : "")>
-                    <td id="@($"{NopCatalogDefaults.ProductAttributePrefix}label_{attribute.Id}")" class="control-label">
+                <div role="presentation" @(T("Product.Attr.shades").Text == @customTextPrompt ? "class=shade-section" : "")>
+                    <dt id="@($"{NopCatalogDefaults.ProductAttributePrefix}label_{attribute.Id}")" class="control-label">
                         <span class="text-prompt col-form-label">
                             @label&nbsp;:
                             @*     @if (T("Product.Attr.shades").Text == @textPrompt)
@@ -64,8 +64,8 @@
                             </div>
                         }
 
-                    </td>
-                    <td id="@($"{NopCatalogDefaults.ProductAttributePrefix}input_{attribute.Id}")" style="gap: 5px;">
+                    </dt>
+                    <dd id="@($"{NopCatalogDefaults.ProductAttributePrefix}input_{attribute.Id}")" style="gap: 5px;">
                         @switch (attribute.AttributeControlType)
                         {
 
@@ -375,10 +375,10 @@
 
 
                         }
-                    </td>
-                </tr>
+                    </dd>
+                </div>
             }
-        </table>
+        </dl>
         <script asp-location="Footer">
             function showHideDropdownQuantity(id) {
                 $('select[name=' + id + '] > option').each(function () {

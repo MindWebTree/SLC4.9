@@ -62,7 +62,7 @@
                                 {
 <p class="sale-price  m-0 limited-offer-@(Model.ProductId)">@Html.Raw(offerText)</p> }
 
-                            <h3 aria-label="Sale price @Model.Price, regular price @Model.OldPrice" class="product-price">
+                            <h3  class="product-price">
     <span id="price-value-@(Model.ProductId)" class="price-value-@(Model.ProductId)">
         @T("Price.Range.With.Saleprice",
 !string.IsNullOrEmpty(Model.MinPrice) ? Model.MinPrice : Model.MinOldPrice,
