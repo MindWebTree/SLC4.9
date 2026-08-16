@@ -412,7 +412,7 @@
                                     <fieldset aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                         <legend style="display:none;">
                                             @textPrompt
-                                        </legend>s
+                                        </legend>
                                         <ul @(attribute.AttributeControlType == AttributeControlType.Checkboxes ? Html.Raw("data-attr=" + attribute.Id) : null) class="option-list">
                                             @foreach (var attributeValue in attribute.Values)
 
@@ -768,7 +768,7 @@
                                          <fieldset aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                         <legend style="display:none;">
                                             @textPrompt
-                                        </legend>s
+                                        </legend>
                                         <div class="jcarousel" data-jcarousel="true">
                                             <ul data-attr="@(attribute.Id)" class="option-list attribute-squares color-squares shade-box" id="color-squares-@(attribute.Id)">
                                                 @foreach (var attributeValue in attribute.Values)
@@ -1853,6 +1853,12 @@
 
                                       $('@addtoCartFormId .price-value-sticky-@Model.Id').html(content);
                                       $('@addtoCartFormId .price-value-sticky-@Model.Id').show();
+
+                                        if (typeof updatePriceAriaLabel === "function") {
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-@Model.Id', data.price, data.oldPrice);
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-withoutoffer-@Model.Id', data.price, data.oldPrice);
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-sticky-@Model.Id', data.price, data.oldPrice);
+                                      }
                                   }
                                   else {
                                       $('@addtoCartFormId .price-value-@Model.Id').text(data.oldPrice ? data.oldPrice : data.price);
@@ -1863,6 +1869,12 @@
                                       $('@addtoCartFormId .price-value-@Model.Id').show();
                                       $('@addtoCartFormId .limited-offer-@Model.Id').show();
                                       $('@addtoCartFormId .limited-offer-@Model.Id').html(data.offerText);
+
+                                         if (typeof updatePriceAriaLabel === "function") {
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-withoutoffer-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-sticky-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
+                                      }
                                   }
 
 
@@ -2237,7 +2249,7 @@
                       // 2. UI Update Loop
                       attributeContainers.each(function (index) {
                           var $container = $(this);
-                          var $parentRow = $container.closest('attribute-row');
+                          var $parentRow = $container.closest('.attribute-row');
                           var currentContainerId = $container.attr('id');
 
                           var otherSelectedIds = [];

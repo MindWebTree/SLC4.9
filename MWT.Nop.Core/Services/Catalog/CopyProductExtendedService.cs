@@ -18,27 +18,30 @@ namespace MWT.Nop.Core.Services.Catalog
     internal class CopyProductExtendedService : CopyProductService, ICopyProductExtendedService
     {
         private readonly IProductExtendedService _productExtendedService;
+        private readonly ICustomProductAttributeService _customProductAttributeService;
 
-        public CopyProductExtendedService(IAclService aclService, ICategoryService categoryService, IDownloadService downloadService, ILanguageService languageService, ILocalizationService localizationService, 
-            ILocalizedEntityService localizedEntityService, IManufacturerService manufacturerService, IPictureService pictureService, IProductAttributeParser productAttributeParser, IProductAttributeService productAttributeService, 
+        public CopyProductExtendedService(IAclService aclService, ICategoryService categoryService, IDownloadService downloadService, ILanguageService languageService, ILocalizationService localizationService,
+            ILocalizedEntityService localizedEntityService, IManufacturerService manufacturerService, IPictureService pictureService, IProductAttributeParser productAttributeParser, IProductAttributeService productAttributeService,
             IProductService productService, IProductTagService productTagService, ISpecificationAttributeService specificationAttributeService, IStoreMappingService storeMappingService, IUrlRecordService urlRecordService, IVideoService videoService,
-            IProductExtendedService productExtendedService) 
+            IProductExtendedService productExtendedService, ICustomProductAttributeService customProductAttributeService)
             : base(aclService, categoryService, downloadService, languageService, localizationService, localizedEntityService, manufacturerService, pictureService, productAttributeParser, productAttributeService, productService, productTagService, specificationAttributeService, storeMappingService, urlRecordService, videoService)
         {
             _productExtendedService = productExtendedService;
+            _customProductAttributeService = customProductAttributeService;
         }
 
         #region Methods
+ 
+
         public virtual async Task<Product> CustomCopyProductAsync(Product product, string newName, string newSku,
-           bool isPublished = true, bool copyImages = true, bool copyAssociatedProducts = true)
+       bool isPublished = true, bool copyMultimedia = true, bool copyAssociatedProducts = true)
         {
-            if (product == null)
-                throw new ArgumentNullException(nameof(product));
+            ArgumentNullException.ThrowIfNull(product);
 
             if (string.IsNullOrEmpty(newName))
                 throw new ArgumentException("Product name is required");
 
-            var productCopy = await CustomCopyBaseProductDataAsync(product, newName, newSku, isPublished);
+            var productCopy = await CustomCopyBaseProductDataAsync(product, newName,newSku, isPublished);
 
             //localization
             await CopyLocalizationDataAsync(product, productCopy);
@@ -47,10 +50,11 @@ namespace MWT.Nop.Core.Services.Catalog
             foreach (var productTag in await _productTagService.GetAllProductTagsByProductIdAsync(product.Id))
                 await _productTagService.InsertProductProductTagMappingAsync(new ProductProductTagMapping { ProductTagId = productTag.Id, ProductId = productCopy.Id });
 
-            await _productService.UpdateProductAsync(productCopy);
-
             //copy product pictures
-            var originalNewPictureIdentifiers = await CopyProductPicturesAsync(product, newName, copyImages, productCopy);
+            var originalNewPictureIdentifiers = await CopyProductPicturesAsync(product, newName, copyMultimedia, productCopy);
+
+            //copy product videos
+            await CopyProductVideosAsync(product, copyMultimedia, productCopy);
 
             //quantity change history
             await _productService.AddStockQuantityHistoryEntryAsync(productCopy, product.StockQuantity, product.StockQuantity, product.WarehouseId,
@@ -73,30 +77,31 @@ namespace MWT.Nop.Core.Services.Catalog
             await CustomCopyAttributesMappingAsync(product, productCopy, originalNewPictureIdentifiers);
             //product <-> discounts mapping
             await CopyDiscountsMappingAsync(product, productCopy);
+
             //store mapping
             var selectedStoreIds = await _storeMappingService.GetStoresIdsWithAccessAsync(product);
             foreach (var id in selectedStoreIds)
                 await _storeMappingService.InsertStoreMappingAsync(productCopy, id);
 
+            //customer role mapping
+            var customerRoleIds = await _aclService.GetCustomerRoleIdsWithAccessAsync(product.Id, nameof(Product));
+
+            foreach (var id in customerRoleIds)
+                await _aclService.InsertAclRecordAsync(productCopy, id);
+
             //tier prices
             await CopyTierPricesAsync(product, productCopy);
 
-            //update "HasTierPrices" and "HasDiscountsApplied" properties
-            productCopy = await _productService.GetProductByIdAsync(productCopy.Id);
-            await _productService.UpdateHasTierPricesPropertyAsync(productCopy);
-            await _productService.UpdateHasDiscountsAppliedAsync(productCopy);
-
             //associated products
-            await CopyAssociatedProductsAsync(product, isPublished, copyImages, copyAssociatedProducts, productCopy);
+            await CopyAssociatedProductsAsync(product, isPublished, copyMultimedia, copyAssociatedProducts, productCopy);
 
             return productCopy;
         }
 
-
-
         #endregion
 
         #region Utilities
+
         protected virtual async Task<Product> CustomCopyBaseProductDataAsync(Product product, string newName, string newSku, bool isPublished)
         {
             //product download & sample download
@@ -143,10 +148,9 @@ namespace MWT.Nop.Core.Services.Catalog
                     }
                 }
             }
-
             var _newSku = string.IsNullOrWhiteSpace((newSku ?? "").Trim()) ? (!string.IsNullOrWhiteSpace(product.Sku)
-                ? string.Format(await _localizationService.GetResourceAsync("Admin.Catalog.Products.Copy.SKU.New"), product.Sku)
-                : product.Sku) : newSku;
+                          ? string.Format(await _localizationService.GetResourceAsync("Admin.Catalog.Products.Copy.SKU.New"), product.Sku)
+                          : product.Sku) : newSku;
             // product
             var productCopy = new Product
             {
@@ -165,6 +169,7 @@ namespace MWT.Nop.Core.Services.Catalog
                 MetaTitle = product.MetaTitle,
                 AllowCustomerReviews = product.AllowCustomerReviews,
                 LimitedToStores = product.LimitedToStores,
+                SubjectToAcl = product.SubjectToAcl,
                 Sku = _newSku,
                 ManufacturerPartNumber = product.ManufacturerPartNumber,
                 Gtin = product.Gtin,
@@ -244,7 +249,9 @@ namespace MWT.Nop.Core.Services.Catalog
                 Published = isPublished,
                 Deleted = product.Deleted,
                 CreatedOnUtc = DateTime.UtcNow,
-                UpdatedOnUtc = DateTime.UtcNow
+                UpdatedOnUtc = DateTime.UtcNow,
+                AgeVerification = product.AgeVerification,
+                MinimumAgeToPurchase = product.MinimumAgeToPurchase
             };
 
             //validate search engine name
@@ -310,19 +317,6 @@ namespace MWT.Nop.Core.Services.Catalog
                 var attribute = await _productAttributeService.GetProductAttributeByIdAsync(productAttributeMapping.ProductAttributeId);
                 foreach (var productAttributeValue in productAttributeValues)
                 {
-                    var attributeValuePictureId = 0;
-                    if (originalNewPictureIdentifiers.ContainsKey(productAttributeValue.PictureId))
-                        attributeValuePictureId = originalNewPictureIdentifiers[productAttributeValue.PictureId];
-
-                    //ProductVariant productVariant = new ProductVariant();
-                    //if (string.Equals(attribute.Name, await _localizationService.GetResourceAsync("Product.Attr.Size"), StringComparison.InvariantCultureIgnoreCase))
-                    //{
-                    //    productVariant.ProductId = productAttributeMapping.ProductId;
-                    //    productVariant.ProductAttributeValueId = 0;
-                    //    await _productService.InsertProductVariant(productVariant);
-                    //}
-
-
                     var attributeValueCopy = new ProductAttributeValue
                     {
                         ProductAttributeMappingId = productAttributeMappingCopy.Id,
@@ -338,11 +332,24 @@ namespace MWT.Nop.Core.Services.Catalog
                         Quantity = productAttributeValue.Quantity,
                         IsPreSelected = productAttributeValue.IsPreSelected,
                         DisplayOrder = productAttributeValue.DisplayOrder,
-                        PictureId = attributeValuePictureId,
-
                         Dimension = productAttributeValue.Dimension,
                         VariantDimension = productAttributeValue.VariantDimension
                     };
+
+                    //picture
+                    var oldValuePictures = await _productAttributeService.GetProductAttributeValuePicturesAsync(productAttributeValue.Id);
+                    foreach (var oldValuePicture in oldValuePictures)
+                    {
+                        if (!originalNewPictureIdentifiers.TryGetValue(oldValuePicture.PictureId, out var valuePictureId))
+                            continue;
+
+                        await _productAttributeService.InsertProductAttributeValuePictureAsync(new ProductAttributeValuePicture
+                        {
+                            ProductAttributeValueId = attributeValueCopy.Id,
+                            PictureId = valuePictureId
+                        });
+                    }
+
                     //picture associated to "iamge square" attribute type (if exists)
                     if (productAttributeValue.ImageSquaresPictureId > 0)
                     {
@@ -363,19 +370,19 @@ namespace MWT.Nop.Core.Services.Catalog
 
                     await _productAttributeService.InsertProductAttributeValueAsync(attributeValueCopy);
 
-                    #region Mind Web Tree Custom updates
+                   
 
-                    int variantId = await _productService.GenerateVariantIdAsync(productAttributeMappingCopy, attributeValueCopy.Id, attributeValueCopy.Name);
+                    int variantId = await _productExtendedService.GenerateVariantIdAsync(productAttributeMappingCopy, attributeValueCopy.Id, attributeValueCopy.Name);
 
 
 
                     if (variantId > 0)
                     {
                         attributeValueCopy.VariantId = variantId;
-                        await _productAttributeService.UpdateProductAttributeValueWithoutEventAsync(attributeValueCopy);
+                        await _customProductAttributeService.UpdateProductAttributeValueWithoutEventAsync(attributeValueCopy);
                     }
 
-                    #endregion
+
                     //save associated value (used for combinations copying)
                     associatedAttributeValues.Add(productAttributeValue.Id, attributeValueCopy.Id);
 
@@ -467,9 +474,6 @@ namespace MWT.Nop.Core.Services.Catalog
                     }
                 }
 
-                //picture
-                originalNewPictureIdentifiers.TryGetValue(combination.PictureId, out var combinationPictureId);
-
                 var combinationCopy = new ProductAttributeCombination
                 {
                     ProductId = productCopy.Id,
@@ -481,19 +485,34 @@ namespace MWT.Nop.Core.Services.Catalog
                     ManufacturerPartNumber = combination.ManufacturerPartNumber,
                     Gtin = combination.Gtin,
                     OverriddenPrice = combination.OverriddenPrice,
+                    NotifyAdminForQuantityBelow = combination.NotifyAdminForQuantityBelow,
                     OverriddenMsrp = combination.OverriddenMsrp,
                     OverriddenOldPrice = combination.OverriddenOldPrice,
-                    NotifyAdminForQuantityBelow = combination.NotifyAdminForQuantityBelow,
-                    PictureId = combinationPictureId
                 };
                 await _productAttributeService.InsertProductAttributeCombinationAsync(combinationCopy);
 
+                //picture
+                var oldCombinationPictures = await _productAttributeService.GetProductAttributeCombinationPicturesAsync(combination.Id);
+                foreach (var oldCombinationPicture in oldCombinationPictures)
+                {
+                    if (!originalNewPictureIdentifiers.TryGetValue(oldCombinationPicture.PictureId, out var combinationPictureId))
+                        continue;
+
+                    await _productAttributeService.InsertProductAttributeCombinationPictureAsync(new ProductAttributeCombinationPicture
+                    {
+                        ProductAttributeCombinationId = combinationCopy.Id,
+                        PictureId = combinationPictureId
+                    });
+                }
+
                 //quantity change history
-                await _productService.AddStockQuantityHistoryEntryAsync(productCopy, combination.StockQuantity,
-                    combination.StockQuantity,
-                    message: string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.CopyProduct"), product.Id), combinationId: combination.Id);
+                await _productService.AddStockQuantityHistoryEntryAsync(productCopy, combinationCopy.StockQuantity,
+                    combinationCopy.StockQuantity,
+                    message: string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.CopyProduct"), product.Id), combinationId: combinationCopy.Id);
             }
         }
+
+
         #endregion
     }
 }

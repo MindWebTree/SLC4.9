@@ -8,7 +8,7 @@ using Nop.Services.Customers;
 using Nop.Services.Discounts;
 using Nop.Services.Localization;
 
-namespace MWT.Nop.Core.Services.Catalog
+namespace MWT.Nop.Core.Services.Discounts
 {
     public partial class DiscountExtendedService : DiscountService, IDiscountExtendedService
     {

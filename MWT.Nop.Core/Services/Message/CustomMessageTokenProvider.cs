@@ -7,6 +7,7 @@ using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.Customers;
 using MWT.Nop.Core.Services.Media;
+using MWT.Nop.Core.Services.Orders;
 using MWTNop.Core.Domain.Catalog;
 using Nop.Core;
 using Nop.Core.Domain;
@@ -28,8 +29,12 @@ using Nop.Services.Attributes;
 using Nop.Services.Blogs;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
+using Nop.Services.Configuration;
 using Nop.Services.Customers;
+using Nop.Services.Customizations.CustomOrders;
+using Nop.Services.Customizations.IpAddress;
 using Nop.Services.Directory;
+using Nop.Services.Events;
 using Nop.Services.Helpers;
 using Nop.Services.Html;
 using Nop.Services.Localization;
@@ -46,6 +51,7 @@ using Nop.Services.Stores;
 using Nop.Services.Tax;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 
 
 namespace MWT.Nop.Core.Services.Message
@@ -53,8 +59,10 @@ namespace MWT.Nop.Core.Services.Message
     /// <summary>
     /// Message token provider
     /// </summary>
+    /// 
     public partial class CustomMessageTokenProvider : MessageTokenProvider, ICustomMessageTokenProvider
     {
+        private readonly IOrderTotalCalculationExtendedService _orderTotalCalculationService;
         private readonly ICustomerExtendedService _customCustomerService;
         private readonly IPictureExtendedService _pictureService;
         private readonly MediaSettings _mediaSettings;
@@ -62,17 +70,22 @@ namespace MWT.Nop.Core.Services.Message
         private readonly IWebHelper _webHelper;
         private readonly ICustomProductAttributeFormatter _productAttributeFormatter;
         private readonly IShoppingCartExtendedCartService _shoppingCartService;
-        private readonly IProductExtendedService _customProductService;
+        private readonly IProductExtendedService _productExtendedService;
         private readonly ITaxService _taxService;
         private readonly ICategoryService _categoryService;
         private readonly IEncryptionService _encryptionService;
+        private readonly ICustomOrderService _customOrderService;
+        private readonly IOrderExtendedService _orderExtendedService;
+        private readonly ISettingService _settingService;
+
         public CustomMessageTokenProvider(CatalogSettings catalogSettings, CurrencySettings currencySettings, IActionContextAccessor actionContextAccessor, IAddressService addressService, IAttributeFormatter<AddressAttribute,
             AddressAttributeValue> addressAttributeFormatter, IAttributeFormatter<CustomerAttribute, CustomerAttributeValue> customerAttributeFormatter, IAttributeFormatter<VendorAttribute, VendorAttributeValue> vendorAttributeFormatter, IBlogService blogService, ICountryService countryService, ICurrencyService currencyService, ICustomerService customerService, IDateTimeHelper dateTimeHelper, IEventPublisher eventPublisher, IGenericAttributeService genericAttributeService, IGiftCardService giftCardService, IHtmlFormatter htmlFormatter, ILanguageService languageService, ILocalizationService localizationService, ILogger logger, INewsService newsService, IOrderService orderService, IPaymentPluginManager paymentPluginManager, IPaymentService paymentService, IPriceFormatter priceFormatter, IProductService productService, IRewardPointService rewardPointService, IShipmentService shipmentService, IStateProvinceService stateProvinceService, IStoreContext storeContext, IStoreService storeService, IUrlHelperFactory urlHelperFactory, IUrlRecordService urlRecordService, IWorkContext workContext, MessageTemplatesSettings templatesSettings, PaymentSettings paymentSettings, StoreInformationSettings storeInformationSettings,
             TaxSettings taxSettings, ICustomerExtendedService customCustomerService,
             IPictureExtendedService pictureService, MediaSettings mediaSettings,
             IHttpContextAccessor httpContextAccessor, IWebHelper webHelper,
             ICustomProductAttributeFormatter productAttributeFormatter, IShoppingCartExtendedCartService shoppingCartService,
-            ITaxService taxService, ICategoryService categoryService, IEncryptionService encryptionService, IProductExtendedService customProductService) : base(catalogSettings, currencySettings, actionContextAccessor, addressService, addressAttributeFormatter, customerAttributeFormatter, vendorAttributeFormatter, blogService, countryService, currencyService, customerService, dateTimeHelper, eventPublisher, genericAttributeService, giftCardService, htmlFormatter, languageService, localizationService, logger, newsService, orderService, paymentPluginManager, paymentService, priceFormatter, productService, rewardPointService, shipmentService, stateProvinceService, storeContext, storeService, urlHelperFactory, urlRecordService, workContext, templatesSettings, paymentSettings, storeInformationSettings, taxSettings)
+            ITaxService taxService, ICategoryService categoryService, IEncryptionService encryptionService, IProductExtendedService productExtendedService, ICustomOrderService customOrderService,
+            IOrderExtendedService orderExtendedService, ISettingService settingService, IOrderTotalCalculationExtendedService orderTotalCalculationService) : base(catalogSettings, currencySettings, actionContextAccessor, addressService, addressAttributeFormatter, customerAttributeFormatter, vendorAttributeFormatter, blogService, countryService, currencyService, customerService, dateTimeHelper, eventPublisher, genericAttributeService, giftCardService, htmlFormatter, languageService, localizationService, logger, newsService, orderService, paymentPluginManager, paymentService, priceFormatter, productService, rewardPointService, shipmentService, stateProvinceService, storeContext, storeService, urlHelperFactory, urlRecordService, workContext, templatesSettings, paymentSettings, storeInformationSettings, taxSettings)
         {
             _customCustomerService = customCustomerService;
             _pictureService = pictureService;
@@ -84,9 +97,12 @@ namespace MWT.Nop.Core.Services.Message
             _taxService = taxService;
             _categoryService = categoryService;
             _encryptionService = encryptionService;
-            _customProductService = customProductService;
+            _productExtendedService = productExtendedService;
+            _customOrderService = customOrderService;
+            _orderExtendedService = orderExtendedService;
+            _settingService = settingService;
+            _orderTotalCalculationService = orderTotalCalculationService;
         }
-
         #region Methods
 
         public virtual async Task CustomAddOrderTokensAsync(IList<Token> tokens, Order order, int languageId, int vendorId = 0)
@@ -94,7 +110,7 @@ namespace MWT.Nop.Core.Services.Message
             var customer = await _customerService.GetCustomerByIdAsync(order.CustomerId);
             //lambda expression for choosing correct order address
             async Task<Address> orderAddress(Order o) => await _addressService.GetAddressByIdAsync((o.PickupInStore ? o.PickupAddressId : o.ShippingAddressId) ?? 0);
-
+          
             var taxRates = _orderService.ParseTaxRates(order, order.TaxRates);
 
             var taxPercentage = _priceFormatter.FormatTaxRate(taxRates.Count > 0 ?
@@ -149,17 +165,14 @@ namespace MWT.Nop.Core.Services.Message
             tokens.Add(new Token("Order.PaymentMethod", await _localizationService.GetResourceAsync(paymentMethodName)));
             tokens.Add(new Token("Order.VatNumber", order.VatNumber));
             var sbCustomValues = new StringBuilder();
+            var customValues = new CustomValues();
+            customValues.FillByXml(order.CustomValuesXml, true);
 
-            // need to confirm
-            //var customValues = _paymentService.DeserializeCustomValues(order);
-            //if (customValues != null)
-            //{
-            //    foreach (var item in customValues)
-            //    {
-            //        sbCustomValues.AppendFormat("{0}: {1}", WebUtility.HtmlEncode(item.Key), WebUtility.HtmlEncode(item.Value != null ? item.Value.ToString() : string.Empty));
-            //        sbCustomValues.Append("<br />");
-            //    }
-            //}
+            foreach (var item in customValues)
+            {
+                sbCustomValues.AppendFormat("{0}: {1}", WebUtility.HtmlEncode(item.Name), WebUtility.HtmlEncode(item.Value ?? string.Empty));
+                sbCustomValues.Append("<br />");
+            }
 
             tokens.Add(new Token("Order.CustomValues", sbCustomValues.ToString(), true));
 
@@ -191,9 +204,6 @@ namespace MWT.Nop.Core.Services.Message
 
         public async Task AddStoreLogoToken(IList<Token> tokens)
         {
-
-
-
             var logo = string.Empty;
             var logoPictureId = _storeInformationSettings.LogoPictureId;
 
@@ -239,6 +249,7 @@ namespace MWT.Nop.Core.Services.Message
             tokens.Add(new Token("Customer.LastName", customer.LastName));
             tokens.Add(new Token("Customer.VatNumber", customer.VatNumber));
             tokens.Add(new Token("Customer.VatNumberStatus", customer.VatNumberStatus));
+
             tokens.Add(new Token("Customer.CustomAttributes", await _customerAttributeFormatter.FormatAttributesAsync(customer.CustomCustomerAttributesXML), true));
 
             //note: we do not use SEO friendly URLS for these links because we can get errors caused by having .(dot) in the URL (from the email address)
@@ -259,31 +270,31 @@ namespace MWT.Nop.Core.Services.Message
 
         public async Task WgsAdditionalServiceAddTokenAsync(IList<Token> tokens, CustomOrder customOrder, int languageId, int vendorId = 0)
         {
-            //var _customOrderService = EngineContext.Current.Resolve<ICustomOrderService>();
-            //List<CustomOrderShoppingCartItem> cartItems = await _customOrderService.GetOrderItems(Convert.ToInt32(customOrder.Id));
-            //bool hasDiscount = false;
-            //decimal totalWithoutDiscount = customOrder.OrderTotal ?? 0;
-            //foreach (var item in cartItems)
-            //{
-            //    var priceAdjustment = await _customOrderService.GetPriceAdjustmentsByCartId(Convert.ToInt32(item.Id));
-            //    if (priceAdjustment != null)
-            //    {
-            //        if (priceAdjustment.ShoppingCartProductPrice > customOrder.OrderTotal)
-            //        {
-            //            hasDiscount = true;
-            //            totalWithoutDiscount = priceAdjustment.ShoppingCartProductPrice ?? 0;
-            //        }
-            //    }
-            //    break;
-            //}
-            //var pairedOrderIds = string.IsNullOrEmpty(customOrder.PairedOrderIds) ? customOrder.ParentOrderID.ToString() : string.Join(", ",
-            //    (await _orderService.GetOrdersByIdsAsync(customOrder.PairedOrderIds.Split(',', StringSplitOptions.RemoveEmptyEntries)
-            //    .Select(id => id.Trim()).Where(id => int.TryParse(id, out _)).Select(int.Parse).Distinct().ToArray())).Select(o => o.Id).Prepend(customOrder.ParentOrderID));
+     
+            List<CustomOrderShoppingCartItem> cartItems = await _customOrderService.GetOrderItems(Convert.ToInt32(customOrder.Id));
+            bool hasDiscount = false;
+            decimal totalWithoutDiscount = customOrder.OrderTotal ?? 0;
+            foreach (var item in cartItems)
+            {
+                var priceAdjustment = await _customOrderService.GetPriceAdjustmentsByCartId(Convert.ToInt32(item.Id));
+                if (priceAdjustment != null)
+                {
+                    if (priceAdjustment.ShoppingCartProductPrice > customOrder.OrderTotal)
+                    {
+                        hasDiscount = true;
+                        totalWithoutDiscount = priceAdjustment.ShoppingCartProductPrice ?? 0;
+                    }
+                }
+                break;
+            }
+            var pairedOrderIds = string.IsNullOrEmpty(customOrder.PairedOrderIds) ? customOrder.ParentOrderID.ToString() : string.Join(", ",
+                (await _orderService.GetOrdersByIdsAsync(customOrder.PairedOrderIds.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(id => id.Trim()).Where(id => int.TryParse(id, out _)).Select(int.Parse).Distinct().ToArray())).Select(o => o.Id).Prepend(customOrder.ParentOrderID));
 
 
-            //tokens.Add(new Token("Order.Subject", pairedOrderIds, true));
-            //tokens.Add(new Token("Order.Total.WithoutDiscount", totalWithoutDiscount, true));
-            //tokens.Add(new Token("OrderTotalWithoutDiscount", hasDiscount, true));
+            tokens.Add(new Token("Order.Subject", pairedOrderIds, true));
+            tokens.Add(new Token("Order.Total.WithoutDiscount", totalWithoutDiscount, true));
+            tokens.Add(new Token("OrderTotalWithoutDiscount", hasDiscount, true));
         }
         public async Task CustomOrderAddTokensAsync(IList<Token> tokens, CustomOrder customOrder, int languageId, int vendorId = 0)
         {
@@ -376,31 +387,30 @@ namespace MWT.Nop.Core.Services.Message
             }
             if (customOrder.LiveOrderNumber != null && customOrder.LiveOrderNumber > 0)
             {
-                //var _customOrderService = EngineContext.Current.Resolve<Nop.Services.Customizations.Phone_Order.ICustomOrderService>();
-                //var orderTypes = await _customOrderService.GetOrderTypes();
-                //string OrderType = (orderTypes.Where(o => o.Id == customOrder.OrderTypeId)).FirstOrDefault()?.Name;
+                var orderTypes = await _customOrderService.GetOrderTypes();
+                string OrderType = (orderTypes.Where(o => o.Id == customOrder.OrderTypeId)).FirstOrDefault()?.Name;
 
-                //if (OrderType == OrderTypes.AlreadyPaid.ToString())
-                //{
-                //    paymentMethodName = "OrderType." + OrderTypes.AlreadyPaid.ToString();
-                //}
+                if (OrderType == OrderTypes.AlreadyPaid.ToString())
+                {
+                    paymentMethodName = "OrderType." + OrderTypes.AlreadyPaid.ToString();
+                }
             }
             tokens.Add(new Token("Order.PaymentMethod", await _localizationService.GetResourceAsync(paymentMethodName)));
             tokens.Add(new Token("Order.VatNumber", _order.Id == 0 ? "" : _order.VatNumber));
-            //if (_order.Id != 0)
-            //{
-            //    var sbCustomValues = new StringBuilder();
-            //    var customValues = _paymentService.DeserializeCustomValues(_order);
-            //    if (customValues != null)
-            //    {
-            //        foreach (var item in customValues)
-            //        {
-            //            sbCustomValues.AppendFormat("{0}: {1}", WebUtility.HtmlEncode(item.Key), WebUtility.HtmlEncode(item.Value != null ? item.Value.ToString() : string.Empty));
-            //            sbCustomValues.Append("<br />");
-            //        }
-            //    }
-            //    tokens.Add(new Token("Order.CustomValues", sbCustomValues.ToString(), true));
-            //}
+            if (_order.Id != 0)
+            {
+                var sbCustomValues = new StringBuilder();
+                var customValues = new CustomValues();
+                customValues.FillByXml(_order.CustomValuesXml, true);
+
+                foreach (var item in customValues)
+                {
+                    sbCustomValues.AppendFormat("{0}: {1}", WebUtility.HtmlEncode(item.Name), WebUtility.HtmlEncode(item.Value ?? string.Empty));
+                    sbCustomValues.Append("<br />");
+                }
+
+                tokens.Add(new Token("Order.CustomValues", sbCustomValues.ToString(), true)); tokens.Add(new Token("Order.CustomValues", sbCustomValues.ToString(), true));
+            }
 
 
 
@@ -471,7 +481,7 @@ namespace MWT.Nop.Core.Services.Message
 
         #region
 
-        public async Task CustomAddOrderDeclineTokensAsync(IList<Token> tokens, Customer customer, IList<ShoppingCartItem> cart, string error, int orderId, int languageId)
+        public async Task CustomAddOrderDeclineTokensAsync(IList<Token> tokens, ProcessPaymentRequest paymentRequest, IFormCollection form, Customer customer, IList<ShoppingCartItem> cart, string error, int orderId, int languageId)
         {
             tokens.Add(new Token("Customer.FullName", await _customerService.GetCustomerFullNameAsync(customer)));
             tokens.Add(new Token("Error", error));
@@ -480,7 +490,7 @@ namespace MWT.Nop.Core.Services.Message
                 tokens.Add(new Token("Email", customer.Email));
 
 
-     
+            string phone = "";
             if (customer.BillingAddressId.HasValue)
             {
                 var address = await _addressService.GetAddressByIdAsync(Convert.ToInt32(customer.BillingAddressId));
@@ -495,8 +505,29 @@ namespace MWT.Nop.Core.Services.Message
                     tokens.Add(new Token("Email", address.Email));
                 tokens.Add(new Token("Phone", address.PhoneNumber));
             }
+            string transactionid = string.Empty;
 
 
+            if (paymentRequest?.CustomValues != null)
+            {
+                var match = paymentRequest.CustomValues
+                    .FirstOrDefault(kvp => string.Equals(kvp.Name, "transactionid", StringComparison.OrdinalIgnoreCase));
+
+                if (!match.Equals(default(KeyValuePair<string, object>)))
+                {
+                    transactionid = match.Value?.ToString() ?? string.Empty;
+                }
+            }
+            if (string.IsNullOrEmpty(transactionid) && form != null)
+            {
+
+                if (form.TryGetValue("transactionid", out var v1) && !string.IsNullOrWhiteSpace(v1))
+                    transactionid = v1.ToString();
+                else if (form.TryGetValue("TransactionId", out var v2) && !string.IsNullOrWhiteSpace(v2))
+                    transactionid = v2.ToString();
+            }
+            tokens.Add(new Token("Transactionid", transactionid));
+            tokens.Add(new Token("HasTransactionid", string.IsNullOrEmpty(transactionid) ? false : true));
             if (orderId == 0 && cart.Count > 0)
             {
                 tokens.Add(new Token("cartProducts", await this.CustomCartProductListToHtmlTableAsync(cart, languageId), true));
@@ -509,165 +540,168 @@ namespace MWT.Nop.Core.Services.Message
 
         public async Task CustomAddCustomerOrderDeclineTokensAsync(IList<Token> tokens, Customer customer, IList<ShoppingCartItem> cart, int orderId, int languageId)
         {
-            //var _customOrderService = EngineContext.Current.Resolve<Nop.Services.Customizations.Phone_Order.ICustomOrderService>();
-            //tokens.Add(new Token("Customer.FullName", await _customerService.GetCustomerFullNameAsync(customer)));
-            //string email = customer.Email;
-            //if (!string.IsNullOrEmpty(email))
-            //    tokens.Add(new Token("Email", customer.Email));
+            tokens.Add(new Token("Customer.FullName", await _customerService.GetCustomerFullNameAsync(customer)));
+            string email = customer.Email;
+            if (!string.IsNullOrEmpty(email))
+                tokens.Add(new Token("Email", customer.Email));
 
 
-            //string phone = "";
-            //if (customer.BillingAddressId.HasValue)
-            //{
-            //    var address = await _addressService.GetAddressByIdAsync(Convert.ToInt32(customer.BillingAddressId));
-            //    if (string.IsNullOrEmpty(email))
-            //        tokens.Add(new Token("Email", address.Email));
-            //    tokens.Add(new Token("Phone", address.PhoneNumber));
-            //}
-            //else if (customer.ShippingAddressId.HasValue)
-            //{
-            //    var address = await _addressService.GetAddressByIdAsync(Convert.ToInt32(customer.ShippingAddressId));
-            //    if (string.IsNullOrEmpty(email))
-            //        tokens.Add(new Token("Email", address.Email));
-            //    tokens.Add(new Token("Phone", address.PhoneNumber));
-            //}
-            //tokens.Add(new Token("OrderDate", DateTime.Now.ToString("MMMM d, yyyy hh:mm tt")));
+            string phone = "";
+            if (customer.BillingAddressId.HasValue)
+            {
+                var address = await _addressService.GetAddressByIdAsync(Convert.ToInt32(customer.BillingAddressId));
+                if (string.IsNullOrEmpty(email))
+                    tokens.Add(new Token("Email", address.Email));
+                tokens.Add(new Token("Phone", address.PhoneNumber));
+            }
+            else if (customer.ShippingAddressId.HasValue)
+            {
+                var address = await _addressService.GetAddressByIdAsync(Convert.ToInt32(customer.ShippingAddressId));
+                if (string.IsNullOrEmpty(email))
+                    tokens.Add(new Token("Email", address.Email));
+                tokens.Add(new Token("Phone", address.PhoneNumber));
+            }
+            tokens.Add(new Token("OrderDate", DateTime.Now.ToString("MMMM d, yyyy hh:mm tt")));
 
-            //if (orderId == 0)
-            //{
-            //    var _orderTotalCalculationService = EngineContext.Current.Resolve<IOrderTotalCalculationService>();
-            //    var (shoppingCartTotalBase, orderTotalDiscountAmountBase, _, appliedGiftCards, redeemedRewardPoints, redeemedRewardPointsAmount) =
-            //                 await _orderTotalCalculationService.GetShoppingCartTotalAsync(cart);
-            //    var shoppingCartTotal = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(shoppingCartTotalBase.Value, await _workContext.GetWorkingCurrencyAsync());
+            if (orderId == 0)
+            {
+                decimal? shoppingCartTotalBase = 0;
+                decimal shoppingCartTotal = 0;
+                try
+                {
+       
+                    (shoppingCartTotalBase, _, _, _, _, _) =
+                                await _orderTotalCalculationService.GetShoppingCartTotalAsync(cart);
+                    shoppingCartTotal = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(shoppingCartTotalBase.Value, await _workContext.GetWorkingCurrencyAsync());
+                }
+                catch
+                {
 
-            //    tokens.Add(new Token("OrderTotal", await _priceFormatter.FormatPriceAsync(shoppingCartTotal, true, false)));
-            //    tokens.Add(new Token("Checkout.Link", $"ReInitiateCheckout/{customer.Id}"));
+                }
+                tokens.Add(new Token("HasOrderTotal", shoppingCartTotal > 0 ? true : false));
+                tokens.Add(new Token("OrderTotal", await _priceFormatter.FormatPriceAsync(shoppingCartTotal, true, false)));
+                tokens.Add(new Token("Checkout.Link", $"ReInitiateCheckout/{customer.Id}"));
 
-            //    if (cart.Count > 0)
-            //    {
+                if (cart.Count > 0)
+                {
 
-            //        var product = await _productService.GetProductByIdAsync(cart[0].ProductId);
-            //        if (product != null)
-            //        {
-            //            var prdurl = (await RouteUrlAsync(_storeContext.GetCurrentStore().Id, "product", new
-            //            {
-            //                id = product.Id,
-            //                SeName = await _urlRecordService.GetSeNameAsync(product)
-            //            }));
-            //            var variant = await _variantService.GetItemVariantInfo(product.Id, cart[0].AttributesXml);
+                    var product = await _productService.GetProductByIdAsync(cart[0].ProductId);
+                    if (product != null)
+                    {
+                        var prdurl = (await RouteUrlAsync(_storeContext.GetCurrentStore().Id, "product", new
+                        {
+                            id = product.Id,
+                            SeName = await _urlRecordService.GetSeNameAsync(product)
+                        }));
+                        var variant = await _productExtendedService.GetItemVariantInfo(product.Id, cart[0].AttributesXml);
 
-            //            tokens.Add(new Token("Cart.Product.Link", prdurl));
-            //            tokens.Add(new Token("Cart.Product.Name", string.IsNullOrWhiteSpace(variant?.Title) ? product.Name : variant.Title));
-
-
-            //            var picture = (await _pictureService.CustomGetPicturesOfProducAsync(product.Id, 1)).FirstOrDefault();
-            //            string fullSizeImageUrl, imageUrl;
-            //            (imageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, _mediaSettings.CategoryThumbPictureSize);
-            //            (fullSizeImageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture);
-            //            tokens.Add(new Token("Cart.Product.Image", fullSizeImageUrl));
-            //        }
-            //    }
-            //}
-            //else
-            //{
-            //    var customOrder = await _customOrderService.GetById(orderId);
-            //    tokens.Add(new Token("OrderTotal", await _priceFormatter.FormatPriceAsync(customOrder.OrderTotal ?? 0, true, false)));
-            //    tokens.Add(new Token("Checkout.Link", $"checkoutCustomOrder?orderid={orderId}&customerid={customer.Id}"));
-            //    var items = await _customOrderService.GetOrderItems(orderId);
-            //    if (items.Count > 0)
-            //    {
-            //        var product = await _productService.GetProductByIdAsync(items[0].ProductId);
-            //        if (product != null)
-            //        {
-            //            var prdurl = (await RouteUrlAsync(_storeContext.GetCurrentStore().Id, "product", new
-            //            {
-            //                id = product.Id,
-            //                SeName = await _urlRecordService.GetSeNameAsync(product)
-            //            }));
-            //            tokens.Add(new Token("Cart.Product.Link", prdurl));
-            //            tokens.Add(new Token("Cart.Product.Name", product.Name));
-
-            //            var picture = (await _pictureService.CustomGetPicturesOfProducAsync(product.Id, 1)).FirstOrDefault();
-            //            string fullSizeImageUrl, imageUrl;
-            //            (imageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, _mediaSettings.CategoryThumbPictureSize);
-            //            (fullSizeImageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture);
-            //            tokens.Add(new Token("Cart.Product.Image", fullSizeImageUrl));
-            //        }
-            //    }
-            //}
+                        tokens.Add(new Token("Cart.Product.Link", prdurl));
+                        tokens.Add(new Token("Cart.Product.Name", string.IsNullOrWhiteSpace(variant?.Title) ? product.Name : variant.Title));
+                      
+                        var picture = (await _pictureService.CustomGetPicturesOfProducAsync(product.Id, 1)).FirstOrDefault();
+                        string fullSizeImageUrl, imageUrl;
+                        (imageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, _mediaSettings.CategoryThumbPictureSize);
+                        (fullSizeImageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture);
+                        tokens.Add(new Token("Cart.Product.Image", fullSizeImageUrl));
+                    }
+                }
+            }
+            else
+            {
+                var customOrder = await _customOrderService.GetById(orderId);
+                tokens.Add(new Token("HasOrderTotal", true));
+                tokens.Add(new Token("OrderTotal", await _priceFormatter.FormatPriceAsync(customOrder.OrderTotal ?? 0, true, false)));
+                tokens.Add(new Token("Checkout.Link", $"checkoutCustomOrder?orderid={orderId}&customerid={customer.Id}"));
+                var items = await _customOrderService.GetOrderItems(orderId);
+                if (items.Count > 0)
+                {
+                    var product = await _productService.GetProductByIdAsync(items[0].ProductId);
+                    if (product != null)
+                    {
+                        var prdurl = (await RouteUrlAsync(_storeContext.GetCurrentStore().Id, "product", new
+                        {
+                            id = product.Id,
+                            SeName = await _urlRecordService.GetSeNameAsync(product)
+                        }));
+                        tokens.Add(new Token("Cart.Product.Link", prdurl));
+                        tokens.Add(new Token("Cart.Product.Name", product.Name));
+                        var picture = (await _pictureService.CustomGetPicturesOfProducAsync(product.Id, 1)).FirstOrDefault();
+                        string fullSizeImageUrl, imageUrl;
+                        (imageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, _mediaSettings.CategoryThumbPictureSize);
+                        (fullSizeImageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture);
+                        tokens.Add(new Token("Cart.Product.Image", fullSizeImageUrl));
+                    }
+                }
+            }
 
         }
 
         protected virtual async Task<string> CustomCustomOrderCartProductListToHtmlTableAsync(int orderId, int languageId)
         {
-            return string.Empty;
-            //var sb = new StringBuilder();
-            //sb.AppendLine("<br><br><br>----------------Cart Details--------------<br><br><table style=\"border: 1px solid black\">");
-            //sb.AppendLine("<tbody><tr>");
-            //sb.AppendLine("<th style=\"border: 1px solid black\">SKU</th>");
-            //sb.AppendLine("<th style=\"border: 1px solid black\">Quantity</th>");
-            //sb.AppendLine("<th style=\"border: 1px solid black\">Price</th>");
-            //sb.AppendLine("</tr>");
-            //var _customOrderService = EngineContext.Current.Resolve<Nop.Services.Customizations.Phone_Order.ICustomOrderService>();
-            //var cart = await _customOrderService.GetOrderItems(orderId);
-            //var _settingService = EngineContext.Current.Resolve<Nop.Services.Configuration.ISettingService>();
-            //foreach (var item in cart)
-            //{
-            //    var _priceAdjustment = await _customOrderService.GetPriceAdjustmentsByCartId(item.Id);
-            //    sb.AppendLine("<tr>");
-            //    sb.Append("<td style=\"border: 1px solid black\">");
-            //    var product = await _productService.GetProductByIdAsync(item.ProductId);
-            //    sb.Append(product.Sku);
-            //    sb.Append("</br>");
-            //    Dictionary<string, string> attrs = new Dictionary<string, string>();
-            //    string attributesDescription = !string.IsNullOrEmpty(item.AttributesDescription) ?
-            //        item.AttributesDescription : (!string.IsNullOrEmpty(item.CustomAttributesDescription) ?
-            //         item.CustomAttributesDescription : "");
-            //    var shadeAttr = await _settingService.GetSettingByKeyAsync<string>("catalog.product.attribute.shade.name");
-            //    if (!string.IsNullOrEmpty(attributesDescription))
-            //    {
-            //        foreach (var attribute in attributesDescription.Split(new String[] { "<br />" }, StringSplitOptions.None))
-            //        {
-            //            if (attribute.Split(":").Length > 1)
-            //                try
-            //                {
+            var sb = new StringBuilder();
+            sb.AppendLine("<br><br><br>----------------Cart Details--------------<br><br><table style=\"border: 1px solid black\">");
+            sb.AppendLine("<tbody><tr>");
+            sb.AppendLine("<th style=\"border: 1px solid black\">SKU</th>");
+            sb.AppendLine("<th style=\"border: 1px solid black\">Quantity</th>");
+            sb.AppendLine("<th style=\"border: 1px solid black\">Price</th>");
+            sb.AppendLine("</tr>");
+            var cart = await _customOrderService.GetOrderItems(orderId);
+            foreach (var item in cart)
+            {
+                var _priceAdjustment = await _customOrderService.GetPriceAdjustmentsByCartId(item.Id);
+                sb.AppendLine("<tr>");
+                sb.Append("<td style=\"border: 1px solid black\">");
+                var product = await _productService.GetProductByIdAsync(item.ProductId);
+                sb.Append(product.Sku);
+                sb.Append("</br>");
+                Dictionary<string, string> attrs = new Dictionary<string, string>();
+                string attributesDescription = !string.IsNullOrEmpty(item.AttributesDescription) ?
+                    item.AttributesDescription : (!string.IsNullOrEmpty(item.CustomAttributesDescription) ?
+                     item.CustomAttributesDescription : "");
+                var shadeAttr = await _settingService.GetSettingByKeyAsync<string>("catalog.product.attribute.shade.name");
+                if (!string.IsNullOrEmpty(attributesDescription))
+                {
+                    foreach (var attribute in attributesDescription.Split(new String[] { "<br />" }, StringSplitOptions.None))
+                    {
+                        if (attribute.Split(":").Length > 1)
+                            try
+                            {
 
-            //                    if (string.Equals(attribute.Split(":")[0], shadeAttr, StringComparison.CurrentCultureIgnoreCase))
-            //                    {
+                                if (string.Equals(attribute.Split(":")[0], shadeAttr, StringComparison.CurrentCultureIgnoreCase))
+                                {
 
-            //                        attrs.Add(attribute.Split(":")[0], System.Net.WebUtility.HtmlDecode(CustomCommonHelper.StripUnwantedPrefixFromShade(
-            //                            string.Join(':', attribute.Split(":").Skip(1)))));
-            //                    }
-            //                    else
-            //                    {
+                                    attrs.Add(attribute.Split(":")[0], System.Net.WebUtility.HtmlDecode(CustomCommonHelper.StripUnwantedPrefixFromShade(
+                                        string.Join(':', attribute.Split(":").Skip(1)))));
+                                }
+                                else
+                                {
 
-            //                        attrs.Add(attribute.Split(":")[0], System.Net.WebUtility.HtmlDecode(string.Join(':', attribute.Split(":").Skip(1))));
-            //                    }
-            //                }
-            //                catch { }
-            //        }
+                                    attrs.Add(attribute.Split(":")[0], System.Net.WebUtility.HtmlDecode(string.Join(':', attribute.Split(":").Skip(1))));
+                                }
+                            }
+                            catch { }
+                    }
 
-            //    }
-            //    string attributes = string.Empty;
-            //    foreach (var attr in attrs)
-            //    {
+                }
+                string attributes = string.Empty;
+                foreach (var attr in attrs)
+                {
 
-            //        attributes += $"<b>{attr.Key}:</b><br/>  {attr.Value}";
-            //        attributes += "<br/>";
-            //    }
-            //    sb.Append(attributes);
-            //    sb.Append("</td>");
-            //    sb.Append($"<td style=\"border: 1px solid black\">{item.Quantity}</td>");
-            //    sb.Append($"<td style=\"border: 1px solid black\">{await _priceFormatter.FormatPriceAsync((_priceAdjustment?.ShoppingCartProductPrice ?? 0) == 0 ? 0 : Convert.ToDecimal(_priceAdjustment.ShoppingCartProductPrice))}</td>");
-            //    sb.AppendLine("</tr>");
-            //}
-            //sb.Append("</tbody></table>");
-            //var result = sb.ToString();
-            //return result;
+                    attributes += $"<b>{attr.Key}:</b><br/>  {attr.Value}";
+                    attributes += "<br/>";
+                }
+                sb.Append(attributes);
+                sb.Append("</td>");
+                sb.Append($"<td style=\"border: 1px solid black\">{item.Quantity}</td>");
+                sb.Append($"<td style=\"border: 1px solid black\">{await _priceFormatter.FormatPriceAsync((_priceAdjustment?.ShoppingCartProductPrice ?? 0) == 0 ? 0 : Convert.ToDecimal(_priceAdjustment.ShoppingCartProductPrice))}</td>");
+                sb.AppendLine("</tr>");
+            }
+            sb.Append("</tbody></table>");
+            var result = sb.ToString();
+            return result;
         }
         protected virtual async Task<string> CustomCartProductListToHtmlTableAsync(IList<ShoppingCartItem> cart, int languageId)
         {
-
             var sb = new StringBuilder();
             sb.AppendLine("<br><br><br>----------------Cart Details--------------<br><br><table style=\"border: 1px solid black\">");
             sb.AppendLine("<tbody><tr>");
@@ -685,8 +719,7 @@ namespace MWT.Nop.Core.Services.Message
                 sb.Append(await _productAttributeFormatter.CustomFormatAttributesAsync(product, item.AttributesXml));
                 sb.Append("</td>");
                 sb.Append($"<td style=\"border: 1px solid black\">{item.Quantity}</td>");
-                sb.Append($"<td style=\"border: 1px solid black\">{await _taxService.GetProductPriceAsync(product,
-                    (await _shoppingCartService.GetUnitPriceAsync(item, true)).unitPrice)}</td>");
+                sb.Append($"<td style=\"border: 1px solid black\">{await _taxService.GetProductPriceAsync(product, (await _shoppingCartService.GetUnitPriceAsync(item, true)).unitPrice)}</td>");
                 sb.AppendLine("</tr>");
             }
             sb.Append("</tbody></table>");
@@ -732,8 +765,7 @@ namespace MWT.Nop.Core.Services.Message
         }
 
 
-        public async Task CustomAddAbandonedCartTokensAsync(IList<Token> tokens, Customer customer, string cartLink, Product product,
-            List<Product> relatedProducts, int languageId, string utmSource)
+        public async Task CustomAddAbandonedCartTokensAsync(IList<Token> tokens, Customer customer, string cartLink, Product product, List<Product> relatedProducts, int languageId, string utmSource)
         {
             tokens.Add(new Token("Customer.FullName", await _customerService.GetCustomerFullNameAsync(customer)));
             string email = customer.Email;
@@ -745,11 +777,37 @@ namespace MWT.Nop.Core.Services.Message
         }
         #endregion
 
+
+        #region Payment Issue
+        public async Task CustomSupportAddPaymentIssueTokensAsync(IList<Token> tokens, string transactionId, decimal paidAmount, decimal expectedAmount,
+            string paymentMethod)
+        {
+            tokens.Add(new Token("TransactionId", transactionId));
+            tokens.Add(new Token("PaidAmount", (await _priceFormatter.FormatPriceAsync(paidAmount))));
+            tokens.Add(new Token("ExpectedAmount", (await _priceFormatter.FormatPriceAsync(expectedAmount))));
+            tokens.Add(new Token("AmountDifference", (await _priceFormatter.FormatPriceAsync(paidAmount - expectedAmount))));
+            tokens.Add(new Token("TransactionDate", DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss UTC")));
+            tokens.Add(new Token("PaymentMethod", paymentMethod));
+        }
+
+
+        public async Task CustomAddPendingOrderTokens(IList<Token> tokens, string transactionId, string orderId,
+    bool isCustomOrder, int customOrderNumber, string paymentMethod)
+        {
+            tokens.Add(new Token("PendingOrder.TransactionId",
+                string.IsNullOrWhiteSpace(transactionId) ? "Not found" : transactionId));
+            tokens.Add(new Token("PendingOrder.OrderId", orderId ?? string.Empty));
+            tokens.Add(new Token("PendingOrder.IsCustomOrder", isCustomOrder));
+            tokens.Add(new Token("PendingOrder.CustomOrderNumber", customOrderNumber));
+            tokens.Add(new Token("PendingOrder.PaymentMethod", paymentMethod ?? string.Empty));
+        }
+        #endregion
+
+
         #region Purchase Journey
 
 
-        public async Task CustomAddPurchaseJourneyTokenAsync(IList<Token> tokens, Customer customer, List<Product> products,
-            int productId, int categoryId, string templateType, string utm_params)
+        public async Task CustomAddPurchaseJourneyTokenAsync(IList<Token> tokens, Customer customer, List<Product> products, int productId, int categoryId, string templateType, string utm_params)
         {
 
             if (templateType == "complete your collection")
@@ -821,30 +879,6 @@ namespace MWT.Nop.Core.Services.Message
 
         #endregion
 
-        #region Payment Issue
-        public async Task CustomSupportAddPaymentIssueTokensAsync(IList<Token> tokens, string transactionId, decimal paidAmount, decimal expectedAmount,
-            string paymentMethod)
-        {
-            tokens.Add(new Token("TransactionId", transactionId));
-            tokens.Add(new Token("PaidAmount", (await _priceFormatter.FormatPriceAsync(paidAmount))));
-            tokens.Add(new Token("ExpectedAmount", (await _priceFormatter.FormatPriceAsync(expectedAmount))));
-            tokens.Add(new Token("AmountDifference", (await _priceFormatter.FormatPriceAsync(paidAmount - expectedAmount))));
-            tokens.Add(new Token("TransactionDate", DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss UTC")));
-            tokens.Add(new Token("PaymentMethod", paymentMethod));
-        }
-
-
-        public async Task CustomAddPendingOrderTokens(IList<Token> tokens, string transactionId, string orderId,
-    bool isCustomOrder, int customOrderNumber, string paymentMethod)
-        {
-            tokens.Add(new Token("PendingOrder.TransactionId",
-                string.IsNullOrWhiteSpace(transactionId) ? "Not found" : transactionId));
-            tokens.Add(new Token("PendingOrder.OrderId", orderId ?? string.Empty));
-            tokens.Add(new Token("PendingOrder.IsCustomOrder", isCustomOrder));
-            tokens.Add(new Token("PendingOrder.CustomOrderNumber", customOrderNumber));
-            tokens.Add(new Token("PendingOrder.PaymentMethod", paymentMethod ?? string.Empty));
-        }
-        #endregion
         #region utilities
 
         private async Task<string> CustomProductAddHTMLEmailB(List<Product> products, string utm_params)
@@ -854,8 +888,7 @@ namespace MWT.Nop.Core.Services.Message
                 products = await products.Take(3).ToListAsync();
             }
             string html = "";
-
-
+            
             StringBuilder productRows = new StringBuilder();
 
             for (int i = 0; i < products.Count; i++)
@@ -908,8 +941,7 @@ namespace MWT.Nop.Core.Services.Message
             }
 
             string html = "";
-
-
+            
             StringBuilder productRows = new StringBuilder();
 
 
@@ -962,8 +994,7 @@ namespace MWT.Nop.Core.Services.Message
                 products = await products.Take(6).ToListAsync();
             }
             string html = "";
-
-
+            
             StringBuilder productRows = new StringBuilder();
             for (int i = 0; i < products.Count; i += 3)
             {
@@ -998,132 +1029,127 @@ namespace MWT.Nop.Core.Services.Message
         }
         protected virtual async Task<string> CustomOrderProductListToHtmlTableAsync(CustomOrder customOrder, int languageId, int vendorId)
         {
-            return string.Empty;
-            //var store = (await _storeService.GetAllStoresAsync()).OrderByDescending(s => s.DisplayOrder).FirstOrDefault();
-            //int storeId = store?.Id ?? 0;
-            //var _customOrderService = EngineContext.Current.Resolve<Nop.Services.Customizations.Phone_Order.ICustomOrderService>();
+            var store = (await _storeService.GetAllStoresAsync()).OrderByDescending(s => s.DisplayOrder).FirstOrDefault();
+            int storeId = store?.Id ?? 0;
+            
+            var table = await _customOrderService.GetOrderItems(customOrder.Id);
 
-            //var table = await _customOrderService.GetOrderItems(customOrder.Id);
+            var language = await _languageService.GetLanguageByIdAsync(languageId);
 
-            //var language = await _languageService.GetLanguageByIdAsync(languageId);
+            var sb = new StringBuilder();
 
-            //var sb = new StringBuilder();
+            //var _pictureService = EngineContext.Current.Resolve<INopF>();
 
-            //var _pictureService = EngineContext.Current.Resolve<IPictureService>();
-            //var _mediaSettings = EngineContext.Current.Resolve<MediaSettings>();
-            ////var _pictureService = EngineContext.Current.Resolve<INopF>();
+            for (var i = 0; i <= table.Count - 1; i++)
+            {
+                var orderItem = table[i];
 
-            //for (var i = 0; i <= table.Count - 1; i++)
-            //{
-            //    var orderItem = table[i];
-
-            //    var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
-            //    var prdurl = await RouteUrlAsync(storeId, "product", new
-            //    {
-            //        id = product.Id,
-            //        SeName = await _urlRecordService.GetSeNameAsync(product)
-            //    });
-            //    if (product == null)
-            //        continue;
+                var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
+                var prdurl = await RouteUrlAsync(storeId, "product", new
+                {
+                    id = product.Id,
+                    SeName = await _urlRecordService.GetSeNameAsync(product)
+                });
+                if (product == null)
+                    continue;
 
 
-            //    sb.AppendLine("<div style=\" float: left;width: 100%;margin-bottom: 15px;display: flex;justify-content: space-between;\">");
-            //    sb.AppendLine("<div class=\"col-12 col-md-7 col-lg-6\" style=\"width: 50%;\">");
-            //    sb.AppendLine("<div class=\"section-3-contant-1\">");
-            //    sb.AppendLine("<div style=\"display: flex;gap: 15px;padding: 0 15px;\">");
-            //    sb.AppendLine($"<div class=\" section-3-order-details col-12 col-md-6 col-lg-4 \">");
+                sb.AppendLine("<div class=\"detail-inner\" style=\" float: left;width: 100%;margin-bottom: 15px;display: flex;justify-content: space-between;\">");
+                sb.AppendLine("<div class=\"col-12 col-md-7 col-lg-6\" style=\"width: 60%;\">");
+                sb.AppendLine("<div class=\"section-3-contant-1\">");
+                sb.AppendLine("<div style=\"display: flex;gap: 15px;padding: 0 15px;\">");
+                sb.AppendLine($"<div class=\" section-3-order-details col-12 col-md-6 col-lg-4 \">");
 
-            //    var picture = (await _pictureService.GetPicturesByProductIdAsync(product.Id, 1)).FirstOrDefault();
-            //    string fullSizeImageUrl, imageUrl;
-            //    (imageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, _mediaSettings.CategoryThumbPictureSize);
-            //    (fullSizeImageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture);
+                var picture = (await _pictureService.GetPicturesByProductIdAsync(product.Id, 1)).FirstOrDefault();
+                string fullSizeImageUrl, imageUrl;
+                (imageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, _mediaSettings.CategoryThumbPictureSize);
+                (fullSizeImageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture);
 
-            //    sb.AppendLine($"<img src=\"{fullSizeImageUrl}\" style=\"width:90px;height:90px;\"/>");
+                sb.AppendLine($"<img src=\"{fullSizeImageUrl}\" style=\"width:90px;height:90px;\"/>");
 
-            //    sb.AppendLine("</div>");
+                sb.AppendLine("</div>");
 
 
-            //    //product name
+                //product name
 
-            //    sb.AppendLine("<div style=\"padding-left: 10px;\">");
+                sb.AppendLine("<div style=\"padding-left: 10px;padding-right: 10px;\">");
 
 
 
-            //    var productName = string.Empty;
-            //    if (customOrder.ParentOrderID == 0)
-            //    {
-            //        productName = "<p style=\"margin-bottom:0;\"><a href=\"" + prdurl + "\">" + await _localizationService.GetLocalizedAsync(product, x => x.Name, languageId) + "</a>";
-            //        productName += $"<br/><b>SKU</b> : ({product.Sku})</p>";
-            //    }
-            //    else
-            //    {
-            //        productName = "<p style=\"margin-bottom:0;\">" + await _localizationService.GetLocalizedAsync(product, x => x.Name, languageId) + "</p>";
-            //    }
+                var productName = string.Empty;
+                if (customOrder.ParentOrderID == 0)
+                {
+                    productName = "<p style=\"margin-bottom:0;\"><a href=\"" + prdurl + "\">" + await _localizationService.GetLocalizedAsync(product, x => x.Name, languageId) + "</a>";
+                    productName += $"<br/><b>SKU</b> : ({product.Sku})</p>";
+                }
+                else
+                {
+                    productName = "<p style=\"margin-bottom:0;\">" + await _localizationService.GetLocalizedAsync(product, x => x.Name, languageId) + "</p>";
+                }
 
 
-            //    //attributes
-            //    var _settingService = EngineContext.Current.Resolve<Nop.Services.Configuration.ISettingService>();
-            //    var shadeAttr = await _settingService.GetSettingByKeyAsync<string>("catalog.product.attribute.shade.name");
+                //attributes
+                var shadeAttr = await _settingService.GetSettingByKeyAsync<string>("catalog.product.attribute.shade.name");
 
-            //    Dictionary<string, string> attrs = new Dictionary<string, string>();
-            //    string attributesDescription = !string.IsNullOrEmpty(orderItem.AttributesDescription) ?
-            //        orderItem.AttributesDescription : (!string.IsNullOrEmpty(orderItem.CustomAttributesDescription) ?
-            //         orderItem.CustomAttributesDescription : "");
+                Dictionary<string, string> attrs = new Dictionary<string, string>();
+                string attributesDescription = !string.IsNullOrEmpty(orderItem.AttributesDescription) ?
+                    orderItem.AttributesDescription : (!string.IsNullOrEmpty(orderItem.CustomAttributesDescription) ?
+                     orderItem.CustomAttributesDescription : "");
 
-            //    if (!string.IsNullOrEmpty(attributesDescription))
-            //    {
-            //        foreach (var attribute in attributesDescription.Split(new String[] { "<br />" }, StringSplitOptions.None))
-            //        {
-            //            if (attribute.Split(":").Length > 1)
-            //                try
-            //                {
+                if (!string.IsNullOrEmpty(attributesDescription))
+                {
+                    foreach (var attribute in attributesDescription.Split(new String[] { "<br />" }, StringSplitOptions.None))
+                    {
+                        if (attribute.Split(":").Length > 1)
+                            try
+                            {
 
-            //                    if (string.Equals(attribute.Split(":")[0], shadeAttr, StringComparison.CurrentCultureIgnoreCase))
-            //                    {
+                                if (string.Equals(attribute.Split(":")[0], shadeAttr, StringComparison.CurrentCultureIgnoreCase))
+                                {
 
-            //                        attrs.Add(attribute.Split(":")[0], System.Net.WebUtility.HtmlDecode(CommonHelper.StripUnwantedPrefixFromShade(
-            //                            string.Join(':', attribute.Split(":").Skip(1)))));
-            //                    }
-            //                    else
-            //                    {
+                                    attrs.Add(attribute.Split(":")[0], System.Net.WebUtility.HtmlDecode(CustomCommonHelper.StripUnwantedPrefixFromShade(
+                                        string.Join(':', attribute.Split(":").Skip(1)))));
+                                }
+                                else
+                                {
 
-            //                        attrs.Add(attribute.Split(":")[0], System.Net.WebUtility.HtmlDecode(string.Join(':', attribute.Split(":").Skip(1))));
-            //                    }
-            //                }
-            //                catch { }
-            //        }
+                                    attrs.Add(attribute.Split(":")[0], System.Net.WebUtility.HtmlDecode(string.Join(':', attribute.Split(":").Skip(1))));
+                                }
+                            }
+                            catch { }
+                    }
 
-            //    }
-            //    productName += attrs.Count > 0 ? "<p>" : "";
-            //    foreach (var attr in attrs)
-            //    {
+                }
+                productName += attrs.Count > 0 ? "<p>" : "";
+                foreach (var attr in attrs)
+                {
 
-            //        productName += $"<b>{attr.Key}:</b><br/>  {attr.Value}";
-            //        productName += "<br/>";
-            //    }
+                    productName += $"<b>{attr.Key}:</b>  {attr.Value}";
+                    productName += "<br/>";
+                }
 
-            //    productName += attrs.Count > 0 ? "</p>" : "";
-            //    sb.AppendLine(productName);
+                productName += attrs.Count > 0 ? "</p>" : "";
+                sb.AppendLine(productName);
 
-            //    // end
+                // end
 
-            //    // quantity
-
-
-
-            //    // end
+                // quantity
 
 
 
-            //    if (!string.IsNullOrEmpty(table[i].Notes))
-            //    {
-            //        string notes = table[i].Notes.Replace("images/customorder", store?.Hosts ?? "" + "images/customorder");
-            //        sb.AppendLine($"<p><b>{await _localizationService.GetResourceAsync("Messages.Order.Product(s).SpecialInstructions", languageId)}</b> {notes}</ p >");
-            //    }
+                // end
 
-            //    sb.AppendLine("</div></div></div></div>");
 
-            //    sb.AppendLine("<div class=\"col-md-2 d-flex align-items-lg-center align-items-md-start\" style=\"width:20%\"><div class=\"section-3-order-details-price\">");
+
+                if (!string.IsNullOrEmpty(table[i].Notes))
+                {
+                    string notes = table[i].Notes.Replace("images/customorder", store?.Hosts ?? "" + "images/customorder");
+                    sb.AppendLine($"<p><b>{await _localizationService.GetResourceAsync("Messages.Order.Product(s).SpecialInstructions", languageId)}</b> {notes}</ p >");
+                }
+
+                sb.AppendLine("</div></div></div></div>");
+
+                sb.AppendLine("<div class=\"col-md-2 d-flex align-items-lg-center align-items-md-start\" style=\"width:20%\"><div class=\"section-3-order-details-price\">");
 
 
 
@@ -1131,65 +1157,65 @@ namespace MWT.Nop.Core.Services.Message
 
 
 
-            //    // Price
+                // Price
 
 
 
-            //    string ItemPriceIncTax = "";
-            //    string adjustmentAmount = "";
-            //    decimal discountPercentage = 0;
-            //    decimal discountAmount = 0;
-            //    string itemTotal = "";
-            //    string cssClass = "";
-            //    var _priceAdjustment = await _customOrderService.GetPriceAdjustmentsByCartId(table[i].Id);
-            //    string resourceName = "Receipt.Item.OfferDiscount";
-            //    if (_priceAdjustment != null)
-            //    {
+                string ItemPriceIncTax = "";
+                string adjustmentAmount = "";
+                decimal discountPercentage = 0;
+                decimal discountAmount = 0;
+                string itemTotal = "";
+                string cssClass = "";
+                var _priceAdjustment = await _customOrderService.GetPriceAdjustmentsByCartId(table[i].Id);
+                string resourceName = "Receipt.Item.OfferDiscount";
+                if (_priceAdjustment != null)
+                {
 
-            //        ItemPriceIncTax = await _priceFormatter.FormatPriceAsync(
-            //            _priceAdjustment.ShoppingCartProductPrice == null ? 0 :
-            //            Convert.ToDecimal(_priceAdjustment.ShoppingCartProductPrice) * table[i].Quantity);
+                    ItemPriceIncTax = await _priceFormatter.FormatPriceAsync(
+                        _priceAdjustment.ShoppingCartProductPrice == null ? 0 :
+                        Convert.ToDecimal(_priceAdjustment.ShoppingCartProductPrice) * table[i].Quantity);
 
-            //        discountAmount = _priceAdjustment.Discountamount == null ? 0 : Convert.ToDecimal(_priceAdjustment.Discountamount);
-            //        discountPercentage = _priceAdjustment.DiscountPercentage == null ? 0 : Convert.ToDecimal(_priceAdjustment.DiscountPercentage);
-            //        decimal _totalAdjustment = (_priceAdjustment.Discounttype == DiscountType.Percentage.ToString() && discountPercentage != 0 ?
-            //             (_priceAdjustment.ShoppingCartProductPrice == null ? 0 : Convert.ToDecimal(_priceAdjustment.ShoppingCartProductPrice)
-            //             * Convert.ToDecimal(_priceAdjustment.DiscountPercentage)) / 100
-            //             : (_priceAdjustment.Discounttype == DiscountType.Fixed.ToString() && discountAmount != 0
-            //             ? discountAmount : 0)) * table[i].Quantity;
-            //        resourceName = _priceAdjustment.Chargestype == ChargeType.Add.ToString() ? "Receipt.Item.AdditionalAdjustment" : resourceName;
-            //        adjustmentAmount = _totalAdjustment != 0 ? (_priceAdjustment.Chargestype == ChargeType.Subtract.ToString() ? "-" : "") + await _priceFormatter.FormatPriceAsync(_totalAdjustment) : "";
-            //        cssClass = _priceAdjustment.Chargestype == ChargeType.Subtract.ToString() ? "danger" : "success";
-            //    }
+                    discountAmount = _priceAdjustment.Discountamount == null ? 0 : Convert.ToDecimal(_priceAdjustment.Discountamount);
+                    discountPercentage = _priceAdjustment.DiscountPercentage == null ? 0 : Convert.ToDecimal(_priceAdjustment.DiscountPercentage);
+                    decimal _totalAdjustment = (_priceAdjustment.Discounttype == DiscountType.Percentage.ToString() && discountPercentage != 0 ?
+                         (_priceAdjustment.ShoppingCartProductPrice == null ? 0 : Convert.ToDecimal(_priceAdjustment.ShoppingCartProductPrice)
+                         * Convert.ToDecimal(_priceAdjustment.DiscountPercentage)) / 100
+                         : (_priceAdjustment.Discounttype == DiscountType.Fixed.ToString() && discountAmount != 0
+                         ? discountAmount : 0)) * table[i].Quantity;
+                    resourceName = _priceAdjustment.Chargestype == ChargeType.Add.ToString() ? "Receipt.Item.AdditionalAdjustment" : resourceName;
+                    adjustmentAmount = _totalAdjustment != 0 ? (_priceAdjustment.Chargestype == ChargeType.Subtract.ToString() ? "-" : "") + await _priceFormatter.FormatPriceAsync(_totalAdjustment) : "";
+                    cssClass = _priceAdjustment.Chargestype == ChargeType.Subtract.ToString() ? "danger" : "success";
+                }
 
-            //    sb.AppendLine($"<p style=\"line-height: 20px;\">Price:{await _priceFormatter.FormatPriceAsync(_priceAdjustment.ShoppingCartProductPrice == null ? 0 : Convert.ToDecimal(_priceAdjustment.ShoppingCartProductPrice))}  <br>Qty :{orderItem.Quantity} </p>");
-            //    sb.AppendLine("</div></div>");
+                sb.AppendLine($"<p style=\"line-height: 20px;\">Price:{await _priceFormatter.FormatPriceAsync(_priceAdjustment.ShoppingCartProductPrice == null ? 0 : Convert.ToDecimal(_priceAdjustment.ShoppingCartProductPrice))}  <br>Qty :{orderItem.Quantity} </p>");
+                sb.AppendLine("</div></div>");
 
-            //    sb.AppendLine("<div class=\"col-md-3 d-flex align-items-lg-center align-items-md-start justify-content-lg-center justify-content-md-center\" style=\"padding-right: 15px; width: 30%; text-align: right;\">");
-
-
-            //    sb.AppendLine("<div class=\" text-md-right text-lg-right \">");
-
-            //    sb.AppendLine($"<p class=\"m-0\">{ItemPriceIncTax}</p>");
-
-            //    if (!string.IsNullOrEmpty(adjustmentAmount))
-            //    {
-            //        sb.AppendLine("<p class=\"text-danger m-0\" style=\"font-style:italic;\">" + string.Format(await _localizationService.GetResourceAsync(resourceName)
-            //            , adjustmentAmount) + "</p>");
-            //    }
-
-            //    sb.AppendLine("</div>");
+                sb.AppendLine("<div class=\"col-md-3 d-flex align-items-lg-center align-items-md-start justify-content-lg-center justify-content-md-center\" style=\"padding-right: 15px; width: 20%; text-align: right;\">");
 
 
-            //    // end
+                sb.AppendLine("<div class=\" text-md-right text-lg-right \">");
 
-            //    sb.AppendLine("</div>");
+                sb.AppendLine($"<p class=\"m-0\">{ItemPriceIncTax}</p>");
 
-            //    sb.AppendLine("</div>");
-            //    // end
-            //}
-            //var result = sb.ToString();
-            //return result;
+                if (!string.IsNullOrEmpty(adjustmentAmount))
+                {
+                    sb.AppendLine("<p class=\"text-danger m-0\" style=\"font-style:italic;\">" + string.Format(await _localizationService.GetResourceAsync(resourceName)
+                        , adjustmentAmount) + "</p>");
+                }
+
+                sb.AppendLine("</div>");
+
+
+                // end
+
+                sb.AppendLine("</div>");
+
+                sb.AppendLine("</div>");
+                // end
+            }
+            var result = sb.ToString();
+            return result;
         }
         protected virtual async Task<string> CustomProductListToHtmlTableAsync(Order order, int languageId, int vendorId)
         {
@@ -1215,7 +1241,7 @@ namespace MWT.Nop.Core.Services.Message
 
 
 
-
+            //var _pictureService = EngineContext.Current.Resolve<INopF>();
 
             for (var i = 0; i <= table.Count - 1; i++)
             {
@@ -1229,8 +1255,8 @@ namespace MWT.Nop.Core.Services.Message
                 });
                 if (product == null)
                     continue;
-                sb.AppendLine("<div style=\" float: left;width: 100%;margin-bottom: 15px;display: flex;justify-content: space-between\">");
-                sb.AppendLine("<div class=\"col-12 col-md-7 col-lg-6\" style=\"width: 50%;\">");
+                sb.AppendLine("<div class=\"detail-inner\" style=\" float: left;width: 100%;margin-bottom: 15px;display: flex;justify-content: space-between\">");
+                sb.AppendLine("<div class=\"col-12 col-md-7 col-lg-6\" style=\"width: 60%;\">");
                 sb.AppendLine("<div class=\"section-3-contant-1\">");
                 sb.AppendLine("<div style=\"display: flex; gap: 15px;padding: 0 15px;\">");
                 sb.AppendLine($"<div class=\" section-3-order-details col-12 col-md-6 col-lg-4 \">");
@@ -1247,11 +1273,11 @@ namespace MWT.Nop.Core.Services.Message
 
                 //product name
 
-                sb.AppendLine("<div style=\"padding-left: 10px;\">");
+                sb.AppendLine("<div style=\"padding-left: 10px;padding-right: 10px;\">");
 
 
                 VariantCombination variant = new VariantCombination();
-                variant = await _customProductService.GetItemVariantInfo(product.Id, orderItem.AttributesXml);
+                variant = await _productExtendedService.GetItemVariantInfo(product.Id, orderItem.AttributesXml);
                 string prdName = string.IsNullOrWhiteSpace(variant?.Title) ? product.Name : variant.Title;
 
                 var productName = "<p style=\"margin-bottom:0;\"><a href=\"" + prdurl + "\">" +
@@ -1260,9 +1286,8 @@ namespace MWT.Nop.Core.Services.Message
                 productName += $"<br/><b>SKU</b> : ({product.Sku})</p>";
 
                 //attributes
-
-                var attributeDescription = string.IsNullOrEmpty(orderItem.AttributesXml) ? orderItem.AttributeDescription :
-                    await _productAttributeFormatter.CustomFormatAttributesAsync(product, orderItem.AttributesXml);
+                
+                var attributeDescription = string.IsNullOrEmpty(orderItem.AttributesXml) ? orderItem.AttributeDescription : await _productAttributeFormatter.CustomFormatAttributesAsync(product, orderItem.AttributesXml);
                 Dictionary<string, string> attrs = new Dictionary<string, string>();
                 if (!string.IsNullOrEmpty(attributeDescription))
                 {
@@ -1281,7 +1306,7 @@ namespace MWT.Nop.Core.Services.Message
                 foreach (var attr in attrs)
                 {
 
-                    productName += $"<b>{attr.Key}:</b><br/> {attr.Value}";
+                    productName += $"<b>{attr.Key}:</b> {attr.Value}";
                     productName += "<br/>";
                 }
                 productName += attrs.Count > 0 ? "</p>" : "";
@@ -1291,22 +1316,19 @@ namespace MWT.Nop.Core.Services.Message
                 {
                     //Special Instructions
 
-                    sb.AppendLine($"<p><b>{await _localizationService.GetResourceAsync("Messages.Order.Product(s).SpecialInstructions",
-                        languageId)}</b> {orderItem.SpecialInstructions}</p>");
+                    sb.AppendLine($"<p><b>{await _localizationService.GetResourceAsync("Messages.Order.Product(s).SpecialInstructions", languageId)}</b> {orderItem.SpecialInstructions}</p>");
                 }
                 sb.AppendLine("</div></div></div></div>");
 
 
 
                 sb.AppendLine("<div class=\"col-md-2 d-flex align-items-lg-center align-items-md-start\" style=\"width:20%\"><div class=\"section-3-order-details-price\">");
-                sb.AppendLine($"<p style=\"  line-height: 20px;\">Price:{await _priceFormatter.FormatPriceAsync(
-                    _currencyService.ConvertCurrency(orderItem.ItemPriceIncTax, order.CurrencyRate),
-                    true, order.CustomerCurrencyCode, languageId, false)}  <br>Qty :{orderItem.Quantity} </p>");
+                sb.AppendLine($"<p style=\"  line-height: 20px;\">Price:{await _priceFormatter.FormatPriceAsync(_currencyService.ConvertCurrency(orderItem.ItemPriceIncTax, order.CurrencyRate), true, order.CustomerCurrencyCode, languageId, false)}  <br>Qty :{orderItem.Quantity} </p>");
 
 
                 sb.AppendLine("</div></div>");
 
-                sb.AppendLine("<div class=\"col-md-3 d-flex align-items-lg-center align-items-md-start justify-content-lg-center justify-content-md-center\" style=\"padding-right: 15px; width: 30%; text-align: right;\">");
+                sb.AppendLine("<div class=\"col-md-3 d-flex align-items-lg-center align-items-md-start justify-content-lg-center justify-content-md-center\" style=\"padding-right: 15px; width: 20%; text-align: right;\">");
 
                 sb.AppendLine("<div class=\" text-md-right text-lg-right \">");
                 string itemSubtotal;
@@ -1341,17 +1363,17 @@ namespace MWT.Nop.Core.Services.Message
 
                 if (!string.IsNullOrEmpty(offerDiscountIncTaxStr))
 
-                    sb.AppendLine($"<p class=\"text-danger m-0\" style=\"font-style:italic;\">" +
+                    sb.AppendLine($"<p class=\"text-danger m-0 item-discount\" style=\"font-style:italic;\">" +
                         $"{string.Format(await _localizationService.GetResourceAsync("Receipt.Item.OfferDiscount"), offerDiscountIncTaxStr)}</p>");
 
                 if (!string.IsNullOrEmpty(buyMoreSaveMoreDiscountIncTaxStr))
                 {
-                    sb.AppendLine($"<p class=\"text-danger m-0\" style=\"font-style:italic;\">" +
+                    sb.AppendLine($"<p class=\"text-danger m-0 item-discount\" style=\"font-style:italic;\">" +
                          $"{string.Format(await _localizationService.GetResourceAsync("Receipt.Item.BuyMoreSaveMoreDiscount"), buyMoreSaveMoreDiscountIncTaxStr)}</p>");
                 }
                 if (orderItem.TotalDiscount > 0)
                 {
-                    sb.AppendLine($"<p class=\"text-danger m-0\" style=\"font-style:italic;\">" +
+                    sb.AppendLine($"<p class=\"text-danger m-0 item-discount\" style=\"font-style:italic;\">" +
                        $"{string.Format(await _localizationService.GetResourceAsync("Receipt.Item.discount"), await _priceFormatter.FormatPriceAsync(_currencyService.ConvertCurrency(orderItem.TotalDiscount > 0 ? -orderItem.TotalDiscount : orderItem.TotalDiscount, order.CurrencyRate), true, order.CustomerCurrencyCode, languageId, true))}</p>");
 
                 }
@@ -1372,19 +1394,19 @@ namespace MWT.Nop.Core.Services.Message
         protected virtual async Task<string> GetTaxDetails(Order order, string shippingZipPostalCode, string taxPercentage, string cusTaxTotal, int languageId)
         {
             string html = "";
-            //var taxes = _orderService.GetTaxDetails(order);
-            //if (!taxes.Where(t => t.TaxType != Nop.Services.Tax.TaxType.Tax && t.TaxRate > 0).Any())
-            //{
-            //    html = $"<p style=\"margin-bottom:10px;text-align:right;\">{shippingZipPostalCode} - Tax({taxPercentage}): {cusTaxTotal}</p>";
-            //}
-            //else
-            //{
-            //    html = $"<p style=\"margin-bottom:10px;text-align:right;\">{await _localizationService.GetResourceAsync("ShoppingCart.Totals.DisplayTax.Info")}: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>";
-            //    foreach (var taxInfo in taxes.Where(t => t.TaxRate > 0))
-            //    {
-            //        html += $"<p style=\"margin-bottom:10px;text-align:right;text-transform: uppercase;\">{string.Format(await _localizationService.GetResourceAsync("Canada.Tax.Label"), taxInfo.TaxType.ToString(), taxInfo.TaxRate.ToString("F2"))}: {await _priceFormatter.FormatPriceAsync(taxInfo.Amount, true, order.CustomerCurrencyCode, languageId, true)}</p>";
-            //    }
-            //}
+            var taxes = _orderExtendedService.GetTaxDetails(order);
+            if (!taxes.Where(t => t.TaxType != TaxType.Tax && t.TaxRate > 0).Any())
+            {
+                html = $"<p style=\"margin-bottom:10px;text-align:right;\">{shippingZipPostalCode} - Tax({taxPercentage}): {cusTaxTotal}</p>";
+            }
+            else
+            {
+                html = $"<p style=\"margin-bottom:10px;text-align:right;\">{await _localizationService.GetResourceAsync("ShoppingCart.Totals.DisplayTax.Info")}: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>";
+                foreach (var taxInfo in taxes.Where(t => t.TaxRate > 0))
+                {
+                    html += $"<p style=\"margin-bottom:10px;text-align:right;text-transform: uppercase;\">{string.Format(await _localizationService.GetResourceAsync("Canada.Tax.Label"), taxInfo.TaxType.ToString(), taxInfo.TaxRate.ToString("F2"))}: {await _priceFormatter.FormatPriceAsync(taxInfo.Amount, true, order.CustomerCurrencyCode, languageId, true)}</p>";
+                }
+            }
 
             return html;
         }
@@ -1392,26 +1414,26 @@ namespace MWT.Nop.Core.Services.Message
         protected virtual async Task<string> CustomOrderGetTaxDetails(string taxInfo, string cusTaxTotal, string shippingZipPostalCode, int languageId)
         {
             string html = "";
-            //var taxes = _orderService.GetTaxDetails(taxInfo);
-            //if (!taxes.Where(t => t.TaxType != Nop.Services.Tax.TaxType.Tax && t.TaxRate > 0).Any())
-            //{
-            //    if (taxes.Count > 0)
-            //    {
-            //        html = $"<p style=\"margin-bottom:10px;text-align:right;\">{shippingZipPostalCode} - Tax({taxes.FirstOrDefault()?.TaxRate}): {cusTaxTotal}</p>";
-            //    }
-            //    else
-            //    {
-            //        html = $"<p style=\"margin-bottom:10px;text-align:right;\">Tax: {cusTaxTotal}</p>";
-            //    }
-            //}
-            //else
-            //{
-            //    html = $"<p style=\"margin-bottom:10px;text-align:right;\">{await _localizationService.GetResourceAsync("ShoppingCart.Totals.DisplayTax.Info")}: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>";
-            //    foreach (var _taxInfo in taxes.Where(t => t.TaxRate > 0))
-            //    {
-            //        html += $"<p style=\"margin-bottom:10px;text-align:right;text-transform: uppercase;\">{string.Format(await _localizationService.GetResourceAsync("Canada.Tax.Label"), _taxInfo.TaxType.ToString(), _taxInfo.TaxRate.ToString("F2"))}: {await _priceFormatter.FormatPriceAsync(_taxInfo.Amount)}</p>";
-            //    }
-            //}
+            var taxes = _orderExtendedService.GetTaxDetails(taxInfo);
+            if (!taxes.Where(t => t.TaxType != TaxType.Tax && t.TaxRate > 0).Any())
+            {
+                if (taxes.Count > 0)
+                {
+                    html = $"<p style=\"margin-bottom:10px;text-align:right;\">{shippingZipPostalCode} - Tax({taxes.FirstOrDefault()?.TaxRate}): {cusTaxTotal}</p>";
+                }
+                else
+                {
+                    html = $"<p style=\"margin-bottom:10px;text-align:right;\">Tax: {cusTaxTotal}</p>";
+                }
+            }
+            else
+            {
+                html = $"<p style=\"margin-bottom:10px;text-align:right;\">{await _localizationService.GetResourceAsync("ShoppingCart.Totals.DisplayTax.Info")}: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>";
+                foreach (var _taxInfo in taxes.Where(t => t.TaxRate > 0))
+                {
+                    html += $"<p style=\"margin-bottom:10px;text-align:right;text-transform: uppercase;\">{string.Format(await _localizationService.GetResourceAsync("Canada.Tax.Label"), _taxInfo.TaxType.ToString(), _taxInfo.TaxRate.ToString("F2"))}: {await _priceFormatter.FormatPriceAsync(_taxInfo.Amount)}</p>";
+                }
+            }
 
             return html;
         }
@@ -1722,196 +1744,205 @@ namespace MWT.Nop.Core.Services.Message
         }
         protected virtual async Task AddCustomOrderTotalTokens(IList<Token> tokens, CustomOrder customOrder, string shippingZipPostalCode, int vendorId, int languageId)
         {
-            //decimal subTotal = 0;
-            //string subTotalAdjustment = "";
-            //string shippingAdjustment = "";
-            ////notes
+            decimal subTotal = 0;
+            string subTotalAdjustment = "";
+            string shippingAdjustment = "";
+            //notes
 
 
-            ////subtotal
+            //subtotal
 
-            //subTotal = customOrder.SubTotal == null ? 0 : Convert.ToDecimal(customOrder.SubTotal);
-            //decimal orderTotal = customOrder.OrderTotal == null ? 0 : (Convert.ToDecimal(customOrder.OrderTotal));
+            subTotal = customOrder.SubTotal == null ? 0 : Convert.ToDecimal(customOrder.SubTotal);
+            decimal orderTotal = customOrder.OrderTotal == null ? 0 : (Convert.ToDecimal(customOrder.OrderTotal));
 
-            //tokens.Add(new Token("Order.Notes", customOrder.InvoiceNote));
-            //tokens.Add(new Token("Order.SpecialInstructionsfromBuyer", customOrder.SpecialInstructionsfromBuyer));
-            //tokens.Add(new Token("Order.Subtotal", await _priceFormatter.FormatPriceAsync(subTotal)));
+            tokens.Add(new Token("Order.Notes", customOrder.InvoiceNote));
+            tokens.Add(new Token("Order.SpecialInstructionsfromBuyer", customOrder.SpecialInstructionsfromBuyer));
+            tokens.Add(new Token("Order.Subtotal", await _priceFormatter.FormatPriceAsync(subTotal)));
 
-            //if (customOrder.CustomDuty > 0)
-            //{
-            //    tokens.Add(new Token("Order.HasCustomDuty", true));
-            //    tokens.Add(new Token("Order.CustomDutyPercentage", Math.Round(customOrder.CustomDutyPercentage, 2) + "%"));
-            //    tokens.Add(new Token("Order.CustomDuty", await _priceFormatter.FormatPriceAsync
-            //        (customOrder.CustomDuty)));
-            //}
-            //else
-            //    tokens.Add(new Token("Order.HasCustomDuty", false));
+            if (customOrder.CustomDuty > 0)
+            {
+                tokens.Add(new Token("Order.HasCustomDuty", true));
+                tokens.Add(new Token("Order.CustomDutyPercentage", Math.Round(customOrder.CustomDutyPercentage, 2) + "%"));
+                tokens.Add(new Token("Order.CustomDuty", await _priceFormatter.FormatPriceAsync
+                    (customOrder.CustomDuty)));
+            }
+            else
+                tokens.Add(new Token("Order.HasCustomDuty", false));
 
-            //var _customOrderService = EngineContext.Current.Resolve<Nop.Services.Customizations.Phone_Order.ICustomOrderService>();
-            //var orderSummaryAdj = await _customOrderService.GetOrderSummaryAdjustment(customOrder.Id);
-            //decimal netAmount = subTotal;
-            //if (orderSummaryAdj != null)
-            //{
-            //    #region SubTotalAdj
+            var orderSummaryAdj = await _customOrderService.GetOrderSummaryAdjustment(customOrder.Id);
+            decimal netAmount = subTotal;
+            if (orderSummaryAdj != null)
+            {
+                #region SubTotalAdj
 
-            //    string subTotalDiscountType = orderSummaryAdj.SubTotalDiscountType == null ? "" :
-            //       (orderSummaryAdj.SubTotalDiscountType == DiscountType.Percentage.ToString() ? DiscountType.Percentage.ToString() : DiscountType.Fixed.ToString());
+                string subTotalDiscountType = orderSummaryAdj.SubTotalDiscountType == null ? "" :
+                   (orderSummaryAdj.SubTotalDiscountType == DiscountType.Percentage.ToString() ? DiscountType.Percentage.ToString() : DiscountType.Fixed.ToString());
 
-            //    decimal discountAmount = orderSummaryAdj.SubtotalDiscount == null ? 0 :
-            //        Convert.ToDecimal(orderSummaryAdj.SubtotalDiscount);
-            //    if (discountAmount != 0)
-            //    {
-            //        subTotalAdjustment = orderSummaryAdj.SubtotalChargeType == ChargeType.Add.ToString() ? "+" : "-" + await _priceFormatter.FormatPriceAsync(
-            //            subTotalDiscountType == DiscountType.Percentage.ToString() ?
-            //            (subTotal * discountAmount) / 100
-            //            : discountAmount);
-            //        netAmount +=
-            //            (orderSummaryAdj.SubtotalChargeType == ChargeType.Add.ToString() ? 1 : -1) *
-            //            (
-            //                subTotalDiscountType == DiscountType.Percentage.ToString()
-            //                    ? (subTotal * discountAmount) / 100
-            //                    : discountAmount
-            //            );
-            //    }
-
+                decimal discountAmount = orderSummaryAdj.SubtotalDiscount == null ? 0 :
+                    Convert.ToDecimal(orderSummaryAdj.SubtotalDiscount);
+                if (discountAmount != 0)
+                {
+                    subTotalAdjustment = orderSummaryAdj.SubtotalChargeType == ChargeType.Add.ToString() ? "+" : "-" + await _priceFormatter.FormatPriceAsync(
+                        subTotalDiscountType == DiscountType.Percentage.ToString() ?
+                        (subTotal * discountAmount) / 100
+                        : discountAmount);
+                    netAmount +=
+                        (orderSummaryAdj.SubtotalChargeType == ChargeType.Add.ToString() ? 1 : -1) *
+                        (
+                            subTotalDiscountType == DiscountType.Percentage.ToString()
+                                ? (subTotal * discountAmount) / 100
+                                : discountAmount
+                        );
+                }
 
 
 
-            //    #endregion
 
-            //    #region ShippingAdj
+                #endregion
 
-            //    string shippingDiscountType = orderSummaryAdj.ShippingDiscountType == null ? "" :
-            //       (orderSummaryAdj.ShippingDiscountType == DiscountType.Percentage.ToString() ? DiscountType.Percentage.ToString() : DiscountType.Fixed.ToString());
+                #region ShippingAdj
 
-            //    discountAmount = orderSummaryAdj.ShippingDiscount == null ? 0 : Convert.ToDecimal(orderSummaryAdj.ShippingDiscount);
-            //    if (discountAmount != 0)
-            //    {
-            //        shippingAdjustment = (orderSummaryAdj.ShippingChargeType == ChargeType.Add.ToString() ? "+" : "-") + await _priceFormatter.FormatPriceAsync(shippingDiscountType == DiscountType.Percentage.ToString() ?
-            //        ((customOrder.Shipping == null ? 0 : Convert.ToDecimal(customOrder.Shipping)) * discountAmount) / 100
-            //            : discountAmount);
-            //    }
-            //    #endregion
-            //}
+                string shippingDiscountType = orderSummaryAdj.ShippingDiscountType == null ? "" :
+                   (orderSummaryAdj.ShippingDiscountType == DiscountType.Percentage.ToString() ? DiscountType.Percentage.ToString() : DiscountType.Fixed.ToString());
 
-            //tokens.Add(new Token("Order.NetSubTotal", await _priceFormatter.FormatPriceAsync
-            //       (netAmount)));
+                discountAmount = orderSummaryAdj.ShippingDiscount == null ? 0 : Convert.ToDecimal(orderSummaryAdj.ShippingDiscount);
+                if (discountAmount != 0)
+                {
+                    shippingAdjustment = (orderSummaryAdj.ShippingChargeType == ChargeType.Add.ToString() ? "+" : "-") + await _priceFormatter.FormatPriceAsync(shippingDiscountType == DiscountType.Percentage.ToString() ?
+                    ((customOrder.Shipping == null ? 0 : Convert.ToDecimal(customOrder.Shipping)) * discountAmount) / 100
+                        : discountAmount);
+                }
+                #endregion
+            }
 
-            ////discount (applied to order subtotal)
-            //if (subTotalAdjustment != "")
-            //{
-            //    tokens.Add(new Token("Order.HasSubtotalDiscount", true));
-            //    tokens.Add(new Token("Order.SubtotalDiscount", subTotalAdjustment));
-            //}
-            //else
-            //    tokens.Add(new Token("Order.HasSubtotalDiscount", false));
+            tokens.Add(new Token("Order.NetSubTotal", await _priceFormatter.FormatPriceAsync
+                   (netAmount)));
 
-            //if (customOrder.Shipping != null)
-            //{
-            //    tokens.Add(new Token("Order.Shipping.label", await _localizationService.GetResourceAsync("order.shipping.CurbSide")));
-            //    tokens.Add(new Token("Order.HasShipping", true));
-            //    tokens.Add(new Token("Order.Shipping", customOrder.Shipping > 0 ? await _priceFormatter.FormatPriceAsync(Convert.ToDecimal(customOrder.Shipping)) : "Free"));
-            //}
-            //else
-            //    tokens.Add(new Token("Order.HasShipping", false));
+            //discount (applied to order subtotal)
+            if (subTotalAdjustment != "")
+            {
+                tokens.Add(new Token("Order.HasSubtotalDiscount", true));
+                tokens.Add(new Token("Order.SubtotalDiscount", subTotalAdjustment));
+            }
+            else
+                tokens.Add(new Token("Order.HasSubtotalDiscount", false));
 
-            //if (!string.IsNullOrEmpty(shippingAdjustment))
-            //{
-            //    tokens.Add(new Token("Order.HasShippingDiscount", true));
-            //    tokens.Add(new Token("Order.ShippingDiscount", shippingAdjustment));
-            //}
-            //else
-            //    tokens.Add(new Token("Order.HasShippingDiscount", false));
+            if (customOrder.Shipping != null)
+            {
+                tokens.Add(new Token("Order.Shipping.label", await _localizationService.GetResourceAsync("order.shipping.CurbSide")));
+                tokens.Add(new Token("Order.HasShipping", true));
+                tokens.Add(new Token("Order.Shipping", customOrder.Shipping > 0 ? await _priceFormatter.FormatPriceAsync(Convert.ToDecimal(customOrder.Shipping)) : "Free"));
+            }
+            else
+                tokens.Add(new Token("Order.HasShipping", false));
 
-            //if ((customOrder.Wgs != null && customOrder.Wgs > 0) || customOrder.ComplementryWgsFree)
-            //{
-            //    tokens.Add(new Token("Order.HasWgs", true));
-            //    tokens.Add(new Token("Order.Wgs", await _priceFormatter.FormatPriceAsync(Convert.ToDecimal(customOrder.Wgs))));
-            //}
-            //else
-            //    tokens.Add(new Token("Order.HasWgs", false));
+            if (!string.IsNullOrEmpty(shippingAdjustment))
+            {
+                tokens.Add(new Token("Order.HasShippingDiscount", true));
+                tokens.Add(new Token("Order.ShippingDiscount", shippingAdjustment));
+            }
+            else
+                tokens.Add(new Token("Order.HasShippingDiscount", false));
 
-            //if (customOrder.OrderTax != null)
-            //{
-            //    tokens.Add(new Token("Order.HasTax", true));
-            //    tokens.Add(new Token("Order.TaxInfo", await CustomOrderGetTaxDetails(customOrder.TaxInfo, await _priceFormatter.FormatPriceAsync(Convert.ToDecimal(customOrder.OrderTax)), shippingZipPostalCode, languageId), true));
+            if ((customOrder.Wgs != null && customOrder.Wgs > 0) || customOrder.ComplementryWgsFree)
+            {
+                tokens.Add(new Token("Order.HasWgs", true));
+                tokens.Add(new Token("Order.Wgs", await _priceFormatter.FormatPriceAsync(Convert.ToDecimal(customOrder.Wgs))));
+            }
+            else
+                tokens.Add(new Token("Order.HasWgs", false));
 
-            //}
-            //else
-            //    tokens.Add(new Token("Order.HasTax", false));
+            if (customOrder.OrderTax != null)
+            {
+                tokens.Add(new Token("Order.HasTax", true));
+                tokens.Add(new Token("Order.TaxInfo", await CustomOrderGetTaxDetails(customOrder.TaxInfo, await _priceFormatter.FormatPriceAsync(Convert.ToDecimal(customOrder.OrderTax)), shippingZipPostalCode, languageId), true));
 
-            //var orderTypes = await _customOrderService.GetOrderTypes();
-            //string OrderType = (orderTypes.Where(o => o.Id == customOrder.OrderTypeId)).FirstOrDefault()?.Name;
+            }
+            else
+                tokens.Add(new Token("Order.HasTax", false));
 
-            //if (OrderType == OrderTypes.HouzzOrder.ToString() && customOrder.HouzzFee != null && customOrder.HouzzFee > 0)
-            //{
-            //    decimal houzzFee = customOrder.HouzzFeeType == DiscountType.Percentage.ToString() ?
-            //        (orderTotal * Convert.ToDecimal(customOrder.HouzzFee)) / 100 : Convert.ToDecimal(customOrder.HouzzFee);
-            //    orderTotal = orderTotal - houzzFee;
-            //    tokens.Add(new Token("Order.HasHouzzFee", true));
-            //    tokens.Add(new Token("Order.HouzzFee", "-" + await _priceFormatter.FormatPriceAsync(houzzFee)));
-            //}
-            //else
-            //    tokens.Add(new Token("Order.HasHouzzFee", false));
+            var orderTypes = await _customOrderService.GetOrderTypes();
+            string OrderType = (orderTypes.Where(o => o.Id == customOrder.OrderTypeId)).FirstOrDefault()?.Name;
 
-            //if ((OrderType == OrderTypes.AlreadyPaid.ToString() || OrderType == OrderTypes.CustomOrder.ToString())
-            //      && customOrder.AlreadyFee != null && customOrder.AlreadyFee > 0 && !customOrder.FullPaid)
-            //{
+            if (OrderType == OrderTypes.HouzzOrder.ToString() && customOrder.HouzzFee != null && customOrder.HouzzFee > 0)
+            {
+                decimal houzzFee = customOrder.HouzzFeeType == DiscountType.Percentage.ToString() ?
+                    (orderTotal * Convert.ToDecimal(customOrder.HouzzFee)) / 100 : Convert.ToDecimal(customOrder.HouzzFee);
+                orderTotal = orderTotal - houzzFee;
+                tokens.Add(new Token("Order.HasHouzzFee", true));
+                tokens.Add(new Token("Order.HouzzFee", "-" + await _priceFormatter.FormatPriceAsync(houzzFee)));
+            }
+            else
+                tokens.Add(new Token("Order.HasHouzzFee", false));
 
-            //    if (OrderType != OrderTypes.AlreadyPaid.ToString())
-            //        tokens.Add(new Token("Order.OrderType", OrderType));
-            //    else
-            //    {
-            //        string subOrderType = (orderTypes.Where(o => o.Id == customOrder.SubOrderTypeId)).FirstOrDefault()?.Name;
-            //        tokens.Add(new Token("Order.OrderType", subOrderType ?? OrderType));
-            //    }
+            if ((OrderType == OrderTypes.AlreadyPaid.ToString() || OrderType == OrderTypes.CustomOrder.ToString())
+                  && customOrder.AlreadyFee != null && customOrder.AlreadyFee > 0 && !customOrder.FullPaid)
+            {
 
-            //    decimal initialPayment = (orderTotal * Convert.ToDecimal(customOrder.AlreadyFee)) / 100;
-            //    decimal pendingPayment = orderTotal - initialPayment;
-            //    if (OrderType == OrderTypes.CustomOrder.ToString())
-            //    {
-            //        tokens.Add(new Token("Order.HasInitialPayment", true));
-            //        tokens.Add(new Token("Order.InitialPayment", await _priceFormatter.FormatPriceAsync(initialPayment)));
-            //        tokens.Add(new Token("Order.HasPendingPayment", true));
-            //        tokens.Add(new Token("Order.PendingPayment", await _priceFormatter.FormatPriceAsync(pendingPayment)));
-            //        tokens.Add(new Token("Order.HasAlreadyPaid", false));
-            //        tokens.Add(new Token("Order.HasPayableAmount", true));
-            //        decimal payableAmount = 0;
-            //        if (customOrder.LiveOrderNumber == null || customOrder.LiveOrderNumber == 0)
-            //            payableAmount = initialPayment;
-            //        else if (!customOrder.FullPaid)
-            //            payableAmount = pendingPayment;
-            //        else
-            //            payableAmount = 0;
-            //        tokens.Add(new Token("Order.PayableAmount", await _priceFormatter.FormatPriceAsync(Convert.ToDecimal(payableAmount))));
-            //    }
-            //    else
-            //    {
+                if (OrderType != OrderTypes.AlreadyPaid.ToString())
+                    tokens.Add(new Token("Order.OrderType", OrderType));
+                else
+                {
+                    string subOrderType = (orderTypes.Where(o => o.Id == customOrder.SubOrderTypeId)).FirstOrDefault()?.Name;
+                    tokens.Add(new Token("Order.OrderType", subOrderType ?? OrderType));
+                }
 
-            //        tokens.Add(new Token("Order.HasAlreadyPaid", true));
-            //        tokens.Add(new Token("Order.AlreadyPaid", await _priceFormatter.FormatPriceAsync(initialPayment)));
-            //        tokens.Add(new Token("Order.HasPendingPayment", false));
-            //        tokens.Add(new Token("Order.HasInitialPayment", false));
-            //        tokens.Add(new Token("Order.HasPayableAmount", false));
-            //    }
+                decimal initialPayment = (orderTotal * Convert.ToDecimal(customOrder.AlreadyFee)) / 100;
+                decimal pendingPayment = orderTotal - initialPayment;
+                if (OrderType == OrderTypes.CustomOrder.ToString())
+                {
+                    tokens.Add(new Token("Order.HasInitialPayment", true));
+                    tokens.Add(new Token("Order.InitialPayment", await _priceFormatter.FormatPriceAsync(initialPayment)));
+                    tokens.Add(new Token("Order.HasPendingPayment", true));
+                    tokens.Add(new Token("Order.PendingPayment", await _priceFormatter.FormatPriceAsync(pendingPayment)));
+                    tokens.Add(new Token("Order.HasAlreadyPaid", false));
+                    tokens.Add(new Token("Order.HasPayableAmount", true));
+                    decimal payableAmount = 0;
+                    if (customOrder.LiveOrderNumber == null || customOrder.LiveOrderNumber == 0)
+                        payableAmount = initialPayment;
+                    else if (!customOrder.FullPaid)
+                        payableAmount = pendingPayment;
+                    else
+                        payableAmount = 0;
+                    tokens.Add(new Token("Order.PayableAmount", await _priceFormatter.FormatPriceAsync(Convert.ToDecimal(payableAmount))));
+                }
+                else
+                {
 
-            //}
-            //else
-            //{
-            //    if (OrderType != OrderTypes.AlreadyPaid.ToString())
-            //        tokens.Add(new Token("Order.OrderType", OrderType));
-            //    else
-            //    {
-            //        string subOrderType = (orderTypes.Where(o => o.Id == customOrder.SubOrderTypeId)).FirstOrDefault()?.Name;
-            //        tokens.Add(new Token("Order.OrderType", subOrderType ?? OrderType));
-            //    }
-            //    tokens.Add(new Token("Order.HasPendingPayment", false));
-            //    tokens.Add(new Token("Order.HasInitialPayment", false));
-            //    tokens.Add(new Token("Order.HasAlreadyPaid", false));
-            //    tokens.Add(new Token("Order.HasPayableAmount", false));
-            //}
+                    tokens.Add(new Token("Order.HasAlreadyPaid", true));
+                    tokens.Add(new Token("Order.AlreadyPaid", await _priceFormatter.FormatPriceAsync(initialPayment)));
+                    tokens.Add(new Token("Order.HasPendingPayment", false));
+                    tokens.Add(new Token("Order.HasInitialPayment", false));
+                    tokens.Add(new Token("Order.HasPayableAmount", false));
+                }
 
-            //tokens.Add(new Token("Order.Total", await _priceFormatter.FormatPriceAsync(orderTotal)));
+            }
+            else
+            {
+                if (OrderType != OrderTypes.AlreadyPaid.ToString())
+                    tokens.Add(new Token("Order.OrderType", OrderType));
+                else
+                {
+                    string subOrderType = (orderTypes.Where(o => o.Id == customOrder.SubOrderTypeId)).FirstOrDefault()?.Name;
+                    tokens.Add(new Token("Order.OrderType", subOrderType ?? OrderType));
+                }
+                tokens.Add(new Token("Order.HasPendingPayment", false));
+                tokens.Add(new Token("Order.HasInitialPayment", false));
+                tokens.Add(new Token("Order.HasAlreadyPaid", false));
+                tokens.Add(new Token("Order.HasPayableAmount", false));
+            }
+            if (OrderType == OrderTypes.AlreadyPaid.ToString() && customOrder.SubOrderTypeId > 0)
+            {
+                string subOrderType = Regex.Replace((orderTypes.Where(o => o.Id == customOrder.SubOrderTypeId)).FirstOrDefault()?.Name ?? string.Empty, @"\s+", string.Empty); ;
+                if (subOrderType == SubOrderTypes.ReplacementOrder.ToString())
+                {
+                    tokens.Add(new Token("Order.Has.PurchaseOrderNumber", !string.IsNullOrEmpty(customOrder.PurchaseOrderNumber)));
+                    tokens.Add(new Token("Order.PurchaseOrderNumber", customOrder.PurchaseOrderNumber));
+                }
+
+            }
+
+            tokens.Add(new Token("Order.Total", await _priceFormatter.FormatPriceAsync(orderTotal)));
 
 
         }
@@ -2139,7 +2170,6 @@ namespace MWT.Nop.Core.Services.Message
         }
         public async Task<string> CustomLatestCartItemHtml(Product product, string cartLink, string utmSource)
         {
-
             var picture = (await _pictureService.CustomGetPicturesOfProducAsync(product.Id, 1)).FirstOrDefault();
             string fullSizeImageUrl, imageUrl;
             (imageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, _mediaSettings.CategoryThumbPictureSize);
@@ -2152,8 +2182,7 @@ namespace MWT.Nop.Core.Services.Message
         public async Task<string> CustomAddRelatedProductHtml(List<Product> relatedProducts, string utmSource)
         {
             string html = "";
-
-
+            
             foreach (var product in relatedProducts)
             {
                 var prdurl = await RouteUrlAsync(_storeContext.GetCurrentStore().Id, "product", new
@@ -2172,4 +2201,5 @@ namespace MWT.Nop.Core.Services.Message
 
         #endregion
     }
+   
 }

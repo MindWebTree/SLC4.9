@@ -1,15 +1,9 @@
-﻿using System.Threading.Tasks;
-using MWT.Nop.Core.Domain.QA;
+﻿using MWT.Nop.Core.Domain.QA;
 using MWT.Nop.Core.Service.Catalog;
-using Nop.Core.Domain.Catalog; 
 using Nop.Services.Caching;
-using Nop.Services.Catalog;
 
-namespace MWT.Nop.Core.Services.Seo.Caching
+namespace MWT.Nop.Core.Services.QA.Caching
 {
-    /// <summary>
-    /// Represents a related product cache event consumer
-    /// </summary>
     public partial class RelatedQuestionAnswerCacheEventConsumer : CacheEventConsumer<RelatedQuestionAnswer>
     {
         /// <summary>

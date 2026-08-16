@@ -1,4 +1,5 @@
 ﻿using MWT.Nop.Core.Service.Catalog;
+using MWT.Nop.Core.Services.Configuration;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Orders;
 using Nop.Data;

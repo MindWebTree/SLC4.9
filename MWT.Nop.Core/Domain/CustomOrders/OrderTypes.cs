@@ -17,4 +17,21 @@ namespace MWT.Nop.Core.Domain.CustomOrders
         [Display(Name = "Houzz Order")]
         HouzzOrder
     }
+    public enum SubOrderTypes
+    {
+        [Display(Name = "Replacement Order")]
+        ReplacementOrder,
+        [Display(Name = "Stain Samples for Sales Team")]
+        StainSampleForTeam,
+        [Display(Name = "Hardware")]
+        Hardware,
+        [Display(Name = "Leather Sample")]
+        LeatherSample,
+        [Display(Name = "Stain Sample")]
+        StainSample,
+        [Display(Name = "Gift For Feedback")]
+        GiftForFeedback,
+        [Display(Name = "Test Order")]
+        TestOrder
+    }
 }

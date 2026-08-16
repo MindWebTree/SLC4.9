@@ -1,5 +1,6 @@
 ﻿
 
+using Microsoft.AspNetCore.Http;
 using MWT.Nop.Core.Domain.CustomOrders;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Customers;
@@ -7,6 +8,7 @@ using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Stores;
 using Nop.Core.Domain.Vendors;
 using Nop.Services.Messages;
+using Nop.Services.Payments;
 namespace MWT.Nop.Core.Services.Message
 {
     public partial interface ICustomWorkflowMessageService: IWorkflowMessageService
@@ -54,7 +56,7 @@ namespace MWT.Nop.Core.Services.Message
 
         #region Order Decline
 
-        Task<List<int>> SendOrderDeclineMessage(Customer customer,int languageId,string errorMessage,int orderId);
+        Task<List<int>> SendOrderDeclineMessage(ProcessPaymentRequest paymentRequest, IFormCollection form, Customer customer, int languageId, string errorMessage, int orderId);
 
         #endregion
 

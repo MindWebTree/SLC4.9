@@ -15,11 +15,11 @@ namespace MWT.Nop.Core.Services.Catalog
     public partial class CustomBackInStockSubscriptionService : BackInStockSubscriptionService, ICustomBackInStockSubscriptionService
     {
         #region Fields
-        private readonly ICustomWorkflowMessageService _customWorkflowMessageService;
+        private readonly Message.ICustomWorkflowMessageService _customWorkflowMessageService;
 
         #endregion
-        public CustomBackInStockSubscriptionService(IRepository<BackInStockSubscription> backInStockSubscriptionRepository, IRepository<Customer> customerRepository, IRepository<Product> productRepository, IWorkflowMessageService workflowMessageService,
-            ICustomWorkflowMessageService customWorkflowMessageService) : base(backInStockSubscriptionRepository, customerRepository, productRepository, workflowMessageService)
+        public CustomBackInStockSubscriptionService(IRepository<BackInStockSubscription> backInStockSubscriptionRepository, IRepository<Customer> customerRepository, IRepository<Product> productRepository, ICustomWorkflowMessageService workflowMessageService,
+            Message.ICustomWorkflowMessageService customWorkflowMessageService) : base(backInStockSubscriptionRepository, customerRepository, productRepository, workflowMessageService)
         {
             _customWorkflowMessageService = customWorkflowMessageService;
         }

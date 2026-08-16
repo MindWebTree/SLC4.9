@@ -2,7 +2,7 @@
 using MWT.Nop.Core.Domain.Catalog;
 using MWT.Nop.Core.Domain.KW;
 using MWT.Nop.Core.Domain.Media;
-using MWT.Nop.Core.Domain.PhoneOrder;
+using MWT.Nop.Core.Domain.CustomOrders;
 using MWT.Nop.Core.Domain.QA;
 using MWT.Nop.Core.Domain.Security;
 using Nop.Data.Mapping;

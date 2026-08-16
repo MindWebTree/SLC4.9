@@ -31,6 +31,7 @@ namespace Nop.Web.Factories;
 /// </summary>
 public partial class SitemapModelFactory : ISitemapModelFactory
 {
+
     #region Fields
 
     protected readonly BlogSettings _blogSettings;

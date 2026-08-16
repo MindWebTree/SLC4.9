@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MWT.Nop.Core.Service.Discount;
+using MWT.Nop.Core.Service.Discounts;
 using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.Customization;
 using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Utilities;
 using Nop.Core;

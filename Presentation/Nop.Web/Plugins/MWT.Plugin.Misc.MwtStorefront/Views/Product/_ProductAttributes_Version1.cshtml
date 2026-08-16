@@ -241,7 +241,7 @@
 
                                 {
 
-                                    <fieldset aria-label="@($"Available {textPrompt}")" aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                    <fieldset aria-label="@($"Available {textPrompt}")"  style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                         <legend style="display:none;">
                                             @textPrompt
                                         </legend>
@@ -339,7 +339,7 @@
 
                                 {
 
-                                    <fieldset aria-label="@($"Available {textPrompt}")" aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                    <fieldset aria-label="@($"Available {textPrompt}")"   style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                         <legend style="display:none;">
                                             @textPrompt
                                         </legend>
@@ -413,7 +413,7 @@
 
 
                                 {
-                                    <fieldset aria-label="@($"Available {textPrompt}")" aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                    <fieldset aria-label="@($"Available {textPrompt}")"   style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                         <legend style="display:none;">
                                             @textPrompt
                                         </legend>
@@ -715,7 +715,7 @@
 
                                     {
 
-                                        <fieldset aria-label="@($"Available {textPrompt}")" aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                        <fieldset aria-label="@($"Available {textPrompt}")"   style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                             <legend style="display:none;">
                                                 @textPrompt
                                             </legend>
@@ -773,7 +773,7 @@
 
 
                                     {
-                                        <fieldset aria-label="@($"Available {textPrompt}")" aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                        <fieldset aria-label="@($"Available {textPrompt}")"  style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                             <legend style="display:none;">
                                                 @textPrompt
                                             </legend>
@@ -1723,6 +1723,12 @@
 
                                       $('@addtoCartFormId .price-value-sticky-@Model.Id').html(content);
                                       $('@addtoCartFormId .price-value-sticky-@Model.Id').show();
+
+                                         if (typeof updatePriceAriaLabel === "function") {
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-@Model.Id', data.price, data.oldPrice);
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-withoutoffer-@Model.Id', data.price, data.oldPrice);
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-sticky-@Model.Id', data.price, data.oldPrice);
+                                      }
                                   }
                                   else {
                                       $('@addtoCartFormId .price-value-@Model.Id').text(data.oldPrice ? data.oldPrice : data.price);
@@ -1733,6 +1739,12 @@
                                       $('@addtoCartFormId .price-value-@Model.Id').show();
                                       $('@addtoCartFormId .limited-offer-@Model.Id').show();
                                       $('@addtoCartFormId .limited-offer-@Model.Id').html(data.offerText);
+
+                                        if (typeof updatePriceAriaLabel === "function") {
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-withoutoffer-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-sticky-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
+                                      }
                                   }
 
 

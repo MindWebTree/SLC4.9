@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
+using MWT.Nop.Core.Services.Message;
 using Nop.Core;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Localization;
@@ -23,7 +24,7 @@ namespace MWT.Nop.Core.Services.Authentication
     public partial class ExternalAuthenticationExtendedService : ExternalAuthenticationService, IExternalAuthenticationExtendedService
     {
        
-        public ExternalAuthenticationExtendedService(CustomerSettings customerSettings, ExternalAuthenticationSettings externalAuthenticationSettings, IActionContextAccessor actionContextAccessor, IAuthenticationPluginManager authenticationPluginManager, ICustomerRegistrationService customerRegistrationService, ICustomerService customerService, IEventPublisher eventPublisher, IGenericAttributeService genericAttributeService, IHttpContextAccessor httpContextAccessor, ILocalizationService localizationService, IRepository<ExternalAuthenticationRecord> externalAuthenticationRecordRepository, IStoreContext storeContext, IUrlHelperFactory urlHelperFactory, IWorkContext workContext, IWorkflowMessageService workflowMessageService, LocalizationSettings localizationSettings) : base(customerSettings, externalAuthenticationSettings, actionContextAccessor, authenticationPluginManager, customerRegistrationService, customerService, eventPublisher, genericAttributeService, httpContextAccessor, localizationService, externalAuthenticationRecordRepository, storeContext, urlHelperFactory, workContext, workflowMessageService, localizationSettings)
+        public ExternalAuthenticationExtendedService(CustomerSettings customerSettings, ExternalAuthenticationSettings externalAuthenticationSettings, IActionContextAccessor actionContextAccessor, IAuthenticationPluginManager authenticationPluginManager, ICustomerRegistrationService customerRegistrationService, ICustomerService customerService, IEventPublisher eventPublisher, IGenericAttributeService genericAttributeService, IHttpContextAccessor httpContextAccessor, ILocalizationService localizationService, IRepository<ExternalAuthenticationRecord> externalAuthenticationRecordRepository, IStoreContext storeContext, IUrlHelperFactory urlHelperFactory, IWorkContext workContext, ICustomWorkflowMessageService workflowMessageService, LocalizationSettings localizationSettings) : base(customerSettings, externalAuthenticationSettings, actionContextAccessor, authenticationPluginManager, customerRegistrationService, customerService, eventPublisher, genericAttributeService, httpContextAccessor, localizationService, externalAuthenticationRecordRepository, storeContext, urlHelperFactory, workContext, workflowMessageService, localizationSettings)
         {
         }
 

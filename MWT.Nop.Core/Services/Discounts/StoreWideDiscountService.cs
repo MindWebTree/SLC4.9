@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks; 
 
-namespace MWT.Nop.Core.Service.Discount
+namespace MWT.Nop.Core.Service.Discounts
 {
     public partial class StoreWideDiscountService : IStoreWideDiscountService
     {

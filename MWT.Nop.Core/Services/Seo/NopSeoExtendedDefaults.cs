@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MWT.Nop.Core.Services.Seo
 { 
-    public static class CustomNopSeoDefaults
+    public static class NopSeoExtendedDefaults
     {
         public static CacheKey UrlRecordByTermSlugCacheKey => new CacheKey("Nop.urlrecord.Term.byslug.{0}");
 

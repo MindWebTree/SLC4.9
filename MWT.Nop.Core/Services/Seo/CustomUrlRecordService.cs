@@ -27,7 +27,7 @@ namespace MWT.Nop.Core.Services.Seo
             if (string.IsNullOrEmpty(slug))
                 return null;
 
-            var key = _staticCacheManager.PrepareKeyForDefaultCache(CustomNopSeoDefaults.UrlRecordByTermSlugCacheKey, slug);
+            var key = _staticCacheManager.PrepareKeyForDefaultCache(NopSeoExtendedDefaults.UrlRecordByTermSlugCacheKey, slug);
 
             if (_localizationSettings.LoadAllUrlRecordsOnStartup)
             {
@@ -65,7 +65,7 @@ namespace MWT.Nop.Core.Services.Seo
             if (string.IsNullOrEmpty(slug))
                 return null;
 
-            var key = _staticCacheManager.PrepareKeyForDefaultCache(CustomNopSeoDefaults.UrlRecordByQuestionAnswerSlugCacheKey, slug);
+            var key = _staticCacheManager.PrepareKeyForDefaultCache(NopSeoExtendedDefaults.UrlRecordByQuestionAnswerSlugCacheKey, slug);
 
             if (_localizationSettings.LoadAllUrlRecordsOnStartup)
             {
@@ -103,7 +103,7 @@ namespace MWT.Nop.Core.Services.Seo
             if (string.IsNullOrEmpty(slug))
                 return null;
 
-            var key = _staticCacheManager.PrepareKeyForDefaultCache(CustomNopSeoDefaults.UrlRecordByLandingPageSlugCacheKey, slug);
+            var key = _staticCacheManager.PrepareKeyForDefaultCache(NopSeoExtendedDefaults.UrlRecordByLandingPageSlugCacheKey, slug);
 
             if (_localizationSettings.LoadAllUrlRecordsOnStartup)
             {

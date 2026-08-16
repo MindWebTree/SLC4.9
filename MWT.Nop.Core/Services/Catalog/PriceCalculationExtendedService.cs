@@ -1,4 +1,5 @@
 ﻿using MWT.Nop.Core.Service.Catalog;
+using MWT.Nop.Core.Services.Discounts;
 using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Domain.Catalog;

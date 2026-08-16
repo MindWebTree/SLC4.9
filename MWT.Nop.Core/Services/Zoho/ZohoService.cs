@@ -55,7 +55,7 @@ namespace MWT.Nop.Core.Service.Zoho
              IRepository<QueuedZohoCustomer> queuedZohoCustomerRepository, ICustomerExtendedService customerService,
              IAddressService addressService, ICountryService countryService,
         IStateProvinceService stateProvinceService, IGenericAttributeService genericAttributeService,
-        IStoreContext storeContext, ICustomOrderService customOrderService
+        IStoreContext storeContext, ICustomOrderService customOrderService,
          IOrderService orderService, IHttpContextAccessor httpContextAccessor)
         {
             _settingService = settingService;

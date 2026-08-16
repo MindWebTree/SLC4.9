@@ -112,7 +112,7 @@
                         {
                             case AttributeControlType.DropdownList:
                                 {
-                                    <fieldset aria-label="@($"Available {textPrompt}")" aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                    <fieldset aria-label="@($"Available {textPrompt}")"  style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                         <legend style="display:none;">
                                             @textPrompt
                                         </legend>
@@ -176,7 +176,7 @@
                                 break;
                             case AttributeControlType.RadioList:
                                 {
-                                    <fieldset aria-label="@($"Available {textPrompt}")" aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                    <fieldset aria-label="@($"Available {textPrompt}")"  style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                         <legend style="display:none;">
                                             @textPrompt
                                         </legend>
@@ -219,7 +219,7 @@
                             case AttributeControlType.Checkboxes:
                             case AttributeControlType.ReadonlyCheckboxes:
                                 {
-                                    <fieldset aria-label="@($"Available {textPrompt}")" aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                    <fieldset aria-label="@($"Available {textPrompt}")"   style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                         <legend style="display:none;">
                                             @textPrompt
                                         </legend>
@@ -390,7 +390,7 @@
                                 {
                                     @if (T("Product.Attr.shades").Text != @textPrompt)
                                     {
-                                        <fieldset aria-label="@($"Available {textPrompt}")" aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                        <fieldset aria-label="@($"Available {textPrompt}")"   style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                             <legend style="display:none;">
                                                 @textPrompt
                                             </legend>
@@ -432,7 +432,7 @@
                                     }
                                     else
                                     {
-                                        <fieldset aria-label="@($"Available {textPrompt}")" aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                        <fieldset aria-label="@($"Available {textPrompt}")"   style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                             <legend style="display:none;">
                                                 @textPrompt
                                             </legend>
@@ -445,7 +445,7 @@
                                                         T("Products.ProductAttributes.PriceAdjustment", attributeValue.Name, attributeValue.PriceAdjustment, string.Empty).Text;
                                                         if (T("Product.Attr.shades").Text == @textPrompt)
                                                         {
-                                                            <li data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected && !attributeValue.Hide ? @Html.Raw(" class=\"selected-value\"") : null) lass="@(attributeValue.Hide ? "unavailable-swatch" : "")">
+                                                            <li data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected && !attributeValue.Hide ? @Html.Raw(" class=\"selected-value\"") : null) class="@(attributeValue.Hide ? "unavailable-swatch" : "")">
                                                                 <label for="@(controlId)_@(attributeValue.Id)" attr-is-show="@(attributeValue.IsPreSelected ? "true" : "false")" class="custom-shade-control @(attribute.EnableHoverImpact ? "attributevalue-section" : "")" data-attr-name="@CustomCommonHelper.StripUnwantedPrefixFromShade(attributeValue.Name)" data-attr-img="/images/shades/large/@(attributeValue.Name).jpg">
                                                                     <img width="200" height="200" class="lazy" src="/images/pixel.png" data-src="/images/shades/large/@(attributeValue.Name).jpg" alt="@attributeValue.Name">
                                                                     <input id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)"
@@ -530,7 +530,7 @@
                             case AttributeControlType.ImageSquares:
                                 {
                                     int index = 0;
-                                    <fieldset aria-label="@($"Available {textPrompt}")" aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                    <fieldset aria-label="@($"Available {textPrompt}")"  style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                         <legend style="display:none;">
                                             @textPrompt
                                         </legend>
@@ -586,7 +586,7 @@
                                                     }
                                                 }
                                             </ul>
-                                            <a href="#" class="jcarousel-control-prev" data-jcarouselcontrol="true">
+                                            <a href="#" aria-label="Previous Slide" class="jcarousel-control-prev" data-jcarouselcontrol="true">
                                                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <g transform="rotate(180 6 6)">
                                                         <path d="M4.57373 9.65452L7.58296 6.64529C7.93835 6.2899 7.93835 5.70837 7.58296 5.35298L4.57373 2.34375"
@@ -598,7 +598,7 @@
                                                     </g>
                                                 </svg>
                                             </a>
-                                            <a href="#" class="jcarousel-control-next" data-jcarouselcontrol="true">
+                                            <a href="#" aria-label="Next Slide" class="jcarousel-control-next" data-jcarouselcontrol="true">
                                                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M4.57373 9.65452L7.58296 6.64529C7.93835 6.2899 7.93835 5.70837 7.58296 5.35298L4.57373 2.34375" stroke="white" stroke-width="0.692308" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                                                 </svg>
@@ -1119,6 +1119,12 @@
 
                                         $('@addtoCartFormId .price-value-sticky-@Model.Id').html(content);
                                         $('@addtoCartFormId .price-value-sticky-@Model.Id').show();
+
+                                         if (typeof updatePriceAriaLabel === "function") {
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-@Model.Id', data.price, data.oldPrice);
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-withoutoffer-@Model.Id', data.price, data.oldPrice);
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-sticky-@Model.Id', data.price, data.oldPrice);
+                                      }
                                     }
                                     else {
                                         $('@addtoCartFormId .price-value-@Model.Id').text(data.oldPrice ? data.oldPrice : data.price);
@@ -1129,6 +1135,12 @@
                                         $('@addtoCartFormId .price-value-@Model.Id').show();
                                         $('@addtoCartFormId .limited-offer-@Model.Id').show();
                                         $('@addtoCartFormId .limited-offer-@Model.Id').html(data.offerText);
+
+                                           if (typeof updatePriceAriaLabel === "function") {
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-withoutoffer-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-sticky-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
+                                      }
                                     }
 
 

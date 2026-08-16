@@ -34,6 +34,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OrderStatus = Nop.Core.Domain.Orders.OrderStatus;
 
 namespace MWT.Nop.Core.Services.Orders
 {
@@ -42,7 +43,7 @@ namespace MWT.Nop.Core.Services.Orders
 
         #region Fields
 
-        private readonly ICustomWorkflowMessageService _customWorkflowMessageService;
+        private readonly Message.ICustomWorkflowMessageService _customWorkflowMessageService;
         private readonly ICustomOrderService _customOrderService;
         private readonly IShoppingCartExtendedCartService _shoppingCartExtendedCartService;
 
@@ -58,9 +59,9 @@ namespace MWT.Nop.Core.Services.Orders
             IProductAttributeParser productAttributeParser, IProductService productService, IReturnRequestService returnRequestService, IRewardPointService rewardPointService, IShipmentService shipmentService,
             IShippingService shippingService, IShoppingCartService shoppingCartService, IStateProvinceService stateProvinceService, IStaticCacheManager staticCacheManager, IStoreContext storeContext,
             IStoreMappingService storeMappingService, IStoreService storeService, ITaxService taxService, IVendorService vendorService, IWebHelper webHelper, IWorkContext workContext,
-            IWorkflowMessageService workflowMessageService, LocalizationSettings localizationSettings, OrderSettings orderSettings, PaymentSettings paymentSettings,
+          ICustomWorkflowMessageService workflowMessageService, LocalizationSettings localizationSettings, OrderSettings orderSettings, PaymentSettings paymentSettings,
             RewardPointsSettings rewardPointsSettings, ShippingSettings shippingSettings, TaxSettings taxSettings,
-            ICustomWorkflowMessageService customWorkflowMessageService, ICustomOrderService customOrderService, IShoppingCartExtendedCartService shoppingCartExtendedCartService) :
+            Message.ICustomWorkflowMessageService customWorkflowMessageService, ICustomOrderService customOrderService, IShoppingCartExtendedCartService shoppingCartExtendedCartService) :
             base(currencySettings, addressService, affiliateService, checkoutAttributeFormatter, countryService, currencyService, customerActivityService, customerService, customNumberFormatter,
                 discountService, encryptionService, eventPublisher, genericAttributeService, giftCardService, languageService, localizationService, logger, orderService, orderTotalCalculationService,
                 paymentPluginManager, paymentService, pdfService, priceCalculationService, priceFormatter, productAttributeFormatter, productAttributeParser, productService, returnRequestService,
@@ -203,7 +204,7 @@ namespace MWT.Nop.Core.Services.Orders
                         }
                         else
                         {
-                            Core.Domain.Orders.Order order = await _orderService.GetOrderByIdAsync(refOrderno);
+                            Order order = await _orderService.GetOrderByIdAsync(refOrderno);
                             result.PlacedOrder = order;
                             await CustomOrderSendNotificationsAndSaveNotesAsync(order, customOrder);
                         }
@@ -329,7 +330,7 @@ namespace MWT.Nop.Core.Services.Orders
             return details;
         }
 
-        protected virtual async Task<Nop.Core.Domain.Orders.Order> SaveCustomOrderDetailsAsync(ProcessPaymentRequest processPaymentRequest,
+        protected virtual async Task<Order> SaveCustomOrderDetailsAsync(ProcessPaymentRequest processPaymentRequest,
       ProcessPaymentResult processPaymentResult, PlaceOrderContainer details)
         {
             decimal total = details.OrderTotal;
@@ -394,7 +395,7 @@ namespace MWT.Nop.Core.Services.Orders
 
             }
 
-            var order = new Nop.Core.Domain.Orders.Order
+            var order = new Order
             {
                 StoreId = processPaymentRequest.StoreId,
                 OrderGuid = processPaymentRequest.OrderGuid,
@@ -420,7 +421,7 @@ namespace MWT.Nop.Core.Services.Orders
                 CustomerCurrencyCode = details.CustomerCurrencyCode,
                 CurrencyRate = details.CustomerCurrencyRate,
                 AffiliateId = details.AffiliateId,
-                OrderStatus = Nop.Core.Domain.Orders.OrderStatus.Pending,
+                OrderStatus =OrderStatus.Pending,
                 AllowStoringCreditCardNumber = processPaymentResult.AllowStoringCreditCardNumber,
                 CardType = processPaymentResult.AllowStoringCreditCardNumber ? _encryptionService.EncryptText(processPaymentRequest.CreditCardType) : string.Empty,
                 CardName = processPaymentResult.AllowStoringCreditCardNumber ? _encryptionService.EncryptText(processPaymentRequest.CreditCardName) : string.Empty,
@@ -491,7 +492,7 @@ namespace MWT.Nop.Core.Services.Orders
 
             return order;
         }
-        protected virtual async Task CustomOrderMoveShoppingCartItemsToOrderItemsAsync(PlaceOrderContainer details, Nop.Core.Domain.Orders.Order order
+        protected virtual async Task CustomOrderMoveShoppingCartItemsToOrderItemsAsync(PlaceOrderContainer details, Order order
            , CustomOrder customOrder)
         {
 
@@ -615,7 +616,7 @@ namespace MWT.Nop.Core.Services.Orders
                 _item.CustomAttributesDescription : _item.AttributesDescription, price, null, null, _item.Quantity, false);
             }
         }
-        protected virtual async Task CustomOrderSendNotificationsAndSaveNotesAsync(Nop.Core.Domain.Orders.Order order, CustomOrder customOrder)
+        protected virtual async Task CustomOrderSendNotificationsAndSaveNotesAsync(Order order, CustomOrder customOrder)
         {
             //notes, messages
             await AddOrderNoteAsync(order, _workContext.OriginalCustomerIfImpersonated != null

@@ -1,12 +1,8 @@
-﻿using MWT.Nop.Core.Domain.StoreWideDiscount;
-using Nop.Core; 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using MWT.Nop.Core.Domain.StoreWideDiscount;
+using Nop.Core;
 
-namespace MWT.Nop.Core.Service.Discount
+namespace MWT.Nop.Core.Service.Discounts
 {
     public partial interface IStoreWideDiscountService
     {

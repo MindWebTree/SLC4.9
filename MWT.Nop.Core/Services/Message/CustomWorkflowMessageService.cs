@@ -1,8 +1,10 @@
-﻿using MWT.Nop.Core.Domain.CustomOrders;
+﻿using Microsoft.AspNetCore.Http;
+using MWT.Nop.Core.Domain.CustomOrders;
 using MWT.Nop.Core.Domain.Messages;
 using MWT.Nop.Core.Services.Customers;
 using MWT.Nop.Core.Services.MailChimp;
 using MWT.Nop.Core.Services.Mandrill;
+using MWT.Nop.Core.Services.Orders;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Common;
@@ -19,16 +21,21 @@ using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Configuration;
 using Nop.Services.Customers;
+using Nop.Services.Customizations.CustomOrders;
+using Nop.Services.Customizations.IpAddress;
+using Nop.Services.Events;
 using Nop.Services.Localization;
 using Nop.Services.Logging;
 using Nop.Services.Messages;
 using Nop.Services.Orders;
+using Nop.Services.Payments;
 using Nop.Services.Stores;
 using System.Data;
 using System.Net;
 
 namespace MWT.Nop.Core.Services.Message
 {
+
     public partial class CustomWorkflowMessageService : WorkflowMessageService, ICustomWorkflowMessageService
     {
         #region Fields
@@ -39,7 +46,8 @@ namespace MWT.Nop.Core.Services.Message
         private readonly IMailchimpService _mailchimpService;
         private readonly IMandrillService _mandrillService;
         private readonly ISettingService _settingService;
-
+        private readonly IShoppingCartService _shoppingCartService;
+        private readonly ICustomOrderService _customOrderService;
         #endregion
 
         public CustomWorkflowMessageService(CommonSettings commonSettings, EmailAccountSettings emailAccountSettings,
@@ -50,7 +58,8 @@ namespace MWT.Nop.Core.Services.Message
             IQueuedEmailService queuedEmailService, IStoreContext storeContext, IStoreService storeService, ITokenizer tokenizer,
             MessagesSettings messagesSettings, ICustomMessageTokenProvider customMessageTokenProvider,
             ICustomerExtendedService customCustomerService, ILogger logger,
-            IMailchimpService mailchimpService, IMandrillService mandrillService, ISettingService settingService) : base(commonSettings, emailAccountSettings, addressService, affiliateService, customerService, emailAccountService, eventPublisher, languageService, localizationService, messageTemplateService, messageTokenProvider, orderService, productService, queuedEmailService, storeContext, storeService, tokenizer, messagesSettings)
+            IMailchimpService mailchimpService, IMandrillService mandrillService, ISettingService settingService, IShoppingCartService shoppingCartService,
+            ICustomOrderService customOrderService) : base(commonSettings, emailAccountSettings, addressService, affiliateService, customerService, emailAccountService, eventPublisher, languageService, localizationService, messageTemplateService, messageTokenProvider, orderService, productService, queuedEmailService, storeContext, storeService, tokenizer, messagesSettings)
         {
             _customMessageTokenProvider = customMessageTokenProvider;
             _customCustomerService = customCustomerService;
@@ -58,6 +67,8 @@ namespace MWT.Nop.Core.Services.Message
             _mailchimpService = mailchimpService;
             _mandrillService = mandrillService;
             _settingService = settingService;
+            _shoppingCartService = shoppingCartService;
+            _customOrderService = customOrderService;
         }
 
         #region Methods
@@ -85,7 +96,7 @@ namespace MWT.Nop.Core.Services.Message
             var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplates.FirstOrDefault(), languageId);
 
             var tokens = new List<Token>(commonTokens);
-            await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
+            await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount,languageId);
             await _customMessageTokenProvider.AddStoreLogoToken(tokens);
 
             //event notification
@@ -100,16 +111,15 @@ namespace MWT.Nop.Core.Services.Message
 
         #region Order Decline
 
-        public async Task<List<int>> SendOrderDeclineMessage(Customer customer, int languageId, string errorMessage, int orderId = 0)
+        public async Task<List<int>> SendOrderDeclineMessage(ProcessPaymentRequest paymentRequest, IFormCollection form, Customer customer, int languageId, string errorMessage, int orderId = 0)
         {
 
-            // var _declinedOrderLogService = EngineContext.Current.Resolve<IDeclinedOrderLogService>();
-            //   await _declinedOrderLogService.Insert(errorMessage);
+            var _declinedOrderLogService = EngineContext.Current.Resolve<IDeclinedOrderLogService>();
+            await _declinedOrderLogService.Insert(errorMessage);
 
             await this.SendCustomerOrderDeclineMessage(customer, languageId, orderId);
             var store = _storeContext.GetCurrentStore();
             var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateExtendedSystemNames.CustomOrderDeclineNotification, store.Id);
-            var _shoppingCartService = EngineContext.Current.Resolve<IShoppingCartService>();
             var cart = await _shoppingCartService.GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart,
                           store.Id);
 
@@ -118,7 +128,7 @@ namespace MWT.Nop.Core.Services.Message
                 return new List<int>();
 
             var commonTokens = new List<Token>();
-            await _customMessageTokenProvider.CustomAddOrderDeclineTokensAsync(commonTokens, customer, cart, errorMessage, orderId, languageId);
+            await _customMessageTokenProvider.CustomAddOrderDeclineTokensAsync(commonTokens, paymentRequest, form, customer, cart, errorMessage, orderId, languageId);
 
 
             return await messageTemplates.SelectAwait(async messageTemplate =>
@@ -127,7 +137,7 @@ namespace MWT.Nop.Core.Services.Message
                 var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
 
                 var tokens = new List<Token>(commonTokens);
-                await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
+                await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
 
                 await _customMessageTokenProvider.AddStoreLogoToken(tokens);
 
@@ -145,9 +155,9 @@ namespace MWT.Nop.Core.Services.Message
         public async Task<List<int>> SendCustomerOrderDeclineMessage(Customer customer, int languageId, int orderId)
         {
 
+
             var store = _storeContext.GetCurrentStore();
             var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateExtendedSystemNames.CustomCustomerOrderDeclineNotification, store.Id);
-            var _shoppingCartService = EngineContext.Current.Resolve<IShoppingCartService>();
             var cart = await _shoppingCartService.GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart,
                           store.Id);
             if (!messageTemplates.Any() || customer == null || (cart.Count == 0 && orderId == 0))
@@ -176,7 +186,7 @@ namespace MWT.Nop.Core.Services.Message
                 var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
 
                 var tokens = new List<Token>(commonTokens);
-                await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
+                await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount,languageId);
 
                 await _customMessageTokenProvider.AddStoreLogoToken(tokens);
 
@@ -213,7 +223,7 @@ namespace MWT.Nop.Core.Services.Message
                 var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
 
                 var tokens = new List<Token>(commonTokens);
-                await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
+                await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
 
                 await _customMessageTokenProvider.AddStoreLogoToken(tokens);
 
@@ -255,7 +265,7 @@ namespace MWT.Nop.Core.Services.Message
                     messageTemplate.BccEmailAddresses = null;
                 }
                 var tokens = new List<Token>(commonTokens);
-                await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
+                await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount,languageId);
                 await _customMessageTokenProvider.AddStoreLogoToken(tokens);
 
                 //event notification
@@ -324,7 +334,7 @@ namespace MWT.Nop.Core.Services.Message
                 var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
 
                 var tokens = new List<Token>(commonTokens);
-                await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
+                await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
                 await _customMessageTokenProvider.AddStoreLogoToken(tokens);
 
                 //event notification
@@ -365,7 +375,7 @@ namespace MWT.Nop.Core.Services.Message
                 var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
 
                 var tokens = new List<Token>(commonTokens);
-                await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
+                await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
                 await _customMessageTokenProvider.AddStoreLogoToken(tokens);
 
                 //event notification
@@ -404,7 +414,7 @@ namespace MWT.Nop.Core.Services.Message
                 var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
 
                 var tokens = new List<Token>(commonTokens);
-                await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
+                await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
                 await _customMessageTokenProvider.AddStoreLogoToken(tokens);
 
                 string fromEmail;
@@ -424,14 +434,15 @@ namespace MWT.Nop.Core.Services.Message
 
                 //event notification
                 await _eventPublisher.MessageTokensAddedAsync(messageTemplate, tokens);
-
+                var _settingService = EngineContext.Current.Resolve<ISettingService>();
+                string replyToEmail = await _settingService.GetSettingByKeyAsync<string>("store.email");
                 var toEmail = emailAccount.Email;
                 var toName = emailAccount.DisplayName;
 
                 return await SendNotificationAsync(messageTemplate, emailAccount, languageId, tokens, senderEmail, senderName,
                     fromEmail: fromEmail,
                     fromName: fromName,
-                    subject: subject);
+                    subject: subject, replyToEmailAddress: replyToEmail);
             }).ToListAsync();
         }
 
@@ -480,6 +491,8 @@ namespace MWT.Nop.Core.Services.Message
                 toEmail = customerEmailAddress;
                 toName = customerName;
                 messageTemplate.BccEmailAddresses = "";
+                var _settingService = EngineContext.Current.Resolve<ISettingService>();
+                senderName = await _settingService.GetSettingByKeyAsync<string>("store.email");
             }
 
             await SendNotificationAsync(messageTemplate, emailAccount, languageId, new List<Token>(), toEmail, toName,
@@ -513,13 +526,13 @@ namespace MWT.Nop.Core.Services.Message
             var commonTokens = new List<Token>();
             await _customMessageTokenProvider.CustomOrderAddTokensAsync(commonTokens, order, languageId);
             await _customMessageTokenProvider.CustomAddCustomerTokensAsync(commonTokens, order.CustomerId == null ? 0 : Convert.ToInt32(order.CustomerId));
-          
+       
 
             //email account
 
             var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplates.FirstOrDefault(), languageId);
             var tokens = new List<Token>(commonTokens);
-            await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount,languageId);
+            await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount   , languageId);
             await _customMessageTokenProvider.AddStoreLogoToken(tokens);
 
 
@@ -546,13 +559,13 @@ namespace MWT.Nop.Core.Services.Message
             var commonTokens = new List<Token>();
             await _customMessageTokenProvider.CustomOrderAddTokensAsync(commonTokens, order, languageId);
             await _customMessageTokenProvider.CustomAddCustomerTokensAsync(commonTokens, order.CustomerId == null ? 0 : Convert.ToInt32(order.CustomerId));
-   
+           
 
             //email account
             var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplates.FirstOrDefault(), languageId);
 
             var tokens = new List<Token>(commonTokens);
-            await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount,languageId);
+            await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
             await _customMessageTokenProvider.AddStoreLogoToken(tokens);
             var body = await _localizationService.GetLocalizedAsync(messageTemplates.FirstOrDefault(), mt => mt.Body, languageId);
             var bodyReplaced = _tokenizer.Replace(body, tokens, true);
@@ -566,28 +579,30 @@ namespace MWT.Nop.Core.Services.Message
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
-
+            string replyToEmail = null;
             var store = (await _storeService.GetAllStoresAsync()).OrderBy(s => s.DisplayOrder).FirstOrDefault();
 
             languageId = await EnsureLanguageIsActiveAsync(languageId, store.Id);
-            //var _customOrderService = EngineContext.Current.Resolve<Nop.Services.Customizations.Phone_Order.ICustomOrderService>();
+       
             var template = MessageTemplateExtendedSystemNames.CustomOrder_InvoiceNotification;
             var commonTokens = new List<Token>();
             //#region Additional Service
 
-            //if (order.ParentOrderID > 0)
-            //{
-            //    var items = await _customOrderService.GetOrderItems(order.Id);
-            //    if (items.Count == 1)
-            //    {
-            //        var product = await _productService.GetProductByIdAsync(items.First().ProductId);
-            //        if (product.Name.StartsWith("wgs", StringComparison.InvariantCultureIgnoreCase))
-            //        {
-            //            template = MessageTemplateSystemNames.CustomOrder_AdditionalService_InvoiceNotification;
-            //            await _customMessageTokenProvider.WgsAdditionalServiceAddTokenAsync(commonTokens, order, languageId);
-            //        }
-            //    }
-            //}
+            if (order.ParentOrderID > 0)
+            {
+                var items = await _customOrderService.GetOrderItems(order.Id);
+                if (items.Count == 1)
+                {
+                    var product = await _productService.GetProductByIdAsync(items.First().ProductId);
+                    if (product.Name.StartsWith("wgs", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        var _settingService = EngineContext.Current.Resolve<ISettingService>();
+                        template = MessageTemplateExtendedSystemNames.CustomOrder_AdditionalService_InvoiceNotification;
+                        await _customMessageTokenProvider.WgsAdditionalServiceAddTokenAsync(commonTokens, order, languageId);
+                        replyToEmail = await _settingService.GetSettingByKeyAsync<string>("store.support.email");
+                    }
+                }
+            }
 
             //#endregion
 
@@ -606,7 +621,7 @@ namespace MWT.Nop.Core.Services.Message
                 var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
 
                 var tokens = new List<Token>(commonTokens);
-                await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
+                await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
                 await _customMessageTokenProvider.AddStoreLogoToken(tokens);
 
                 //event notification
@@ -665,7 +680,7 @@ namespace MWT.Nop.Core.Services.Message
                     _messageTemplate.Name = messageTemplate.Name;
 
                     return await SendNotificationAsync(_messageTemplate, emailAccount, languageId, tokens, toEmail, toName,
-                        null, null);
+                        null, null, replyToEmail);
                 }
                 else
                 {
@@ -684,7 +699,7 @@ namespace MWT.Nop.Core.Services.Message
                     _messageTemplate.Name = messageTemplate.Name;
 
                     return await SendNotificationAsync(_messageTemplate, emailAccount, languageId, tokens, toEmail, toName,
-                        null, null);
+                        null, null, replyToEmail);
                 }
             }).ToListAsync();
         }
@@ -709,45 +724,45 @@ namespace MWT.Nop.Core.Services.Message
             var commonTokens = new List<Token>();
             await _customMessageTokenProvider.CustomOrderAddTokensAsync(commonTokens, order, languageId);
             await _customMessageTokenProvider.CustomAddCustomerTokensAsync(commonTokens, order.CustomerId == null ? 0 : Convert.ToInt32(order.CustomerId));
-
+           
 
 
             List<int> orderPlacedStoreOwnerNotificationQueuedEmailIds = await messageTemplates.SelectAwait(async messageTemplate =>
-             {
-                 //email account
-                 var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
-                 if (customerOnly)
-                 {
-                     messageTemplate.BccEmailAddresses = null;
-                 }
+            {
+                //email account
+                var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
+                if (customerOnly)
+                {
+                    messageTemplate.BccEmailAddresses = null;
+                }
 
-                 var tokens = new List<Token>(commonTokens);
-                 await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
-                 await _customMessageTokenProvider.AddStoreLogoToken(tokens);
+                var tokens = new List<Token>(commonTokens);
+                await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
+                await _customMessageTokenProvider.AddStoreLogoToken(tokens);
 
-                 //event notification
-                 await _eventPublisher.MessageTokensAddedAsync(messageTemplate, tokens);
+                //event notification
+                await _eventPublisher.MessageTokensAddedAsync(messageTemplate, tokens);
 
-                 int billingAddressId = 0;
-                 if (order.LiveOrderNumber != null && order.LiveOrderNumber > 0)
-                 {
-                     var _order = await _orderService.GetOrderByIdAsync(Convert.ToInt32(order.LiveOrderNumber));
-                     billingAddressId = _order.BillingAddressId == null ? 0 : Convert.ToInt32(_order.BillingAddressId);
-                 }
-                 else if (order.CustomerId != null && order.CustomerId > 0)
-                 {
-                     var customer = await _customerService.GetCustomerByIdAsync(Convert.ToInt32(order.CustomerId));
-                     billingAddressId = customer.BillingAddressId == null ? 0 : Convert.ToInt32(customer.BillingAddressId);
-                 }
+                int billingAddressId = 0;
+                if (order.LiveOrderNumber != null && order.LiveOrderNumber > 0)
+                {
+                    var _order = await _orderService.GetOrderByIdAsync(Convert.ToInt32(order.LiveOrderNumber));
+                    billingAddressId = _order.BillingAddressId == null ? 0 : Convert.ToInt32(_order.BillingAddressId);
+                }
+                else if (order.CustomerId != null && order.CustomerId > 0)
+                {
+                    var customer = await _customerService.GetCustomerByIdAsync(Convert.ToInt32(order.CustomerId));
+                    billingAddressId = customer.BillingAddressId == null ? 0 : Convert.ToInt32(customer.BillingAddressId);
+                }
 
-                 var billingAddress = await _addressService.GetAddressByIdAsync(billingAddressId);
+                var billingAddress = await _addressService.GetAddressByIdAsync(billingAddressId);
 
-                 var toEmail = billingAddress?.Email;
-                 var toName = $"{billingAddress.FirstName} {billingAddress.LastName}";
+                var toEmail = billingAddress?.Email;
+                var toName = $"{billingAddress.FirstName} {billingAddress.LastName}";
 
-                 return await SendNotificationAsync(messageTemplate, emailAccount, languageId, tokens, toEmail, toName,
-                     null, null);
-             }).ToListAsync();
+                return await SendNotificationAsync(messageTemplate, emailAccount, languageId, tokens, toEmail, toName,
+                    null, null);
+            }).ToListAsync();
 
 
             try
@@ -794,14 +809,14 @@ namespace MWT.Nop.Core.Services.Message
             var commonTokens = new List<Token>();
             await _customMessageTokenProvider.CustomOrderAddTokensAsync(commonTokens, order, languageId);
             await _customMessageTokenProvider.CustomAddCustomerTokensAsync(commonTokens, order.CustomerId == null ? 0 : Convert.ToInt32(order.CustomerId));
-
+     
             return await messageTemplates.SelectAwait(async messageTemplate =>
             {
                 //email account
                 var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
 
                 var tokens = new List<Token>(commonTokens);
-                await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
+                await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
                 await _customMessageTokenProvider.AddStoreLogoToken(tokens);
 
                 //event notification
@@ -811,7 +826,7 @@ namespace MWT.Nop.Core.Services.Message
                 if (order.LiveOrderNumber != null && order.LiveOrderNumber > 0)
                 {
                     var _order = await _orderService.GetOrderByIdAsync(Convert.ToInt32(order.LiveOrderNumber));
-                    billingAddressId =  Convert.ToInt32(_order.BillingAddressId);
+                    billingAddressId = _order.BillingAddressId == null ? 0 : Convert.ToInt32(_order.BillingAddressId);
                 }
                 else if (order.CustomerId != null && order.CustomerId > 0)
                 {
@@ -864,14 +879,14 @@ namespace MWT.Nop.Core.Services.Message
 
         //    languageId = await EnsureLanguageIsActiveAsync(languageId, store.Id);
 
-        //    var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateSystemNames.CustomOrder_PartialOrderLinkNotification, store.Id);
+        //    var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateExtendedSystemNames.CustomOrder_PartialOrderLinkNotification, store.Id);
         //    if (!messageTemplates.Any())
         //        return new List<int>();
 
         //    //tokens
         //    var commonTokens = new List<Token>();
-        //    await _messageTokenProvider.CustomOrderAddTokensAsync(commonTokens, order, languageId);
-        //    await _messageTokenProvider.CustomAddCustomerTokensAsync(commonTokens, order.CustomerId == null ? 0 : Convert.ToInt32(order.CustomerId));
+        //    await _customMessageTokenProvider.CustomOrderAddTokensAsync(commonTokens, order, languageId);
+        //    await _customMessageTokenProvider.CustomAddCustomerTokensAsync(commonTokens, order.CustomerId == null ? 0 : Convert.ToInt32(order.CustomerId));
         //    var _customOrderService = EngineContext.Current.Resolve<Nop.Services.Customizations.Phone_Order.ICustomOrderService>();
         //    return await messageTemplates.SelectAwait(async messageTemplate =>
         //    {
@@ -879,7 +894,7 @@ namespace MWT.Nop.Core.Services.Message
         //        var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
 
         //        var tokens = new List<Token>(commonTokens);
-        //        await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount);
+        //        await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount);
 
         //        //event notification
         //        await _eventPublisher.MessageTokensAddedAsync(messageTemplate, tokens);
@@ -911,12 +926,13 @@ namespace MWT.Nop.Core.Services.Message
         public async Task<IList<int>> SendSupportNotificationZipCodeNotFound(int languageId, Store store
             , string zipCode, string ipAddress, string customerName, string customerEmail)
         {
-
+            
             if (string.IsNullOrEmpty(zipCode))
             {
                 await _logger.InsertLogAsync(LogLevel.Error, "Estimated Shipping Module Zip Code Empty", "");
                 return new List<int>();
             }
+            var _settingService = EngineContext.Current.Resolve<ISettingService>();
             var toEmail = await _settingService.GetSettingByKeyAsync<string>("Estimated.Delivery.Notification.Email");
             var toName = await _settingService.GetSettingByKeyAsync<string>("Estimated.Delivery.Notification.Name");
             toName = toName == null ? "" : toName;
@@ -940,7 +956,7 @@ namespace MWT.Nop.Core.Services.Message
                 var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
 
                 var tokens = new List<Token>(commonTokens);
-                await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
+                await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
                 await _customMessageTokenProvider.AddStoreLogoToken(tokens);
 
                 //event notification
@@ -984,14 +1000,18 @@ namespace MWT.Nop.Core.Services.Message
             {
                 var commonTokens = new List<Token>();
                 commonTokens.AddRange(tokens);
-                await _messageTokenProvider.AddCustomerTokensAsync(commonTokens, customer);
+                await _customMessageTokenProvider.AddCustomerTokensAsync(commonTokens, customer);
 
+
+                var _mailchimpService = EngineContext.Current.Resolve<IMailchimpService>();
                 if (await _mailchimpService.CartOperation(subscription.Email, "", "OutOfStock"))
                 {
                     var _tokenizer = EngineContext.Current.Resolve<ITokenizer>();
                     var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplates.FirstOrDefault(), languageId);
                     var alltokens = new List<Token>(commonTokens);
-                    await _messageTokenProvider.AddStoreTokensAsync(alltokens, store, emailAccount, languageId);
+                    await _customMessageTokenProvider.AddStoreTokensAsync(alltokens, store, emailAccount,languageId);
+                    var _mandrillService = EngineContext.Current.Resolve<IMandrillService>();
+
                     string subject = await _localizationService.GetLocalizedAsync(messageTemplates.FirstOrDefault(), mt => mt.Subject, languageId);
                     var body = await _localizationService.GetLocalizedAsync(messageTemplates.FirstOrDefault(), mt => mt.Body, languageId);
 
@@ -1027,7 +1047,7 @@ namespace MWT.Nop.Core.Services.Message
 
             //tokens
             var commonTokens = new List<Token>();
-            await _messageTokenProvider.AddCustomerTokensAsync(commonTokens, customer);
+            await _customMessageTokenProvider.AddCustomerTokensAsync(commonTokens, customer);
 
             return await messageTemplates.SelectAwait(async messageTemplate =>
             {
@@ -1035,7 +1055,7 @@ namespace MWT.Nop.Core.Services.Message
                 var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
 
                 var tokens = new List<Token>(commonTokens);
-                await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
+                await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
 
                 //event notification
                 await _eventPublisher.MessageTokensAddedAsync(messageTemplate, tokens);
@@ -1066,7 +1086,7 @@ namespace MWT.Nop.Core.Services.Message
 
             //tokens
             var commonTokens = new List<Token>();
-            await _messageTokenProvider.AddCustomerTokensAsync(commonTokens, customer);
+            await _customMessageTokenProvider.AddCustomerTokensAsync(commonTokens, customer);
             commonTokens.Add(new Token("Wishlist.PersonalMessage", personalMessage, true));
             commonTokens.Add(new Token("Wishlist.Email", customerEmail));
 
@@ -1076,7 +1096,7 @@ namespace MWT.Nop.Core.Services.Message
                 var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
 
                 var tokens = new List<Token>(commonTokens);
-                await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
+                await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
 
                 //event notification
                 await _eventPublisher.MessageTokensAddedAsync(messageTemplate, tokens);
@@ -1103,21 +1123,22 @@ namespace MWT.Nop.Core.Services.Message
             var commonTokens = new List<Token>();
             await _customMessageTokenProvider.CustomSupportAddAbandonedCartTokensAsync(commonTokens, customer, cart, languageId);
 
-
+            var _settingService = EngineContext.Current.Resolve<ISettingService>();
+            var storeEmail = await _settingService.GetSettingByKeyAsync<string>("store.email");
             return await messageTemplates.SelectAwait(async messageTemplate =>
             {
                 //email account
                 var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
 
                 var tokens = new List<Token>(commonTokens);
-                await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
+                await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
 
                 await _customMessageTokenProvider.AddStoreLogoToken(tokens);
 
                 //event notification
                 await _eventPublisher.MessageTokensAddedAsync(messageTemplate, tokens);
 
-                var toEmail = emailAccount.Email;
+                var toEmail = string.IsNullOrEmpty(storeEmail) ? emailAccount.Email : storeEmail;
                 var toName = emailAccount.DisplayName;
 
                 return await SendNotificationAsync(messageTemplate, emailAccount, languageId, tokens, toEmail, toName);
@@ -1136,7 +1157,7 @@ namespace MWT.Nop.Core.Services.Message
             await _customMessageTokenProvider.CustomAddAbandonedCartTokensAsync(tokens, customer, cartLink, product, relatedProducts, languageId, utmSource);
 
             var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
-            await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
+            await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
             await _customMessageTokenProvider.AddStoreLogoToken(tokens);
             await _eventPublisher.MessageTokensAddedAsync(messageTemplate, tokens);
             var toEmail = email;
@@ -1160,6 +1181,7 @@ namespace MWT.Nop.Core.Services.Message
                     dt.Rows.Add(bccEmail, bccEmail);
                 }
             }
+            var _mandrillService = EngineContext.Current.Resolve<IMandrillService>();
             await _mandrillService.SendEmail(bodyReplaced, subjectReplaced, dt, new Dictionary<string, string>(), "POST");
 
             return true;
@@ -1175,7 +1197,7 @@ namespace MWT.Nop.Core.Services.Message
             var store = _storeContext.GetCurrentStore();
             var tokens = new List<Token>();
             var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
-            await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount,languageId);
+            await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
             await _customMessageTokenProvider.AddStoreLogoToken(tokens);
             await _customMessageTokenProvider.CustomAddCustomerTokensAsync(tokens, customer.Id);
 
@@ -1187,7 +1209,7 @@ namespace MWT.Nop.Core.Services.Message
             var toEmail = await _customCustomerService.GetCustomerEmail(customer);
             var toName = await _customerService.GetCustomerFullNameAsync(customer);
 
-            
+            var _settingService = EngineContext.Current.Resolve<ISettingService>();
 
             if (await _settingService.GetSettingByKeyAsync<bool>("Purchase.Journey.Sandbox.Enabled"))
             {
@@ -1249,7 +1271,7 @@ namespace MWT.Nop.Core.Services.Message
                 var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
 
                 var tokens = new List<Token>(commonTokens);
-                await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
+                await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
 
                 await _customMessageTokenProvider.AddStoreLogoToken(tokens);
 
@@ -1282,7 +1304,7 @@ namespace MWT.Nop.Core.Services.Message
                 return new List<int>();
 
             var commonTokens = new List<Token>();
-            await _messageTokenProvider.AddCustomerTokensAsync(commonTokens, customer);
+            await _customMessageTokenProvider.AddCustomerTokensAsync(commonTokens, customer);
             await _customMessageTokenProvider.CustomAddPendingOrderTokens(commonTokens, transactionId, orderId, isCustomOrder, customOrderNumber, paymentMethod);
             var _settingService = EngineContext.Current.Resolve<ISettingService>();
             var storeEmail = await _settingService.GetSettingByKeyAsync<string>("store.email");
@@ -1292,7 +1314,7 @@ namespace MWT.Nop.Core.Services.Message
                 var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
 
                 var tokens = new List<Token>(commonTokens);
-                await _messageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount,languageId);
+                await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
 
                 await _customMessageTokenProvider.AddStoreLogoToken(tokens);
 
@@ -1309,4 +1331,5 @@ namespace MWT.Nop.Core.Services.Message
 
         #endregion
     }
+
 }
