@@ -44,6 +44,7 @@ var AjaxCart = {
 
     //add a product to the cart/wishlist from the catalog pages
     addproducttocart_catalog: function (urladd) {
+        debugger;
         if (this.loadWaiting !== false) {
             return;
         }

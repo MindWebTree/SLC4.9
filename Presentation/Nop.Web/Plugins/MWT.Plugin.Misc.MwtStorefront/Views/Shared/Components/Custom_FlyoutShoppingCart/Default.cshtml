@@ -31,7 +31,7 @@
             }
             else
             {
-                @Html.Raw(string.Format(T("ShoppingCart.Mini.ItemsText").Text, $"<a href=\"{Url.RouteUrl("ShoppingCart")}\">{string.Format(T("ShoppingCart.Mini.Items").Text, Model.TotalProducts)}</a>"))
+                @Html.Raw(string.Format(T("ShoppingCart.Mini.ItemsText").Text, $" {string.Format(T("ShoppingCart.Mini.Items").Text, Model.TotalProducts)}"))
             }
         </div>
         @if (Model.TotalProducts > 0)
@@ -44,9 +44,9 @@
                         @if (Model.ShowProductImages)
                         {
                             <div class="picture">
-                                <a href="@Url.RouteUrl("Product", new {id=item.ProductId, SeName = item.ProductSeName })" title="@item.Picture.Title">
-                                    <img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" />
-                                </a>
+                           
+                                    <img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" />
+                             
                             </div>
                         }
                         <div class="product">

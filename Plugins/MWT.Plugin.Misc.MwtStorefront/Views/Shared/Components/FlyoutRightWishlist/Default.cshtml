@@ -29,13 +29,12 @@
                     <div class="d-flex product-add-to-cart">
                         <div>  <input type="checkbox" class="checkbox" id="@(item.Id)" data-parent="@item.ProductId" data-variantId="@item.Variant?.Id??0" name="addtocart" value="@(item.Id)" /></div>
                         <div class="img-add-to-cart">
-                            <a href="@Url.RouteUrl("Product", new { id = item.ProductId, SeName = item.ProductSeName })" title="@item.Picture.Title">
-                                <img alt="@item.Picture.AlternateText" src="/images/pixel.png" data-src="@item.Picture.ImageUrl" class="lazy" title="@item.Picture.Title" />
-                            </a>
+                                 <img alt="@item.Picture.AlternateText" src="/images/pixel.png" data-src="@item.Picture.ImageUrl" class="lazy"/>
+                 
                         </div>
                         <div class="deatail-add-to-cart">
                             <h4>
-                                <a href="@Url.RouteUrl("Product", new { id = item.ProductId, SeName = item.ProductSeName })" title="@item.Picture.Title">
+                                <a href="@Url.RouteUrl("Product", new { id = item.ProductId, SeName = item.ProductSeName })">
                                     @item.ProductName
                                 </a>
                             </h4>
@@ -51,7 +50,7 @@
                         </div>
                         <div class="price">
                             <h4>@item.UnitPrice</h4>
-                            <a href="#" onclick="deleteItem('@item.Id',this,event,'@Url.RouteUrl("CartItem-Delete", new {shoppingCartRecId = item.Id, shoppingCartTypeId = (int) ShoppingCartType.Wishlist})')">
+                            <a href="#" aria-label="Remove @Model.Items[i].ProductName from wishlist" onclick="deleteItem('@item.Id',this,event,'@Url.RouteUrl("CartItem-Delete", new { shoppingCartRecId = item.Id, shoppingCartTypeId = (int)ShoppingCartType.Wishlist })')">
                                 <svg width="14" height="15" viewBox="0 0 14 15" class="deleteItem" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path opacity="0.5" d="M0.9375 13.5938C0.9375 13.9667 1.08566 14.3244 1.34938 14.5881C1.6131 14.8518 1.97079 15 2.34375 15H10.7812C11.1542 15 11.5119 14.8518 11.7756 14.5881C12.0393 14.3244 12.1875 13.9667 12.1875 13.5938V3.75H0.9375V13.5938ZM8.90625 6.09375C8.90625 5.96943 8.95563 5.8502 9.04354 5.7623C9.13145 5.67439 9.25068 5.625 9.375 5.625C9.49932 5.625 9.61855 5.67439 9.70645 5.7623C9.79436 5.8502 9.84375 5.96943 9.84375 6.09375V12.6563C9.84375 12.7806 9.79436 12.8998 9.70645 12.9877C9.61855 13.0756 9.49932 13.125 9.375 13.125C9.25068 13.125 9.13145 13.0756 9.04354 12.9877C8.95563 12.8998 8.90625 12.7806 8.90625 12.6563V6.09375ZM6.09375 6.09375C6.09375 5.96943 6.14313 5.8502 6.23104 5.7623C6.31895 5.67439 6.43818 5.625 6.5625 5.625C6.68682 5.625 6.80605 5.67439 6.89395 5.7623C6.98186 5.8502 7.03125 5.96943 7.03125 6.09375V12.6563C7.03125 12.7806 6.98186 12.8998 6.89395 12.9877C6.80605 13.0756 6.68682 13.125 6.5625 13.125C6.43818 13.125 6.31895 13.0756 6.23104 12.9877C6.14313 12.8998 6.09375 12.7806 6.09375 12.6563V6.09375ZM3.28125 6.09375C3.28125 5.96943 3.33064 5.8502 3.41854 5.7623C3.50645 5.67439 3.62568 5.625 3.75 5.625C3.87432 5.625 3.99355 5.67439 4.08145 5.7623C4.16936 5.8502 4.21875 5.96943 4.21875 6.09375V12.6563C4.21875 12.7806 4.16936 12.8998 4.08145 12.9877C3.99355 13.0756 3.87432 13.125 3.75 13.125C3.62568 13.125 3.50645 13.0756 3.41854 12.9877C3.33064 12.8998 3.28125 12.7806 3.28125 12.6563V6.09375ZM12.6562 0.937505H9.14062L8.86523 0.389653C8.8069 0.272529 8.71703 0.174006 8.60575 0.105169C8.49448 0.0363316 8.3662 -8.87099e-05 8.23535 5.13654e-06H4.88672C4.75616 -0.000496734 4.62811 0.0357877 4.51723 0.104701C4.40634 0.173615 4.31711 0.272371 4.25976 0.389653L3.98437 0.937505H0.46875C0.34443 0.937505 0.225201 0.986891 0.137294 1.0748C0.049386 1.16271 0 1.28193 0 1.40625L0 2.34375C0 2.46807 0.049386 2.5873 0.137294 2.67521C0.225201 2.76312 0.34443 2.8125 0.46875 2.8125H12.6562C12.7806 2.8125 12.8998 2.76312 12.9877 2.67521C13.0756 2.5873 13.125 2.46807 13.125 2.34375V1.40625C13.125 1.28193 13.0756 1.16271 12.9877 1.0748C12.8998 0.986891 12.7806 0.937505 12.6562 0.937505Z" fill="black" />
                                 </svg>
@@ -109,7 +108,7 @@
                     </p>
                     <div class="formsection">
                         <div class="emailstep">
-                            <input type="email" name="email" class="form-control" id="email" placeholder="@T("cart.popup.wishlist.Email.Placeholder")">
+                            <input aria-label="email" type="email" name="email" class="form-control" id="email" placeholder="@T("cart.popup.wishlist.Email.Placeholder")">
                             <div class="row" style=" max-width: 450px; margin: 0px auto;">
                                 <div class="col-md-6" style=" padding-left: 0px;">
                                     <button type="button" class="btn btn-primary" id="btnemailwishlist">
@@ -135,7 +134,7 @@
                     </p>
                     <div class="formsection">
                         <div class="emailstep">
-                            <input type="password" class="form-control" name="password" id="password" placeholder="@T("cart.popup.wishlist.password.Placeholder")">
+                            <input type="password" class="form-control" name="password" id="password" aria-label="password" placeholder="@T("cart.popup.wishlist.password.Placeholder")">
                             <button type="button" class="btn btn-primary" id="btnwishlistlogin">
                                 <span class="wishlist-actionbtn-text">
                                     @T("common.login")

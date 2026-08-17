@@ -12,6 +12,7 @@ using MWT.Nop.Core.Services.CategoryCollection;
 using MWT.Nop.Core.Services.Configuration;
 using MWT.Nop.Core.Services.Custom;
 using MWT.Nop.Core.Services.Customers;
+using MWT.Nop.Core.Services.Discounts;
 using MWT.Nop.Core.Services.ElasticSearch;
 using MWT.Nop.Core.Services.FeedBack;
 using MWT.Nop.Core.Services.IPLite;
@@ -30,6 +31,7 @@ using MWT.Nop.Core.Services.Search.RewardClaim;
 using MWT.Nop.Core.Services.Seo;
 using MWT.Nop.Core.Services.Shared;
 using Nop.Core.Infrastructure;
+using Nop.Services.Customizations.CustomOrders;
 using Nop.Services.Customizations.IpAddress;
 using Nop.Services.Orders;
 
@@ -82,6 +84,11 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<IPriceCalculationExtendedService, PriceCalculationExtendedService>();
             services.AddScoped<IOrderTotalCalculationExtendedService, OrderTotalCalculationExtendedService>(); 
             services.AddScoped<IDiscountExtendedService, DiscountExtendedService>(); 
+            services.AddScoped<ICustomBackInStockSubscriptionService, CustomBackInStockSubscriptionService>(); 
+            services.AddScoped<ICustomWorkflowMessageService, CustomWorkflowMessageService>(); 
+            services.AddScoped<ICustomOrderService, CustomOrderService>(); 
+            services.AddScoped<ICustomMessageTokenProvider, CustomMessageTokenProvider>(); 
+            services.AddScoped<IOrderExtendedService, OrderExtendedService>(); 
 
 
             services.AddScoped<IIpAddressService, IpAddressService>();
