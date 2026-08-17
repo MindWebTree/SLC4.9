@@ -30,10 +30,10 @@
             }
 
             <h4 class="price actual-price sale-price"
-                aria-label="Sale price @(!string.IsNullOrEmpty(Model.ProductPrice.MinPrice) ? Model.ProductPrice.MinPrice : Model.ProductPrice.MinOldPrice) to 
-                         @(!string.IsNullOrEmpty(Model.ProductPrice.MaxPrice) ? Model.ProductPrice.MaxPrice : Model.ProductPrice.MaxOldPrice),
-                         regular price @(!string.IsNullOrEmpty(Model.ProductPrice.MinOldPrice) ? Model.ProductPrice.MinOldPrice : Model.ProductPrice.MinPrice)
-                         to @(!string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ? Model.ProductPrice.MaxOldPrice : Model.ProductPrice.MaxPrice)">
+                aria-label="Sale price @(!string.IsNullOrEmpty(Model.ProductPrice.MinPrice) ? Model.ProductPrice.MinPrice : Model.ProductPrice.MinOldPrice) to
+                                     @(!string.IsNullOrEmpty(Model.ProductPrice.MaxPrice) ? Model.ProductPrice.MaxPrice : Model.ProductPrice.MaxOldPrice),
+                                     regular price @(!string.IsNullOrEmpty(Model.ProductPrice.MinOldPrice) ? Model.ProductPrice.MinOldPrice : Model.ProductPrice.MinPrice)
+                                     to @(!string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ? Model.ProductPrice.MaxOldPrice : Model.ProductPrice.MaxPrice)">
                 @T("Price.Range.With.Saleprice",
                 !string.IsNullOrEmpty(Model.ProductPrice.MinPrice) ? Model.ProductPrice.MinPrice : Model.ProductPrice.MinOldPrice,
         !string.IsNullOrEmpty(Model.ProductPrice.MaxPrice) ? Model.ProductPrice.MaxPrice : Model.ProductPrice.MaxOldPrice,
@@ -49,7 +49,7 @@
                 <p class="sale-price  m-0 offertext-p">@Html.Raw(offerText)</p>
             }
             <h4 class="price actual-price" aria-label="Sale price @(!string.IsNullOrEmpty(Model.ProductPrice.MinOldPrice) ? Model.ProductPrice.MinOldPrice : Model.ProductPrice.MinPrice)
-                        to @(!string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ? Model.ProductPrice.MaxOldPrice : Model.ProductPrice.MaxPrice)">
+                                    to @(!string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ? Model.ProductPrice.MaxOldPrice : Model.ProductPrice.MaxPrice)">
                 @T("Price.Range",
                 !string.IsNullOrEmpty(Model.ProductPrice.MinOldPrice) ? Model.ProductPrice.MinOldPrice : Model.ProductPrice.MinPrice,
         !string.IsNullOrEmpty(Model.ProductPrice.MaxOldPrice) ? Model.ProductPrice.MaxOldPrice : Model.ProductPrice.MaxPrice)

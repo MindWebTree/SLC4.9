@@ -6,7 +6,7 @@ using MWT.Nop.Core.Domain.KW;
 using MWT.Nop.Core.Domain.QA;
 using MWT.Nop.Core.Domain.Security;
 using MWT.Nop.Core.Domain.StoreWideDiscount;
-using MWT.Nop.Core.Service.Discount;
+using MWT.Nop.Core.Service.Discounts;
 using MWT.Nop.Core.Services.Catalog;
 using MWTNop.Core.Domain.Catalog;
 using Nop.Core;

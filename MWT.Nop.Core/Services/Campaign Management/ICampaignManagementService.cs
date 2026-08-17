@@ -5,6 +5,7 @@ namespace MWT.Nop.Core.Service.Campaign_Management
 {
     public partial interface ICampaignManagementService
     {
+
         #region Campaign
         Task<MWT_Campaign> GetCampaignByid(int id);
         Task DeleteCampaign(MWT_Campaign campaign);

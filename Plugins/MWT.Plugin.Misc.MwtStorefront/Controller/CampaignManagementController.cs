@@ -52,12 +52,6 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controller
             List<int> activatedCampaignsIds = new List<int>();
             List<int> activatedCampaignStrip = new List<int>();
 
-
-
-
-
-
-
             string campaignCookie = _httpContextAccessor.HttpContext?.Request?.Cookies["campaigncookie"];
             foreach (var cookie in _httpContextAccessor.HttpContext?.Request?.Cookies)
             {

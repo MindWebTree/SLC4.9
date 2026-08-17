@@ -2,6 +2,7 @@
 using MWT.Nop.Core.Domain.Orders;
 using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.Customers;
+using MWT.Nop.Core.Services.Discounts;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Common;

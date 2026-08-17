@@ -460,9 +460,6 @@ namespace MWT.Nop.Core.Service.Campaign_Management
 
         #endregion
 
-
-
-
         #region Frequency
 
         public async Task<List<MWT_CampaignFrequency>> CampaignFrequency()

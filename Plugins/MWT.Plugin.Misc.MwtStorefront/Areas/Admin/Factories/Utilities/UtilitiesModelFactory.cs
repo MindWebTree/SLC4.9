@@ -1,7 +1,7 @@
 ﻿using MWT.Nop.Core.Domain;
 using MWT.Nop.Core.Domain.Marketing;
 using MWT.Nop.Core.Service;
-using MWT.Nop.Core.Service.Discount;
+using MWT.Nop.Core.Service.Discounts;
 using MWT.Nop.Core.Services.Customers;
 using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Utilities;
 using Nop.Core;

@@ -1,11 +1,13 @@
 ﻿
-using MWT.Nop.Core.Domain.PhoneOrder;
+using Microsoft.AspNetCore.Http;
+using MWT.Nop.Core.Domain.CustomOrders;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Orders;
 using Nop.Services.Messages;
+using Nop.Services.Payments;
 
-namespace MWT.Nop.Core.Services.Message 
+namespace MWT.Nop.Core.Services.Message
 {
     /// <summary>
     /// Message token provider
@@ -19,15 +21,20 @@ namespace MWT.Nop.Core.Services.Message
         Task CustomAddCustomerTokensAsync(IList<Token> tokens, int customerId);
         void CustomAddShippingToken(IList<Token> tokens, int languageId, string zipCode, string ipAddress, string customerName,
              string customerEmail);
-
-        Task CustomAddOrderDeclineTokensAsync(IList<Token> tokens,Customer customer,IList<ShoppingCartItem> cart,string error,int orderId,int languageId);
+        Task CustomAddOrderDeclineTokensAsync(IList<Token> tokens, ProcessPaymentRequest paymentRequest, IFormCollection form, Customer customer, IList<ShoppingCartItem> cart, string error, int orderId, int languageId);
 
         Task CustomAddCustomerOrderDeclineTokensAsync(IList<Token> tokens, Customer customer, IList<ShoppingCartItem> cart, int orderId, int languageId);
         Task CustomSupportAddAbandonedCartTokensAsync(IList<Token> tokens, Customer customer, IList<ShoppingCartItem> cart, int languageId);
 
-       Task CustomAddAbandonedCartTokensAsync(IList<Token> tokens, Customer customer,string cartLink, Product product, List<Product> relatedProducts,int languageId,string utmSource);
+        Task CustomAddAbandonedCartTokensAsync(IList<Token> tokens, Customer customer, string cartLink, Product product, List<Product> relatedProducts, int languageId, string utmSource);
 
         Task WgsAdditionalServiceAddTokenAsync(IList<Token> tokens, CustomOrder customOrder, int languageId, int vendorId = 0);
-        Task CustomAddPurchaseJourneyTokenAsync(IList<Token> tokens, Customer customer, List<Product> products, int productId, int categoryId, string templateType,string utm_params);
+        Task CustomAddPurchaseJourneyTokenAsync(IList<Token> tokens, Customer customer, List<Product> products, int productId, int categoryId, string templateType, string utm_params);
+
+        Task CustomSupportAddPaymentIssueTokensAsync(IList<Token> tokens, string transactionId, decimal paidAmount, decimal expectedAmount,
+        string PaymentMethod);
+
+        Task CustomAddPendingOrderTokens(IList<Token> tokens, string transactionId, string orderId,
+    bool isCustomOrder, int customOrderNumber, string paymentMethod);
     }
 }
