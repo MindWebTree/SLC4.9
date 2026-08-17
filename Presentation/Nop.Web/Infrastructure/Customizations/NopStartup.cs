@@ -6,6 +6,7 @@ using MWT.Nop.Core.Service.Discount;
 using MWT.Nop.Core.Service.FAQModule;
 using MWT.Nop.Core.Service.Zoho;
 using MWT.Nop.Core.Services;
+using MWT.Nop.Core.Services.AbandonedCarts;
 using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.CategoryCollection;
 using MWT.Nop.Core.Services.Configuration;
@@ -30,6 +31,7 @@ using MWT.Nop.Core.Services.Seo;
 using MWT.Nop.Core.Services.Shared;
 using Nop.Core.Infrastructure;
 using Nop.Services.Customizations.IpAddress;
+using Nop.Services.Orders;
 
 namespace Nop.Web.Infrastructure.Customizations
 {
@@ -75,6 +77,11 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<ITestimonialService, TestimonialService>();
             services.AddScoped<IRewardClaimService, RewardClaimService>();
             services.AddScoped<IManageService, ManageService>();
+            services.AddScoped<ICustomWishlistService, CustomWishlistService>();
+            services.AddScoped<IAbandonedCartService, AbandonedCartService>();
+            services.AddScoped<IPriceCalculationExtendedService, PriceCalculationExtendedService>();
+            services.AddScoped<IOrderTotalCalculationExtendedService, OrderTotalCalculationExtendedService>(); 
+            services.AddScoped<IDiscountExtendedService, DiscountExtendedService>(); 
 
 
             services.AddScoped<IIpAddressService, IpAddressService>();
@@ -140,6 +147,8 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<IProductTemplateSectionService, ProductTemplateSectionService>();
 
             #endregion
+
+
         }
 
     }

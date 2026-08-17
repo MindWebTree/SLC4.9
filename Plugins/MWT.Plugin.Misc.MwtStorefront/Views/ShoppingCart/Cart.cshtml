@@ -16,7 +16,7 @@
     //page class
     Html.AppendPageCssClassParts("html-shopping-cart-page");
     var themeName = await _themeContext.GetWorkingThemeNameAsync();
-    Html.AddScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/cart.js?" + DateTime.Now.Ticks);
+    Html.AddScriptParts(ResourceLocation.Footer, $"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/cart.js?" + DateTime.Now.Ticks);
     if (seoSettings.CanonicalUrlsEnabled)
     {
         Html.AddCanonicalUrlParts(Url.RouteUrl("ShoppingCart", null, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant(), false);

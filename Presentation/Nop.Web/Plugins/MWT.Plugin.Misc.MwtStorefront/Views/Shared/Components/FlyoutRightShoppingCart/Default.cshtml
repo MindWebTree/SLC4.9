@@ -1,31 +1,28 @@
 ﻿@inject Nop.Services.Configuration.ISettingService _settingServce;
+@using MWT.Plugin.Misc.MwtStorefront.Models.ShoppingCart
 @using Nop.Core.Domain.Orders
 @using System.Globalization;
 @inject Nop.Services.Configuration.ISettingService _settingService;
-@inject Nop.Services.Orders.IShoppingCartService _shoppingCartService;
-@model CustomMiniShoppingCartModel
-@{
-    var settingValue = await _settingServce.GetSettingByKeyAsync<string>("MarketingSettings.ShowBuymoreSavemoreBanner");
+@inject IShoppingCartExtendedCartService _shoppingCartService;
+@model MiniShoppingCartExtendedModel
+@{ var settingValue = await _settingServce.GetSettingByKeyAsync<string>("MarketingSettings.ShowBuymoreSavemoreBanner");
     bool showBuymoreSavemoreBanner = false;
     bool.TryParse(settingValue, out showBuymoreSavemoreBanner);
     bool disableConversion = await _settingService.GetSettingByKeyAsync<bool>("Disable.Addtocart.Desktop.Conversion");
     bool disableMobileConversion = await _settingService.GetSettingByKeyAsync<bool>("Disable.Addtocart.Mobile.Conversion");
     string queryStringKey = await _settingService.GetSettingByKeyAsync<string>("Disable.Addtocart.Conversion,QueryString");
-    string buymoreSaveMoreDiscount = null; /*  await _shoppingCartService.GetBuyMoreSaveMoreDiscountConfiguration();  */
-}
+    string buymoreSaveMoreDiscount = await _shoppingCartService.GetBuyMoreSaveMoreDiscountConfiguration(); }
 <div class="modal-header">
     <div class="model-title-logo">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="10" cy="10" r="9.4" stroke="#188A47" stroke-width="1.2" />
             <path d="M8.55523 13.7755C8.43946 13.898 8.27545 14 8.13073 14C7.98601 14 7.822 13.8929 7.7014 13.7704L5 10.9133L5.85866 10.0051L8.13555 12.4133L14.1558 6L15 6.92347L8.55523 13.7755Z" fill="#188A47" />
         </svg>
-        <h3 class="modal-title" id="cartpopuptitle">
+        <h4 class="modal-title" id="cartpopuptitle">
             @T("cart.popup" + Model.Heading + ".title", 1)
-        </h3>
+        </h4>
     </div>
-    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-×
-</button>
+    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 </div>
 <script>
     function isMobile() {
@@ -86,212 +83,114 @@
 
             gtag_addtocart_withoutvalue_report_conversion();
             if (@Model.Items.Count > 0) {
-             
+             setTimeout(function () {
                 gtag_addtocart_report_conversion('@(Decimal.Parse(Model.Items.FirstOrDefault()?.UnitPrice ?? "0".Replace("\"", ""), NumberStyles.Currency))' * (conversionValue/100), ' ');
+				}, 200);
             }
         }
 
     }
 </script>
-
-<div class="modal-body">
+@{ 
+    var firstItem = Model.Items.FirstOrDefault();
+    bool enableNewAtcLayout = firstItem?.EnableNewATCLayout ?? false;
+}
+<div class="modal-body  @(enableNewAtcLayout?"version2":"")">
     @if (Model.Items.Count > 0)
     {
+
         if (!string.IsNullOrEmpty(buymoreSaveMoreDiscount))
         {
             if (Model.Items.Count > 1)
             {
-<div class="bymore-savemore-activated">
-    <div class="bymore-savemore-activated-logo">
-        <p>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g clip-path="url(#clip0_8210_806)">
-                    <path d="M17.841 9.6513L10.341 2.1513C10.041 1.8513 9.62435 1.66797 9.16602 1.66797H3.33268C2.41602 1.66797 1.66602 2.41797 1.66602 3.33464V9.16797C1.66602 9.6263 1.84935 10.043 2.15768 10.3513L9.65768 17.8513C9.95768 18.1513 10.3743 18.3346 10.8327 18.3346C11.291 18.3346 11.7077 18.1513 12.0077 17.843L17.841 12.0096C18.1493 11.7096 18.3327 11.293 18.3327 10.8346C18.3327 10.3763 18.141 9.9513 17.841 9.6513ZM4.58268 5.83464C3.89102 5.83464 3.33268 5.2763 3.33268 4.58464C3.33268 3.89297 3.89102 3.33464 4.58268 3.33464C5.27435 3.33464 5.83268 3.89297 5.83268 4.58464C5.83268 5.2763 5.27435 5.83464 4.58268 5.83464Z" fill="#007E47" />
-                </g>
-                <defs>
-                    <clipPath id="clip0_8210_806">
-                        <rect width="20" height="20" fill="white" />
-                    </clipPath>
-                </defs>
-            </svg>
-        </p>
-        <p>
-            @T("cart.POPUP.BuyMore.SaveMore.Succees.Message", buymoreSaveMoreDiscount)
-        </p>
-    </div>
-</div> }
-else
-{
-<div class="bymore-savemore-de-activated">
-    <p>
-        @T("cart.popup.BuyMore.SaveMore.Succees.Hint", buymoreSaveMoreDiscount)
-    </p>
-</div> }
-}
-<div class="cart-items">
-    @for (var i = 0; i < Model.Items.Count; i++)
-    {
-
-        var item = Model.Items[i];
-
-<div class="product-add-to-cart-setting">
-    <div class="d-flex product-add-to-cart">
-        <div class="img-add-to-cart">
-
-                <img alt="@item.Picture.AlternateText" src="/images/pixel.png" data-src="@item.Picture.ImageUrl" class="lazy" title="@item.Picture.Title" />
-        </div>
-        <div class="deatail-add-to-cart">
-            <h4>
-                <a href="@Url.RouteUrl("Product", new { id = item.ProductId, SeName = item.ProductSeName })" title="@item.Picture.Title">
-                    @item.ProductName
-                </a>
-            </h4>
-            <p>
-
-
-
-                @if (!string.IsNullOrEmpty(item.AttributeInfo))
+                <div class="bymore-savemore-activated">
+                    <div class="bymore-savemore-activated-logo">
+                        <p>
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g clip-path="url(#clip0_8210_806)">
+                                    <path d="M17.841 9.6513L10.341 2.1513C10.041 1.8513 9.62435 1.66797 9.16602 1.66797H3.33268C2.41602 1.66797 1.66602 2.41797 1.66602 3.33464V9.16797C1.66602 9.6263 1.84935 10.043 2.15768 10.3513L9.65768 17.8513C9.95768 18.1513 10.3743 18.3346 10.8327 18.3346C11.291 18.3346 11.7077 18.1513 12.0077 17.843L17.841 12.0096C18.1493 11.7096 18.3327 11.293 18.3327 10.8346C18.3327 10.3763 18.141 9.9513 17.841 9.6513ZM4.58268 5.83464C3.89102 5.83464 3.33268 5.2763 3.33268 4.58464C3.33268 3.89297 3.89102 3.33464 4.58268 3.33464C5.27435 3.33464 5.83268 3.89297 5.83268 4.58464C5.83268 5.2763 5.27435 5.83464 4.58268 5.83464Z" fill="#007E47" />
+                                </g>
+                                <defs>
+                                    <clipPath id="clip0_8210_806">
+                                        <rect width="20" height="20" fill="white" />
+                                    </clipPath>
+                                </defs>
+                            </svg>
+                        </p>
+                        <p>
+                            @T("cart.POPUP.BuyMore.SaveMore.Succees.Message", buymoreSaveMoreDiscount)
+                        </p>
+                    </div>
+                </div> }
+            else
+            {
+                <div class="bymore-savemore-de-activated">
+                    <p>
+                        @T("cart.popup.BuyMore.SaveMore.Succees.Hint", buymoreSaveMoreDiscount)
+                    </p>
+                </div> }
+        }
+        <div class="cart-items @(enableNewAtcLayout?"version2":"")">
+            @for (var i = 0; i < Model.Items.Count; i++)
+            {
+                var item = Model.Items[i];
+                if (item.EnableNewATCLayout && item.PictureModels.Count > 0)
                 {
-                    List<string> values = new List<string>();
-                    string[] attrs = item.AttributeInfo.Split(new string[] { "<br />" }, StringSplitOptions.None);
+                    @await Html.PartialAsync("_FlyoutCartItemV2", item) }
+                else
+                {
+                    @await Html.PartialAsync("_FlyoutCartItem", item)}
 
-                    foreach (var attr in attrs)
-                    {
-                        string[] _attrParts = attr.Split(':');
-                        if (_attrParts.Length > 1)
+            }
+        </div>
+
+        <div class="flyoutcart-bottom">
+            <div class="product-add-to-cartsubtotal">
+                <div class="cartsubtotal-text">
+                    <strong>@T("Cart.Popup.Totals.SubTotal")</strong>
+                    <span>@T("Cart.Popup.NoOfItems", Model.TotalProducts)</span>
+                </div>
+                <div class="d-flex price">
+                    <p>@T("Cart.Popup.SubTotal.Message")</p>
+                    <h4>@Model.SubTotal</h4>
+                </div>
+            </div>
+            <div class="cartsubtotal-button-setting">
+                <div class="product-add-to-buttons">
+                    @{ var checkoutUrl = "";
+                        if (Model.AnonymousCheckoutAllowed && Model.CurrentCustomerIsGuest)
                         {
-                            values.Add(string.Join(", ", _attrParts.Skip(1)));
+                            checkoutUrl = Url.RouteUrl("ShoppingCart");
                         }
-                    }
-
-@Html.Raw(string.Join(", ", values))
-                        @Html.Raw("<br>")}
-                <div class="d-flex align-items-center">
-                    <div class="quantity nobr">
-
-
-                        @if (item.AllowedQuantities?.Count > 0)
-                        {
-                            <div class="quantity-container">
-                                <span class="quantity-label">Qty</span>
-                                <span class="quantity-background"></span>
-                                <div class="quantity-box">
-                                    <select name="itemquantity@(item.Id)"
-                                            id="itemquantity@(item.Id)"
-                                            class="qty-dropdown form-control"
-                                           >
-                                        @foreach (var qty in item.AllowedQuantities)
-                                        {
-                                            <option value="@qty.Value" selected="@qty.Selected">@qty.Value</option>
-}
-                                    </select>
-                                </div>
-                            </div> }
                         else
                         {
-                            var quantityOptions = Enumerable.Range(1, 10).Select(i => new SelectListItem { Value = i.ToString(), Text = i.ToString(), Selected = (i == item.Quantity) }).ToList();
-                            <div class="quantity-container">
-                                <span class="quantity-label">Qty</span>
-                                <span class="quantity-background"></span>
-                                <div class="quantity-box">
-                                    <select aria-label="Quantity" name="itemquantity@(item.Id)"
-                                            id="itemquantity@(item.Id)"
-                                            class="qty-dropdown form-control"  >
-                                        @foreach (var qty in quantityOptions)
-                                        {
-                                            <option value="@qty.Value" selected="@qty.Selected">@qty.Value</option>
-}
-                                    </select>
-                                </div>
-                            </div>}
-                    </div>
-
-                    <div class="update-button-desktop">
-                        <button aria-label="Update quantity for @item.ProductName" onclick="validateAndUpdateQuantity('@item.Id',this,event,'@Url.RouteUrl("CartItem-Update", new { shoppingCartId = item.Id, shoppingCartTypeId = (int)ShoppingCartType.ShoppingCart })')">
-                            <svg fill="#000000" width="30px" height="30px" viewBox="0 0 512 512" data-name="Layer 1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"><path d="M64,256H34A222,222,0,0,1,430,118.15V85h30V190H355V160h67.27A192.21,192.21,0,0,0,256,64C150.13,64,64,150.13,64,256Zm384,0c0,105.87-86.13,192-192,192A192.21,192.21,0,0,1,89.73,352H157V322H52V427H82V393.85A222,222,0,0,0,478,256Z" /></svg>
-                        </button>
-                    </div>
-
-                    <div class="delete-button-desktop">
-                        <button aria-label="Remove item from cart" onclick="deleteItem('@item.Id',this,event,'@Url.RouteUrl("CartItem-Delete", new {shoppingCartRecId = item.Id, shoppingCartTypeId = (int) ShoppingCartType.ShoppingCart})')">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="deleteItem">
-                                <path d="M7.32109 22.3984H16.7611C17.8411 22.3984 18.6811 21.5184 18.6811 20.4784V7.47844H19.5211C19.7611 7.47844 19.9211 7.31844 19.9211 7.07844V6.15844C19.9211 5.31844 19.2411 4.67844 18.4411 4.67844H15.0411V3.63844C15.0411 2.95844 14.4811 2.39844 13.8011 2.39844H10.2411C9.56109 2.39844 9.00109 2.95844 9.00109 3.63844V4.67844H5.60109C4.76109 4.67844 4.12109 5.35844 4.12109 6.15844V7.07844C4.12109 7.31844 4.28109 7.47844 4.52109 7.47844H5.36109V20.4784C5.36109 21.5184 6.24109 22.3984 7.32109 22.3984ZM17.8811 20.4784C17.8811 21.1184 17.3611 21.5984 16.7611 21.5984H7.32109C6.68109 21.5984 6.20109 21.0784 6.20109 20.4784V7.47844H17.9211V20.4784H17.8811ZM9.80109 3.63844C9.80109 3.39844 10.0011 3.19844 10.2411 3.19844H13.8011C14.0411 3.19844 14.2411 3.39844 14.2411 3.63844V4.67844H9.84109V3.63844H9.80109ZM4.92109 6.15844C4.92109 5.75844 5.24109 5.47844 5.60109 5.47844H18.4011C18.8011 5.47844 19.0811 5.79844 19.0811 6.15844V6.67844H4.92109V6.15844Z" fill="black" />
-                                <path d="M15.1605 19.6794C15.4005 19.6794 15.5605 19.5194 15.5605 19.2794V9.75938C15.5605 9.51937 15.4005 9.35938 15.1605 9.35938C14.9205 9.35938 14.7605 9.51937 14.7605 9.75938V19.2794C14.7605 19.5194 14.9605 19.6794 15.1605 19.6794ZM12.0405 19.6794C12.2805 19.6794 12.4405 19.5194 12.4405 19.2794V9.75938C12.4405 9.51937 12.2805 9.35938 12.0405 9.35938C11.8005 9.35938 11.6405 9.51937 11.6405 9.75938V19.2794C11.6405 19.5194 11.8005 19.6794 12.0405 19.6794ZM8.88047 19.6794C9.12047 19.6794 9.28047 19.5194 9.28047 19.2794V9.75938C9.28047 9.51937 9.12047 9.35938 8.88047 9.35938C8.64047 9.35938 8.48047 9.51937 8.48047 9.75938V19.2794C8.48047 19.5194 8.64047 19.6794 8.88047 19.6794Z" fill="black" />
-                            </svg>
-
-                            <svg width="14" height="15" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#4D585A" class="minicart-processing" style="display: none; width: 15px;">
-                                <g fill="none" fill-rule="evenodd">
-                                    <g transform="translate(1 1)" stroke-width="2">
-                                        <circle stroke-opacity=".5" cx="18" cy="18" r="18"></circle>
-                                        <path d="M36 18c0-9.94-8.06-18-18-18">
-                                            <animateTransform attributeName="transform" type="rotate" from="0 18 18" to="360 18 18" dur="1s" repeatCount="indefinite"></animateTransform>
-                                        </path>
-                                    </g>
-                                </g>
-                            </svg>
-                        </button>
-                    </div>
-                    <h4 class="shoppingcart-unitprice">@item.UnitPrice</h4>
-                </div>
-            </p>
-        </div>
-    </div>
-
-    <div class="delete-button-mobile">
-        <button aria-label="Update quantity for @item.ProductName" onclick="validateAndUpdateQuantity('@item.Id',this,event,'@Url.RouteUrl("CartItem-Update", new { shoppingCartId = item.Id, shoppingCartTypeId = (int)ShoppingCartType.ShoppingCart })')">Update</button>
-        <button aria-label="Remove item from cart" onclick="deleteItem('@item.Id',this,event,'@Url.RouteUrl("CartItem-Delete", new {shoppingCartRecId = item.Id, shoppingCartTypeId = (int) ShoppingCartType.ShoppingCart})')">Delete</button>
-    </div>
-</div>}
-</div>
-
-                <div class="product-add-to-cartsubtotal">
-                    <div class="cartsubtotal-text">
-                        <strong>@T("Cart.Popup.Totals.SubTotal")</strong><span>
-                            @T("Cart.Popup.NoOfItems", Model.TotalProducts)
-                        </span>
-                    </div>
-                    <div class="d-flex price">
-                        <p>@T("Cart.Popup.SubTotal.Message")</p>
-                        <h4>@Model.SubTotal</h4>
+                            checkoutUrl = Url.RouteUrl("Checkout");
+                        }
+                        <div class="continue mb-3">
+                            <button type="button" class="btn btn-secondary" onclick="setLocation('@checkoutUrl')">
+                                @T("Cart.Popup.Btn.CheckoutNow")
+                            </button>
+                        </div> }
+                    <div class="continue">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">@T("shoppingcart.continueshopping")</button>
                     </div>
                 </div>
-
-
-
-                                <div class="cartsubtotal-button-setting">
-                                    <div class="product-add-to-buttons">
-                                        @{ var checkoutUrl = "";
-                                            if (Model.AnonymousCheckoutAllowed && Model.CurrentCustomerIsGuest)
-                                            {
-                                                checkoutUrl = Url.RouteUrl("ShoppingCart");
-                                            }
-                                            else
-                                            {
-                                                checkoutUrl = Url.RouteUrl("Checkout");
-                                            }
-                            <div class="continue mb-3">
-                                <button type="button" class="btn btn-secondary" onclick="setLocation('@checkoutUrl')">
-                                    @T("Cart.Popup.Btn.CheckoutNow")
-                                </button>
-                            </div> }
-                                        <div class="continue">
-                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">@T("shoppingcart.continueshopping")</button>
-                                        </div>
-
-                                    </div>
-                                    @await Component.InvokeAsync("CartSimilarProducts", new { productId = Model.Items[0].ProductId, parentGroupId = Model.Items[0].ParentGroupedProductId, productThumbPictureSize = 150 })
-                                </div> }
-                            else
-                            {
-                <div class="empty"><svg width="56" viewBox="0 0 65 74" xmlns="http://www.w3.org/2000/svg"><g fill-rule="nonzero" fill="none"><path d="M64.407 9.856L53.605 0H11.371L.569 9.856A1.548 1.548 0 00.1 11.603c.235.619.843 1.031 1.524 1.031h61.727a1.62 1.62 0 001.522-1.031 1.545 1.545 0 00-.467-1.747z" fill="#C4C4C4"></path><path d="M63.351 9.927H1.624C.728 9.927 0 10.644 0 11.529v59.267C0 72.566 1.454 74 3.249 74h58.478c1.795 0 3.249-1.434 3.249-3.204V11.53c0-.885-.728-1.602-1.625-1.602z" fill="#E4E4E4"></path><path d="M32.488 45.122c-7.963 0-14.44-6.447-14.44-14.37v-4.79a1.6 1.6 0 011.605-1.596 1.6 1.6 0 011.604 1.596v4.79c0 6.163 5.04 11.177 11.23 11.177 6.192 0 11.231-5.014 11.231-11.177v-4.79a1.6 1.6 0 011.604-1.596 1.6 1.6 0 011.605 1.596v4.79c0 7.923-6.477 14.37-14.44 14.37z" fill="#6D6D6D"></path></g></svg><p>@T("shoppingcart.cartisempty")</p></div>}
+                @if (!enableNewAtcLayout)
+                {
+                    @await Component.InvokeAsync("CartSimilarProducts", new { productId = Model.Items[0].ProductId, parentGroupId = Model.Items[0].ParentGroupedProductId, productThumbPictureSize = 150 })}
+            </div>
+        </div> }
+    else
+    {
+        <div class="empty"><svg width="56" viewBox="0 0 65 74" xmlns="http://www.w3.org/2000/svg"><g fill-rule="nonzero" fill="none"><path d="M64.407 9.856L53.605 0H11.371L.569 9.856A1.548 1.548 0 00.1 11.603c.235.619.843 1.031 1.524 1.031h61.727a1.62 1.62 0 001.522-1.031 1.545 1.545 0 00-.467-1.747z" fill="#C4C4C4"></path><path d="M63.351 9.927H1.624C.728 9.927 0 10.644 0 11.529v59.267C0 72.566 1.454 74 3.249 74h58.478c1.795 0 3.249-1.434 3.249-3.204V11.53c0-.885-.728-1.602-1.625-1.602z" fill="#E4E4E4"></path><path d="M32.488 45.122c-7.963 0-14.44-6.447-14.44-14.37v-4.79a1.6 1.6 0 011.605-1.596 1.6 1.6 0 011.604 1.596v4.79c0 6.163 5.04 11.177 11.23 11.177 6.192 0 11.231-5.014 11.231-11.177v-4.79a1.6 1.6 0 011.604-1.596 1.6 1.6 0 011.605 1.596v4.79c0 7.923-6.477 14.37-14.44 14.37z" fill="#6D6D6D"></path></g></svg><p>@T("shoppingcart.cartisempty")</p></div>}
 </div>
 
 
 
 <script type="text/javascript">
-    function validateAndUpdateQuantity(cartId, obj, event, url) {
-        const quantity = parseInt($(`#itemquantity${cartId}`).val());
-     
+    function validateAndUpdateQuantity(inputElement) {
+        const quantity = parseInt(inputElement.value);
+        const url = inputElement.getAttribute("data-url");
         if (isNaN(quantity) || quantity <= 0) {
             return false;
         }
@@ -319,6 +218,11 @@ else
             else {
                 addSlickSlider(false);
             }
+            setTimeout(function () {
+                $('.selection-preview-wrapper').each(function () {
+                    initSelectionPreview($(this));
+                });
+            }, 800);
         });
     });
     function addSlickSlider(isSlickAdded) {
@@ -375,8 +279,36 @@ else
                 setTimeout(function () { $('.complete-images').resize(); lazyloadimages(); }, 200);
             }
         }
-		else{
-		 lazyloadimages();
-		}
+        else {
+            lazyloadimages();
+        }
+    }
+    function initSelectionPreview($wrapper) {
+        var $track = $wrapper.find('.selection-preview-image');
+        var $prev = $wrapper.find('.sp-prev');
+        var $next = $wrapper.find('.sp-next');
+        var scrollAmount = 270; //
+        function updateChevrons() {
+            var scrollLeft = $track.scrollLeft();
+            var maxScroll = $track[0].scrollWidth - $track[0].clientWidth;
+
+            $prev.toggleClass('sp-hidden', scrollLeft <= 0);
+
+            $next.toggleClass('sp-hidden', scrollLeft >= maxScroll - 1);
+			
+        }
+
+        $prev.on('click', function () {
+            $track.scrollLeft($track.scrollLeft() - scrollAmount);
+        });
+
+        $next.on('click', function () {
+            $track.scrollLeft($track.scrollLeft() + scrollAmount);
+        });
+
+        $track.on('scroll', updateChevrons);
+
+        // Initial state
+        updateChevrons();
     }
 </script>

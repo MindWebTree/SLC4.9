@@ -1,9 +1,10 @@
 ﻿@inject Nop.Services.Configuration.ISettingService _settingServce;
+@using MWT.Plugin.Misc.MwtStorefront.Models.ShoppingCart
 @using Nop.Core.Domain.Orders
 @using System.Globalization;
 @inject Nop.Services.Configuration.ISettingService _settingService;
-@inject Nop.Services.Orders.IShoppingCartService _shoppingCartService;
-@model MiniShoppingCartModel
+@inject IShoppingCartExtendedCartService _shoppingCartService;
+@model MiniShoppingCartExtendedModel
 @{ var settingValue = await _settingServce.GetSettingByKeyAsync<string>("MarketingSettings.ShowBuymoreSavemoreBanner");
     bool showBuymoreSavemoreBanner = false;
     bool.TryParse(settingValue, out showBuymoreSavemoreBanner);

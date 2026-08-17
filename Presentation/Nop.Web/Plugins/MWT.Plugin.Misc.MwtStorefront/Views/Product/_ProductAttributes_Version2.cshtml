@@ -499,7 +499,7 @@
                                     @if (T("Product.Attr.shades").Text != @textPrompt)
 
                                     {
-                                        <fieldset aria-label="@($"Available {textPrompt}")" aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                        <fieldset aria-label="@($"Available {textPrompt}")"   style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                             <legend style="display:none;">
                                                 @textPrompt
                                             </legend>
@@ -541,7 +541,7 @@
                                     else
 
                                     {
-                                        <fieldset aria-label="@($"Available {textPrompt}")" aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                        <fieldset aria-label="@($"Available {textPrompt}")"   style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                             <legend style="display:none;">
                                                 @textPrompt
                                             </legend>
@@ -654,7 +654,7 @@
                                 {
 
                                     int index = 0;
-                                    <fieldset aria-label="@($"Available {textPrompt}")" aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                    <fieldset aria-label="@($"Available {textPrompt}")"  style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                         <legend style="display:none;">
                                             @textPrompt
                                         </legend>
@@ -856,8 +856,7 @@
             });
             $('.accordion-header').on('click', function () {
 
-                $(this).toggleClass('active');
-                console.log($(this));
+                $(this).toggleClass('active'); 
                 $(this).next().toggleClass('active');
 
             });
@@ -1299,6 +1298,12 @@
 
                                       $('@addtoCartFormId .price-value-sticky-@Model.Id').html(content);
                                       $('@addtoCartFormId .price-value-sticky-@Model.Id').show();
+
+                                       if (typeof updatePriceAriaLabel === "function") {
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-@Model.Id', data.price, data.oldPrice);
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-withoutoffer-@Model.Id', data.price, data.oldPrice);
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-sticky-@Model.Id', data.price, data.oldPrice);
+                                      }
                                   }
                                   else {
                                       $('@addtoCartFormId .price-value-@Model.Id').text(data.oldPrice ? data.oldPrice : data.price);
@@ -1310,6 +1315,11 @@
                                      $('@addtoCartFormId .limited-offer-@Model.Id').show()
                                       $('@addtoCartFormId .limited-offer-@Model.Id').html(data.offerText);
 
+                                       if (typeof updatePriceAriaLabel === "function") {
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-withoutoffer-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-sticky-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
+                                      }
                                   }
 
 

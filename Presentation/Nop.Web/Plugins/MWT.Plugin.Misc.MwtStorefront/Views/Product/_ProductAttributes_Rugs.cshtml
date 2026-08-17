@@ -138,7 +138,7 @@
 
 
                 }
-                <div data-attr-name=" attribute-row @(label.Trim().ToLower())" class=" @(!attribute.Values.Any(val => !val.Hide) ? "all-unavailable" : "") @(textPrompt.Trim().ToLower())-attrname   @(T("Product.Attr.shades").Text == @customTextPrompt ? "shade-section" : T("Product.Attr.Size").Text == @customTextPrompt ? (attribute.Values.Count == 1 ? "size-section single-attr-container" : "size-section") : @customTextPrompt + "-section") attribute-craousel">
+                <div data-attr-name="@(label.Trim().ToLower())" class=" attribute-row  @(!attribute.Values.Any(val => !val.Hide) ? "all-unavailable" : "") @(textPrompt.Trim().ToLower())-attrname   @(T("Product.Attr.shades").Text == @customTextPrompt ? "shade-section" : T("Product.Attr.Size").Text == @customTextPrompt ? (attribute.Values.Count == 1 ? "size-section single-attr-container" : "size-section") : @customTextPrompt + "-section") attribute-craousel">
                     <dt id="@($"{NopCatalogDefaults.ProductAttributePrefix}label_{attribute.Id}")" class="control-label  @(counter > 1 ? "accordion-header" : string.Empty) @(counter > 1 && !attribute.IsExpanded ? "active" : string.Empty)">
                         <span class="text-prompt col-form-label">
 
@@ -1716,6 +1716,13 @@
 
                                       $('@addtoCartFormId .price-value-sticky-@Model.Id').html(content);
                                       $('@addtoCartFormId .price-value-sticky-@Model.Id').show();
+
+                                       if (typeof updatePriceAriaLabel === "function") {
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-@Model.Id', data.price, data.oldPrice);
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-withoutoffer-@Model.Id', data.price, data.oldPrice);
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-sticky-@Model.Id', data.price, data.oldPrice);
+                                      }
+
                                   }
                                   else {
                                       $('@addtoCartFormId .price-value-@Model.Id').text(data.oldPrice ? data.oldPrice : data.price);
@@ -1726,6 +1733,12 @@
                                       $('@addtoCartFormId .price-value-@Model.Id').show();
                                       $('@addtoCartFormId .limited-offer-@Model.Id').show();
                                       $('@addtoCartFormId .limited-offer-@Model.Id').html(data.offerText);
+
+                                        if (typeof updatePriceAriaLabel === "function") {
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-withoutoffer-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
+                                          updatePriceAriaLabel('@addtoCartFormId .price-value-sticky-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
+                                      }
                                   }
 
 
@@ -2100,7 +2113,7 @@
                       // 2. UI Update Loop
                       attributeContainers.each(function (index) {
                           var $container = $(this);
-                                var $parentRow = $container.closest('attribute-row');
+                                var $parentRow = $container.closest('.attribute-row');
                           var currentContainerId = $container.attr('id');
 
                           var otherSelectedIds = [];
