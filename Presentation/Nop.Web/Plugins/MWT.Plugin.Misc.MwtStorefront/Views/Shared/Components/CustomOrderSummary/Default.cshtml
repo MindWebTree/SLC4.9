@@ -2,14 +2,19 @@
 @using Nop.Core
 @using Nop.Core.Domain.Orders
 @using Nop.Core.Domain.Tax
+@using Nop.Services.Forums
+@using Nop.Services.Topics
 @inject IWebHelper webHelper
+@inject IForumService _forumService
 @inject IWorkContext workContext
 @inject OrderSettings orderSettings
-@inject Nop.Services.Customers.ICustomerService _customerService
+@inject ITopicService _topicService
+@inject ICustomerExtendedService _customerService
 @inject Nop.Services.Configuration.ISettingService _settingService
 @inject Nop.Services.Catalog.IPriceFormatter _priceFormatter
 @inject Nop.Core.IStoreContext _storeContext
 @inject Nop.Core.IWorkContext _workcontext
+@inject ICustomWorkContext _customWorkcontext
 @{
     bool isMemberShipEnabled = false;
     decimal memberShipFeeValue = 0;
@@ -105,7 +110,7 @@
             <div class="row mt-3">
                 <div class="col-12 col-sm-12 col-lg-8">
 
-                    @if (!_workcontext.IsMobileDevice())
+                    @if (!_customWorkcontext.IsMobileDevice())
                     {
                         <div class="cartitems-heading">
                             <div class="row">
@@ -735,8 +740,10 @@
                                                                 </script>
                                                             }
                                                             else
-                                                            {
-                                                                <a class="read" id="read-terms" href="@Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("conditionsofuse") })">@T("Checkout.TermsOfService.Read")</a>
+                                                            { 
+                                                                var topic = await _topicService.GetTopicBySystemNameAsync("conditionsofuse");
+                                                               
+                                                                <a class="read" id="read-terms" href="@Url.RouteUrl("Topic", new { SeName =  topic.SystemName })">@T("Checkout.TermsOfService.Read")</a>
                                                             }
                                                         </label>
                                                     </div>
@@ -807,7 +814,7 @@
                                                     @T("Checkout.TermsOfService.IAccept")
                                                 </label>
                                             }
-                                            <div class="addon-buttons">@foreach (var pm in Model.ButtonPaymentMethodViewComponentNames)
+                                            <div class="addon-buttons">@foreach (var pm in Model.ButtonPaymentMethodViewComponents)
                                                 {
                                                     @await Component.InvokeAsync(pm)
                                                 }</div>
@@ -829,8 +836,10 @@
                 var inclTax = await workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
                 //tax info is already included in the price (incl/excl tax). that's why we display only shipping info here
                 //of course, you can modify appropriate locales to include VAT info there
-                <div class="tax-shipping-info">
-                    @T(inclTax ? "ShoppingCart.TaxShipping.InclTax" : "ShoppingCart.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("shippinginfo") }))
+                    var topic = await _topicService.GetTopicBySystemNameAsync("conditionsofuse");
+
+                    <div class="tax-shipping-info">
+                        @T(inclTax ? "ShoppingCart.TaxShipping.InclTax" : "ShoppingCart.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = topic.SystemName }))
                 </div>
             } @*@if (Model.IsEditable)
         {

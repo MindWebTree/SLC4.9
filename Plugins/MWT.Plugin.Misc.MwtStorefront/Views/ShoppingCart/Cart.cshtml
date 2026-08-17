@@ -1,25 +1,26 @@
 ﻿@model ShoppingCartModel
 @inject IThemeContext _themeContext
-@inject Nop.Core.IWorkContext _workcontext
+@inject ICustomWorkContext _customWorkcontext
+@inject IWorkContext _workcontext
 @using Nop.Core
 @using Nop.Core.Domain.Seo
 @inject IWebHelper webHelper
 @inject SeoSettings seoSettings
 @inject Nop.Services.Configuration.ISettingService _settingService;
 @inject Nop.Services.Orders.IShoppingCartService _shoppingCartService
-@inject Nop.Services.Customers.ICustomerService _customerService
+@inject ICustomerExtendedService _customerService
 @{
     Layout = "_ColumnsOne";
-    Html.AddMetaDescriptionParts(await _settingService.GetSettingByKeyAsync<string>("seosettings.Cartmetadescription"));
+    NopHtml.AddMetaDescriptionParts(await _settingService.GetSettingByKeyAsync<string>("seosettings.Cartmetadescription"));
     //title
-    Html.AddTitleParts(T("PageTitle.ShoppingCart").Text);
+    NopHtml.AddTitleParts(T("PageTitle.ShoppingCart").Text);
     //page class
-    Html.AppendPageCssClassParts("html-shopping-cart-page");
+    NopHtml.AppendPageCssClassParts("html-shopping-cart-page");
     var themeName = await _themeContext.GetWorkingThemeNameAsync();
-    Html.AddScriptParts(ResourceLocation.Footer, $"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/cart.js?" + DateTime.Now.Ticks);
+    NopHtml.AddScriptParts(ResourceLocation.Footer, $"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/cart.js?" + DateTime.Now.Ticks);
     if (seoSettings.CanonicalUrlsEnabled)
     {
-        Html.AddCanonicalUrlParts(Url.RouteUrl("ShoppingCart", null, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant(), false);
+        NopHtml.AddCanonicalUrlParts(Url.RouteUrl("ShoppingCart", null, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant(), false);
     }
 
     var customer = await _workcontext.GetCurrentCustomerAsync();
@@ -35,7 +36,6 @@
         <!-- Create Account  -->
         @await Component.InvokeAsync("CustomRegisterBlock")
         <!-- Create Account  -->
-
         @await Html.PartialAsync("_CheckoutOptionsPartial", new LoginModel() { Email = customerEmail })
 
     }
@@ -45,7 +45,7 @@
     var common_update = '@T("Common.Update")';
     var common_save = '@T("Common.Save")';
     var common_edit = '@T("Common.Edit")';
-    var is_Mobile_Device = '@(_workcontext.IsMobileDevice())';
+    var is_Mobile_Device = '@(_customWorkcontext.IsMobileDevice())';
     var ajaxCartUrl = '@(Url.RouteUrl("ShoppingCart"))';
 
 </script>
