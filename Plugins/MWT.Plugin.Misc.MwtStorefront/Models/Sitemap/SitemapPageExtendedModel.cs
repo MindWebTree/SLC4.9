@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MWT.Plugin.Misc.MwtStorefront.Models.Common
+namespace MWT.Plugin.Misc.MwtStorefront.Models.Sitemap
 {
-    public partial record CustomSitemapPageModel : BasePageableModel
+    public partial record SitemapPageExtendedModel : BasePageableModel
     {
     }
 }
