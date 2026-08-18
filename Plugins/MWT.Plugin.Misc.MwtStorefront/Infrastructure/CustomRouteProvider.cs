@@ -73,23 +73,15 @@
 
                 endpointRouteBuilder.MapControllerRoute(name: "Sitemap",
                    pattern: $"{lang}/sitemap",
-                   defaults: new { controller = "Common", action = "CustomSitemap" });
+                   defaults: new { controller = "SiteMap", action = "ExtendedSitemap" });
 
                 endpointRouteBuilder.MapControllerRoute(name: "sitemap.xml",
                   pattern: $"sitemap.xml",
-                  defaults: new { controller = "Common", action = "CustomSitemapXml" });
+                  defaults: new { controller = "SiteMap", action = "ExtendedSitemapXml" });
 
-                endpointRouteBuilder.MapControllerRoute(name: "kw_sitemap.xml",
-              pattern: $"kw_sitemap.xml",
-              defaults: new { controller = "Common", action = "CustomKwTermSitemapXml" });
-
-                endpointRouteBuilder.MapControllerRoute(name: "qa_sitemap.xml",
-       pattern: $"qa_sitemap.xml",
-       defaults: new { controller = "Common", action = "CustomQuestionAnswerSitemapXml" });
-
-                endpointRouteBuilder.MapControllerRoute(name: "picturesitemap.xml",
+                 endpointRouteBuilder.MapControllerRoute(name: "picturesitemap.xml",
                pattern: $"picturesitemap.xml",
-               defaults: new { controller = "Common", action = "CustomPictureSitemapXml" });
+               defaults: new { controller = "SiteMap", action = "GeneratePictureSitemapXml" });
 
                 endpointRouteBuilder.MapControllerRoute(name: "CheckoutOnePage",
            pattern: $"{lang}/onepagecheckout/",
@@ -247,23 +239,23 @@
 
                 endpointRouteBuilder.MapControllerRoute(name: "Sitemap_Products",
                  pattern: $"products_sitemap.xml",
-                 defaults: new { controller = "Common", action = "CustomGenerateProductSitemapXml" });
+                 defaults: new { controller = "SiteMap", action = "GenerateProductSitemapXml" });
 
                 endpointRouteBuilder.MapControllerRoute(name: "Sitemap_Pages",
               pattern: $"pages_sitemap.xml",
-              defaults: new { controller = "Common", action = "CustomGeneratePageSitemapXml" });
+              defaults: new { controller = "SiteMap", action = "GeneratePageSitemapXml" });
 
                 endpointRouteBuilder.MapControllerRoute(name: "Sitemap_Categories",
         pattern: $"categories_sitemap.xml",
-        defaults: new { controller = "Common", action = "CustomGenerateCategorySitemapXml" });
+        defaults: new { controller = "SiteMap", action = "GenerateCategorySitemapXml" });
 
                 endpointRouteBuilder.MapControllerRoute(name: "Sitemap_QuestionAnswer",
     pattern: $"qa_sitemap.xml",
-    defaults: new { controller = "Common", action = "CustomGenerateQuestionAnswerSitemapXml" });
+    defaults: new { controller = "SiteMap", action = "GenerateQuestionAnswerSitemapXml" });
 
                 endpointRouteBuilder.MapControllerRoute(name: "Sitemap_KwTerm",
     pattern: $"kw_sitemap.xml",
-    defaults: new { controller = "Common", action = "CustomGenerateKwTermSitemapXml" });
+    defaults: new { controller = "SiteMap", action = "GenerateKwTermSitemapXml" });
 
 
                 endpointRouteBuilder.MapControllerRoute(name: "google_feed",

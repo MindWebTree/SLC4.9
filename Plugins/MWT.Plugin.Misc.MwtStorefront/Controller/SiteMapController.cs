@@ -195,7 +195,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controller
         //available even when navigation is not allowed
         [CheckAccessPublicStore(ignore: true)]
         //ignore SEO friendly URLs checks
-        public virtual async Task<IActionResult> PictureSitemapXml(int? id)
+        public virtual async Task<IActionResult> GeneratePictureSitemapXml(int? id)
         {
             var siteMap = _sitemapXmlSettings.SitemapXmlEnabled
                 ? await _sitemapModelFactory.PreparePictureSitemapXmlAsync(id) : string.Empty;

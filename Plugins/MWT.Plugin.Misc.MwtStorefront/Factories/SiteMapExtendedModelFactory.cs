@@ -1,4 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
+using MWT.Nop.Core.Domain.KW;
 using MWT.Nop.Core.Services.KW;
 using MWT.Nop.Core.Services.Media;
 using MWT.Nop.Core.Services.QA;
@@ -43,6 +47,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
         private readonly IKwTermService _kwTermService;
         private readonly IPictureExtendedService _pictureService;
         private readonly MediaSettings _mediaSettings;
+        private readonly IActionContextAccessor _actionContextAccessor;
+        private readonly IUrlHelperFactory _urlHelperFactory;
+        private readonly IUrlRecordService _urlRecordService;
 
         #endregion
         public SiteMapExtendedModelFactory(BlogSettings blogSettings, ForumSettings forumSettings, IBlogService blogService, ICategoryService categoryService, ICustomerService customerService,
@@ -50,13 +57,17 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
             ILocker locker, IManufacturerService manufacturerService, INewsService newsService, INopFileProvider nopFileProvider, INopUrlHelper nopUrlHelper,
             IProductService productService, IProductTagService productTagService, IStaticCacheManager staticCacheManager, IStoreContext storeContext, ITopicService topicService,
             IWebHelper webHelper, IWorkContext workContext, LocalizationSettings localizationSettings, NewsSettings newsSettings, SitemapSettings sitemapSettings, SitemapXmlSettings sitemapXmlSettings,
-            IQuestionAnswerService questionAnswerService, IKwTermService kwTermService, IPictureExtendedService pictureService, MediaSettings mediaSettings)
+            IQuestionAnswerService questionAnswerService, IKwTermService kwTermService, IPictureExtendedService pictureService, MediaSettings mediaSettings,
+            IActionContextAccessor actionContextAccessor, IUrlHelperFactory urlHelperFactory, IUrlRecordService urlRecordService)
             : base(blogSettings, forumSettings, blogService, categoryService, customerService, eventPublisher, httpContextAccessor, languageService, localizationService, locker, manufacturerService, newsService, nopFileProvider, nopUrlHelper, productService, productTagService, staticCacheManager, storeContext, topicService, webHelper, workContext, localizationSettings, newsSettings, sitemapSettings, sitemapXmlSettings)
         {
             _questionAnswerService = questionAnswerService;
             _kwTermService = kwTermService;
             _pictureService = pictureService;
             _mediaSettings = mediaSettings;
+            _actionContextAccessor = actionContextAccessor;
+            _urlHelperFactory = urlHelperFactory;
+            _urlRecordService = urlRecordService;
         }
 
 
@@ -203,7 +214,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
                         GroupTitle = categoriesGroupTitle,
                         ParentId = category.ParentCategoryId,
                         Name = await _localizationService.GetLocalizedAsync(category, x => x.Name),
-                        Url = await _nopUrlHelper.RouteGenericUrlAsync(category)
+                        Url = (await GetLocalizedSitemapUrlAsync("Category", CustomGetSeoRouteParamsAwait(category), category.UpdatedOnUtc)).Location
                     }).ToListAsync());
                 }
 
@@ -229,7 +240,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
                     {
                         GroupTitle = productsGroupTitle,
                         Name = await _localizationService.GetLocalizedAsync(product, x => x.Name),
-                        Url = await _nopUrlHelper.RouteGenericUrlAsync(product)
+                        Url = (await GetLocalizedSitemapUrlAsync("Product", CustomGetSeoRouteParamsAwait(product), product.UpdatedOnUtc)).Location
                     }).ToListAsync());
                 }
 
@@ -433,10 +444,10 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
             var products = await _productService.SearchProductsAsync(0, storeId: (await _storeContext.GetCurrentStoreAsync()).Id,
                 visibleIndividuallyOnly: true, orderBy: ProductSortingEnum.CreatedOn);
 
-     
+
             foreach (var product in products)
             {
-                var sitemap = await PrepareExtendedLocalizedSitemapUrlAsync(product, product.UpdatedOnUtc, UpdateFrequency.Daily);
+                var sitemap = await GetLocalizedSitemapUrlAsync("Product", CustomGetSeoRouteParamsAwait(product), product.UpdatedOnUtc, UpdateFrequency.Daily);
 
                 #region picture
 
@@ -562,11 +573,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
         protected virtual async Task<IEnumerable<SitemapUrlExtendedModel>> GetKwTermUrlsAsync()
         {
 
-            var kwterms = await _kwTermService.GetAllKwTermsAsync(storeId: (await _storeContext.GetCurrentStoreAsync()).Id, pageIndex: 0, pageSize: int.MaxValue);
-
-            return await kwterms
-                .SelectAwait(async category => await PrepareExtendedLocalizedSitemapUrlAsync(category, category.UpdatedOnUtc))
-                .ToListAsync();
+            return await (await _kwTermService.GetAllKwTermsAsync(storeId: (await _storeContext.GetCurrentStoreAsync()).Id, pageIndex: 0, pageSize: int.MaxValue))
+               .SelectAwait(async kwTerm => await GetLocalizedSitemapUrlAsync("KWTerm", CustomGetSeoRouteParamsAwait(kwTerm), kwTerm.UpdatedOnUtc)).ToListAsync();
 
         }
 
@@ -615,12 +623,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
         {
 
 
-            var store = await _storeContext.GetCurrentStoreAsync();
-            var questionAnswers = await _questionAnswerService.GetAllQuestionAnswersAsync(storeId: store.Id);
+            return await (await _questionAnswerService.GetAllQuestionAnswersAsync(storeId: (await _storeContext.GetCurrentStoreAsync()).Id, pageIndex: 0, pageSize: int.MaxValue))
+               .SelectAwait(async questionAnswer => await GetLocalizedSitemapUrlAsync("QuestionAnswer", CustomGetSeoRouteParamsAwait(questionAnswer), questionAnswer.UpdatedOnUtc)).ToListAsync();
 
-            return await questionAnswers
-                .SelectAwait(async category => await PrepareExtendedLocalizedSitemapUrlAsync(category, category.UpdatedOnUtc))
-                .ToListAsync();
 
         }
 
@@ -668,12 +673,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
         }
         protected virtual async Task<IEnumerable<SitemapUrlExtendedModel>> GetExtendedCategoryUrlsAsync()
         {
-            var store = await _storeContext.GetCurrentStoreAsync();
-            var categories = await _categoryService.GetAllCategoriesAsync(storeId: store.Id);
-
-            return await categories
-                .SelectAwait(async category => await PrepareExtendedLocalizedSitemapUrlAsync(category, category.UpdatedOnUtc))
-                .ToListAsync();
+            return await (await _categoryService.GetAllCategoriesAsync(storeId: (await _storeContext.GetCurrentStoreAsync()).Id))
+               .SelectAwait(async category => await GetLocalizedSitemapUrlAsync("Category", CustomGetSeoRouteParamsAwait(category), category.UpdatedOnUtc)).ToListAsync();
 
 
         }
@@ -772,13 +773,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
 
         protected virtual async Task<IEnumerable<SitemapUrlExtendedModel>> GetExtendedProductUrlsAsync()
         {
-            var store = await _storeContext.GetCurrentStoreAsync();
-            var products = await _productService
-                .SearchProductsAsync(0, storeId: store.Id, visibleIndividuallyOnly: true, orderBy: ProductSortingEnum.CreatedOn);
-
-            return await products
-                .SelectAwait(async product => await PrepareExtendedLocalizedSitemapUrlAsync(product, product.UpdatedOnUtc))
-                .ToListAsync();
+            return await (await _productService.SearchProductsAsync(0, storeId: (await _storeContext.GetCurrentStoreAsync()).Id,
+                visibleIndividuallyOnly: true, orderBy: ProductSortingEnum.CreatedOn))
+                .SelectAwait(async product => await GetLocalizedSitemapUrlAsync("Product", CustomGetSeoRouteParamsAwait(product), product.UpdatedOnUtc)).ToListAsync();
         }
 
         #endregion
@@ -786,6 +783,68 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
 
 
         #region Common
+        protected virtual Func<int?, Task<object>> CustomGetSeoRouteParamsAwait<T>(T model)
+         where T : BaseEntity, ISlugSupported
+        {
+            if (string.Equals(typeof(T).Name, "KWTerm", StringComparison.InvariantCultureIgnoreCase) || string.Equals(typeof(T).Name, "QuestionAnswer", StringComparison.InvariantCultureIgnoreCase))
+                return async lang => new { SeName = await _urlRecordService.GetSeNameAsync(model, lang) };
+            else
+                return async lang => new { SeName = await _urlRecordService.GetSeNameAsync(model, lang), id = model.Id };
+        }
+
+        protected virtual IUrlHelper GetUrlHelper()
+        {
+            return _urlHelperFactory.GetUrlHelper(_actionContextAccessor.ActionContext);
+        }
+
+        public virtual async Task<SitemapUrlExtendedModel> GetLocalizedSitemapUrlAsync(string routeName,
+           Func<int?, Task<object>> getRouteParamsAwait = null,
+           DateTime? dateTimeUpdatedOn = null,
+           UpdateFrequency updateFreq = UpdateFrequency.Weekly)
+        {
+            var urlHelper = GetUrlHelper();
+
+            //url for current language
+            var url = urlHelper.RouteUrl(routeName,
+                getRouteParamsAwait != null ? await getRouteParamsAwait(null) : null,
+                await GetHttpProtocolAsync());
+
+            var updatedOn = dateTimeUpdatedOn ?? DateTime.UtcNow;
+            var languages = _localizationSettings.SeoFriendlyUrlsForLanguagesEnabled
+                ? await _languageService.GetAllLanguagesAsync()
+                : null;
+
+            if (languages == null)
+                return new SitemapUrlExtendedModel(url, new List<string>(), updateFreq, updatedOn);
+
+            var pathBase = _actionContextAccessor.ActionContext.HttpContext.Request.PathBase;
+            //return list of localized urls
+            var localizedUrls = await languages
+                .SelectAwait(async lang =>
+                {
+                    var currentUrl = urlHelper.RouteUrl(routeName,
+                        getRouteParamsAwait != null ? await getRouteParamsAwait(lang.Id) : null,
+                        await GetHttpProtocolAsync());
+
+                    if (string.IsNullOrEmpty(currentUrl))
+                        return null;
+
+                    //Extract server and path from url
+                    var scheme = new Uri(currentUrl).GetComponents(UriComponents.SchemeAndServer, UriFormat.Unescaped);
+                    var path = new Uri(currentUrl).PathAndQuery;
+
+                    //Replace seo code
+                    var localizedPath = path
+                        .RemoveLanguageSeoCodeFromUrl(pathBase, true)
+                        .AddLanguageSeoCodeToUrl(pathBase, true, lang);
+
+                    return new Uri(new Uri(scheme), localizedPath).ToString();
+                })
+                .Where(value => !string.IsNullOrEmpty(value))
+                .ToListAsync();
+
+            return new SitemapUrlExtendedModel(url, localizedUrls, updateFreq, updatedOn);
+        }
 
         protected virtual async Task<SitemapUrlExtendedModel> PrepareExtendedLocalizedSitemapUrlAsync<TEntity>(TEntity entity,
        DateTime? dateTimeUpdatedOn = null,
@@ -794,7 +853,10 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
             var isSingleLanguageEntity = entity is BlogPost or NewsItem;
             var url = await _nopUrlHelper
                 .RouteGenericUrlAsync(entity, await GetHttpProtocolAsync(), ensureTwoPublishedLanguages: !isSingleLanguageEntity);
+            if (entity.Id == 7576)
+            {
 
+            }
             var store = await _storeContext.GetCurrentStoreAsync();
 
             var updatedOn = dateTimeUpdatedOn ?? DateTime.UtcNow;

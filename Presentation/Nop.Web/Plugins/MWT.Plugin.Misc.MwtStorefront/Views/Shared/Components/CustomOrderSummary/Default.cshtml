@@ -3,19 +3,24 @@
 @using Nop.Core.Domain.Orders
 @using Nop.Core.Domain.Tax
 @using Nop.Services.Forums
+@using Nop.Services.Security
+@using Nop.Services.Seo
 @using Nop.Services.Topics
+@using Nop.Web.Framework.Mvc.Routing
 @inject IWebHelper webHelper
 @inject IForumService _forumService
 @inject IWorkContext workContext
 @inject OrderSettings orderSettings
-@inject ITopicService _topicService
+@inject IForumService _forumService
 @inject ICustomerExtendedService _customerService
 @inject Nop.Services.Configuration.ISettingService _settingService
 @inject Nop.Services.Catalog.IPriceFormatter _priceFormatter
 @inject Nop.Core.IStoreContext _storeContext
 @inject Nop.Core.IWorkContext _workcontext
 @inject ICustomWorkContext _customWorkcontext
+@inject INopUrlHelper _nopurlHelper;
 @{
+ 
     bool isMemberShipEnabled = false;
     decimal memberShipFeeValue = 0;
     string memberShipFee = "";
@@ -62,7 +67,8 @@
                     }
                 </ul>
             </div>
-        } @*we add enctype = "multipart/form-data" because "File upload" attribute control type requires it*@
+        }
+     @*we add enctype = "multipart/form-data" because "File upload" attribute control type requires it*@
         <form asp-route="ShoppingCart" method="post" enctype="multipart/form-data" id="shopping-cart-form">
 
             @*Membership Section*@
@@ -102,7 +108,8 @@
                         </div>
                     </div>
                 }
-            } @*Membership Section End*@
+            }
+     @*Membership Section End*@
 
 
 
@@ -245,8 +252,8 @@
                                                             <div class="card-body p-0">
 
                                                                 <textarea aria-label="@T("shoppingcart.specialinstructions.PlaceHolder")" class="form-control desktop ItemNotes " cols="2" name="itemspecialinstructions@(item.Id)"
-                                                                          type="text" id="itemspecialinstructions@(item.Id)"
-                                                                          placeholder="@T("shoppingcart.specialinstructions.PlaceHolder")" rows="2" style="resize:vertical;">@(string.IsNullOrEmpty(item.SpecialInstructions) ? "" : item.SpecialInstructions)</textarea>
+                                                              type="text" id="itemspecialinstructions@(item.Id)"
+                                                              placeholder="@T("shoppingcart.specialinstructions.PlaceHolder")" rows="2" style="resize:vertical;">@(string.IsNullOrEmpty(item.SpecialInstructions) ? "" : item.SpecialInstructions)</textarea>
 
 
 
@@ -434,7 +441,8 @@
                                                 }
 
                                             }
-                                        }      @if (!string.IsNullOrEmpty(item.Sku))
+                                        }
+                  @if (!string.IsNullOrEmpty(item.Sku))
                                         {
 
                                             <p class="sku"><strong>@T("shoppingcart.sku"):</strong> @Html.Raw(item.Sku)</p>
@@ -610,7 +618,7 @@
                                                     <div class="col-12">
                                                         <div class="form-group">
                                                             <textarea class="form-control ItemNotes" cols="2" name="itemspecialinstructions@(item.Id)" value="@(item.SpecialInstructions)"
-                                                                      placeholder="@T("shoppingcart.specialinstructions.PlaceHolder") Instructions" rows="2" style="resize:vertical;">@(string.IsNullOrEmpty(item.SpecialInstructions) ? "" : item.SpecialInstructions)</textarea>
+                                                          placeholder="@T("shoppingcart.specialinstructions.PlaceHolder") Instructions" rows="2" style="resize:vertical;">@(string.IsNullOrEmpty(item.SpecialInstructions) ? "" : item.SpecialInstructions)</textarea>
                                                             <button type="button" data-bs-dismiss="modal" class="btn btn-secondary save-btn custom-cart-instruction">@T("Common.Save")</button>
                                                             <button type="button" data-bs-dismiss="modal" class="btn btn-secondary custom-cart-instruction-clear-btn" ref-special-instrution="itemspecialinstructions@(item.Id)">@T("Common.Clear")</button>
 
@@ -622,7 +630,8 @@
                                     </div>
                                 </div>
                             </div>
-                        }               }
+                        }
+                   }
                     <div class="share-info">
                         <p class="share-label">@T("ShoppingCart.Share.Heading")</p>
                         <a href="#" class="share-link" onclick="copyCartLink(event)"
@@ -666,8 +675,8 @@
                                         <div class="accordion">
                                             <div class="card" type="button">
                                                 <button type="button" tabindex="0" role="button" class="card-header collapsed" id="heading-discountcodes"
-                                                     data-bs-toggle="collapse" data-bs-target="#collapse-discountcodes"
-                                                     aria-expanded=" @(Model.DiscountBox?.Messages.Count()>0?"false":"true")" aria-controls="collapse-discountcodes">
+                                                        data-bs-toggle="collapse" data-bs-target="#collapse-discountcodes"
+                                                        aria-expanded=" @(Model.DiscountBox?.Messages.Count()>0?"false":"true")" aria-controls="collapse-discountcodes">
                                                     <h2 class="mb-0 text-left text-uppercase">
                                                         @T("Shoppingcart.SpecialOfferCodes")
                                                     </h2>
@@ -740,10 +749,10 @@
                                                                 </script>
                                                             }
                                                             else
-                                                            { 
-                                                                var topic = await _topicService.GetTopicBySystemNameAsync("conditionsofuse");
-                                                               
-                                                                <a class="read" id="read-terms" href="@Url.RouteUrl("Topic", new { SeName =  topic.SystemName })">@T("Checkout.TermsOfService.Read")</a>
+                                                            {
+
+
+                                                                <a class="read" id="read-terms" href="@await _nopurlHelper.RouteTopicUrlAsync("conditionsofuse")">@T("Checkout.TermsOfService.Read")</a>
                                                             }
                                                         </label>
                                                     </div>
@@ -780,11 +789,11 @@
                                                     {
                                                         if (!isAuthenticated)
                                                         {
-                                                            <div>
-                                                                <button type="button" data-bs-toggle="modal" data-bs-target="#guestcheckoutsignin" class="Signin checkout button-2 btn btn-primary checkout-button w-100">
-                                                                    PROCEED TO CHECKOUT
-                                                                </button>
-                                                            </div> @*@if (!IsMemberShipAddedInCart)
+                                        <div>
+                                            <button type="button" data-bs-toggle="modal" data-bs-target="#guestcheckoutsignin" class="Signin checkout button-2 btn btn-primary checkout-button w-100">
+                                                PROCEED TO CHECKOUT
+                                            </button>
+                                        </div> @*@if (!IsMemberShipAddedInCart)
                                         {
                                         <div class=" w-100 text-center p-2">OR</div>
                                         <div>
@@ -793,95 +802,98 @@
                                         </button>
                                         </div>
                                         }*@ }
-                                                        else
-                                                        {
+                                                                                else
+                                                            {
 
-                                                            <div>
-                                                                <button type="submit" name="customcheckout" value="customcheckout" class="Checkout-Button checkout button-2 btn btn-primary checkout-button w-100">
-                                                                    @T("Checkout.Button")
-                                                                </button>
-                                                            </div>
+                                                                <div>
+                                                                    <button type="submit" name="customcheckout" value="customcheckout" class="Checkout-Button checkout button-2 btn btn-primary checkout-button w-100">
+                                                                        @T("Checkout.Button")
+                                                                    </button>
+                                                                </div>
+                                                            }
                                                         }
                                                     }
-                                                }
 
-                                            </div>
-                                            @await Html.PartialAsync("_Offer")
-                                            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryCartFooter })
-                                            @if (Model.IsEditable)
-                                            {
-                                                <label class="custom-control-label cart-term-service" style="margin: 20px 0 0px;">
-                                                    @T("Checkout.TermsOfService.IAccept")
-                                                </label>
-                                            }
-                                            <div class="addon-buttons">@foreach (var pm in Model.ButtonPaymentMethodViewComponents)
+                                                </div>
+                                                @await Html.PartialAsync("_Offer")
+                                                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryCartFooter })
+                                                @if (Model.IsEditable)
                                                 {
-                                                    @await Component.InvokeAsync(pm)
-                                                }</div>
-                                        }
+                                                    <label class="custom-control-label cart-term-service" style="margin: 20px 0 0px;">
+                                                        @T("Checkout.TermsOfService.IAccept")
+                                                    </label>
+                                                }
+                                                <div class="addon-buttons">
+                                                    @foreach (var pm in Model.ButtonPaymentMethodViewComponents)
+                                                    {
+                                                        @await Component.InvokeAsync(pm)
+                                                    }
+                                                </div>
+                                            }
 
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
 
 
 
-            @if (Model.IsEditable && Model.Items.Count > 0 && Model.DisplayTaxShippingInfo)
-            {
-                var inclTax = await workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
-                //tax info is already included in the price (incl/excl tax). that's why we display only shipping info here
-                //of course, you can modify appropriate locales to include VAT info there
-                    var topic = await _topicService.GetTopicBySystemNameAsync("conditionsofuse");
+                @if (Model.IsEditable && Model.Items.Count > 0 && Model.DisplayTaxShippingInfo)
+                {
+                    var inclTax = await workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
+                    //tax info is already included in the price (incl/excl tax). that's why we display only shipping info here
+                    //of course, you can modify appropriate locales to include VAT info there
+
 
                     <div class="tax-shipping-info">
-                        @T(inclTax ? "ShoppingCart.TaxShipping.InclTax" : "ShoppingCart.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = topic.SystemName }))
-                </div>
-            } @*@if (Model.IsEditable)
+                        @T(inclTax ? "ShoppingCart.TaxShipping.InclTax" : "ShoppingCart.TaxShipping.ExclTax", await _nopurlHelper.RouteTopicUrlAsync("shippinginfo"))
+                    </div>
+                }
+                @*@if (Model.IsEditable)
         {
         @await Component.InvokeAsync("CrossSellProducts")
         }*@
-        </form>
-    }
-    else
-    {
-        <div class="no-data">
-            @T(isAuthenticated ? "ShoppingCart.CartIsEmpty" : "ShoppingCart.CartIsEmpty.Guest")
-        </div>
-    }
-    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryContentAfter })
-</div>
+            </form>
+        }
+        else
+        {
+            <div class="no-data">
+                @T(isAuthenticated ? "ShoppingCart.CartIsEmpty" : "ShoppingCart.CartIsEmpty.Guest")
+            </div>
+        }
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryContentAfter })
+    </div>
 
-<script>
-    window.dataLayer = window.dataLayer || [];
-    @{
-        var currencyCode = (await workContext.GetWorkingCurrencyAsync()).CurrencyCode;
-        var eventId = Guid.NewGuid().ToString();
-        var cartValue = Model.Items.Sum(x => x.Quantity * x.UnitPriceValue);
-    }
-        window.dataLayer.push({
-            'event': 'view_cart',
-            'ecommerce': {
-                'currency': '@currencyCode',
-                'value': @cartValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture),
-                'items': [
-    @foreach (var item in Model.Items)
-    {
-        <text>{
-                            'item_id': '@item.ProductId',
-                            'item_name': '@Html.Raw(JavaScriptEncoder.Default.Encode(item.ProductName))',
-                            'price': @item.UnitPriceValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture),
-                            'quantity': @item.Quantity,
-                            'item_variant': @(item.Variant?.VariantId ?? 0),
-                            'item_category': 'Shopping Cart'
-                            },</text>
-    }
-                ]
-            }
-        });
-</script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        @{
+                var currencyCode = (await workContext.GetWorkingCurrencyAsync()).CurrencyCode;
+                var eventId = Guid.NewGuid().ToString();
+                var cartValue = Model.Items.Sum(x => x.Quantity * x.UnitPriceValue);
+        }
+            window.dataLayer.push({
+                'event': 'view_cart',
+                'ecommerce': {
+                    'currency': '@currencyCode',
+                    'value': @cartValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture),
+                    'items': [
+        @foreach (var item in Model.Items)
+        {
+                <text>{
+                                    'item_id': '@item.ProductId',
+                                    'item_name': '@Html.Raw(JavaScriptEncoder.Default.Encode(item.ProductName))',
+                                    'price': @item.UnitPriceValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture),
+                                    'quantity': @item.Quantity,
+                                    'item_variant': @(item.Variant?.VariantId ?? 0),
+                                    'item_category': 'Shopping Cart'
+                                    },</text>
+        }
+                    ]
+                }
+            });
+    </script>
 

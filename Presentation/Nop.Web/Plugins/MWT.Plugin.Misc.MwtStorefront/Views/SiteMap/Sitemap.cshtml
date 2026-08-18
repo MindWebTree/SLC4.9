@@ -1,0 +1,132 @@
+﻿@model MWT.Plugin.Misc.MwtStorefront.Models.Sitemap.SitemapExtendedModel
+@using Nop.Core.Domain.Seo
+@inject SeoSettings seoSettings
+@inject Nop.Core.IWebHelper webHelper
+@inject Nop.Services.Configuration.ISettingService _settingService;
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Sitemap").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-sitemap-page");
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        NopHtml.AddCanonicalUrlParts(Url.RouteUrl("Sitemap", null, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant(), seoSettings.QueryStringInCanonicalUrlsEnabled);
+    }
+    NopHtml.AddMetaDescriptionParts(await _settingService.GetSettingByKeyAsync<string>("seosettings.sitemapmetadescription"));
+}
+<div class="page sitemap-page">
+    <div class="page-title">
+        <h1>@T("Sitemap")</h1>
+    </div>
+    <div class="page-body">
+        <div class="description">
+            @T("Sitemap.Description")
+        </div>
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.SitemapBefore })
+        @foreach (var itemGroup in Model.Items.GroupBy(itemGroup => itemGroup.GroupTitle).Where(g => g.Key == "Categories" || g.Key == "General"))
+        {
+            if (itemGroup.Key == "General")
+            {
+                <div class="entity">
+                    <div class="entity-title">
+                        <h2>@itemGroup.Key</h2>
+                    </div>
+
+                    <div class="entity-body">
+                        <ul>
+                            @foreach (var item in Model.Items.Where(x => x.GroupTitle == "General"))
+                            {
+                                <li><a href="@item.Url">@item.Name</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+            else
+            {
+
+                @foreach (var itemGroupCategory in Model.Items.Where(x => x.GroupTitle == "Categories" && x.ParentId == 0))
+                {
+                    if (!Model.Items.Any(x => x.ParentId == itemGroupCategory.Id))
+                    {
+                        continue;
+                    }
+                    <div class="entity">
+                        <div class="entity-title">
+                            <h2><a href="@itemGroupCategory.Url">@itemGroupCategory.Name</a></h2>
+                        </div>
+                        <div class="entity-body">
+                            <ul>
+                                @foreach (var item in Model.Items.Where(x => x.GroupTitle != "General" && x.ParentId == itemGroupCategory.Id))
+                                {
+                                    <li><a href="@item.Url">@item.Name</a></li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                }
+            }
+        }<div class="entity">
+            <div class="entity-title">
+                <h2>Customer Service </h2>
+            </div>
+            <div class="entity-body">
+                <ul>
+                    <li><a href="/contactus">Contact Us</a></li>
+                   
+                    <li><a href="/cancellation-policy">Cancellation Policy</a></li>
+                    <li><a href="/faqs">FAQs</a></li>
+                    <li><a href="/sms-marketing-tcs">Messaging Terms & Conditions</a></li>
+                    <li><a href="/login">My Account</a></li>
+                    <li><a href="/privacy-policy">Privacy Policy</a></li>
+                    <li><a href="/return-policy">Return Policy</a></li>
+                    <li><a href="/shipping-delivery">Shipping & Delivery</a></li>
+                    <li><a href="/login">Track Your Order</a></li>
+                    <li><a href="/white-glove-delivery">White Glove Delivery</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="entity">
+            <div class="entity-title">
+                <h2>Company Information </h2>
+            </div>
+            <div class="entity-body">
+                <ul>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/customization-services">Customization Services</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="entity">
+            <div class="entity-title">
+                <h2>External Pages</h2>
+            </div>
+            <div class="entity-body">
+                <ul>
+                    <li><a href="/blog/">Blogs</a></li>
+                    <li><a href="https://www.facebook.com/sierralivingconcepts/">Facebook</a></li>
+                    <li><a href="https://www.houzz.com/professionals/furniture-and-accessories/sierra-living-concepts-inc-pfvwus-pf~1577091348?">Houzz</a></li>
+                    <li><a href="https://www.instagram.com/sierralivingconcepts/">Instagram</a></li>
+                    <li><a href="https://www.pinterest.com/slcfurniture/">Pinterest</a></li>
+                    <li><a href="https://x.com/i/flow/login?redirect_after_login=%2Fsierralivingcon">Twitter</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="entity">
+            <div class="entity-title">
+                <h2>Work with Us</h2>
+            </div>
+            <div class="entity-body">
+                <ul>
+                    <li><a href="/affiliates">Affiliates</a></li>
+                    <li><a href="/to-the-trade">To The Trade</a></li>
+                </ul>
+            </div>
+        </div>
+
+
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.SitemapAfter })
+    </div>
+</div>
