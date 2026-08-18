@@ -537,7 +537,7 @@
             var token = $('input[name="__RequestVerificationToken"]').val();
 
             $.ajax({
-                url: '@Url.Action("CustomRegister", "Customer")',
+                url: '@Url.Action("CustomRegister", "CustomerExtended")',
                 method: 'POST',
                 data: $(this).serialize(),
 

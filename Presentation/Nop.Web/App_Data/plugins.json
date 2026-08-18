@@ -56,10 +56,6 @@
       "Version": "4.90.2"
     },
     {
-      "SystemName": "ExternalAuth.Facebook",
-      "Version": "4.90.3"
-    },
-    {
       "SystemName": "Payments.CashOnDelivery",
       "Version": "4.90.1"
     },

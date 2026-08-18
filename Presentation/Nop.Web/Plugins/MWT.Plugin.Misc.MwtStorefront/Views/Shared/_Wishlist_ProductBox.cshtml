@@ -1,0 +1,77 @@
+﻿@model Nop.Web.Models.ShoppingCart.WishlistModel.ShoppingCartItemModel
+@using Nop.Core
+@using Nop.Core.Domain.Catalog
+@using Nop.Core.Domain.Orders
+@using Nop.Core.Domain.Tax
+@inject CatalogSettings catalogSettings
+@inject IWorkContext _workContext
+<div class="col-sm-6 col-lg-4 cat-box" bis_skin_checked="1">
+    <div data-productid="@Model.Id">
+        <div class="cat-img">
+            @*Tags*@
+
+
+            <a href="@Url.RouteUrl("Product", new {id=Model.ProductId, SeName = Model.ProductSeName })" title="@Model.Picture.Title">
+                <img alt="@Model.Picture.AlternateText" src="/images/pixel.png" height="415" width="415"
+                     data-src="@Model.Picture.ImageUrl"
+                     default-pic="@Model.Picture.ImageUrl" alt-pic="@(Model.Picture==null?"":Model.Picture.ImageUrl)"
+                     title="@Model.Picture.Title" class="lazy" style="width:100%;height:auto;" />
+            </a>
+
+        </div>
+
+
+      
+        <h3>
+            <a href="@Url.RouteUrl("Product", new {id=Model.ProductId,SeName = Model.ProductSeName})">@Model.ProductName</a>
+        </h3>
+        @*Size Shade aggregation*@
+
+        @*@if (!string.IsNullOrEmpty(Model.SizeShadeMessage))
+
+            {
+                <h4 class="size-shade-aggregation">
+                    @{
+                        var attrs = Model.SizeShadeMessage.Split(',');
+
+                        foreach (var attr in attrs)
+
+                        {
+                            <a href="@Url.RouteUrl("Product", new {id=Model.Id,SeName = Model.SeName})">
+                                @attr
+                            </a>
+                        }
+                    }
+                </h4>
+            }*@
+        <h5 class="price old-price">
+            <span class="saleprice">  @Model.UnitPrice</span>
+        </h5>
+
+        <div class="add-to-cart" bis_skin_checked="1">
+            <form asp-route="Wishlist" method="post" class="d-inline">
+                <input type="hidden" name="addtocart" value="@Model.Id" />
+                <button type="submit" name="addtocartbutton" value="@Model.Id" id="add-to-cart-button-@Model.ProductId" class="button-2 btn btn-primary add-to-cart-button btn btn-secondary" data-productid="@Model.ProductId" data-id="@Model.Id">
+
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21.2609 14.1244L23.164 4.37432C23.3014 3.67036 22.8418 3 22.2218 3H6.40934L6.04034 0.899531C5.94839 0.375984 5.55273 0 5.09376 0H0.966184C0.432569 0 0 0.503672 0 1.125V1.875C0 2.49632 0.432569 3 0.966184 3H3.77951L6.60752 19.0985C5.93095 19.5516 5.47504 20.4011 5.47504 21.375C5.47504 22.8247 6.48438 24 7.72947 24C8.97456 24 9.9839 22.8247 9.9839 21.375C9.9839 20.6402 9.72435 19.9765 9.30661 19.5H17.7465C17.3288 19.9765 17.0692 20.6402 17.0692 21.375C17.0692 22.8247 18.0786 24 19.3237 24C20.5687 24 21.5781 22.8247 21.5781 21.375C21.5781 20.3357 21.0593 19.4376 20.3068 19.0123L20.5289 17.8744C20.6663 17.1703 20.2067 16.5 19.5867 16.5H8.78088L8.51739 15H20.3187C20.7698 15 21.1609 14.6365 21.2609 14.1244Z" fill="white" />
+                    </svg>
+                    @T("ShoppingCart.AddToCart")
+                </button>
+            </form>
+            <form asp-route="Wishlist" method="post" class="d-inline">
+                <input type="hidden" name="removefromcart" value="@Model.Id" />
+                <button type="submit" name="updatecart" value="true" data-toggle="tooltip" data-placement="top" aria-label="delete" id="delete-wishlist-button-@Model.ProductId" data-productid="@Model.ProductId" data-id="@Model.Id">
+
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="0.5" y="0.5" width="47" height="47" rx="3.5" stroke="#444444" />
+                        <path d="M13.5 16.65H15.95M15.95 16.65H35.55M15.95 16.65V33.8C15.95 34.4498 16.2081 35.0729 16.6676 35.5324C17.1271 35.9919 17.7502 36.25 18.4 36.25H30.65C31.2998 36.25 31.9229 35.9919 32.3824 35.5324C32.8419 35.0729 33.1 34.4498 33.1 33.8V16.65M19.625 16.65V14.2C19.625 13.5502 19.8831 12.9271 20.3426 12.4676C20.8021 12.0081 21.4252 11.75 22.075 11.75H26.975C27.6248 11.75 28.2479 12.0081 28.7074 12.4676C29.1669 12.9271 29.425 13.5502 29.425 14.2V16.65M22.075 22.775V30.125M26.975 22.775V30.125" stroke="#444444" stroke-width="1.91406" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+
+                </button>
+            </form>
+        </div>
+    </div>
+
+</div>
+

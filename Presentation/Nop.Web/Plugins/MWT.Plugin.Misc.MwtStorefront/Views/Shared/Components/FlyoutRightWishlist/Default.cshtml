@@ -269,10 +269,10 @@
         $("#wishlistpopupmodel .error p").removeClass("success");
         $.ajax({
             type: "POST",
-            url: '/customer/LoginRegisterPopup',
+            url: '/CustomerExtended/LoginRegisterPopup',
             data: data,
             dataType: "json",
-            success: function (result) {
+            success: function (result) {    
                 if (result.statusCode == 200) {
                     setTimeout(function () {
                         window.location = window.location.href;
@@ -343,7 +343,7 @@
             $("#wishlistpopupmodel .error p").removeClass("success");
             $.ajax({
                 type: "POST",
-                url: '/customer/ValidateCustomer',
+                url: '/CustomerExtended/ValidateCustomer',
                 data: $("#loginform").serialize(),
                 dataType: "json",
                 success: function (result) {

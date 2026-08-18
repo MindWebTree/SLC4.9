@@ -1,4 +1,5 @@
 ﻿@model Nop.Web.Models.Customer.RegisterModel
+@inject CatalogSettings catalogSettings
 <div class="modal fade cart-login-process" id="new-create-account" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -97,8 +98,8 @@
                                         <nop-date-picker asp-day-name="@Html.NameFor(x => x.DateOfBirthDay)"
                                                          asp-month-name="@Html.NameFor(x => x.DateOfBirthMonth)"
                                                          asp-year-name="@Html.NameFor(x => x.DateOfBirthYear)"
-                                                         asp-begin-year="@(DateTime.Now.Year - 110)"
-                                                         asp-end-year="@(DateTime.Now.Year)"
+                                                         asp-begin-year="@DateTime.UtcNow"
+                                                         asp-end-year="@DateTime.UtcNow.AddYears(catalogSettings.CountDisplayedYearsDatePicker)"
                                                          asp-selected-day="@Model.DateOfBirthDay"
                                                          asp-selected-month="@Model.DateOfBirthMonth"
                                                          asp-selected-year="@Model.DateOfBirthYear" />
@@ -266,10 +267,10 @@
                             </div>
                         }
                         @if (Model.StreetAddressEnabled ||
-               Model.StreetAddress2Enabled ||
-               Model.CityEnabled ||
-               Model.CountyEnabled ||
-               Model.CountryEnabled)
+                                                Model.StreetAddress2Enabled ||
+                                                Model.CityEnabled ||
+                                                Model.CountyEnabled ||
+                                                Model.CountryEnabled)
                         {
                             <div class="title">
                                 <strong>@T("Account.YourAddress")</strong>
@@ -437,18 +438,24 @@
                                 <strong>@T("Account.Options")</strong>
                             </div>
                             <div class="form-fields">
-                                @if (Model.NewsletterEnabled)
+                                @if (Model.NewsletterEnabled && Model.NewsLetterSubscriptions.Count > 0)
                                 {
                                     <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-12 col-sm-12 col-md-4 offset-md-4 offset-lg-4 offset-xl-4">
-                                                <div class="custom-control custom-checkbox newsletter">
-                                                    <input asp-for="Newsletter" type="checkbox" class="custom-control-input" id="Newsletter" />
-                                                    <label asp-for="Newsletter" for="Newsletter" class="custom-control-label"></label>
+                                        @for (int i = 0; i < Model.NewsLetterSubscriptions.Count; i++)
+                                        {
+                                            <div class="row">
+
+                                                <div class="col-12 col-sm-12 col-md-4 offset-md-4 offset-lg-4 offset-xl-4">
+                                                    <div class="custom-control custom-checkbox newsletter">
+                                                        <input class="form-check-input" type="checkbox" asp-for="NewsLetterSubscriptions[i].IsActive" />
+                                                        <input type="hidden" asp-for="NewsLetterSubscriptions[i].TypeId" />
+                                                        <label asp-for="NewsLetterSubscriptions[i].IsActive">@Model.NewsLetterSubscriptions[i].Name</label>
+                                                    </div>
+
                                                 </div>
-                                                <span asp-validation-for="Newsletter"></span>
                                             </div>
-                                        </div>
+
+                                        }
                                     </div>
                                 }
                                 @if (Model.CustomerAttributes.Count > 0)
@@ -530,7 +537,7 @@
             var token = $('input[name="__RequestVerificationToken"]').val();
 
             $.ajax({
-                url: '@Url.Action("CustomRegister", "Customer")',
+                url: '@Url.Action("CustomRegister", "CustomerExtended")',
                 method: 'POST',
                 data: $(this).serialize(),
 
@@ -549,7 +556,7 @@
                 error: function () {
                     $('#registerForm .errormessage').html('@T("Common.Error")');
                 }, complete: function () {
-                   
+
                 }
             });
         });
