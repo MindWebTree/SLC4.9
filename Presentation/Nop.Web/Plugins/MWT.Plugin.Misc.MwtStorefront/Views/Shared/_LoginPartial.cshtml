@@ -12,7 +12,7 @@
                     </svg>
                 </button>
                 <div class="modal-login-header">
-                    <h5 id="exampleModalLabel">@T("Checkout.Signin.Option.Heading")</h5>
+                    <h3 id="exampleModalLabel">@T("Checkout.Signin.Option.Heading")</h3>
                 </div>
                 <p class="option-info">@T("Checkout.Signin.Option.Info")</p>
                 <div class="partial-customer-login">
@@ -22,7 +22,7 @@
                         <div class="gap-2">
                             @await Component.InvokeAsync("ExternalMethods", "ExternalAuthentication")
                         </div>
-                       
+
                     </div>
 
                     <div class="customer-login-divider">
@@ -36,7 +36,6 @@
                         <form id="loginForm">
                             @Html.AntiForgeryToken()
                             <div class="errormessage">
-
                             </div>
                             <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
                             <div id="loginModalBody" hidden>
@@ -48,7 +47,7 @@
                                 <div class="form-group">
                                     <input id="email" asp-for="Username" placeholder="Username" class="form-control" />
                                     <div class="checkout-label">
-                                        <label asp-for="Username"></label>
+                                        <label for="email" asp-for="Username"></label>
                                         <span class="required">*</span>
                                     </div>
                                     <span asp-validation-for="Username" class="text-danger"></span>
@@ -59,7 +58,7 @@
                                 <div class="form-group">
                                     <input id="Email" asp-for="Email" placeholder="Email" class="form-control" />
                                     <div class="checkout-label">
-                                        <label asp-for="Email"></label>
+                                        <label for="Email" asp-for="Email"></label>
                                         <span class="required">*</span>
                                     </div>
                                     <span asp-validation-for="Email" class="text-danger"></span>
@@ -69,7 +68,7 @@
                             <div class="form-group">
                                 <input asp-for="Password" placeholder="Password" id="Password" class="form-control" type="password" />
                                 <div class="checkout-label">
-                                    <label asp-for="Password"></label>
+                                    <label for="Password" asp-for="Password"></label>
                                     <span class="required">*</span>
                                 </div>
                                 <span asp-validation-for="Password" class="text-danger"></span>
@@ -87,13 +86,16 @@
                                 </div>
                             }
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div class="form-check">
-                                    <input id="RememberMe" class="form-check-input" asp-for="RememberMe" />
-                                    <label class="form-check-label" asp-for="RememberMe"></label>
-                                </div>
-                                <a href="#" class="text-muted text-decoration-none" data-bs-toggle="modal" data-bs-target="#forgot-password-default">
-                                    @T("account.login.forgotpassword")
-                                </a>
+                                <fieldset style="border:0; padding:0; margin:0;" class="d-flex justify-content-between align-items-center mb-3">
+                                    <legend class="sr-only">Login Options</legend>
+                                    <div class="form-check">
+                                        <input id="RememberMe" class="form-check-input" asp-for="RememberMe" />
+                                        <label for="RememberMe" class="form-check-label" asp-for="RememberMe"></label>
+                                    </div>
+                                    <a href="#" class="text-muted text-decoration-none" data-bs-toggle="modal" data-bs-target="#forgot-password-default">
+                                        @T("account.login.forgotpassword")
+                                    </a>
+                                </fieldset>
                             </div>
 
                             <button type="submit" class="btn btn-signin">@T("checkout.button.signin") </button>
@@ -146,7 +148,7 @@
                 error: function (xhr, status, error) {
                     $('#loginForm .errormessage').html('@T("Common.Error")');
                 }, complete: function () {
-                  
+
                 }
             });
         });

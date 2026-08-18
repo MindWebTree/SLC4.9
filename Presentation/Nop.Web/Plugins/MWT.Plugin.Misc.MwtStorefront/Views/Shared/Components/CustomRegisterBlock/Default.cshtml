@@ -4,7 +4,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">@T("Checkout.Register.Heading")</h5>
+                <h3 class="modal-title" id="exampleModalLabel">@T("Checkout.Register.Heading")</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M1 0L21 20" stroke="#010101" stroke-width="1.76757" stroke-miterlimit="10" />
@@ -192,7 +192,7 @@
                         }
                         @if (Model.PhoneEnabled)
                         {
-                            <input name="Phone" value="-" aria-describedby="Register-Phone-error" type="hidden">
+                            <input name="Phone" value="-"   type="hidden">
 
                         }
 
@@ -201,7 +201,7 @@
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 px-0">
                                     <input asp-for="Password" placeholder="Password" class="form-control" id="Register-Password" />
                                     <div class="checkout-label" bis_skin_checked="1">
-                                        <label for="Password">Password</label>
+                                        <label for="Register-Password">Password</label>
                                         <span class="required">*</span>
                                     </div>
                                 </div>
@@ -493,7 +493,7 @@
                                 <div class="col-12 col-sm-12">
 
 
-                                    <label class="custom-control-label">@T("consent.message.register")</label>
+                                    <span class="custom-control-label">@T("consent.message.register")</span>
 
                                 </div>
                             </div>

@@ -127,7 +127,7 @@
                         </div>
                         <div class="table-wrapper panel panel-default">
 
-                            <table class="cart table-wrapper table table-responsive">
+                            <table class="cart table-wrapper table table-responsive" role="presentation">
                                 <colgroup>
 
                                     <col />
@@ -244,7 +244,7 @@
                                                         <div id="prd-instruction-@item.Id">
                                                             <div class="card-body p-0">
 
-                                                                <textarea class="form-control desktop ItemNotes " cols="2" name="itemspecialinstructions@(item.Id)"
+                                                                <textarea aria-label="@T("shoppingcart.specialinstructions.PlaceHolder")" class="form-control desktop ItemNotes " cols="2" name="itemspecialinstructions@(item.Id)"
                                                                           type="text" id="itemspecialinstructions@(item.Id)"
                                                                           placeholder="@T("shoppingcart.specialinstructions.PlaceHolder")" rows="2" style="resize:vertical;">@(string.IsNullOrEmpty(item.SpecialInstructions) ? "" : item.SpecialInstructions)</textarea>
 
@@ -575,7 +575,7 @@
                                             <div class="modal-content">
                                                 <!-- Modal Header -->
                                                 <div class="modal-header">
-                                                    <h4 class="modal-title">@T("shoppingcart.specialinstructions.Add")</h4>
+                                                    <h2 class="modal-title">@T("shoppingcart.specialinstructions.Add")</h2>
                                                     <button class="close" type="button" data-bs-dismiss="modal" aria-label="Close"> <span aria-hidden="true">×</span> </button>
                                                 </div>
                                                 <!-- Modal body -->
@@ -665,13 +665,13 @@
                                         <p class="headeing-order">@T("checkout.ordersummary", Model.Items.Count)</p>
                                         <div class="accordion">
                                             <div class="card" type="button">
-                                                <div class="card-header collapsed" id="heading-discountcodes"
+                                                <button type="button" tabindex="0" role="button" class="card-header collapsed" id="heading-discountcodes"
                                                      data-bs-toggle="collapse" data-bs-target="#collapse-discountcodes"
                                                      aria-expanded=" @(Model.DiscountBox?.Messages.Count()>0?"false":"true")" aria-controls="collapse-discountcodes">
                                                     <h2 class="mb-0 text-left text-uppercase">
                                                         @T("Shoppingcart.SpecialOfferCodes")
                                                     </h2>
-                                                </div>
+                                                </button>
 
                                                 <div id="collapse-discountcodes" class="accordion-collapse collapse" aria-labelledby="heading-discountcodes">
                                                     <div class="card-body">

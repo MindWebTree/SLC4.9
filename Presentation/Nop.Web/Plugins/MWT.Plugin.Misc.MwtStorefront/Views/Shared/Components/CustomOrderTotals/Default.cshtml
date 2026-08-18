@@ -4,11 +4,12 @@
 @inject Nop.Services.Catalog.IPriceFormatter _priceFormatter;
 <div class="total-info">
 
-    <table class="cart-total">
+    <table class="cart-total" role="presentation">
+        <caption class="sr-only">Order Summary</caption>
         <tbody>
             <tr class="order-subtotal">
                 <td class="cart-total-left">
-                    <label>@T("ShoppingCart.Totals.SubTotal")</label>
+                    <span>@T("ShoppingCart.Totals.SubTotal")</span>
                 </td>
                 <td class="cart-total-right">
                     <span class="value-summary">@Model.subTotalWithOutDiscount</span>
@@ -20,9 +21,9 @@
             {
                 <tr class="order-subtotal-discount">
                     <td class="cart-total-left">
-                        <label>
+                        <span>
                             @T("ShoppingCart.Totals.MemberShipFee")
-                            <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.Totals.MemberShipFee.help")">
+                            <button type="button" aria-label="@T("ShoppingCart.Totals.MemberShipFee.help")" class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.Totals.MemberShipFee.help")">
 
                                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
@@ -30,8 +31,8 @@
                                     <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
                                 </svg>
 
-                            </span>
-                        </label>
+                            </button>
+                        </span>
                     </td>
                     <td class="cart-total-right">
                         <span class="value-summary">@Model.MemberShipFee</span>
@@ -42,14 +43,14 @@
             {
                 <tr class="order-subtotal-discount">
                     <td class="cart-total-left">
-                        <label>
+                        <span>
                             @T("ShoppingCart.Totals.MemberShipFee.Discount")
                             @{
                                 var discountSummary = Model.DiscountSummary.Where(d => d.Type == DiscountType.MemberShipFeeDiscount).FirstOrDefault();
                                 if (discountSummary != null)
                                 {
 
-                                                        <span class="offer-info summary-offer-info">
+                                    <button aria-label="@T("ShoppingCart.Totals.MemberShipFee.Discount")" type="button" class="offer-info summary-offer-info">
 
                                                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                 <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
@@ -57,11 +58,11 @@
                                                                 <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
                                                             </svg>
 
-                                                        </span>
+                                                        </button>
 
                                     <span class="discount-info in">
                                         <div class="discount-info-inner">
-                                            <h4>@discountSummary.Heading</h4><span class="close-discount-info">×</span><span>
+                                            <h3>@discountSummary.Heading</h3><span class="close-discount-info">×</span><span>
                                                 @if (!string.IsNullOrEmpty(discountSummary.Description))
                                                 {
                                                     <h3>@Html.Raw(discountSummary.Description)</h3>
@@ -71,7 +72,7 @@
                                     </span>
                                 }
                             }
-                        </label>
+                        </span>
                     </td>
                     <td class="cart-total-right">
                         <span class="value-summary discount">@Model.MemberShipFeeDiscount</span>
@@ -83,13 +84,13 @@
             {
                 <tr class="order-subtotal-discount">
                     <td class="cart-total-left">
-                        <label>
+                        <span>
                             @T("ShoppingCart.Totals.MemberShipDiscount")@{
                                 var discountSummary = Model.DiscountSummary.Where(d => d.Type == DiscountType.MemberShipDiscount).FirstOrDefault();
                                 if (discountSummary != null)
                                 {
 
-                                                        <span class="offer-info summary-offer-info">
+                                <button aria-label="@T("ShoppingCart.Totals.MemberShipDiscount")" type="button" class="offer-info summary-offer-info">
 
                                                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                 <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
@@ -97,11 +98,11 @@
                                                                 <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
                                                             </svg>
 
-                                                        </span>
+                                                        </button>
 
                                     <span class="discount-info in">
                                         <div class="discount-info-inner">
-                                            <h4>@discountSummary.Heading</h4><span class="close-discount-info">×</span><span>
+                                            <h3>@discountSummary.Heading</h3><span class="close-discount-info">×</span><span>
                                                 @if (!string.IsNullOrEmpty(discountSummary.Description))
                                                 {
                                                     <h3>@Html.Raw(discountSummary.Description)</h3>
@@ -111,7 +112,7 @@
                                     </span>
                                 }
                             }
-                        </label>
+                        </span>
                     </td>
                     <td class="cart-total-right">
                         <span class="value-summary discount">@Model.MemberShipDiscount</span>
@@ -124,14 +125,14 @@
             {
                 <tr class="order-subtotal-discount">
                     <td class="cart-total-left">
-                        <label>
+                        <span>
                             @T("ShoppingCart.Totals.offerDiscount")
                             @{
                                 var discountSummary = Model.DiscountSummary.Where(d => d.Type == DiscountType.OfferDiscount).FirstOrDefault();
                                 if (discountSummary != null)
                                 {
 
-                                                        <span class="offer-info summary-offer-info">
+                                    <button aria-label="@T("ShoppingCart.Totals.offerDiscount")" type="button" class="offer-info summary-offer-info">
 
                                                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                 <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
@@ -139,11 +140,13 @@
                                                                 <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
                                                             </svg>
 
-                                                        </span>
+                                                        </button>
 
                                     <span class="discount-info in">
                                         <div class="discount-info-inner">
-                                            <h4>@discountSummary.Heading</h4><span class="close-discount-info">×</span><span>
+                                            <h3>@discountSummary.Heading</h3>
+                                            <button type="button" aria-label="close" class="close-discount-info">×</button>
+                                         
                                                 @if (!string.IsNullOrEmpty(discountSummary.Description))
                                                 {
                                                     <h3>@Html.Raw(discountSummary.Description)</h3>
@@ -154,7 +157,7 @@
                                 }
                             }
 
-                        </label>
+                        </span>
                     </td>
                     <td class="cart-total-right">
                         <span class="value-summary discount">@Model.offerDiscount</span>
@@ -184,7 +187,8 @@
 
                                     <span class="discount-info in">
                                         <div class="discount-info-inner">
-                                            <h4>@discountSummary.Heading</h4><span class="close-discount-info">×</span><span>
+                                            <h3>@discountSummary.Heading</h3>
+                                        <button type="button" aria-label="close" class="close-discount-info">×</button>
                                                 @if (!string.IsNullOrEmpty(discountSummary.Description))
                                                 {
                                                     <h3>@Html.Raw(discountSummary.Description)</h3>
@@ -207,14 +211,14 @@
             {
                 <tr class="order-subtotal-discount">
                     <td class="cart-total-left">
-                        <label>
+                        <span>
                             @T("ShoppingCart.Totals.SubTotalDiscount") @{
                                 var productDiscountSummary = Model.DiscountSummary.Where(d => d.Type == DiscountType.ProductCouponDiscount).FirstOrDefault();
                                 var discountSummary = Model.DiscountSummary.Where(d => d.Type == DiscountType.SubTotalCouponDiscount).FirstOrDefault();
                                 if (discountSummary != null || productDiscountSummary != null)
                                 {
 
-                                                        <span class="offer-info summary-offer-info">
+                                <button aria-label="@T("ShoppingCart.Totals.SubTotalDiscount")" type="button" class="offer-info summary-offer-info">
 
                                                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                 <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
@@ -222,13 +226,14 @@
                                                                 <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
                                                             </svg>
 
-                                                        </span>
+                                                        </button>
 
                                     <span class="discount-info in">
                                         <div class="discount-info-inner">
-                                            <h4>
+                                            <h3>
                                                 @(discountSummary != null ? discountSummary.Heading : productDiscountSummary.Heading)
-                                            </h4><span class="close-discount-info">×</span><span>
+                                            </h3>
+                                        <button type="button" aria-label="close" class="close-discount-info">×</button>
                                                 @if ((discountSummary != null && !string.IsNullOrEmpty(discountSummary.Description))
                                        || (productDiscountSummary != null && !string.IsNullOrEmpty(productDiscountSummary.Description)))
                                                 {
@@ -247,7 +252,7 @@
                                 }
                             }
 
-                        </label>
+                        </span>
                     </td>
                     <td class="cart-total-right">
                         <span class="value-summary discount">@Model.SubTotalDiscount</span>
@@ -290,7 +295,7 @@
                 <tr class="shipping-cost">
                     <td class="cart-total-left">
                         @T("ShoppingCart.Shipping.AdditionalFee")
-                        <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.Shipping.AdditionalFee.help")">
+                        <button aria-label="@T("ShoppingCart.Shipping.AdditionalFee")" type="button" class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.Shipping.AdditionalFee.help")">
 
                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
@@ -298,7 +303,7 @@
                                 <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
                             </svg>
 
-                        </span>
+                        </button>
                     </td>
                     <td class="cart-total-right">
 
@@ -311,9 +316,9 @@
             {
                 <tr class="additional-fees">
                     <td class="cart-total-left">
-                        <label>
+                        <span>
                             @T("ShoppingCart.Totals.PaymentMethodAdditionalFee"):
-                            <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.Totals.PaymentMethodAdditionalFee.help")">
+                            <button aria-label="@T("ShoppingCart.Totals.PaymentMethodAdditionalFee")" type="button" class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.Totals.PaymentMethodAdditionalFee.help")">
 
                                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
@@ -321,8 +326,8 @@
                                     <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
                                 </svg>
 
-                            </span>
-                        </label>
+                            </button>
+                        </span>
                     </td>
                     <td class="cart-total-right">
                         <span class="value-summary">@Model.PaymentMethodAdditionalFee</span>
@@ -337,7 +342,7 @@
                     </td>
                     <td class="cart-total-right">
                         <span class="value-summary">@Model.CustomDuty</span>
-                        <span class="offer-info summary-offer-info">
+                        <button aria-label="@T("ShoppingCart.Totals.CustomDuty", Model.CustomDutyPercentage)" type="button" class="offer-info summary-offer-info">
 
                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
@@ -345,13 +350,13 @@
                                 <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
                             </svg>
 
-                        </span>
+                        </button>
 
                         <span class="discount-info in">
                             <div class="discount-info-inner">
-                                <h4>
+                                <h3>
                                     @Html.Raw(T("shoppingcart.totals.customduty.Heading"))
-                                </h4><span class="close-discount-info">×</span>
+                                </h3><span class="close-discount-info">×</span>
 
                                 <div class="text-start">@Html.Raw(T("shoppingcart.totals.customduty.Description", Model.CustomDutyPercentage))</div>
 
@@ -366,7 +371,7 @@
                 {
                     <tr class="tax-rate">
                         <td class="cart-total-left">
-                            <label>@string.Format(T("ShoppingCart.Totals.TaxRateLine").Text, taxRate.Rate):</label>
+                            <span>@string.Format(T("ShoppingCart.Totals.TaxRateLine").Text, taxRate.Rate):</span>
                         </td>
                         <td class="cart-total-right">
                             <span>@taxRate.Value</span>
@@ -392,7 +397,7 @@
                 {
                     <tr class="tax-value">
                         <td class="cart-total-left">
-                            <label>@T("ShoppingCart.Totals.DisplayTax.Info")</label>
+                            <span>@T("ShoppingCart.Totals.DisplayTax.Info")</span>
                         </td>
                         <td></td>
                     </tr>
@@ -400,7 +405,7 @@
                     {
                         <tr class="tax-value">
                             <td style="padding: 0 0 0 10px;">
-                                <label style="text-transform: uppercase;">@T("Canada.Tax.Label", tax.TaxType.ToString(), tax.TaxRate.ToString("F2"))</label>
+                                <span style="text-transform: uppercase;">@T("Canada.Tax.Label", tax.TaxType.ToString(), tax.TaxRate.ToString("F2"))</span>
                             </td>
                             <td class="cart-total-right">
                                 <span class="">@await _priceFormatter.FormatPriceAsync(tax.Amount, true, false)</span>
@@ -414,13 +419,13 @@
             {
                 <tr class="discount-total">
                     <td class="cart-total-left">
-                        <label>
+                        <span>
                             @T("ShoppingCart.Totals.OrderTotalDiscount") @{
                                 var discountSummary = Model.DiscountSummary.Where(d => d.Type == DiscountType.OrderDiscount).FirstOrDefault();
                                 if (discountSummary != null)
                                 {
 
-                                                        <span class="offer-info summary-offer-info">
+                                <button aria-label="@T("ShoppingCart.Totals.OrderTotalDiscount")" type="button" aria-label="Offer Inf" class="offer-info summary-offer-info">
 
                                                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                 <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
@@ -428,11 +433,12 @@
                                                                 <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
                                                             </svg>
 
-                                                        </span>
+                                                        </button>
 
                                     <span class="discount-info in">
                                         <div class="discount-info-inner">
-                                            <h4>@discountSummary.Heading</h4><span class="close-discount-info">×</span><span>
+                                            <h3>@discountSummary.Heading</h3>
+                                        <button type="button" aria-label="close" class="close-discount-info">×</button>
                                                 @if (!string.IsNullOrEmpty(discountSummary.Description))
                                                 {
                                                     <h3>@Html.Raw(discountSummary.Description)</h3>
@@ -443,7 +449,7 @@
                                 }
                             }
 
-                        </label>
+                        </span>
                     </td>
                     <td class="cart-total-right">
                         <span class="value-summary discount">@Model.OrderTotalDiscount</span>
@@ -458,7 +464,7 @@
                 {
                     <tr class="giftcard-summary">
                         <td class="cart-total-left">
-                            <label>@T("ShoppingCart.Totals.GiftCardInfo"):</label>
+                            <span>@T("ShoppingCart.Totals.GiftCardInfo"):</span>
                             <span>@T("ShoppingCart.Totals.GiftCardInfo.Code", gc.CouponCode)</span>
                             @if (Model.IsEditable)
                             {
@@ -477,7 +483,7 @@
             {
                 <tr class="reward-points">
                     <td class="cart-total-left">
-                        <label>@string.Format(T("ShoppingCart.Totals.RewardPoints").Text, Model.RedeemedRewardPoints):</label>
+                        <span>@string.Format(T("ShoppingCart.Totals.RewardPoints").Text, Model.RedeemedRewardPoints):</span>
                     </td>
                     <td class="cart-total-right">
                         <span class="value-summary">@Model.RedeemedRewardPointsAmount</span>
@@ -486,7 +492,7 @@
             }
             <tr class="order-total">
                 <td class="cart-total-left">
-                    <label>@T("ShoppingCart.Totals.OrderTotal")</label><br />
+                    <span>@T("ShoppingCart.Totals.OrderTotal")</span><br />
                     @if(!Model.DisplayTax){
                     <span class="tax-checkout">@T("ShoppingCart.Tax.Checkout")</span>
                     }

@@ -62,7 +62,7 @@ namespace MWT.Nop.Core.Services.Message
 
         #region Wishlist
         Task<IList<int>> CustomSendWishlistEmailAFriendMessageAsync(Customer customer, int languageId,
-          string customerEmail, string friendsEmail, string personalMessage);
+          string customerEmail, string friendsEmail, string personalMessage,string wishlistUrl);
         #endregion
 
         #region Abandoned Card

@@ -1072,7 +1072,7 @@ namespace MWT.Nop.Core.Services.Message
         #region Wishlist
 
         public virtual async Task<IList<int>> CustomSendWishlistEmailAFriendMessageAsync(Customer customer, int languageId,
-          string customerEmail, string friendsEmail, string personalMessage)
+          string customerEmail, string friendsEmail, string personalMessage, string wishlistUrl)
         {
             if (customer == null)
                 throw new ArgumentNullException(nameof(customer));
@@ -1089,6 +1089,7 @@ namespace MWT.Nop.Core.Services.Message
             await _customMessageTokenProvider.AddCustomerTokensAsync(commonTokens, customer);
             commonTokens.Add(new Token("Wishlist.PersonalMessage", personalMessage, true));
             commonTokens.Add(new Token("Wishlist.Email", customerEmail));
+            commonTokens.Add(new Token("Wishlist.URLForCustomer", wishlistUrl, true));
 
             return await messageTemplates.SelectAwait(async messageTemplate =>
             {
