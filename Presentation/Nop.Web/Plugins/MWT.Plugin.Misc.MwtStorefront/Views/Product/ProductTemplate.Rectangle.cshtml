@@ -43,9 +43,9 @@
                         }
                     }
                 Layout = "_ColumnsOne";
-    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/product-gtm.js");
-                NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/magiczoomplus.js");
-    NopHtml.AppendCssFileParts($"~/Themes/{themeName}/Content/css/magiczoomplus.css");
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/product-gtm.js");
+                NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/magiczoomplus.js");
+    NopHtml.AppendCssFileParts($"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/magiczoomplus.css");
                 //title
     NopHtml.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
                 //meta

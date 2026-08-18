@@ -70,15 +70,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Themes\BlackWhiteTheme\Views\Shared\_Root.cshtml">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Themes\BlackWhiteTheme\Views\Shared\_Root.Head.cshtml">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="wwwroot\images\customizationform\" />
   </ItemGroup>
 

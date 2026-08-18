@@ -292,8 +292,11 @@
                                     }
 
                                     //register CSS and JS
-                                    NopHtml.AddCssFileParts("~/lib/fineuploader/fine-uploader.min.css");
-                                    NopHtml.AddScriptParts(ResourceLocation.Footer, "~/lib/fineuploader/jquery.fine-uploader.min.js");
+                                    <link rel="stylesheet" href="~/lib_npm/filepond/filepond.min.css" />
+                                    <link rel="stylesheet" href="~/lib_npm/filepond-plugin-get-file/filepond-plugin-get-file.min.css" />
+                                    <script asp-exclude-from-bundle="true" src="~/lib_npm/filepond/filepond.min.js" asp-location="Footer"></script>
+                                    <script asp-exclude-from-bundle="true" src="~/lib_npm/filepond-plugin-file-validate-type/filepond-plugin-file-validate-type.min.js" asp-location="Footer"></script>
+                                    <script asp-exclude-from-bundle="true" src="~/lib_npm/filepond-plugin-get-file/filepond-plugin-get-file.min.js" asp-location="Footer"></script>
 
                                     //ex. ['jpg', 'jpeg', 'png', 'gif'] or []
                                     var allowedFileExtensions = string.Join(", ", attribute.AllowedFileExtensions.Select(x => "'" + x.Trim() + "'").ToList());

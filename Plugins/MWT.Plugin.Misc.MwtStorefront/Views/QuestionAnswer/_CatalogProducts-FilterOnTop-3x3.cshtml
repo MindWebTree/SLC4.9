@@ -5,7 +5,7 @@
     var themeName = await themeContext.GetWorkingThemeNameAsync();
 }
 @{
-    NopHtml.AddScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/public.catalogproducts.js?version=26");
+    NopHtml.AddScriptParts(ResourceLocation.Footer, $"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/public.catalogproducts.js?version=26");
 }
 
 <div class="products-container">

@@ -40,6 +40,9 @@
 	  <Content Include="Areas\Admin\Views\**\*.cshtml">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
+	  <Content Include="Content\**\*">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
   </ItemGroup>
 
 	<ItemGroup>
@@ -70,11 +73,7 @@
 	  <Folder Include="Factories\Api\" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Content Update="Views\Shared\_Header.cshtml">
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </Content>
-	</ItemGroup>
+	 
 
 
   <!-- This target execute after "Build" target -->

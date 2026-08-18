@@ -6,11 +6,13 @@ using MWT.Nop.Core.Service.Discounts;
 using MWT.Nop.Core.Service.FAQModule;
 using MWT.Nop.Core.Service.Zoho;
 using MWT.Nop.Core.Services;
+using MWT.Nop.Core.Services.AbandonedCarts;
 using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.CategoryCollection;
 using MWT.Nop.Core.Services.Configuration;
 using MWT.Nop.Core.Services.Custom;
 using MWT.Nop.Core.Services.Customers;
+using MWT.Nop.Core.Services.Discounts;
 using MWT.Nop.Core.Services.ElasticSearch;
 using MWT.Nop.Core.Services.FeedBack;
 using MWT.Nop.Core.Services.IPLite;
@@ -29,7 +31,9 @@ using MWT.Nop.Core.Services.Search.RewardClaim;
 using MWT.Nop.Core.Services.Seo;
 using MWT.Nop.Core.Services.Shared;
 using Nop.Core.Infrastructure;
+using Nop.Services.Customizations.CustomOrders;
 using Nop.Services.Customizations.IpAddress;
+using Nop.Services.Orders;
 
 namespace Nop.Web.Infrastructure.Customizations
 {
@@ -75,6 +79,16 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<ITestimonialService, TestimonialService>();
             services.AddScoped<IRewardClaimService, RewardClaimService>();
             services.AddScoped<IManageService, ManageService>();
+            services.AddScoped<ICustomWishlistService, CustomWishlistService>();
+            services.AddScoped<IAbandonedCartService, AbandonedCartService>();
+            services.AddScoped<IPriceCalculationExtendedService, PriceCalculationExtendedService>();
+            services.AddScoped<IOrderTotalCalculationExtendedService, OrderTotalCalculationExtendedService>(); 
+            services.AddScoped<IDiscountExtendedService, DiscountExtendedService>(); 
+            services.AddScoped<ICustomBackInStockSubscriptionService, CustomBackInStockSubscriptionService>(); 
+            services.AddScoped<ICustomWorkflowMessageService, CustomWorkflowMessageService>(); 
+            services.AddScoped<ICustomOrderService, CustomOrderService>(); 
+            services.AddScoped<ICustomMessageTokenProvider, CustomMessageTokenProvider>(); 
+            services.AddScoped<IOrderExtendedService, OrderExtendedService>(); 
 
 
             services.AddScoped<IIpAddressService, IpAddressService>();
@@ -140,6 +154,8 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<IProductTemplateSectionService, ProductTemplateSectionService>();
 
             #endregion
+
+
         }
 
     }

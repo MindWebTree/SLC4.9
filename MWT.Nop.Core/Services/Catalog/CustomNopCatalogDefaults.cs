@@ -16,7 +16,7 @@ namespace MWT.Nop.Core.Service.Catalog
         public static CacheKey ProductSaleInfoCacheKey => new CacheKey("Nop.product.Sale.Info.{0}");
         public static string ProductSaleInfoPrefix => "Nop.product.Sale.Info";
         public static CacheKey ProductsBasicInfoCacheKey => new CacheKey("Nop.product.Basic.Info.All");
-        public static CacheKey CustomRelatedProductsCacheKey => new CacheKey("Nop.relatedproduct.byproduct.{0}-{1}");
+        public static CacheKey CustomRelatedProductsCacheKey => new CacheKey("Nop.relatedproduct.byproduct.{0}-{1}-custom");
         public static string RelatedPrefix => "Nop.relatedproduct.byproduct";
         public static string CollectionPrefix => "Nop.collectionproduct.byproduct";
         public static string CollectionProductsPrefix => "Nop.collectionproduct.byproduct.{0}";

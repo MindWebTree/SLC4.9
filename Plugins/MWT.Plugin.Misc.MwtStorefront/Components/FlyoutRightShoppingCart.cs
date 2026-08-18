@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MWT.Plugin.Misc.MwtStorefront.Factories;
 using MWT.Plugin.Misc.MwtStorefront.Models.Catalog;
 using Nop.Core.Domain.Orders;
 using Nop.Services.Security;
@@ -10,11 +11,11 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
     public class FlyoutRightShoppingCartViewComponent : NopViewComponent
     {
         private readonly IPermissionService _permissionService;
-        private readonly IShoppingCartModelFactory _shoppingCartModelFactory;
+        private readonly IShoppingCartExtendedModelFactory _shoppingCartModelFactory;
         private readonly ShoppingCartSettings _shoppingCartSettings;
 
         public FlyoutRightShoppingCartViewComponent(IPermissionService permissionService,
-            IShoppingCartModelFactory shoppingCartModelFactory,
+            IShoppingCartExtendedModelFactory shoppingCartModelFactory,
             ShoppingCartSettings shoppingCartSettings)
         {
             _permissionService = permissionService;
@@ -31,13 +32,12 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
             if (!await _permissionService.AuthorizeAsync(StandardPermission.PublicStore.ENABLE_SHOPPING_CART))
                 return Content("");
 
-         //   var model = await _shoppingCartModelFactory.PrepareCustomMiniShoppingCartModelAsync(ShoppingCartType.ShoppingCart);
-         var model = new CustomMiniShoppingCartModel();
+            var model = await _shoppingCartModelFactory.PrepareCustomMiniShoppingCartModelAsync(ShoppingCartType.ShoppingCart);
             model.Heading = actionType;
             if (cartItems == null)
                 model.cartItems = model.Items.Count == 0 ? new List<int>() : new List<int>() { model.Items.FirstOrDefault().Id };
             else
-                model.cartItems = cartItems;
+                model.cartItems = cartItems; ;
             return View(model);
         }
     }

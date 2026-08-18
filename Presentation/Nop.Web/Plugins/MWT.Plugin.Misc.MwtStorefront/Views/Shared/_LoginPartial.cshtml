@@ -128,7 +128,7 @@
                         var token = $('input[name="__RequestVerificationToken"]').val();
 
             $.ajax({
-                            url: '@Url.Action("CustomSignIn", "Customer")', // Action method to handle login
+                            url: '@Url.Action("CustomSignIn", "CustomerExtended")', // Action method to handle login
                 method: 'POST',
                 data: $(this).serialize(),
             headers: {

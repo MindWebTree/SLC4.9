@@ -368,8 +368,8 @@
                                         </legend>
 
                                         <ul data-attr="@(attribute.Id)" class="option-list attribute-squares color-squares @(attribute.Values.Count>0
-                                                                                                                                                                                                                                                                                                                        && T("Product.Attr.Size").Text == @textPrompt
-                                                                                                                                                                                                                                                                                                                        ? "new-size-box" + (attribute.Values.Count == 1 ? " single" : "") : "shade-box")" id="color-squares-@(attribute.Id)">
+                                                                                                                                                                                                                                                                                                                                                                                                && T("Product.Attr.Size").Text == @textPrompt
+                                                                                                                                                                                                                                                                                                                                                                                                ? "new-size-box" + (attribute.Values.Count == 1 ? " single" : "") : "shade-box")" id="color-squares-@(attribute.Id)">
 
                         @foreach (var attributeValue in attribute.Values)
                                             {
@@ -465,37 +465,37 @@
                             case AttributeControlType.ImageSquares:
                                 {
                                     int index = 0;
-                                      <fieldset aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                    <fieldset aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                         <legend style="display:none;">
                                             @textPrompt
                                         </legend>
-                                    <ul data-attr="@(attribute.Id)" class="option-list attribute-squares image-squares" id="image-squares-@(attribute.Id)">
-                                        @foreach (var attributeValue in attribute.Values)
-                                        {
-                                            index++;
-                                            var attributeName = string.IsNullOrEmpty(attributeValue.PriceAdjustment) ?
-                                            attributeValue.Name :
-                                            T("Products.ProductAttributes.PriceAdjustment", attributeValue.Name, attributeValue.PriceAdjustment, string.Empty).Text;
-                                            <li data-index="@attributeValue.Name" data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected && !attributeValue.Hide ? @Html.Raw(" class=\"selected-value\"") : null) class="@(attributeValue.Hide ? "unavailable-swatch" : "")">
-                                                <label for="@(controlId)_@(attributeValue.Id)">
-                                                    <span class="attribute-square-container">
-                                                        <span class="attribute-square" style="background: url('@(attributeValue.ImageSquaresPictureModel.FullSizeImageUrl)') 50% 50% no-repeat;">&nbsp;</span>
-                                                    </span>
-                                                    <input data-index="@attributeValue.Name" id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)" value="@attributeValue.Id" checked="@attributeValue.IsPreSelected" @(attributeValue.Hide ? "disabled=\"disabled\"" : null)
-                                                           @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onclick=\"showHideRadioQuantity('{controlId}', true)\"") : null) />
+                                        <ul data-attr="@(attribute.Id)" class="option-list attribute-squares image-squares" id="image-squares-@(attribute.Id)">
+                                            @foreach (var attributeValue in attribute.Values)
+                                            {
+                                                index++;
+                                                var attributeName = string.IsNullOrEmpty(attributeValue.PriceAdjustment) ?
+                                                attributeValue.Name :
+                                                T("Products.ProductAttributes.PriceAdjustment", attributeValue.Name, attributeValue.PriceAdjustment, string.Empty).Text;
+                                                <li data-index="@attributeValue.Name" data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected && !attributeValue.Hide ? @Html.Raw(" class=\"selected-value\"") : null) class="@(attributeValue.Hide ? "unavailable-swatch" : "")">
+                                                    <label for="@(controlId)_@(attributeValue.Id)">
+                                                        <span class="attribute-square-container">
+                                                            <span class="attribute-square" style="background: url('@(attributeValue.ImageSquaresPictureModel.FullSizeImageUrl)') 50% 50% no-repeat;">&nbsp;</span>
+                                                        </span>
+                                                        <input data-index="@attributeValue.Name" id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)" value="@attributeValue.Id" checked="@attributeValue.IsPreSelected" @(attributeValue.Hide ? "disabled=\"disabled\"" : null)
+                                                               @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onclick=\"showHideRadioQuantity('{controlId}', true)\"") : null) />
 
-                                                </label>
-                                                <span class="attrvalue-name">@attributeValue.Name </span>
-                                                <div class="tooltip-container">
+                                                    </label>
+                                                    <span class="attrvalue-name">@attributeValue.Name </span>
+                                                    <div class="tooltip-container">
 
-                                                    <div class="tooltip-body"><img src="@(attributeValue.ImageSquaresPictureModel.FullSizeImageUrl)" alt="@attributeName" /></div>
-                                                    <div class="not-available-text">@T("Products.ProductAttributes.NotAvailable")</div>
-                                                    <div class="tooltip-header">@attributeName</div>
-                                                </div>
+                                                        <div class="tooltip-body"><img src="@(attributeValue.ImageSquaresPictureModel.FullSizeImageUrl)" alt="@attributeName" /></div>
+                                                        <div class="not-available-text">@T("Products.ProductAttributes.NotAvailable")</div>
+                                                        <div class="tooltip-header">@attributeName</div>
+                                                    </div>
 
-                                            </li>
-                                        }
-                                    </ul>
+                                                </li>
+                                            }
+                                        </ul>
                                     </fieldset>
                                     foreach (var attributeValue in attribute.Values.Where(value => value.CustomerEntersQty))
                                     {
@@ -752,6 +752,10 @@
                                                 }
                                                 else {
                                                     $('<p class="sale-price  m-0 limited-offer-@Model.Id">' + data.offerText + '</p>').parent().insertBefore($('@addtoCartFormId .price-value-@Model.Id').parent());
+
+                                                }
+                                                 if (typeof updatePriceAriaLabel === "function") {
+                                                    updatePriceAriaLabel('@addtoCartFormId .price-value-@Model.Id', data.price, data.oldPrice);
                                                 }
                                             }
                                             else {
@@ -759,6 +763,11 @@
                                                 $('@addtoCartFormId .price-value-@Model.Id').show();
                                                 $('@addtoCartFormId .limited-offer-@Model.Id').show();
                                                $('@addtoCartFormId .limited-offer-@Model.Id').html(data.offerText);
+
+                                               if (typeof updatePriceAriaLabel === "function") {
+                                                    updatePriceAriaLabel('@addtoCartFormId .price-value-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
+                                                }
+
                                             }
 
                                         }

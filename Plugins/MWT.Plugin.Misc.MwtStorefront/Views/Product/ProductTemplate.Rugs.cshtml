@@ -70,12 +70,12 @@
     var reviewPageSize = await _settingService.GetSettingByKeyAsync<int>("product.reviews.pagesize");
 
     Layout = "_ColumnsOne";
-    NopHtml.AppendCssFileParts($"~/Themes/{themeName}/Content/css/jcarousel.responsive.css");
-    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/magiczoomplus.js");
-    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/product-gtm.js");
-    NopHtml.AppendCssFileParts( $"~/Themes/{themeName}/Content/css/magiczoomplus.css");
-    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/jquery.jcarousel.min.js");
-    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/js/jcarousel.responsive.js");
+    NopHtml.AppendCssFileParts($"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/jcarousel.responsive.css");
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/magiczoomplus.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/product-gtm.js");
+    NopHtml.AppendCssFileParts($"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/magiczoomplus.css");
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/jquery.jcarousel.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/jcarousel.responsive.js");
     //title
     NopHtml.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : name);
     //meta

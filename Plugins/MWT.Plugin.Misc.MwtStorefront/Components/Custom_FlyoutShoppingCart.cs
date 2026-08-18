@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using MWT.Plugin.Misc.MwtStorefront.Factories;
 using Nop.Core.Domain.Orders;
 using Nop.Services.Security;
 using Nop.Web.Factories;
@@ -11,11 +12,11 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
     public class Custom_FlyoutShoppingCartViewComponent : NopViewComponent
     {
         private readonly IPermissionService _permissionService;
-        private readonly IShoppingCartModelFactory _shoppingCartModelFactory;
+        private readonly IShoppingCartExtendedModelFactory _shoppingCartModelFactory;
         private readonly ShoppingCartSettings _shoppingCartSettings;
 
         public Custom_FlyoutShoppingCartViewComponent(IPermissionService permissionService,
-            IShoppingCartModelFactory shoppingCartModelFactory,
+            IShoppingCartExtendedModelFactory shoppingCartModelFactory,
             ShoppingCartSettings shoppingCartSettings)
         {
             _permissionService = permissionService;
@@ -32,8 +33,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
             if (!await _permissionService.AuthorizeAsync(StandardPermission.PublicStore.ENABLE_SHOPPING_CART))
                 return Content("");
 
-            // var model = await _shoppingCartModelFactory.PrepareCustomMiniShoppingCartModelAsync(ShoppingCartType.ShoppingCart);
-            var model = new MiniShoppingCartModel();
+             var model = await _shoppingCartModelFactory.PrepareCustomMiniShoppingCartModelAsync(ShoppingCartType.ShoppingCart);
             return View(model);
         }
     }

@@ -1,9 +1,10 @@
 ﻿@inject Nop.Services.Configuration.ISettingService _settingServce;
+@using MWT.Plugin.Misc.MwtStorefront.Models.ShoppingCart
 @using Nop.Core.Domain.Orders
 @using System.Globalization;
 @inject Nop.Services.Configuration.ISettingService _settingService;
-@inject Nop.Services.Orders.IShoppingCartService _shoppingCartService;
-@model MiniShoppingCartModel
+@inject IShoppingCartExtendedCartService _shoppingCartService;
+@model MiniShoppingCartExtendedModel
 @{ var settingValue = await _settingServce.GetSettingByKeyAsync<string>("MarketingSettings.ShowBuymoreSavemoreBanner");
     bool showBuymoreSavemoreBanner = false;
     bool.TryParse(settingValue, out showBuymoreSavemoreBanner);
@@ -17,9 +18,9 @@
             <circle cx="10" cy="10" r="9.4" stroke="#188A47" stroke-width="1.2" />
             <path d="M8.55523 13.7755C8.43946 13.898 8.27545 14 8.13073 14C7.98601 14 7.822 13.8929 7.7014 13.7704L5 10.9133L5.85866 10.0051L8.13555 12.4133L14.1558 6L15 6.92347L8.55523 13.7755Z" fill="#188A47" />
         </svg>
-        <h4 class="modal-title" id="cartpopuptitle">
+        <h3 class="modal-title" id="cartpopuptitle">
             @T("cart.popup" + Model.Heading + ".title", 1)
-        </h4>
+        </h3>
     </div>
     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 </div>

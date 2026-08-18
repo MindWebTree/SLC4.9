@@ -1,7 +1,6 @@
-﻿@using MWT.Nop.Core.Services
-@using MWT.Nop.Core.Services.Customers
-@inject Nop.Services.Configuration.ISettingService _settingServce;
-@inject ICustomerExtendedService _customerService;
+﻿@inject Nop.Services.Configuration.ISettingService _settingServce;
+@using MWT.Plugin.Misc.MwtStorefront.Models.ShoppingCart;
+@inject Nop.Services.Customers.ICustomerService _customerService;
 @inject Nop.Core.IWorkContext _workContext;
 @inject Nop.Core.IWebHelper webHelper
 @{
@@ -14,7 +13,7 @@
                    : webHelper.GetRawUrl(Context.Request);
 }
 
-@model MiniShoppingCartModel
+@model MiniShoppingCartExtendedModel
 
 <div class="container">
     <div class="mini-shopping-cart row">
@@ -46,14 +45,13 @@
                         @if (Model.ShowProductImages)
                         {
                             <div class="picture">
-
-                                <img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" />
-
+                                      <img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl"  />
+                            
                             </div>
                         }
                         <div class="product">
                             <div class="name">
-                                <a href="@Url.RouteUrl("Product", new { id = item.ProductId, SeName = item.ProductSeName })">@item.ProductName</a>
+                                <a href="@Url.RouteUrl("Product", new {id=item.ProductId, SeName = item.ProductSeName })">@item.ProductName</a>
                             </div>
                             @if (!string.IsNullOrEmpty(item.AttributeInfo))
                             {
