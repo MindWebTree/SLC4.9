@@ -1,47 +1,41 @@
 ﻿
-using Nop.Web.Framework.Models.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Plugin.Misc.ProductBundle.Domain;
+using MWT.Nop.Plugin.Misc.ProductBundle.Domain.MWT.Nop.Plugin.Misc.ProductBundle.Domain;
 using MWT.Nop.Plugin.Misc.ProductBundle.Models;
+using MWT.Nop.Plugin.Misc.ProductBundle.Models.BundleLogs;
 using MWT.Nop.Plugin.Misc.ProductBundle.Models.Variant;
 using MWT.Nop.Plugin.Misc.ProductBundle.Services;
 using Nop.Core;
+using Nop.Core.Domain.Catalog;
+using Nop.Core.Infrastructure;
 using Nop.Services.Catalog;
 using Nop.Services.Configuration;
+using Nop.Services.Customers;
 using Nop.Services.Localization;
 using Nop.Services.Media;
 using Nop.Services.Messages;
 using Nop.Services.Security;
 using Nop.Services.Seo;
+using Nop.Web.Factories;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
-using Nop.Web.Framework.Mvc.Filters;
-using System;
-using System.Threading.Tasks;
-using MWT.Nop.Plugin.Misc.ProductBundle.Domain.MWT.Nop.Plugin.Misc.ProductBundle.Domain;
+using Nop.Web.Framework.Models.Extensions;
 using Nop.Web.Framework.Mvc;
-using System.Linq;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Nop.Core.Domain.Catalog;
-using Nop.Web.Factories;
-using Microsoft.AspNetCore.Http;
-using Nop.Core.Infrastructure;
-using System.IO;
-using MWT.Nop.Plugin.Misc.ProductBundle.Models.BundleLogs;
-using Nop.Services.Customers;
+using Nop.Web.Framework.Mvc.Filters;
 
 namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
 {
     [AuthorizeAdmin]
-    [Area(AreaNames.Admin)]
+    [Area(AreaNames.ADMIN)]
     [AutoValidateAntiforgeryToken]
     public class ProductBundleController : BasePluginController
     {
         private readonly IPermissionService _permissionService;
         private readonly IPictureService _pictureService;
         private readonly IUrlRecordService _urlRecordService;
-        private readonly IProductService _productService;
+        private readonly IProductExtendedService _productService;
         private readonly IBundleService _bundleService;
         private readonly IProductAttributeService _productAttributeService;
         private readonly ILocalizationService _localizationService;
@@ -60,7 +54,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
             IBundleService bundleService,
             IProductAttributeService productAttributeService,
             ILocalizationService localizationService,
-            IProductService productService,
+            IProductExtendedService productService,
             IUrlRecordService urlRecordService,
             IPictureService pictureService,
             INotificationService notificationService,
@@ -102,11 +96,10 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
 
         [HttpPost]
         /// <returns>A task that represents the asynchronous operation</returns>
+        /// 
+        [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> VariantList(VariantBundleSearchModel searchModel)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
-                return await AccessDeniedDataTablesJson();
-
+        { 
             //try to get a product with the specified id
 
             var product = await _productService.GetProductByIdAsync(searchModel.ProductId)
@@ -124,10 +117,9 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
 
 
         [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
+        [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
         public async Task<IActionResult> BundleEdit(BundleConfigurationModel model, bool continueEditing)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
+        { 
 
             if (!ModelState.IsValid)
                 return View("~/Plugins/MWT.Nop.Plugin.Misc.ProductBundle/Views/BundleEdit.cshtml", model);
@@ -207,10 +199,9 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
         #region Bundle Items List, Delete, Edit 
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
         public async Task<IActionResult> BulkEditBundleItemList(BundleItemSearchModel searchModel)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
+        { 
 
             // UPDATED: Pass both BundleId and AttributeValueId to filter the correct tab's items
             var bundleItems = await _bundleService.GetBundleItemsAsync(searchModel.BundleId);
@@ -309,11 +300,9 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
         #endregion
 
         #region Bundle Items Product Add Poup
-
+        [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> BundleItemProductAddPopup(int bundleId)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
+        { 
 
             var bundledetails = await _bundleService.GetBundleByIdAsync(bundleId);
             var searchModel = new BundleItemProductSearchModel();
@@ -364,10 +353,9 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> BundleItemProductAddPopup(AddBundleItemProductModel model)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
+        { 
 
             if (model.SelectedProducts != null && model.SelectedProducts.Any())
             {
@@ -458,13 +446,12 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
             var searchModel = new BundleItemProductSearchModel { BundleId = model.BundleId };
             return View("~/Plugins/MWT.Nop.Plugin.Misc.ProductBundle/Views/BundleProductAddPopup.cshtml", searchModel);
         }
-        [HttpPost]
-        /// <returns>A task that represents the asynchronous operation</returns>
+
+        [HttpPost] 
+        [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> BundleItemProductAddPopupList(BundleItemProductSearchModel searchModel)
         {
-
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
-                return await AccessDeniedDataTablesJson();
+             
 
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
@@ -526,11 +513,10 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
 
         #region Configuration
         [AuthorizeAdmin]
-        [Area(AreaNames.Admin)]
+        [Area(AreaNames.ADMIN)]
+        [CheckPermission(StandardPermission.Configuration.MANAGE_PLUGINS)]
         public async Task<IActionResult> Configure()
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManagePlugins))
-                return AccessDeniedView();
+        { 
 
             // This line now works because _productBundleSettings was injected!
             var model = new ConfigurationModel
@@ -541,10 +527,9 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
             return View("~/Plugins/MWT.Nop.Plugin.Misc.ProductBundle/Views/Configure.cshtml", model);
         }
         [HttpPost]
+        [CheckPermission(StandardPermission.Configuration.MANAGE_PLUGINS)]
         public async Task<IActionResult> Configure(ConfigurationModel model)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManagePlugins))
-                return Content("Access denied");
+        { 
 
             // Save the settings using your new settings class
             _productBundleSettings.DiscountPercentage = model.DiscountPercentage;
@@ -558,19 +543,18 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
         #endregion
 
         [HttpGet]
+        [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> Manage(int id)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
+        { 
 
 
             var variantdetails = await _productService.GetVariantByVariantId(id);
             if (variantdetails == null)
-                return RedirectToAction("List", "Product", new { area = AreaNames.Admin });
+                return RedirectToAction("List", "Product", new { area = AreaNames.ADMIN });
 
             var product = await _productService.GetProductByIdAsync(variantdetails.ProductId);
             if (product == null)
-                return RedirectToAction("List", "Product", new { area = AreaNames.Admin });
+                return RedirectToAction("List", "Product", new { area = AreaNames.ADMIN });
 
 
             var bundledetails = await _bundleService.GetBundleByVariantIdAsync(id);
@@ -647,12 +631,11 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
 
 
         [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
+        [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> UpdateBundleName(
             int bundleId, int productId, int variantId, string name, int noOfPieces, bool continueEditing,
             bool displayOnProductPage, int pictureId )
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
+        { 
 
             var bundleValueConfig = await _bundleService.GetBundleByIdAsync(bundleId);
 
@@ -693,16 +676,14 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
             {
                 return RedirectToAction("Manage", new { id = variantId });
             }
-            return RedirectToAction("Edit", "Product", new { id = productId, area = AreaNames.Admin });
+            return RedirectToAction("Edit", "Product", new { id = productId, area = AreaNames.ADMIN });
 
         }
 
         #region BundleLog
+        [CheckPermission(StandardPermission.Configuration.MANAGE_PLUGINS)]
         public async Task<IActionResult> Log(int productId = 0, int variantId = 0)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManagePlugins))
-                return AccessDeniedView();
-
+        {  
             var model = new BundleAuditLogSearchModel
             {
                 ProductId = productId,
@@ -715,10 +696,9 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Configuration.MANAGE_PLUGINS)]
         public async Task<IActionResult> LogListData(BundleAuditLogSearchModel searchModel)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManagePlugins))
-                return await AccessDeniedDataTablesJson();
+        { 
 
             // 3. Pass the IDs from the search model directly into your service!
             var logs = await _bundleLoggerService.GetAllLogsAsync(

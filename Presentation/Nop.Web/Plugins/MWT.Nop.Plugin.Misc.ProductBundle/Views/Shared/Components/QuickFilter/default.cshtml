@@ -1,0 +1,233 @@
+@model QuickFilterListModel
+
+@if (Model.Filters.Count > 0)
+{
+    var currentUrl = (Context.Request?.Path ?? "").ToString() + Context.Request?.QueryString == null ? "" : Context.Request?.QueryString.ToString().ToLower();
+    currentUrl = currentUrl.Replace("?", "");
+    <div class="quick-filters-list">
+        @foreach (var filter in Model.Filters)
+        {
+            var link = filter.Link.Split('?').Length > 1 ? filter.Link.Split('?')[1].ToLower() : "";
+            bool isSelected = false;
+            var counter = 0;
+            foreach (var filterParam in link.Split('&'))
+            {
+                if (!isSelected && counter != 0)
+                {
+                    break;
+                }
+                counter++;
+
+                var filterParamKeyvalue = filterParam.Split('=');
+                if (filterParamKeyvalue.Length > 1)
+                {
+                    foreach (var queryParam in currentUrl.Split('&'))
+                    {
+                        if (string.Equals(filterParamKeyvalue[0].Trim(), queryParam.Split('=')[0], StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            isSelected = true;
+                            var filterParamvalues = filterParamKeyvalue[1].Replace("[", "").Replace("]", "").Split(',');
+
+                            foreach (var filterParamValue in filterParamvalues)
+                            {
+                                if (queryParam.Replace("[", "").Replace("]", "").Split('=').Length > 1)
+                                {
+                                    if (!queryParam.Replace("[", "").Replace("]", "").Split('=')[1].Split(',').Contains(filterParamValue))
+                                    {
+                                        isSelected = false;
+                                    }
+                                }
+
+                            }
+                            break;
+                        }
+                        else
+                        {
+                            isSelected = false;
+                        }
+                    }
+                }
+
+
+            }
+            <div class="category-breakouts__category @(isSelected ? "active" : "")">
+                <a href="@filter.Link">
+                    <p class="cmsBlack crate-bold renew__eyebrow tC">
+                        @filter.TermName
+                    </p><svg width="16" height="16" alt="@filter.TermName" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+                        <path d="M12 4L4 12" stroke="white" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+
+                        <path d="M4 4L12 12" stroke="white" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+
+                    </svg>
+                </a>
+            </div>
+
+
+        }
+    </div>
+
+}
+<!-- Ram || quick filter || 11-12-2023-->
+<script asp-location="Footer">
+    $('body').on('click', '.quick-filters-list .category-breakouts__category', function (e) {
+
+        var urlParts = decodeURI($(this).find('a').attr('href')).replace(new RegExp('%2B', 'g'), '+').split('?');
+
+        if (urlParts.length > 1) {
+
+            e.preventDefault();
+            var queryParamsParts = urlParts[1].split('&');
+            var queryParams = [];
+            for (var i = 0; i < queryParamsParts.length; i++) {
+                if (queryParamsParts[i].split('=').length == 2) {
+                    var valueArray = queryParamsParts[i].split('=')[1].replace('[', '').replace(']', '');
+                    valueArray.split(',').forEach(value => {
+                        queryParams.push({ key: queryParamsParts[i].split('=')[0], value: value });
+                    })
+
+                }
+            }
+            
+            if (!$(this).hasClass('active')) {
+                $('.quick-filters-list .category-breakouts__category ').removeClass('active');
+                $(this).addClass('active');
+                $(".filtercheckbox").each(function () {
+                    $(this).prop("checked", false);
+                });
+                $('.desktopFilters').show();
+                selectFilters(queryParams, true);
+
+                
+
+
+
+
+
+            } else {
+                $(this).removeClass('active');
+                selectFilters(queryParams, false);
+                //alert("a");
+                //debugger;
+                //$(this).removeClass('active')
+                //var click_element = $(this);
+                //var click_element_url = click_element.find('a');
+                //click_element_url = click_element_url.attr('href');
+                //var queryString = window.location.href.split("?")[1];
+                //var filterNeedToRemove = click_element_url.split('?')[1];
+                //var finalQueryString = "";
+
+                //var queryParameters = queryString.split('&');
+                //for (var i = 0; i < queryParameters.length; i++) {
+                //    var paramKey = queryParameters[i].split('=')[0];
+                //    var paramValue = queryParameters[i].split('=')[1].replace('[', '').replace(']', '');
+                //    var filterParameters = filterNeedToRemove.split('&');
+                //    for (var j = 0; j < filterParameters.length; j++) {
+
+                //        if (paramKey.toLowerCase().trim() == (filterParameters[j].split('=')[0]).toLowerCase().trim()) {
+                //            var arrParamValue = paramValue.replace('[', '').replace(']', '').split(',');
+                //            var arrFilterParamValue = filterParameters[j].split('=')[1].replace('[', '').replace(']', '').split(',');
+                //            for (var k = 0; k < arrFilterParamValue.length; k++) {
+                //                const index = arrParamValue.indexOf(arrFilterParamValue[k]);
+                //                if (index > -1) {
+                //                    arrParamValue.splice(index, 1);
+                //                }
+                //            }
+                //            try {
+                //                paramValue = arrParamValue.length > 0 ? arrParamValue.toString() : "";
+                //            }
+                //            catch (err) {
+                //                console.log(err);
+                //            }
+                //        }
+
+                //    }
+
+                //    finalQueryString += paramValue.trim() != "" ? (finalQueryString.length > 1 ? "&" : "") + (paramKey + '=' + '[' + paramValue + ']') : '';
+                //}
+
+                //$('.selectedFilters .selections').remove();
+            }
+
+        }
+
+    })
+
+
+    function selectFilters(queryParams, isRemove) {
+
+        queryParams.forEach(queryParam => {
+
+            if (queryParam.key != "sortby") {
+                if ($('[data-filter-name="' + queryParam.key + '"]').length > 0) {
+                    var parentFilterId = $('[data-filter-name="' + queryParam.key + '"]').attr("id").replace("filter-btn-horizonatal-", "").replace('filter-btn-', '');
+           
+                    const filterOption = $('input[data-parent-filterid="' + parentFilterId + '"]').filter(function () {
+                        return $(this).data('filter-name') === queryParam.value;
+                    });
+
+                    if (filterOption.length > 0) {
+                        filterOption.prop('checked', isRemove);
+                    }
+                }
+            }
+            else {
+                $('#products-orderby').val(queryParam.value);
+            }
+        });
+
+       
+        var elements = $('.popupfilter').length > 0 ? $('.popupfilter') : $(".filtercheckbox");
+        console.log(elements);
+        var isFilterSelected = false;
+        $(elements).each(function () {
+            var optionId = $(this).attr("popup-data-option-id");
+         
+            if (!optionId || typeof (optionId) == "undefined") {
+                optionId = $(this).attr("data-option-id");
+                
+            }
+           
+
+            if ($("[data-option-id=" + optionId + "]")) {
+                if ($(this).prop('checked') == true) {
+                    if ($(".selectedFilters").find("button[data-option-id=\"" + optionId + "\"]").length == 0)
+                        $(".inline-clear-all").after('<span class="selections"><button data-style="button" aria-label="" type="button" data-option-id="' + optionId + '" class="cta"><span class="selections-close">\u00D7</span> <span>' + $('label[for="attribute-option-' + optionId + '"]').contents().filter(function () {
+                            return this.nodeType === Node.TEXT_NODE;
+                        }).text() + '</span></button></span>');
+                    isFilterSelected = true;
+                    if (!$("[data-option-id=" + optionId + "]").hasClass("popupfilter")) {
+                        if ($("[data-option-id=" + optionId + "]").prop('checked') != true) {
+                            $("[data-option-id=" + optionId + "]").prop("checked", true);
+                        }
+
+                    }
+                }
+                else {
+                    if ($(".selectedFilters").find("button[data-option-id=\"" + optionId + "\"]").length > 0)
+                        $(".selectedFilters").find("button[data-option-id=\"" + optionId + "\"]").parent().remove();
+                    if (  !$("[data-option-id=" + optionId + "]").hasClass("popupfilter")) {
+                        if ($("[data-option-id=" + optionId + "]").prop('checked') == true) {
+                            $("[data-option-id=" + optionId + "]").prop("checked", false);
+                        }
+                    }
+                }
+            }
+        });
+
+        if (isFilterSelected) {
+            $(".inline-clear-all a").parent().parent().show();
+            $(".filterDesktopIcon span").text($(".filterDesktopIcon span").attr("data-hidefilter-text"));
+            $(".filterDesktopIcon").addClass("show");
+        }
+        else {
+            $(".inline-clear-all a").parent().parent().hide();
+           
+        }
+
+        $(".popupfilterheading button").click();
+        // Load Filters
+        CatalogProducts.getProducts();
+    }
+</script>

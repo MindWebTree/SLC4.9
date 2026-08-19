@@ -1,12 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
+using MWT.Nop.Core.Data.Discounts;
+using MWT.Nop.Core.Service.Catalog;
+using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Plugin.Misc.ProductBundle.Domain;
 using MWT.Nop.Plugin.Misc.ProductBundle.Infrastructure.Cache;
 using MWT.Nop.Plugin.Misc.ProductBundle.Models;
 using MWT.Nop.Plugin.Misc.ProductBundle.Services;
+using MWT.Plugin.Misc.MwtStorefront.Factories;
+using MWT.Plugin.Misc.MwtStorefront.Models.Catalog;
 using Newtonsoft.Json;
 using Nop.Core;
 using Nop.Core.Caching;
-using Nop.Core.Customizations.Discounts;
+using Nop.Core.Domain.Logging;
 using Nop.Core.Domain.Media;
 using Nop.Services.Catalog;
 using Nop.Services.Configuration;
@@ -14,15 +19,8 @@ using Nop.Services.Localization;
 using Nop.Services.Logging;
 using Nop.Services.Media;
 using Nop.Services.Orders;
-using Nop.Web.Factories;
 using Nop.Web.Framework.Components;
-using Nop.Web.Models.Catalog;
 using Nop.Web.Models.Media;
-using Nop.Core.Domain.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MWT.Nop.Plugin.Misc.ProductBundle.Components
 {
@@ -32,15 +30,15 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Components
         #region Fields
 
         private readonly IBundleService _bundleService;
-        private readonly IProductModelFactory _productModelFactory;
+        private readonly ICustomProductModelFactory _productModelFactory;
         private readonly IPictureService _pictureService;
         private readonly ILocalizationService _localizationService;
         private readonly IProductAttributeService _productAttributeService;
-        private readonly IProductService _productService;
+        private readonly IProductExtendedService _productService;
         private readonly IProductAttributeParser _productAttributeParser;
         private readonly IPriceFormatter _priceFormatter;
         private readonly ISettingService _settingService;
-        private readonly IShoppingCartService _shoppingCartService;
+        private readonly IShoppingCartExtendedCartService _shoppingCartService;
         private readonly IStaticCacheManager _staticCacheManager;
         private readonly IWebHelper _webHelper;
         private readonly IWorkContext _workContext;
@@ -55,13 +53,13 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Components
         public ProductBundleWidgetViewComponent(IBundleService bundleService,
             IProductAttributeService productAttributeService,
             ILocalizationService localizationService,
-            IProductService productService,
+            IProductExtendedService productService,
             IPictureService pictureService,
-            IProductModelFactory productModelFactory,
+            ICustomProductModelFactory productModelFactory,
             IProductAttributeParser productAttributeParser,
             IPriceFormatter priceFormatter,
             ISettingService settingService,
-            IShoppingCartService shoppingCartService,
+            IShoppingCartExtendedCartService shoppingCartService,
             IStaticCacheManager staticCacheManager,
             IWebHelper webHelper,
             IWorkContext workContext,
@@ -93,7 +91,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Components
 
         public async Task<IViewComponentResult> InvokeAsync(string widgetZone, object additionalData)
         {
-            if (additionalData is not ProductDetailsModel productDetailsModel)
+            if (additionalData is not CustomProductDetailsModel productDetailsModel)
                 return Content("");
             try
             {
@@ -140,7 +138,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Components
                     if (!validBundles.Any())
                         return new ProductConfigurationBundleModel();
 
-                    var uniqueProductIds = allBundleItems.Select(item => item.ProductId).Distinct().ToArray();
+                        var uniqueProductIds = allBundleItems.Select(item => item.ProductId).Distinct().ToArray();
                     var bundleProducts = await _productService.GetProductsByIdsAsync(uniqueProductIds);
 
                     var productOverviewModels = await _productModelFactory.PrepareCustomProductOverviewDetailInfoModelAsync(

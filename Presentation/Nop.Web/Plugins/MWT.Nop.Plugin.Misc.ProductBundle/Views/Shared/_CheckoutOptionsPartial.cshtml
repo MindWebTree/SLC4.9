@@ -1,0 +1,195 @@
+﻿@model Nop.Web.Models.Customer.LoginModel
+@using Nop.Services.Configuration;
+@inject Nop.Core.IStoreContext _storeContext
+@inject ISettingService settingService;
+@inject Nop.Core.Domain.Security.CaptchaSettings _captchaSettings;
+@inject Nop.Core.Domain.Customers.CustomerSettings _customerSettings;
+@{
+    var store = await _storeContext.GetCurrentStoreAsync();
+    var storeEmail = await settingService.GetSettingByKeyAsync<string>("store.email");
+}
+
+<div class="modal fade cart-login-process" id="guestcheckoutsignin" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered guestcheckoutsignin-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 0L21 20" stroke="#010101" stroke-width="1.76757" stroke-miterlimit="10" />
+                        <path d="M1 20L21 0" stroke="#010101" stroke-width="1.76757" stroke-miterlimit="10" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h3 class="modal-title" id="GuestCheckoutModalLabel">@T("Checkout.Guest.Heading")</h3>
+                <p>@T("Checkout.Guest.Info")</p>
+                <form id="guest-checkout" class="guest-checkout">
+                    <input type="hidden" name="checkout-as-guest" value="true" />
+                    <div class="form-group" bis_skin_checked="1">
+                        <input placeholder="Email" class="form-control" asp-for="Email" type="email" id="GuestCheckout-Email" required />
+                        <div class="checkout-label" bis_skin_checked="1">
+                            <label for="Email">Email Address</label>
+                            <span class="required">*</span>
+                        </div>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-signin">@T("checkout.button.checkoutasguest")</button>
+                </form>
+
+                <h3 class="modal-title">@T("Checkout.Signin.Heading")</h3>
+                <div class="modal-body">
+                    <form id="returning-user" class="returning-user">
+                        @Html.AntiForgeryToken()
+
+
+                        <div class="errormessage">
+
+                        </div>
+
+
+                        @if (_customerSettings.UsernamesEnabled)
+                        {
+                            <div class="form-group" bis_skin_checked="1">
+                                <input placeholder="Email" asp-for="Username" id="Checkout-Email" class="form-control" type="email" />
+                                <div class="checkout-label" bis_skin_checked="1">
+                                    <label for="Checkout-Email" asp-for="Username"></label>
+                                    <span class="required">*</span>
+                                </div>
+                                <span asp-validation-for="Username" class="text-danger"></span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="form-group" bis_skin_checked="1">
+                                <input placeholder="Email"  asp-for="Email" id="Checkout-Email" class="form-control" type="email" />
+                                <div class="checkout-label" bis_skin_checked="1">
+                                    <label for="Checkout-Email" asp-for="Email"></label>
+                                    <span class="required">*</span>
+                                </div>
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        }
+                        <div class="form-group" bis_skin_checked="1">
+                            <input placeholder="Password" asp-for="Password" id="Checkout-Password" class="form-control" type="password" />
+                            <div class="checkout-label" bis_skin_checked="1">
+                                <label for="Checkout-Password">Password</label>
+                                <span class="required">*</span>
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <!-- Remember Me & Forgot Password -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" asp-for="RememberMe" type="checkbox" id="Checkout-rememberMe" />
+                                <label class="form-check-label" for="Checkout-rememberMe">Remember me</label>
+                            </div>
+                        </div>
+                        @if (_captchaSettings.Enabled && _captchaSettings.ShowOnLoginPage)
+                        {
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-12 col-sm-8 offset-md-3 offset-lg-3 offset-xl-3">
+                                            <nop-captcha class="g-recaptcha" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        <button type="submit" class="btn btn-signin">@T("Checkout.Signin.Button")</button>
+
+                    </form>
+                </div>
+                <div class="footer-modal-content">
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#forgot-password-default" class="text-muted text-decoration-none">@T("account.login.forgotpassword")</a>
+                    <p>@T("Checkout.Signin.Footer.Heading") </p>
+                    <div class="footer-call-chat">
+                        <a href="tel:@store.CompanyPhoneNumber">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2.00055 9.976C2.73055 11.5927 3.9738 13.3442 5.4113 14.7817C6.94455 16.315 8.63605 17.5293 10.1743 18.2003C11.0118 18.5658 11.7611 18.7485 12.3918 18.7485C13.0188 18.7485 13.5286 18.5675 13.8903 18.2055L15.3413 16.755C15.7821 16.3137 15.7426 15.5568 15.2531 15.067L13.1151 12.9288C12.6251 12.4392 11.8676 12.4 11.4271 12.8407L10.7613 13.5065C10.5768 13.6445 9.43655 13.2933 8.1538 12.0105C6.8703 10.7273 6.5183 9.58625 6.65705 9.4035L7.32355 8.737C7.7643 8.296 7.7248 7.5385 7.2353 7.049L5.0968 4.911C4.6068 4.4215 3.8498 4.38175 3.4088 4.823L1.9583 6.2735C1.23405 6.9975 1.24905 8.3125 2.0003 9.976H2.00055ZM2.66555 6.9805L4.1163 5.53C4.1263 5.52 4.1463 5.514 4.17205 5.514C4.22855 5.514 4.3143 5.54225 4.39005 5.618L6.52805 7.756C6.63855 7.8665 6.64805 7.99825 6.6163 8.03L5.9498 8.69625C5.1213 9.52525 6.07555 11.3465 7.44655 12.7175C8.1293 13.4 8.88005 13.9455 9.56055 14.2528C10.6806 14.7587 11.2363 14.4457 11.4676 14.214L12.1341 13.5478C12.166 13.5158 12.2973 13.5255 12.4081 13.6357L14.5458 15.774C14.6563 15.8845 14.6658 16.016 14.6341 16.0478L13.1833 17.4985C12.7808 17.9013 11.8056 17.821 10.5743 17.2835C9.1478 16.6613 7.5653 15.5215 6.1183 14.0747C4.7628 12.7192 3.5943 11.075 2.9118 9.56425C2.3603 8.3435 2.26805 7.37775 2.6653 6.9805H2.66555ZM18.5705 11.0843C18.5705 5.66175 14.1588 1.25 8.7363 1.25V2.25C13.6075 2.25 17.5705 6.21325 17.5705 11.0843H18.5705Z" fill="#828282" />
+                                <path d="M8.92578 3.98438V4.98438C12.3933 4.98438 15.2145 7.80538 15.2145 11.2729H16.2145C16.2145 7.25388 12.9445 3.98438 8.92578 3.98438Z" fill="#828282" />
+                                <path d="M12.6685 11.2664H13.6685C13.6685 8.65144 11.541 6.52344 8.92578 6.52344V7.52344C10.9895 7.52344 12.6685 9.20269 12.6685 11.2664Z" fill="#828282" />
+                            </svg>
+                            <span class="phone">@store.CompanyPhoneNumber</span>
+                        </a>
+                        <a href="mailto:@storeEmail">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18.7137 4.17445C18.6988 4.13515 18.6799 4.09746 18.6575 4.06195C18.6485 4.03839 18.6381 4.01542 18.6262 3.9932C18.568 3.93545 18.5029 3.88507 18.4325 3.8432L18.3262 3.8057H1.83871C1.79508 3.80109 1.75109 3.80109 1.70746 3.8057L1.60121 3.8432C1.56814 3.86117 1.53677 3.88209 1.50746 3.9057C1.47359 3.92961 1.44219 3.95683 1.41371 3.98695C1.40181 4.00917 1.39138 4.03213 1.38246 4.0557C1.31636 4.12277 1.27082 4.20735 1.25121 4.29945C1.2496 4.32442 1.2496 4.34948 1.25121 4.37445V15.6245C1.25121 15.7902 1.31706 15.9492 1.43427 16.0664C1.55148 16.1836 1.71045 16.2495 1.87621 16.2495H18.1262C18.292 16.2495 18.4509 16.1836 18.5682 16.0664C18.6854 15.9492 18.7512 15.7902 18.7512 15.6245V4.37445C18.7528 4.34948 18.7528 4.32442 18.7512 4.29945C18.7431 4.25659 18.7305 4.21469 18.7137 4.17445ZM16.2887 4.99945L10.0012 9.83695L3.71371 4.99945H16.2887ZM17.5012 14.9995H2.50121V5.62445L9.61996 11.0995C9.72925 11.1836 9.86329 11.2292 10.0012 11.2292C10.1391 11.2292 10.2732 11.1836 10.3825 11.0995L17.5012 5.62445V14.9995Z" fill="#828282" />
+                            </svg>
+                            <span class="mail">@storeEmail</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script asp-location="Footer">
+    $(document).ready(function () {
+ $('#returning-user').on('submit', function (e) {
+            if (!$(this).valid()) {
+                return;
+            }
+      e.preventDefault();
+
+     var token = $('input[name="__RequestVerificationToken"]').val();
+
+            $.ajax({
+                    url: '@Url.Action("CustomSignIn", "CustomerExtended")',
+                method: 'POST',
+                data: $(this).serialize(),
+                headers: {
+                    'RequestVerificationToken': token
+                },
+                success: function (data) {
+                 if (data.statusCode === 200) {
+                        window.location.href = data.redirectUrl || '/onepagecheckout';
+                    } else {
+
+                     $('#returning-user .errormessage').html('<div class="alert alert-danger">' + data.message + '</div>');
+                        $('#guestcheckoutsignin').modal('show');
+  }
+                },
+                error: function (xhr, status, error) {
+                    $('#returning-user .errormessage').html('@T("Common.Error")');
+                }, complete: function () {
+                  
+                    
+                }
+            });
+        });
+
+$('#guest-checkout').on('submit', function (e) {
+    if (!$(this).valid()) {
+        return;
+    }
+  e.preventDefault();
+ var token = $('input[name="__RequestVerificationToken"]').val();
+
+    var formData = $("#shopping-cart-form").serialize();
+   
+    formData = formData + '&Email=' + $('#GuestCheckout-Email').val();
+    
+    formData = formData + '&checkout-as-guest=true&__RequestVerificationToken=' + token;
+
+    console.log(formData);
+
+    $.ajax({
+        url: '@Url.Action("Cart", "ShoppingCart")',
+        method: 'POST',
+      data: formData,
+        headers: {
+            'RequestVerificationToken': token
+        },
+        success: function (data) {
+            window.location.href = '/onepagecheckout';
+        },
+        error: function (xhr, status, error) {
+        }
+    });
+});
+    });
+</script>

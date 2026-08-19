@@ -1,0 +1,23 @@
+﻿@model CustomProductOverviewModel
+@using Nop.Core
+@using Nop.Core.Domain.Catalog
+@using Nop.Core.Domain.Orders
+@using Nop.Core.Domain.Tax
+@inject CatalogSettings catalogSettings
+@inject ICustomWorkContext workContext
+@{ 
+    string offerText = CustomCommonHelper.GetProductOfferText(Model.Id, Model.ProductPrice.OfferText, Model.ProductPrice.OfferPlaceHolder, Model.ProductPrice.DiscountAmount, Model.ProductPrice.DiscountPercentage, Model.ProductPrice.SaleEndDate, false);
+}
+<div data-productid="@Model.Id">
+
+    <a href="@Url.RouteUrl("Product", new {id=Model.Id, SeName = Model.SeName })" title="@Model.DefaultPictureModel.Title">
+        <img alt="@Model.DefaultPictureModel.AlternateText" src="/images/pixel.png" data-src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" class="lazy" />
+    </a>
+    <h3 class="product-title">
+        <a href="@Url.RouteUrl("Product", new {id=Model.Id,SeName = Model.SeName})">@Model.Name</a>
+    </h3>
+    @await Html.PartialAsync("_ListingPrice", Model)
+</div>
+
+
+

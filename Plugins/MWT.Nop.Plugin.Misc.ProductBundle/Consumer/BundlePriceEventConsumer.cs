@@ -1,20 +1,14 @@
-﻿using BundlerMinifier;
+﻿using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Plugin.Misc.ProductBundle.Domain;
 using MWT.Nop.Plugin.Misc.ProductBundle.Infrastructure.Cache;
 using MWT.Nop.Plugin.Misc.ProductBundle.Services; // Ensure this matches where your IProductBundleService is
+using MWTNop.Core.Domain.Catalog;
 using Nop.Core.Caching;
 using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Customization.Catalog;
 using Nop.Core.Events;
 using Nop.Data;
 using Nop.Services.Catalog;
 using Nop.Services.Events;
-using Nop.Web.Areas.CustomOrder.Models.Product;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MWT.Nop.Plugin.Misc.ProductBundle.Consumer
 {
@@ -41,7 +35,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Consumer
 
     {
         private readonly IBundleService _bundleService;
-        private readonly IProductService _productService;
+        private readonly IProductExtendedService _productService;
         private readonly IRepository<BundleConfiguration> _bundleConfigRepository;
         private readonly IProductAttributeService _productAttributeService;
         private readonly IStaticCacheManager _staticCacheManager;
@@ -49,7 +43,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Consumer
 
         public BundlePriceEventConsumer(
             IBundleService bundleService,
-            IProductService productService,
+            IProductExtendedService productService,
             IRepository<BundleConfiguration> bundleConfigRepository,
             IProductAttributeService productAttributeService,
             IStaticCacheManager staticCacheManager)

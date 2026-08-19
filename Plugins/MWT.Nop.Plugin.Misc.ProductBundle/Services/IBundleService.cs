@@ -1,6 +1,7 @@
 ﻿using MWT.Nop.Plugin.Misc.ProductBundle.Domain;
 using MWT.Nop.Plugin.Misc.ProductBundle.Models;
 using MWT.Nop.Plugin.Misc.ProductBundle.Models.Variant;
+using MWTNop.Core.Domain.Catalog;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Customization.Catalog;

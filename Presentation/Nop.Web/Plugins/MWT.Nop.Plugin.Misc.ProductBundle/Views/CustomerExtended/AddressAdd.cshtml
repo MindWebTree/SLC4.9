@@ -1,0 +1,39 @@
+﻿@model  CustomCustomerAddressEditModel
+@using Nop.Core.Domain.Seo
+@inject Nop.Core.IWebHelper webHelper
+@inject SeoSettings seoSettings
+@{
+    Layout = "_ColumnsTwo";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Account").Text);
+    NopHtml.AppendPageCssClassParts("html-account-page");
+    //page class
+    NopHtml.AppendPageCssClassParts("html-address-edit-page");
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        NopHtml.AddCanonicalUrlParts(Url.RouteUrl("CustomerAddressAdd", null, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant(), false);
+    }
+}
+@section left
+{
+    @await Component.InvokeAsync("CustomerNavigation", new { selectedTabId = CustomerNavigationEnum.Addresses })
+}
+<form asp-route="CustomerAddressAdd" method="post">
+    <div class="page account-page address-edit-page">
+        <div class="page-title">
+            <h1 id="addresses-add-heading">@T("Account.MyAccount") - @T("Account.CustomerAddresses.AddNew")</h1>
+        </div>
+        <div class="page-body" aria-labelledby="addresses-add-heading" role="region">
+            <div asp-validation-summary="ModelOnly" class="message-error"></div>
+            @{
+                var dataDictAddress = new ViewDataDictionary(ViewData);
+                dataDictAddress.TemplateInfo.HtmlFieldPrefix = "Address";
+                @await Html.PartialAsync("_CreateOrUpdateExtendedAddress", Model.Address, dataDictAddress)
+            }
+            <div class="buttons">
+                <button type="submit" class="button-1 btn btn-primary save-address-button">@T("Common.Save")</button>
+            </div>
+        </div>
+    </div>
+</form>

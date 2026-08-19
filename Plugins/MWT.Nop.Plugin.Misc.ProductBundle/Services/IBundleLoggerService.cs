@@ -1,11 +1,6 @@
 ﻿using MWT.Nop.Plugin.Misc.ProductBundle.Domain;
+using MWTNop.Core.Domain.Catalog;
 using Nop.Core;
-using Nop.Core.Domain.Customization.Catalog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MWT.Nop.Plugin.Misc.ProductBundle.Services
 {

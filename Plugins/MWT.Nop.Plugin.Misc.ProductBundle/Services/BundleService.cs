@@ -1,29 +1,27 @@
 ﻿
 using LinqToDB;
+using MWT.Nop.Core.Data.Discounts;
+using MWT.Nop.Core.Infrastructure;
+using MWT.Nop.Core.Service.Catalog;
+using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Plugin.Misc.ProductBundle.Consumer;
 using MWT.Nop.Plugin.Misc.ProductBundle.Domain;
 using MWT.Nop.Plugin.Misc.ProductBundle.Domain.MWT.Nop.Plugin.Misc.ProductBundle.Domain;
 using MWT.Nop.Plugin.Misc.ProductBundle.Models;
 using MWT.Nop.Plugin.Misc.ProductBundle.Models.Variant;
+using MWTNop.Core.Domain.Catalog;
 using Nop.Core;
 using Nop.Core.Caching;
-using Nop.Core.Customizations.Discounts;
 using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Customization.Catalog;
 using Nop.Core.Domain.Logging;
 using Nop.Data;
 using Nop.Services.Catalog;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
 using Nop.Services.Logging;
-using Nop.Services.Orders;
 using Nop.Web.Framework.Models.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 
 
 namespace MWT.Nop.Plugin.Misc.ProductBundle.Services
@@ -34,11 +32,11 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Services
         private readonly IRepository<BundleItem> _bundleItemRepository;
         private readonly IRepository<VariantPriceBackup> _variantbackupRepository;
         private readonly IRepository<Product> _productRepository;
-        private readonly IProductService _productService;
+        private readonly IProductExtendedService _productService;
         private readonly IProductAttributeParser _productAttributeParser;
         private readonly IProductAttributeService _productAttributeService;
         private readonly ILocalizationService _localizationService;
-        private readonly IShoppingCartService _shoppingCartService;
+        private readonly IShoppingCartExtendedCartService _shoppingCartService;
         private readonly ISettingService _settingService;
         private readonly IPriceCalculationService _priceCalculationService;
         private readonly IWorkContext _workContext;
@@ -54,11 +52,11 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Services
             IRepository<BundleConfiguration> bundleConfigRepository,
             IRepository<BundleItem> bundleItemRepository,
             IRepository<Product> productRepository,
-            IProductService productService,
+            IProductExtendedService productService,
             IProductAttributeParser productAttributeParser,
             IProductAttributeService productAttributeService,
             ILocalizationService localizationService,
-            IShoppingCartService shoppingCartService,
+            IShoppingCartExtendedCartService shoppingCartService,
             ISettingService settingService,
             IPriceCalculationService priceCalculationService,
             IWorkContext workContext,
@@ -562,10 +560,10 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Services
                 // skipping true to guarding recursion events
                 BundleEventContext.SkipRecalculation.Value = true;
                 decimal? oldPrice = variant.Price;
-                totalOldPrice = CommonHelper.RoundToNearest49or99(totalPrice + (totalPrice * maxDiscountPercentage / 100));
+                totalOldPrice = CustomCommonHelper.RoundToNearest49or99(totalPrice + (totalPrice * maxDiscountPercentage / 100));
                 totalPrice = totalOldPrice - (totalOldPrice * maxDiscountPercentage / 100);
 
-                variant.Msrp = CommonHelper.RoundToNearest49or99(totalMSRP);
+                variant.Msrp = CustomCommonHelper.RoundToNearest49or99(totalMSRP);
                 variant.OldPrice = totalOldPrice;
                 variant.Price = (totalPrice % 1 >= 0.5m) ? Math.Ceiling((decimal)totalPrice) : Math.Floor((decimal)totalPrice);
 

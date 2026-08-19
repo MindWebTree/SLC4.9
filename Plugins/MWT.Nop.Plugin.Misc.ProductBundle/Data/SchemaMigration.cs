@@ -1,4 +1,6 @@
 ﻿using FluentMigrator;
+using MWT.Nop.Plugin.Misc.ProductBundle.Domain;
+using Nop.Data.Extensions;
 using Nop.Data.Migrations;
 using System;
 using System.Collections.Generic;
@@ -8,35 +10,34 @@ using System.Threading.Tasks;
 
 namespace MWT.Nop.Plugin.Misc.ProductBundle.Data
 {
-    [SkipMigrationOnUpdate]
+ 
     [NopMigration("2026/05/20 00:00:00", "Bundle Configuration")]
     public class SchemaMigration : AutoReversingMigration
     {
         protected IMigrationManager _migrationManager;
-
-        public SchemaMigration(IMigrationManager migrationManager)
-        {
-            _migrationManager = migrationManager;
-        }
-
+         
         public override void Up()
         {
-            if (!Schema.Table(nameof(BundleAuditLogMappingBuilder)).Exists())
+            if (!Schema.Table(nameof(BundleAuditLog)).Exists())
             {
-                _migrationManager.BuildTable<BundleAuditLogMappingBuilder>(Create);
+                Create.TableFor<BundleAuditLog>();
             }
-            if (!Schema.Table(nameof(BundleConfigurationMappingBuilder)).Exists())
+
+            if (!Schema.Table(nameof(BundleConfiguration)).Exists())
             {
-                _migrationManager.BuildTable<BundleConfigurationMappingBuilder>(Create);
+                Create.TableFor<BundleConfiguration>();
             }
-            if (!Schema.Table(nameof(BundleItemMappingBuilder)).Exists())
+
+            if (!Schema.Table(nameof(BundleItem)).Exists())
             {
-                _migrationManager.BuildTable<BundleItemMappingBuilder>(Create);
+                Create.TableFor<BundleItem>();
             }
-            if (!Schema.Table(nameof(VariantPriceBackupMappingBuilder)).Exists())
+
+            if (!Schema.Table(nameof(VariantPriceBackup)).Exists())
             {
-                _migrationManager.BuildTable<VariantPriceBackupMappingBuilder>(Create);
+                Create.TableFor<VariantPriceBackup>();
             }
+
         }
     }
 }

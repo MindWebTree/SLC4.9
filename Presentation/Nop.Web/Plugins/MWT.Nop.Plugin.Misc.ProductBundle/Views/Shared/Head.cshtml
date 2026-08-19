@@ -1,0 +1,31 @@
+﻿@using Nop.Core.Domain.Catalog
+@using Nop.Services.Helpers
+
+@inject CatalogSettings catalogSettings
+@inject IThemeContext themeContext
+@inject IUserAgentHelper userAgentHelper
+
+@{
+    Layout ="";
+    var themeName = await themeContext.GetWorkingThemeNameAsync();
+    var supportRtl = await Html.ShouldUseRtlThemeAsync();
+
+    //add main CSS file
+  //  NopHtml.AppendCssFileParts($"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/styles{(supportRtl ? ".rtl" : "")}.css");
+
+
+    NopHtml.AppendCssFileParts($"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/root-theme-styles.css?ver=547");
+    NopHtml.AppendCssFileParts($"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/bootstrap.min.css");
+    NopHtml.AppendCssFileParts($"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/fontawesome-all.min.css");
+    NopHtml.AppendCssFileParts($"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/slick.css");
+    NopHtml.AppendCssFileParts($"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/slick-theme.css");
+    
+    //add swiper css file
+    if (catalogSettings.DisplayAllPicturesOnCatalogPages)
+    {
+        NopHtml.AppendCssFileParts("~/lib_npm/swiper/swiper-bundle.min.css");
+    }
+
+    //add jQuery UI css file
+    NopHtml.AppendCssFileParts("~/lib_npm/jquery-ui-dist/jquery-ui.min.css");
+}

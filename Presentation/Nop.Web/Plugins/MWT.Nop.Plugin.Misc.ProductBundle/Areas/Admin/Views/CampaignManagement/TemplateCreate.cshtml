@@ -1,0 +1,19 @@
+﻿
+@model DesignModel
+<div class="card card-secondary card-outline">
+    <div class="card-header with-border clearfix">
+        <div class="card-title">
+            <i class="fas fa-info"></i>@T("CampaignManagement.Template.Add")
+        </div>
+        <div class="card-tools float-right">
+            <button class="btn btn-tool" data-card-widget="collapse" type="button">
+                <i class="fa-minus toggle-icon fa"></i>
+            </button>
+        </div>
+        <a href="@Url.ActionLink("Templates")" class="btn btn-info float-left mx-2">
+            <i class="fas fa-cog"></i>
+            @T("CampaignManagement.Templates.Back")
+        </a>
+    </div>
+@await Html.PartialAsync("_createupdatetemplate",Model)
+</div>

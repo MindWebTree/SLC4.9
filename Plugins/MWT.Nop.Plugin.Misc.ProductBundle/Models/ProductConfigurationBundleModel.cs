@@ -1,5 +1,6 @@
 ﻿
 using MWT.Nop.Plugin.Misc.ProductBundle.Domain;
+using MWT.Plugin.Misc.MwtStorefront.Models.Catalog;
 using Nop.Web.Framework.Models;
 using Nop.Web.Models.Catalog;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Models
     {
         public ProductConfigurationBundleModel()
         {
-            ProductOverviewModels = new List<ProductOverviewModel>();
+            ProductOverviewModels = new List<CustomProductOverviewModel>();
             InitialItems = new List<BundleItem>();
         }
 
@@ -40,7 +41,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Models
         public string WidgetZone { get; set; }
         public bool IsPreSelected { get; set; }
 
-        public IList<ProductOverviewModel> ProductOverviewModels { get; set; }
+        public IList<CustomProductOverviewModel> ProductOverviewModels { get; set; }
 
         public List<int> InitialProductIds { get; set; }
         public string BundleManifestJson { get; set; }

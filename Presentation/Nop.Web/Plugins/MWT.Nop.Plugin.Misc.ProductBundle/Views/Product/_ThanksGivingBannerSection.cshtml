@@ -1,0 +1,12 @@
+﻿@inject ICustomWorkContext _workContext
+
+<div class="plan-outer-div">
+@if (_workContext.IsMobileDevice())
+{
+    <img src="/images/pixel.png" data-src="/images/uploaded/buymore mobile ver4.jpg" alt="" class="w-100 lazy">
+}
+else
+{
+    <img src="/images/pixel.png" data-src="/images/uploaded/buymore desktop ver4.jpg" alt="" class="w-100 lazy">
+}
+</div>

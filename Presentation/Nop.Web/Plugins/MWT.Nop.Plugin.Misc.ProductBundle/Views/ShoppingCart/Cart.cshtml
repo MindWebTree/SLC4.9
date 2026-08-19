@@ -1,0 +1,107 @@
+﻿@model ShoppingCartModel
+@inject IThemeContext _themeContext
+@inject ICustomWorkContext _customWorkcontext
+@inject IWorkContext _workcontext
+@using Nop.Core
+@using Nop.Core.Domain.Seo
+@inject IWebHelper webHelper
+@inject SeoSettings seoSettings
+@inject Nop.Services.Configuration.ISettingService _settingService;
+@inject Nop.Services.Orders.IShoppingCartService _shoppingCartService
+@inject ICustomerExtendedService _customerService
+@{
+    Layout = "_ColumnsOne";
+    NopHtml.AddMetaDescriptionParts(await _settingService.GetSettingByKeyAsync<string>("seosettings.Cartmetadescription"));
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.ShoppingCart").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-shopping-cart-page");
+    var themeName = await _themeContext.GetWorkingThemeNameAsync();
+    NopHtml.AddScriptParts(ResourceLocation.Footer, $"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/cart.js?" + DateTime.Now.Ticks);
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        NopHtml.AddCanonicalUrlParts(Url.RouteUrl("ShoppingCart", null, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant(), false);
+    }
+
+    var customer = await _workcontext.GetCurrentCustomerAsync();
+    if (customer != null && !await _customerService.IsRegisteredAsync(customer))
+    {
+        string customerEmail = await _customerService.GetCustomerEmail(customer);
+        <!-- Account signin -->
+        @await Html.PartialAsync("_LoginPartial", new Nop.Web.Models.Customer.LoginModel())
+        <!-- Account signin -->
+        <!-- Forgot Password - Default -->
+        @await Html.PartialAsync("_ResetPasswordPartial", new PasswordRecoveryModel())
+        <!-- Forgot Password - Default -->
+        <!-- Create Account  -->
+        @await Component.InvokeAsync("CustomRegisterBlock")
+        <!-- Create Account  -->
+        @await Html.PartialAsync("_CheckoutOptionsPartial", new LoginModel() { Email = customerEmail })
+
+    }
+
+}
+<script type="text/javascript">
+    var common_update = '@T("Common.Update")';
+    var common_save = '@T("Common.Save")';
+    var common_edit = '@T("Common.Edit")';
+    var is_Mobile_Device = '@(_customWorkcontext.IsMobileDevice())';
+    var ajaxCartUrl = '@(Url.RouteUrl("ShoppingCart"))';
+
+</script>
+
+@if (!Model.OnePageCheckoutEnabled)
+{
+    @await Component.InvokeAsync("CheckoutProgress", new { step = CheckoutProgressStep.Cart })
+}
+<div class="page shopping-cart-page">
+    <div class="page-title panel-heading">
+        <h1>@T("ShoppingCart")</h1>
+    </div>
+    <div class="page-body panel-body shopping-cart-page-body">
+        @await Component.InvokeAsync("CustomOrderSummary", new { overriddenModel = Model })
+    </div>
+</div>
+@if ((await _shoppingCartService.GetShoppingCartAsync(customer, Nop.Core.Domain.Orders.ShoppingCartType.ShoppingCart)).Count == 0)
+{
+
+    if (await _customerService.IsRegisteredAsync(customer))
+    {
+        @await Component.InvokeAsync("Custom_WishlistBlock")
+        if ((await _shoppingCartService.GetShoppingCartAsync(customer, Nop.Core.Domain.Orders.ShoppingCartType.Wishlist)).Count == 0)
+        {
+            @await Component.InvokeAsync("Custom_RecentlyViewedProductsBlock")
+        }
+    }
+    else
+    {
+        @await Component.InvokeAsync("Custom_RecentlyViewedProductsBlock")
+    }
+}
+else
+{
+    @await Component.InvokeAsync("ShoppingCartRecommendationProductsBlock")
+}
+<div class="modal fade" id="cartprocessingModel" tabindex="-1" role="dialog" aria-labelledby="cartprocessingModel" aria-hidden="true"
+     style="padding-right:0 !important; text-align: center;">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-body">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="opacity:0;"><span aria-hidden="true">&times;</span></button>
+            <svg width="60" height="60" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#fff">
+                <g fill="none" fill-rule="evenodd">
+                    <g transform="translate(1 1)" stroke-width="2">
+                        <circle stroke-opacity=".5" cx="18" cy="18" r="18" />
+                        <path d="M36 18c0-9.94-8.06-18-18-18">
+                            <animateTransform attributeName="transform"
+                                              type="rotate"
+                                              from="0 18 18"
+                                              to="360 18 18"
+                                              dur="1s"
+                                              repeatCount="indefinite" />
+                        </path>
+                    </g>
+                </g>
+            </svg>
+        </div>
+    </div>
+</div>

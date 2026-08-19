@@ -1,0 +1,242 @@
+﻿@model MWT.Plugin.Misc.MwtStorefront.Models.TestimonialModel
+<form id="testimonialForm">
+    @Html.AntiForgeryToken()
+    <div id="validation-summary"></div>
+
+    <label for="Email">Email</label>
+    <input type="email" id="Email" name="Email" class="form-control" placeholder="Enter your email" />
+    <span asp-validation-for="Email"></span>
+    @Html.LabelFor(m => m.OrderId)
+    <input asp-for="OrderId" value="@(Model.OrderId == 0 ? "" : Model.OrderId.ToString())" placeholder="@T("Testimonial.Fields.OrderId.Hint")" class="form-control" />
+    <span asp-validation-for="OrderId"></span>
+
+    <br />
+
+    <h4>Upload Video</h4>
+    <div class="d-flex justify-content-center">
+        <div id="dropzone"
+             class="text-center border border-primary p-4 rounded w-100"
+             style="max-width: 500px; cursor: pointer;"
+             onclick="document.getElementById('UploadVideo').click();"
+             ondragover="event.preventDefault(); this.classList.add('bg-light');"
+             ondragleave="this.classList.remove('bg-light');"
+             ondrop="handleFileDrop(event)">
+
+            <div id="upload-label">
+                <i class="bi bi-upload fs-2"></i>
+                <img src="/images/uploaded/download_Image_Testmonial.png" />
+                <p class="mb-1 text-center">
+                    Click or Drag video Here
+                    <!-- <span class="text-primary text-decoration-underline">Browse</span>    -->
+                </p>
+                <small class="text-muted">MP4,MOV up to 50MB</small>
+            </div>
+
+            <input id="UploadVideo" type="file" accept="video/*" hidden onchange="uploadFile(this.files[0])" />
+            <div id="progress-section" class="mt-3 d-none">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span id="file-name" class="fw-bold">Uploading...</span>
+                    <span id="upload-percentage">0%</span>
+                </div>
+                <div class="progress">
+                    <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width: 0%"></div>
+                </div>
+                <div id="upload-status" class="text-success mt-2 fw-bold d-none">✔ Uploaded</div>
+            </div>
+        </div>
+    </div>
+    @Html.ValidationMessageFor(m => m.Video, "", new { @class = "text-danger" })
+    <br />
+    <div class="social-divider">
+        <span class="social-divider-content">OR</span>
+    </div>
+    <!-- @Html.LabelFor(m => m.VideoUrl) -->
+    <input asp-for="VideoUrl" placeholder="@T("Testimonial.Fields.videoUrl.Hint")" class="form-control video-input" />
+    <span asp-validation-for="VideoUrl"></span>
+
+    @* <input asp-for="FacebookUrl" placeholder="@T("Testimonial.Fields.FacbookVideoUrl.Hint")" class="form-control facebook-video-input" />
+    <span asp-validation-for="FacebookUrl"></span> *@
+
+
+    <br />
+
+    <div class="consent visibility-off-video-review">
+        <input asp-for="IsConsent" checked />
+        @Html.LabelFor(m => m.IsConsent)
+        <span asp-validation-for="IsConsent"></span>
+    </div>
+
+    <br />
+
+    <button type="submit" disabled>@T("Testimonial.Common.Submit")<span class="load loading"></span></button>
+	<p style="text-align: center !important;
+    float: left;
+    width: 100%;">By submitting, you agree to our content usage <a href="/privacy-policy" target="_blank" style="    text-align: left !important;
+    letter-spacing: 0;    text-decoration: underline !important;">terms</a>.</p>
+</form>
+<div class="sucess message"></div>
+<script asp-location="Footer">
+
+    let emailTimer = null;
+
+    $(document).on("input", "#Email", function () {
+        clearTimeout(emailTimer);
+
+        const email = this.value.trim();
+
+        // Clear OrderId if empty
+        if (!email) {
+            $("#OrderId").val("");
+            return;
+        }
+
+        // Run only after user stops typing for 600ms
+        emailTimer = setTimeout(function () {
+
+            // Email validation regex
+            const emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+
+            if (!emailRegex.test(email)) {
+                $("#OrderId").val("");
+                return;
+            }
+
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: "@Url.RouteUrl("api-customer-recent-order")",
+                data: { email: email },
+                success: function (res) {
+
+                    if (res && res.orderId > 0) {
+
+                        $("#OrderId").val(res.orderId);
+                    } else {
+                        $("#OrderId").val("");
+                    }
+                },
+                error: function (e) {
+                    console.error("API error", e);
+                }
+            });
+
+        }, 600); // delay after typing stops
+    });
+    function validateForm() {
+        const orderIdFilled = $.trim($('#OrderId').val()) !== '';
+        const videoUrlFilled = $.trim($('#VideoUrl').val()) !== '';
+        const videoFileSelected = $('#UploadVideo')[0].files.length > 0;
+        const isConsentChecked = $('#IsConsent').is(':checked');
+        if (orderIdFilled && isConsentChecked && (videoUrlFilled || videoFileSelected)) {
+            $("button[type='submit']").prop('disabled', false);
+        } else {
+            $("button[type='submit']").prop('disabled', true);
+        }
+    }
+
+    // Attach event listeners
+
+    function handleFileDrop(event) {
+        event.preventDefault();
+        const file = event.dataTransfer.files[0];
+        if (file) {
+            $('#UploadVideo')[0].files = event.dataTransfer.files;
+            uploadFile(file);
+        }
+    }
+    function uploadFile(file) {
+        if (!file || !file.type.startsWith('video/')) {
+            alert('Please select a valid video file.');
+            return;
+        }
+
+        $("button[type='submit']").attr("disabled", true);
+        $('#UploadVideo').addClass('d-none');
+        $('#progress-section').removeClass('d-none');
+        $('#file-name').text(file.name);
+        const progressBar = $('#progress-bar');
+        const percentageLabel = $('#upload-percentage');
+        const uploadStatus = $('#upload-status');
+        let progress = 0;
+        progressBar.css('width', '0%');
+        percentageLabel.text('0%');
+        uploadStatus.addClass('d-none');
+        const interval = setInterval(() => {
+            progress += 5;
+            progressBar.css('width', `${progress}%`);
+            percentageLabel.text(`${progress}%`);
+            if (progress >= 100) {
+                $("button[type='submit']").removeAttr("disabled");
+                clearInterval(interval);
+                uploadStatus.removeClass('d-none');
+                progressBar.removeClass('progress-bar-animated');
+            }
+        }, 100);
+    }
+    // Make sure your code runs only after jQuery is loaded and DOM is ready
+    document.addEventListener("DOMContentLoaded", function () {
+        $('#OrderId, #VideoUrl').on('input', validateForm);
+        $('#Video, #IsConsent').on('change', validateForm);
+        $('#testimonialForm').on('submit', function (e) {
+            e.preventDefault();
+            // Clear previous client-side and server-side validation messages
+            $('.field-validation-error, .text-danger').text('');
+            $('.validation-summary-errors').remove();
+            if (!$(this).valid()) {
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append("orderId", $('#OrderId').val());
+            formData.append("videoUrl", $('#VideoUrl').val());
+            formData.append("email", $('#Email').val());
+            // formData.append("facebookurl", $('#FacebookUrl').val());
+            formData.append("isConsent", $('#IsConsent').is(':checked'));
+            if ($('#UploadVideo')[0].files.length > 0) {
+                formData.append("Video", $('#UploadVideo')[0].files[0]);
+            }
+            var token = $('input[name="__RequestVerificationToken"]').val();
+            formData.append("__RequestVerificationToken", token);
+            $("button[type='submit']").attr("disabled", true);
+            $("button[type='submit']").addClass("processing");
+            $.ajax({
+                url: '@Url.Action("Add", "Testimonials")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    $("button[type='submit']").removeAttr("disabled");
+                    $("button[type='submit']").removeClass("processing");
+                    $('.message').html("");
+                    if (response.success) {
+                        $('#validation-summary').html('');
+                        $('#UploadVideo').removeClass('d-none');
+                        $('#progress-section').addClass('d-none');
+                        $('.message').html(response.message);
+                        $('#testimonialForm')[0].reset();
+                    } else {
+
+                        const messages = response.message.split('\n'); // Split message by newline
+                        let listItems = messages.map(msg => `<li>${msg}</li>`).join('');
+
+                        $('#validation-summary').html(`
+            <div class="text-danger validation-summary-errors">
+                <ul>${listItems}</ul>
+            </div>
+        `);
+                    }
+                },
+                error: function (xhr) {
+                    $("button[type='submit']").removeAttr("disabled");
+                    $("button[type='submit']").removeClass("processing");
+                    $('#validation-summary').html(
+                        `<div class="text-danger validation-summary-errors">
+                        <ul><li>An unexpected error occurred.</li></ul>
+                    </div>`
+                    );
+                }
+            });
+        });
+    });
+</script>

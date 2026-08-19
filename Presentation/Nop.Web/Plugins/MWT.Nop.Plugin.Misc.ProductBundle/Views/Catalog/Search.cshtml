@@ -1,0 +1,157 @@
+﻿@model CustomSearchModel
+@inject ICustomWorkContext _workcontext
+@inject ISettingService _settingService;
+@inject ILocalizationService _localizationService;
+@inject IHttpContextAccessor _httpContextAccessor;
+@inject IWebHelper webHelper
+@inject IStoreContext _storeContext
+
+@using Nop.Core.Domain.Seo
+
+@inject SeoSettings seoSettings
+@{
+    bool IsHorizontal = await _settingService.GetSettingByKeyAsync<bool>("Search.IsHorizontal");
+    Layout = IsHorizontal ? "_searchTemplate" : "_searchTemplate_sidebar";
+
+    //title
+    NopHtml.AddTitleParts(string.Format(await _settingService.GetSettingByKeyAsync<string>("seosettings.SearchTitle"), Model.SearchTerm));
+    NopHtml.AddMetaDescriptionParts(await _settingService.GetSettingByKeyAsync<string>("seosettings.Searchmetadescription"));
+    NopHtml.AddMetaKeywordParts(Model.SearchTerm);
+
+
+
+    NopHtml.AddCanonicalUrlParts("/search", false);
+    ViewBag.EnableInfiniteScroll = "True";
+    //page class
+    NopHtml.AppendPageCssClassParts("html-search-page");
+    string listingViewPath = await _settingService.GetSettingByKeyAsync<string>("Search.template.listingView");
+
+}
+<script>
+    var defaultSortOption = '@((await _localizationService.GetResourceAsync("Common.Select")).Replace(" ", "_"))';
+</script>
+<style type="text/css">
+    .viewall-page {
+        display: none !important;
+    }
+</style>
+
+@*Hidden Variables*@
+
+@section Heading {
+    @if (Model.CatalogProductsModel.TotalItems > 0)
+    {
+        if (string.IsNullOrEmpty(_httpContextAccessor.HttpContext.Request.Query["categoryid"].ToString()))
+        {
+            <h1 class="search page-heading">@T("Search", Model.CatalogProductsModel.TotalItems, Model.SearchTerm)</h1>
+        }
+        else
+        {
+            <h1 class="search page-heading">@T("Search.With.Filter", Model.SearchTerm)</h1>
+        }
+
+        @await Component.InvokeAsync("CustomRelatedSearchTermsForSearch", new { searchTerm = Model.SearchTerm })
+    }
+    else
+    {
+        <h1 class="search page-heading">@T("Search.NotFound", Model.SearchTerm)</h1>
+    }
+}
+
+@section CatalogSelector {
+    @if (Model.CatalogProductsModel.TotalItems > 0)
+    {
+        @await Html.PartialAsync("_CatalogSelectors", Model.CatalogProductsModel)
+    }
+}
+
+@if (_workcontext.IsMobileDevice() && IsHorizontal)
+{
+    @section SelectedtFilters {
+        @if (Model.CatalogProductsModel.TotalItems > 0)
+        {
+            @await Html.PartialAsync("_SelectedtFilters", Model.CatalogProductsModel)
+        }
+    }
+}
+@section CatalogFilters {
+    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBeforeFilters, additionalData = Model })
+    @if (_workcontext.IsMobileDevice())
+    {@if (Model.CatalogProductsModel.TotalItems > 0)
+        {
+            @await Html.PartialAsync("_CatalogFilters", Model.CatalogProductsModel)
+        }
+    }
+    else
+    {
+        if (IsHorizontal)
+        { @if (Model.CatalogProductsModel.TotalItems > 0)
+            {
+                <div class="desktopFilters w-100" style="display:none;">
+                    @await Html.PartialAsync("_CatalogFiltersHorizontal", Model.CatalogProductsModel)
+                    @await Html.PartialAsync("_SelectedtFilters", Model.CatalogProductsModel)
+                </div>
+            }
+        }
+        else
+        {
+            @if (Model.CatalogProductsModel.TotalItems > 0)
+            {
+                @await Html.PartialAsync("_CatalogFiltersSideBar", Model.CatalogProductsModel)
+            }
+        }
+    }
+}
+@if (!IsHorizontal)
+{
+    @section SelectedtFilters {
+        @if (Model.CatalogProductsModel.TotalItems > 0)
+        {
+            @await Html.PartialAsync("_SelectedtFilters", Model.CatalogProductsModel)
+        }
+    }
+}
+
+<script>
+    var pageSize = '@Model.CatalogProductsModel.PageSize';
+</script>
+<div class="page search-page">
+    <div class="page-body">
+
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductSearchPageBeforeResults })
+        @{
+            var catalogProductsViewData = new ViewDataDictionary(ViewData);
+            catalogProductsViewData["fetchUrl"] = Html.Raw(Url.Action("GetSearchCategoryProducts", "Catalog"));
+            @await Html.PartialAsync(listingViewPath, Model.CatalogProductsModel, catalogProductsViewData)
+            <script asp-location="Footer">
+                $(document).ready(function () {
+                    $(CatalogProducts).on('before', function (e) {
+
+                        var isAdvanced = $('#@Html.IdFor(model => model.advs)').is(':checked');
+
+                        e.payload.urlBuilder
+                            .addParameter('q', $('#@Html.IdFor(model => model.q)').val())
+                            .addParameter('advs', isAdvanced);
+
+                        if (isAdvanced) {
+                            e.payload.urlBuilder
+                                .addParameter('cid', $('#@Html.IdFor(model => model.cid)').val())
+                                .addParameter('isc', $('#@Html.IdFor(model => model.isc)').is(':checked'))
+                                .addParameter('mid', $('#@Html.IdFor(model => model.mid)').val())
+                                .addParameter('vid', $('#@Html.IdFor(model => model.vid)').val())
+                                .addParameter('sid', $('#@Html.IdFor(model => model.sid)').is(':checked'));
+                        }
+                    });
+                });
+            </script>
+
+            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBeforeFeaturedProducts, additionalData = Model })
+        }
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductSearchPageAfterResults })
+
+        @*recently  products*@
+        @await Component.InvokeAsync("Custom_RecentlyViewedProductsBlock")
+
+    </div>
+
+</div>

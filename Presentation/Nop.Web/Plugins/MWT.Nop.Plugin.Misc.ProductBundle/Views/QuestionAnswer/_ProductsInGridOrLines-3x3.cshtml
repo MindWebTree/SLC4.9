@@ -1,0 +1,113 @@
+﻿@model CustomCatalogProductsModel
+@inject MWT.Nop.Core.Infrastructure.ICustomWorkContext _workContext
+@inject Nop.Services.Configuration.ISettingService _settingService;
+@inject MWT.Nop.Core.Services.Catalog.ICustomCategoryService _categoryService
+@using MWT.Nop.Core.Infrastructure;
+@{
+    var EnableInfiniteScroll = false;
+    int position = 5;
+    bool.TryParse((string)ViewBag.EnableInfiniteScroll, out EnableInfiniteScroll);
+}
+@if (!string.IsNullOrEmpty(Model.WarningMessage))
+{
+
+    <div class="warning">
+        @Model.WarningMessage
+    </div>
+}
+@{
+    int entityId = 0;
+    int.TryParse(ViewData["entityId"] == null ? "" : ViewData["entityId"].ToString(), out entityId);
+    var kwModel = new KwTermModel();
+    if (entityId != 0)
+        kwModel.Id = entityId;
+    else
+        kwModel.Id = Model.CategoryID;
+    if (kwModel.Id == 19 || kwModel.Id == 61 || kwModel.Id == 60 || kwModel.Id == 62 || kwModel.Id == 59)
+    {
+        position = 2;
+    }
+    bool hasThirdBanner = await _categoryService.IsMwtWidgetApplied(CustomPublicWidgetZones.CategoryDetailsProductListThirdPosition, kwModel.Id, "KwTerm", _workContext.IsMobileDevice());
+    bool hasNinthBanner = await _categoryService.IsMwtWidgetApplied(CustomPublicWidgetZones.CategoryDetailsProductListNinthPosition, kwModel.Id, "KwTerm", _workContext.IsMobileDevice());
+
+}
+@if (Model.Products.Count > 0)
+{
+    int rowPosition = (Model.Products.Count / 3) / 2;
+    if (rowPosition > 1)
+    {
+        if ((rowPosition * 3) % 2 == 1)
+        {
+            rowPosition = (rowPosition - 1) * 3;
+        }
+        else
+        {
+            rowPosition = rowPosition * 3;
+        }
+        if (_workContext.IsMobileDevice())
+            rowPosition = rowPosition - 1;
+    }
+    else
+        rowPosition = 0;
+
+    <div class="row">
+        @{
+            int counter = 1;
+        }
+        @foreach (var product in Model.Products)
+        {
+            <div class="col-sm-6 col-lg-4 cat-box">
+                @await Html.PartialAsync(product.Inventory <= 0 ? "_Catgory_ProductBox_OutOfStock" : "_Catgory_ProductBox", product)
+            </div>
+            if (counter == position)
+            {
+                if (hasThirdBanner)
+                {
+                    counter++;
+                }
+                if (hasThirdBanner)
+                {
+                    <div class="col-sm-6 col-lg-4 cat-box">
+                        @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsProductListThirdPosition, additionalData = kwModel })
+                    </div>
+                }
+            }
+            else if (counter == 8)
+            {
+                if (hasNinthBanner)
+                {
+                    counter++;
+                }
+                if (hasNinthBanner)
+                {
+                    <div class="col-sm-6 col-lg-4 cat-box">
+                        @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsProductListNinthPosition, additionalData = kwModel })
+                    </div>
+                }
+            }
+            if (counter == rowPosition)
+            {
+                @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsProductListMiddle, additionalData = kwModel })
+            }
+            counter++;
+        }
+    </div>
+
+
+
+   
+
+
+   
+}
+else if (!string.IsNullOrEmpty(Model.NoResultMessage))
+{
+    <div class="no-result">
+        @Model.NoResultMessage
+    </div>
+}
+<div class="infinite-scroll-loader">Loading  ...</div>
+<script>
+    if (document.getElementById("noofprdDisplay") != null)
+        document.getElementById("noofprdDisplay").innerHTML = "@(Html.Raw(string.Format(T("Label.Showing").Text, (Model.PageIndex + 1) * Model.PageSize > Model.TotalItems ? Model.TotalItems : (Model.PageIndex + 1) * Model.PageSize, Model.TotalItems)))";
+</script>

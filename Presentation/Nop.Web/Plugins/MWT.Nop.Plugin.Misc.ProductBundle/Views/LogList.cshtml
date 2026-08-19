@@ -1,0 +1,182 @@
+﻿@model MWT.Nop.Plugin.Misc.ProductBundle.Models.BundleLogs.BundleAuditLogSearchModel
+@using Nop.Web.Framework.Models.DataTables
+@using Microsoft.AspNetCore.Routing
+@using MWT.Nop.Plugin.Misc.ProductBundle.Models.BundleLogs
+
+@{
+    Layout = "_AdminLayout";
+    ViewBag.PageTitle = "Product Bundle Logs";
+}
+<style>
+    .card-default {
+        border-radius: 12px;
+    }
+
+        .card-default .card-body {
+            padding: 24px;
+        }
+
+    .font-weight-semibold {
+        font-weight: 600;
+    }
+</style>
+<form asp-controller="ProductBundle" asp-action="List" method="post">
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            Product Bundle Logs
+
+            @* Dynamic Header to show the admin what they are filtering by *@
+            @if (Model.ProductId > 0)
+            {
+                <small>
+                    <i class="fas fa-arrow-circle-right"></i>
+                    Filtered by Product (ID: @Model.ProductId)
+                    @if (Model.VariantId > 0)
+                    {
+                        <span> and Variant (ID: @Model.VariantId)</span>
+                    }
+                </small>
+            }
+        </h1>
+
+        <div class="float-right">
+            @* Smart "Back" button to easily return to the Product Edit page *@
+            @if (Model.ProductId > 0)
+            {
+                <a href="@Url.Action("Edit", "Product", new { id = Model.ProductId, area = "Admin" })" class="btn btn-default">
+                    <i class="fas fa-arrow-left"></i> Back to Product
+                </a>
+            }
+            else
+            {
+                <a href="@Url.Action("List", "Product", new { area = "Admin" })" class="btn btn-default">
+                    <i class="fas fa-arrow-left"></i> Back to Catalog
+                </a>
+            }
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="form-horizontal">
+                <div class="cards-group">
+
+                    <div class="card card-default shadow-sm border-0 mb-3">
+                        <div class="card-body p-4">
+
+                            <!-- Header -->
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="mr-2">
+                                    <i class="fas fa-search text-primary"></i>
+                                </div>
+
+                                <h5 class="mb-0 font-weight-semibold">
+                                    Search Filters
+                                </h5>
+                            </div>
+
+                            <!-- Search Fields -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group row align-items-center mb-0">
+
+                                        <div class="col-md-4">
+                                            <div class="label-wrapper mb-0">
+                                                <nop-label asp-for="SearchKeyword" />
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-8">
+                                            <div class="input-group">
+
+                                                <nop-editor asp-for="SearchKeyword" />
+
+                                                <div class="input-group-append">
+                                                    <button type="button"
+                                                            id="search-logs"
+                                                            class="btn btn-primary">
+                                                        <i class="fas fa-search mr-1"></i>
+                                                        @T("Admin.Common.Search")
+                                                    </button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <div class="card card-default">
+                        <div class="card-body">
+                            @(await Html.PartialAsync("Table", new DataTablesModel
+                            {
+                                Name = "bundlelogs-grid",
+
+                                // Fixed: Controller is BundleAuditLog, not ProductBundle
+                                UrlRead = new DataUrl("LogListData", "ProductBundle", new RouteValueDictionary
+                                {
+                                    ["productId"] = Model.ProductId,
+                                    ["variantId"] = Model.VariantId
+                                }),
+
+                                SearchButtonId = "search-logs",
+                                Length = Model.PageSize,
+                                LengthMenu = Model.AvailablePageSizes,
+
+                                // Fixed: Using SearchMessage to match model
+                                Filters = new List<FilterParameter>
+                                {
+                                    new FilterParameter(nameof(Model.SearchKeyword))
+                                },
+
+                                ColumnCollection = new List<ColumnProperty>
+                                {
+                                    new ColumnProperty(nameof(BundleAuditLogModel.ProductId)) { Title = "ProductId", Width = "50" },
+                                    new ColumnProperty(nameof(BundleAuditLogModel.VariantId)) { Title = "VariantId", Width = "50" },
+                                    new ColumnProperty(nameof(BundleAuditLogModel.CreatedOnUtc))
+                                    {
+                                        Title = "Date",
+                                        Width = "150",
+                                        Render = new RenderDate()
+                                    },
+                                    new ColumnProperty(nameof(BundleAuditLogModel.ActionType)) { Title = "Action", Width = "100" },
+                                    new ColumnProperty(nameof(BundleAuditLogModel.UserIdentifier)) { Title = "User", Width = "150" },
+                                    new ColumnProperty(nameof(BundleAuditLogModel.OldPrice)) { Title = "Old Price", Width = "100" },
+                                    new ColumnProperty(nameof(BundleAuditLogModel.NewPrice)) { Title = "New Price", Width = "100" },
+                                    new ColumnProperty(nameof(BundleAuditLogModel.IsValid))
+                                    {
+                                        Title = "Is Valid",
+                                        Width = "80",
+                                        Render = new RenderBoolean()
+                                    },
+                                    new ColumnProperty(nameof(BundleAuditLogModel.ActualQuantity)) { Title = "Qty", Width = "50", ClassName = NopColumnClassDefaults.CenterAll },
+                                    new ColumnProperty(nameof(BundleAuditLogModel.RequiredPieces)) { Title = "Required", Width = "50", ClassName = NopColumnClassDefaults.CenterAll },
+                                    new ColumnProperty(nameof(BundleAuditLogModel.LogMessage)) { Title = "Details" }
+                                }
+                            }))
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>
+
+<script>
+    $(document).ready(function () {
+  $('#@Html.IdFor(model => model.SearchKeyword)').keydown(function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                // Simulate a click on the button so NopCommerce's native script takes over
+                $('#search-logs').click();
+                return false;
+            }
+        });
+
+    });
+</script>

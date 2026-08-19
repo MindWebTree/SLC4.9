@@ -8,6 +8,8 @@ using Nop.Web.Framework.Infrastructure;
 using Nop.Services.Configuration;
 using MWT.Nop.Plugin.Misc.ProductBundle.Domain.MWT.Nop.Plugin.Misc.ProductBundle.Domain;
 using MWT.Nop.Plugin.Misc.ProductBundle.Services;
+using MWT.Nop.Plugin.Misc.ProductBundle.Components;
+using MWT.Nop.Core.Infrastructure;
 
 namespace MWT.Nop.Plugin.Misc.ProductBundle
 {
@@ -33,7 +35,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle
                     DiscountPercentage = 0  
                 }); 
 
-            await _localizationService.AddLocaleResourceAsync(new System.Collections.Generic.Dictionary<string, string>
+            await _localizationService.AddOrUpdateLocaleResourceAsync(new System.Collections.Generic.Dictionary<string, string>
             {
                 ["MWT.Plugin.ProductBundle.BundleName"] = "Bundle Name",
                 ["MWT.Plugin.ProductBundle.ConfigurationValue"] = "Configuration Value",
@@ -64,14 +66,16 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle
 
         public Task<IList<string>> GetWidgetZonesAsync()
         {
-            return Task.FromResult<IList<string>>(new List<string> { PublicWidgetZones.ProductConfigurationBundle
+            return Task.FromResult<IList<string>>(new List<string> { CustomPublicWidgetZones.ProductConfigurationBundle
             }
                 );
         }
 
-        public string GetWidgetViewComponentName(string widgetZone)
+      
+
+        public Type GetWidgetViewComponent(string widgetZone)
         {
-            return "ProductBundleWidget";
+          return typeof(ProductBundleWidgetViewComponent);
         }
 
         public bool HideInWidgetList => false;

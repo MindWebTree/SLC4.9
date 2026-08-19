@@ -1,0 +1,60 @@
+﻿@model Nop.Core.Domain.Catalog.Product
+@using Nop.Core.Domain.Seo;
+@using Nop.Core.Domain.Catalog;
+@inject ICustomSpecificationAttributeService _specificationAttributeService
+@inject ICustomUrlRecordService _urlRecordService
+@inject Nop.Core.IWebHelper webHelper
+@inject SeoSettings seoSettings
+@inject Nop.Services.Configuration.ISettingService _settingService
+@inject ICustomSpecificationAttributeService _specificationAttributeService
+@inject ICustomCategoryService _categoryService
+
+@{
+    var sename = await _urlRecordService.GetSeNameAsync(Model);
+    var productUrl = Url.RouteUrl("Product", new { id = Model.Id, SeName = sename }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
+    Html.AddCanonicalUrlParts(productUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+    string title = Model.Name.Length > 45 ? Model.Name.Substring(0, 45) : Model.Name;
+    Html.AddTitleParts(await _settingService.GetSettingByKeyAsync<string>("seosettings.review.pagetitle.prefix") + " - " + title);
+
+
+    Category category = new Category();
+    string categorySename = "";
+    int mainCategoryId = await _specificationAttributeService.GetMainCategoryOfProduct(Model.Id);
+    if (mainCategoryId == 0)
+    {
+        mainCategoryId = (await _categoryService.GetProductCategoriesByProductIdAsync(Model.Id, false)).FirstOrDefault()?.CategoryId ?? 0;
+    }
+    if (mainCategoryId != 0)
+    {
+        category = await _categoryService.GetCategoryByIdAsync(mainCategoryId);
+        if (category != null)
+        {
+            categorySename = await _urlRecordService.GetSeNameAsync(category);
+        }
+    }
+}
+<div class="page product-reviews-page">
+    <div class="page-title">
+        <h1>
+            @if ((category?.Id ?? 0) != 0)
+            {
+                @T("Reviews.ProductReviewsFor") <a href="@Url.RouteUrl("Category", new  { id = category.Id,    SeName = categorySename })">@category.Name</a>
+            }
+            else
+            {
+                @T("Reviews.ProductReviewsFor") <a href="@Url.RouteUrl("Product", new  { id = Model.Id,    SeName = sename })">@Model.Name</a>
+            }
+        </h1>
+    </div>
+    <div class="page-body">
+        @await Component.InvokeAsync("Custom_FeedBackBlock", new
+        {
+            productId = Model.Id,
+            pageSize = int.MaxValue,
+            sku = Model.Sku ?? "",
+            mainCategoryId =
+                                        await _specificationAttributeService.GetMainCategoryOfProduct(Model.Id),
+        IsReviewPage = true
+        })
+    </div>
+</div>

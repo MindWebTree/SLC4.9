@@ -1,0 +1,134 @@
+﻿@using MWT.Nop.Core.Infrastructure
+@using Nop.Services.Localization
+@inject ICustomWorkContext _workContext;
+@inject  ILocalizationService _localizationService;
+@{
+    Layout = "_Root";
+}
+<script>
+
+    var shadeAsShow = '@T("Product.selected.shades")';
+    var defaultSortOption = '@((await _localizationService.GetResourceAsync("Common.Select")).Replace(" ", "_"))';
+</script>
+@{
+    //current category ID
+    var currentCategoryId = 0;
+    if (Url.ActionContext.RouteData.Values["controller"].ToString().Equals("catalog", StringComparison.InvariantCultureIgnoreCase) &&
+        Url.ActionContext.RouteData.Values["action"].ToString().Equals("category", StringComparison.InvariantCultureIgnoreCase))
+    {
+        currentCategoryId = Convert.ToInt32(Url.ActionContext.RouteData.Values["categoryId"].ToString());
+    }
+
+
+    //current manufacturer ID
+    var currentManufacturerId = 0;
+    if (Url.ActionContext.RouteData.Values["controller"].ToString().Equals("catalog", StringComparison.InvariantCultureIgnoreCase) &&
+        Url.ActionContext.RouteData.Values["action"].ToString().Equals("manufacturer", StringComparison.InvariantCultureIgnoreCase))
+    {
+        currentManufacturerId = Convert.ToInt32(Url.ActionContext.RouteData.Values["manufacturerId"].ToString());
+    }
+
+
+    //current product ID
+    var currentProductId = 0;
+    if (Url.ActionContext.RouteData.Values["controller"].ToString().Equals("product", StringComparison.InvariantCultureIgnoreCase) &&
+        Url.ActionContext.RouteData.Values["action"].ToString().Equals("productdetails", StringComparison.InvariantCultureIgnoreCase))
+    {
+        currentProductId = Convert.ToInt32(Url.ActionContext.RouteData.Values["productId"].ToString());
+    }
+    var hidefilter = false;
+    var displayFilters = false;
+    bool.TryParse((string)ViewBag.hidefilter, out hidefilter);
+    bool.TryParse((string)ViewBag.displayFilters, out displayFilters);
+    var EnableInfiniteScroll = false;
+    bool.TryParse((string)ViewBag.EnableInfiniteScroll, out EnableInfiniteScroll);
+        bool isParentCategory= ViewBag.IsParentCategory == null ? false : (bool)ViewBag.IsParentCategory;
+}
+<script>
+    var EnableInfiniteScroll='@EnableInfiniteScroll';
+</script>
+@if (EnableInfiniteScroll)
+{
+    <text>
+        <style>
+            .pager {
+                display: none;
+            }
+        </style>
+    </text>
+}
+@await RenderSectionAsync("Breadcrumb", false)
+
+@*@if (IsSectionDefined("left"))
+    {
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnBefore })
+        @await RenderSectionAsync("left")
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnAfter })
+    }
+    else
+    {*@
+@await RenderSectionAsync("FeaturedProduct")
+
+<div class="row mx-0 @(isParentCategory?"parent-category":"")">
+
+
+    @await RenderSectionAsync("CategoryTopWidget")
+    @await RenderSectionAsync("Heading")
+       @if (IsSectionDefined("SubCategories"))
+    {
+        @await RenderSectionAsync("SubCategories")
+
+    }
+    @*@await RenderSectionAsync("QuickFilter")*@
+    <div class="category-listing-sort-filter-conatiner">
+    @if (IsSectionDefined("CatalogSelector"))
+    {
+        @await RenderSectionAsync("CatalogSelector")
+    }
+   
+    @if (IsSectionDefined("SelectedtFilters"))
+    {
+        @await RenderSectionAsync("SelectedtFilters", false)
+    }
+    </div>
+      @if (IsSectionDefined("AdditionalDescription"))
+    {
+        @await RenderSectionAsync("AdditionalDescription")
+
+    }
+  
+</div>
+
+
+
+<div class="row sidebar-container   @(isParentCategory?"parent-category":"")">
+    @if (IsSectionDefined("CatalogFilters"))
+    {
+        <div class="filters @(displayFilters?"show col-sm-3":"col-0")">
+            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnBefore })
+            @await RenderSectionAsync("CatalogFilters", false)
+
+            @*@await Component.InvokeAsync("CategoryNavigation", new { currentCategoryId = currentCategoryId, currentProductId = currentProductId })
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnAfterCategoryNavigation })
+        @await Component.InvokeAsync("ManufacturerNavigation", new { currentManufacturerId = currentManufacturerId })
+        @await Component.InvokeAsync("VendorNavigation")
+        @await Component.InvokeAsync("RecentlyViewedProductsBlock", new { productThumbPictureSize = 64 })
+        @await Component.InvokeAsync("PopularProductTags")
+        @await Component.InvokeAsync("PollBlock", new { systemKeyword = "LeftColumnPoll" })
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnAfter })*@
+        </div>
+    }
+    <div class="listinggrid  @(displayFilters?"col-sm-9":"col-sm-12")">
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.MainColumnBefore })
+        @RenderBody()
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.MainColumnAfter })
+    </div>
+    <div class="col-sm-12">
+        @await RenderSectionAsync("categoryBottom")
+    </div>
+</div>
+@*}*@
+
+
+
+
