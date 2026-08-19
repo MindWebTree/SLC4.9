@@ -1,0 +1,414 @@
+﻿@model SearchBoxModel
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor httpContextAccessor
+
+@{
+    var controllerName = this.ViewContext.RouteData.Values["controller"].ToString();
+    var action = this.ViewContext.RouteData.Values["action"].ToString();
+    bool isHome = String.Compare(controllerName, "home",
+                  StringComparison.OrdinalIgnoreCase) == 0 && String.Compare(action, "index",
+                  StringComparison.OrdinalIgnoreCase) == 0 ? true : false;
+
+    var url = httpContextAccessor.HttpContext.Request.Scheme + "://" + httpContextAccessor.HttpContext.Request.Host.ToString() + httpContextAccessor.HttpContext.Request.Path.ToString();
+}
+<div class="search-box store-search-box input-group">
+
+    <script>
+        var defaultSearchSuggestions = '[]';
+            // var defaultSearchSuggestions = '[]'@(await Component.InvokeAsync("SearchDefaultAutoComplete"));
+        defaultSearchSuggestions = defaultSearchSuggestions.replaceAll("\&quot;", "\"");
+        defaultSearchSuggestions = defaultSearchSuggestions.replaceAll("double-quot", "\\\"");
+        defaultSearchSuggestions = JSON.parse(defaultSearchSuggestions);
+    </script>
+    @if (isHome)
+    {
+        <script type="application/ld+json">
+            {
+              "@@context": "https://schema.org",
+              "@@type": "WebSite",
+              "@@id": "https://www.sierralivingconcepts.com/#website",
+              "url": "https://www.sierralivingconcepts.com/",
+              "potentialAction": {
+                "@@type": "SearchAction",
+                "target": "https://www.sierralivingconcepts.com/search?searchterm={searchterm}",
+                "query-input": "required name=searchterm"
+              }
+            }
+        </script>
+    }
+    <form asp-route="@NopRouteNames.General.SEARCH" method="get" id="small-search-box-form">
+
+
+
+        @if (Model.ShowSearchBox)
+        {
+            <input aria-label="search" placeholder="@T("Search.Placeholder")" type="text" class="search-box-text form-control" autocomplete="off" name="searchterm" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false"/>
+            <button class="close-icon" style="display: none;" aria-label="Clear" type="button">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.99999 8.00001L15.2917 2.70833C15.9221 2.07794 15.9221 1.07794 15.2917 0.447552C14.6613 -0.183839 13.6613 -0.18384 13.0309 0.447552L7.73925 5.73922L2.44758 0.447552C1.81719 -0.183839 0.817185 -0.18384 0.186795 0.447552C-0.443595 1.07794 -0.443595 2.07794 0.186795 2.70833L5.47846 8.00001L0.186795 13.2917C-0.443595 13.9221 -0.443595 14.9221 0.186795 15.5525C0.451066 15.8168 0.774142 15.9479 1.09746 15.9479C1.42078 15.9479 1.74386 15.8168 2.00813 15.5525L7.29979 10.2608L12.5915 15.5525C12.8558 15.8168 13.1788 15.9479 13.5021 15.9479C13.8254 15.9479 14.1485 15.8168 14.4127 15.5525C15.0431 14.9221 15.0431 13.9221 14.4127 13.2917L9.99999 8.00001Z" fill="black" fill-opacity="0.5" />
+                </svg>
+            </button>
+            <button type="submit" class="new-btn" aria-label="search">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19.7266 17.2913L15.832 13.3971C15.6562 13.2214 15.418 13.1237 15.168 13.1237H14.5312C15.6094 11.7449 16.25 10.0107 16.25 8.12421C16.25 3.63636 12.6133 0 8.125 0C3.63672 0 0 3.63636 0 8.12421C0 12.6121 3.63672 16.2484 8.125 16.2484C10.0117 16.2484 11.7461 15.6079 13.125 14.5298V15.1665C13.125 15.4165 13.2227 15.6547 13.3984 15.8305L17.293 19.7246C17.6602 20.0918 18.2539 20.0918 18.6172 19.7246L19.7227 18.6193C20.0898 18.2521 20.0898 17.6584 19.7266 17.2913ZM8.125 13.1237C5.36328 13.1237 3.125 10.8896 3.125 8.12421C3.125 5.36276 5.35937 3.12469 8.125 3.12469C10.8867 3.12469 13.125 5.35885 13.125 8.12421C13.125 10.8857 10.8906 13.1237 8.125 13.1237Z" fill="black" fill-opacity="0.5" />
+                </svg>
+            </button>
+
+             
+            //Seema : 13-01-2022 removed placeholder
+            @await Component.InvokeAsync(typeof(WidgetViewComponent),
+            new { widgetZone = PublicWidgetZones.SearchBoxBeforeSearchButton, additionalData = Model })
+
+            <!--<button type="submit" class="button-1 btn btn-primary search-box-button">@T("Search.Button")</button>-->
+            @if (Model.SearchTermMinimumLength > 0)
+            {
+
+                <script asp-location="Footer">
+                    var searchBoxContainerClass = jQuery('body').width() < 992 ? ".m-search " : ".desktop-device ";
+                    $("#small-search-box-form").on("submit", function (event) {
+                        if ($(searchBoxContainerClass + ".search-box-text").val() == "") {
+                            $(searchBoxContainerClass + ".search-box-text").focus();
+                            event.preventDefault();
+                        }
+                    });
+                    $(document).ready(function () {
+                        $(searchBoxContainerClass + ".search-box-text").on("input", function () {
+                            if ($(this).val().length > 0) {
+                                $(".close-icon").css("display", "block");
+                            } else {
+                                $(".close-icon").css("display", "none");
+                            }
+                        });
+
+                        $(".close-icon").click(function () {
+                            $('.m-search').removeClass('display');
+                            $('.m-search').removeClass('fixed');
+                            $(searchBoxContainerClass + ".search-box-text").val("");
+                            $(this).css("display", "none");
+                            // Shift focus directly back to the magnifying glass icon in the header
+                            $('.search-trigger-icon').focus();
+                        });
+                    });
+                </script>
+            }
+            @if (Model.AutoCompleteEnabled)
+            {
+
+                <script asp-location="Footer">
+                    var header = "";
+                    var bindRecentSearch = true;
+                    var searchBoxContainerClass = jQuery('body').width() < 992 ? ".m-search " : ".desktop-device ";
+                    // default suggestions
+                    $("body").on("click", '.clear-recent-search', function (event) {
+            event.stopPropagation();
+                        bindRecentSearch = false;
+                          $.ajax({
+                                cache: false,
+                                type: "POST",
+                                url: "@Url.Action("ClearRecentSearch","catalog")",
+                                dataType: "json",
+                                success: function (data, textStatus, jqXHR) {
+                                    fndefaultSearchSuggestions($(searchBoxContainerClass + '.search-box-text').val());
+                                },
+                                error: function (jqXHR, textStatus, errorThrown) {
+
+                                }
+                            });
+                    });
+$(document).on("keydown", ".search-box-text", function (e) { 
+    if (e.key !== "Enter") return; 
+    const activeId = $(this).attr("aria-activedescendant");
+    if (!activeId) return; 
+    const $btn = $("#" + activeId).find(".clear-recent-search");
+
+    if ($btn.length) {
+        e.preventDefault();
+        $btn[0].click();
+    }
+});
+                    $(searchBoxContainerClass + '.search-box-text').on('input', function () {
+                        if ($(this).val().length < 3) {
+                         fndefaultSearchSuggestions($(this).text());
+                        }
+                    });
+                    $(searchBoxContainerClass + '.search-box-text').focus(function (event) {
+                     if ($(this).val().length < 3) {
+                        fndefaultSearchSuggestions($(this).text());
+                        }
+                    });
+
+                    $("body").on("click", function (e) {
+                        if ($(e.target).is(searchBoxContainerClass + '.search-box-text') === false
+                            && $(e.target).is('.d-suggestion') === false
+                            && $(e.target).is('.close-icon') === false
+                        ) {
+                            $(".d-suggestion").removeClass("d-suggestion");
+                        }
+                    });
+
+            function fndefaultSearchSuggestions(searchText) {
+                $(".ui-autocomplete").css("top", $(jQuery('body').width() < 992 ? ".m-search #small-search-box-form" : ".desktop-device #small-search-box-form").height() + "px");
+				if(jQuery('body').width()  >992){
+				$(".ui-autocomplete").css("top","46px");
+				}
+                        var autocompleteElement = $("#small-search-box-form").next();
+                        $(autocompleteElement).html("");
+                        $(autocompleteElement).addClass("d-suggestion");
+                        var counter = 1;
+                        $.each(defaultSearchSuggestions, function (key, item) {
+
+                            counter = counter + 1;
+                            if (item.Header) {
+                                if ((item.IsRecentSearch && bindRecentSearch) || !item.IsRecentSearch) {
+                                    $(autocompleteElement).append('<li  class="heading ' + item.Header + ' ui-menu-item"><b id="ui-id-' + counter + '" tabindex="-1" class="ui-menu-item-wrapper">' + item.Header + '</b></li>')
+
+                                }
+                            }
+                            else {
+console.log("item",item)
+                                var i = "",
+                                    a = String(searchText.replace(/[°"§%()^&*\[\]{}=\\?´`'#<>|,;.:+_-]+/g, "")),
+                                    l = a.split(" ").join("|");
+
+                                item.name = String(item.Name).replace(new RegExp("(" + l + ")", "gi"),
+                                    '<span class="highlight-search-help">$1</span>');
+
+                                if (item.Products) {
+
+                                    var image = "";
+                                    var count = 0;
+                                    $.each(item.Products, function (key, prd) {
+counter++;
+                                        image =  "<a href=\"" + prd.Url + "\" tabindex=\"-1\" id = \"ui-id-" + counter + "\"  class=\"defaulsuggestion ui-menu-item-wrapper\"><img alt=\"" + prd.Name + "\" src=\"" + prd.ImageUrl + "\"/></a>"
+                                        count++;
+                                   $(autocompleteElement).append("<li  class=\"recent-view-images ui-menu-item\" class=\"recent-view-images ui-menu-item\">" + image + "</li>");
+                                        if (count === 3) return false;
+                                    });
+
+
+                                }
+                                else {
+                                    if (bindRecentSearch) {
+                                        if (item.Url == "") {
+                                       $(autocompleteElement).append(
+    "<li  aria-label=\"clear-recent-search\" class=\"ui-menu-item\">" +
+    "<a href=\"#\" id=\"ui-id-" + counter + "\" class=\"clear-recent-search ui-menu-item-wrapper\">" +
+    item.Name +
+    "</a></li>"
+);
+
+                                        }
+                                        else {
+                                            $(autocompleteElement).append("<li class=\"ui-menu-item defaulsuggestion\"><a  class=\"defaulsuggestion ui-menu-item-wrapper\" tabindex=\"-1\" id = \"ui-id-" + counter + "\" href=\"" + item.Url + "\"><span>" + item.Name + "</span></a></li>");
+                                        }
+                                    }
+                                }
+
+
+                            }
+                        });
+                        $(autocompleteElement).show();
+                    }
+
+$(document).on('keydown', '.search-box-text', function (e) {
+
+    if (e.key === 'Enter') {
+
+        var activeId = $(this).attr('aria-activedescendant');
+
+        if (activeId) {
+
+            var activeElement = $('#' + activeId);
+
+            if (activeElement.is('a') && activeElement.attr('href')) {
+                e.preventDefault();
+                window.location.href = activeElement.attr('href');
+            }
+        }
+    }
+});
+                    // end
+            $(document).ready(function () {
+console.log("console.log")
+                        var showLinkToResultSearch;
+                        var searchText;
+                        $(searchBoxContainerClass+'.search-box-text').autocomplete({
+                            delay: 500,
+                            minLength: @(Model.SearchTermMinimumLength.ToString()),
+                            source: '@(Url.RouteUrl("ProductSearchAutoComplete"))',
+                            appendTo: '.search-box',
+							focus: function(event, ui) {
+								event.preventDefault();
+								
+								// Clear aria-selected from all options
+								$(this).autocomplete("widget").find("li[role='option']").attr("aria-selected", "false");
+								// Find the active LI item
+								var $active = $(".ui-state-active");
+								var $li = $active.closest("li");
+								// Ensure the LI has an ID (grab from wrapper or create if missing)
+								var activeId = $li.attr("id");
+								if (!activeId) {
+									activeId = $active.attr("id") || ("ui-active-item-" + Math.random().toString(36).substr(2, 9));
+									$li.attr("id", activeId);
+								}
+								if (activeId) {
+									$(this).attr("aria-activedescendant", activeId);
+									$li.attr("aria-selected", "true"); 
+								}
+							},
+                            select: function (event, ui) {
+
+								//event.preventDefault();
+							    if (event.key === "Tab") {
+									event.preventDefault();
+									return false;
+								}
+                                $(searchBoxContainerClass + ".search-box-text").val(ui.item.title);
+
+                                if (ui.item.url != "") {
+                                    setLocation(ui.item.url);
+                                }
+                                else {
+                                    event.preventDefault();
+                                    console.log("preventDefault");
+                                }
+
+                                return false;
+                            },
+                            response: function (event, ui) {
+								if (ui.content.length == 1) {
+                                    $.each(defaultSearchSuggestions, function (key, suggestion) {
+                                        if ((suggestion.IsRecentSearch ==true && bindRecentSearch) || !suggestion.IsRecentSearch) {
+
+                                            ui.content.push({
+                                                url: suggestion.Url, name: suggestion.Name, Header: suggestion.Header
+                                                ,
+                                                Products: suggestion.Products
+                                            });
+                                        }
+                                    });
+                                }
+                            }
+                        })
+                            .data("ui-autocomplete")._renderItem = function (ul, item) {
+                                $("#small-search-box-form").next().removeClass("d-suggestion");
+                                // console.log(item);
+                                var t = item.label;
+                                showLinkToResultSearch = item.showlinktoresultsearch;
+                                //html encode
+                                // Mind Web tree 16/02/2023 elastic search tab work
+                                t = htmlEncode(t);
+                                if (item.Header) {
+                                    header = item.Header;
+                                    return $("<li class=\"ui-state-disabled heading " + header + "\" role=\"presentation\"></li>")
+    .data("item.autocomplete", item)
+    .append("<b tabindex=\"-1\">" + item.Header + "</b>")
+    .appendTo(ul);
+                                }
+                                else {
+                                    var i = "",
+                                        a = String(this.term.replace(/[°"§%()^&*\[\]{}=\\?´`'#<>|,;.:+_-]+/g, "")),
+                                        l = a.split(" ").join("|");
+
+                                    item.name = String(item.name).replace(new RegExp("(" + l + ")", "gi"),
+                                        '<span class="highlight-search-help">$1</span>');
+
+                                    if (header == "PRODUCTS") {
+                                        return $("<li role=\"option\" aria-selected=\"false\"></li>")
+    .data("item.autocomplete", item)
+    .append("<a tabindex=\"-1\" href=\"" + item.url + "\"><img src=\"" + item.ImageUrl + "\"/><span>" + item.name + "</span></a>")
+    .appendTo(ul);
+                                    }
+                                    else {
+                                        if (item.Products) {
+                                            var images = "";
+											   var count = 0;
+                                            $.each(item.Products, function (key, prd) {
+                                                images = images + "<a href=\"" + prd.Url + "\"><img alt=\"" + prd.Name+ "\" src=\"" + prd.ImageUrl +"\"/></a>";
+												count++;
+												 if (count === 3 ) return false;
+                                            });
+                                           return $("<li class=\"recent-view-images\" role=\"option\" aria-selected=\"false\"></li>")
+    .data("item.autocomplete", item)
+    .append(images)
+    .appendTo(ul);
+                                        }
+                                        else {
+                                            if (item.url == "") {
+                                                return $("<li role=\"option\" aria-selected=\"false\"></li>")
+    .data("item.autocomplete", item)
+    .append("<button tabindex=\"-1\" class=\"clear-recent-search\">" + item.name + "</button>")
+    .appendTo(ul);
+                                            }
+                                            else {
+                                                return $("<li role=\"option\" aria-selected=\"false\"></li>")
+    .data("item.autocomplete", item)
+    .append("<a tabindex=\"-1\" href=\"" + item.url + "\"><span>" + item.name + "</span></a>")
+    .appendTo(ul);
+                                            }
+                                        }
+                                    }
+
+                                }
+                            };
+
+                    });
+                </script>
+            }
+            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.SearchBox, additionalData = Model })
+        }
+    </form>
+</div>
+<script>
+let usingKeyboard = false;
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Tab") {
+    usingKeyboard = true;
+    document.body.classList.add("using-keyboard");
+  }
+});
+
+document.addEventListener("mousemove", () => {
+  usingKeyboard = false;
+  document.body.classList.remove("using-keyboard");
+});
+document.addEventListener("keydown", function (e) {
+    if (!["ArrowDown", "ArrowUp"].includes(e.key)) return;
+
+    setTimeout(() => {
+        const menu = document.querySelector(".ui-autocomplete");
+        if (!menu) return;
+
+        const activeId = document.querySelector(".search-box-text")
+            ?.getAttribute("aria-activedescendant");
+
+        if (!activeId) return;
+
+        menu.querySelectorAll(".ui-menu-item").forEach(item => {
+            item.setAttribute(
+                "aria-selected",
+                item.id === activeId ? "true" : "false"
+            );
+        });
+    }, 0);
+});
+
+document.addEventListener("focusin", function (e) {
+    const menu = document.querySelector(".ui-autocomplete");
+
+    if (!menu) return;
+
+    // If focus moves outside the autocomplete menu
+    if (!menu.contains(e.target)) {
+
+        document.body.classList.remove("using-keyboard");
+
+        menu.querySelectorAll(".ui-menu-item[aria-selected='true']")
+            .forEach(item => {
+                item.setAttribute("aria-selected", "false");
+            });
+    }
+});
+</script>

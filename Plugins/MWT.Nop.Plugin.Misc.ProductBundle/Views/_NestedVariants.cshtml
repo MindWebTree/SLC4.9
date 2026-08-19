@@ -1,0 +1,45 @@
+﻿@model List<MWT.Nop.Plugin.Misc.ProductBundle.Models.Variant.VariantBundleModel>
+@{
+ 
+    var productId = Model.FirstOrDefault()?.ProductId ?? 0;
+}
+
+<div class="nested-variant-wrapper" style="padding: 15px; background: #f8f9fa; border: 1px solid #dee2e6; margin: 10px 0 10px 50px; border-radius: 4px;">
+    <table class="table table-sm table-bordered bg-white mb-0">
+        <thead class="thead-light">
+            <tr>
+                <th width="50" class="text-center">Select</th>
+                <th width="100">Variant ID</th>
+                <th>Title / Attributes</th>
+                <th width="100">Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var v in Model)
+            {
+                <tr>
+                    <td class="text-center">
+                        @* Grouping by 'name="variant_@productId"' ensures only one selection per product *@
+                        <input type="radio"
+                               name="variant_@productId"
+                               value="@v.VariantId"
+                               class="variant-radio"
+                               data-product-id="@productId" />
+                    </td>
+                    <td class="text-center">@v.VariantId</td>
+                    <td>
+                        <strong>@v.Title</strong><br />
+                        <small>@Html.Raw(v.Attributes)</small>
+                    </td>
+                    <td>
+                        <input type="number"
+                               id="qty-@v.VariantId"
+                               value="1" min="1"
+                               class="form-control form-control-sm variant-qty"
+                               disabled />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

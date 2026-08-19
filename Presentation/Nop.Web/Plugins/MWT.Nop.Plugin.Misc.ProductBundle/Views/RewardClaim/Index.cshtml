@@ -1,0 +1,1283 @@
+﻿@model RewardClaimRequestModel
+@using MWT.Nop.Core.Domain.RewardClaim
+@{ 
+    Layout = "_ColumnsOne";
+}
+<style>
+    /* create by sandeep claim-rewards-page */
+
+
+    @@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
+
+    #rewardclaim-page .master-wrapper-content.container {
+        background: #EAEAEA;
+        max-width: 100%;
+        padding: 0;
+        padding-bottom: 30px;
+		margin-top:30px;
+    }
+p.pick-p {
+    float: left;
+    width: 100%;
+	    text-align: center;
+		font-size:16px;
+}
+    .message-error.validation-summary-errors li {
+        color: #f00 !important;
+        padding: 0 !important;
+        margin: 0;
+        text-align: center !important;
+    }
+
+    .message-error.validation-summary-errors {
+        padding: 0;
+    }
+
+    #rewardclaim-page ol.breadcrumb {
+        background: #fff;
+        margin: 0;
+        padding: 20px 20px;
+    }
+
+    #rewardclaim-page div#ph-title {
+        display: none;
+    }
+
+    #rewardclaim-page .main-container-claim-page {
+        background: #fff;
+        max-width: 720px;
+        margin: 50px auto;
+        margin-top: 0;
+        border-top: 50px solid #eaeaea;
+    }
+
+    .main-container-claim-page section.banner {
+        background: #888888;
+        text-align: center;
+        min-height: 123px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 0;
+    }
+
+        .main-container-claim-page section.banner h2 {
+            font-family: "Oswald", sans-serif;
+            font-size: 40px;
+            color: #fff;
+            font-weight: 400;
+        }
+
+        .main-container-claim-page section.banner p {
+            font-size: 20px;
+            color: #fff;
+            padding: 16px 0 0 0;
+            margin: 0 0 0 0;
+        }
+
+    .main-container-claim-page .valued-section h2 {
+        font-size: 28px;
+        font-weight: 700 !important;
+    }
+
+    .main-container-claim-page .valued-section p {
+        font-size: 18px;
+        text-align: center;
+        color: #555555;
+    }
+    /* Custom Styles */
+    .main-container-claim-page .gift-form-section {
+        padding: 60px 20px;
+    }
+
+    .main-container-claim-page .gift-form-box {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 30px;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+
+    .main-container-claim-page .custom-alert {
+        background-color: #fef1f1;
+        color: #b20000;
+        border: none;
+        font-weight: 500;
+        font-size: 15px;
+    }
+
+    .main-container-claim-page .form-label {
+        font-weight: 500;
+    }
+
+    .main-container-claim-page .form-control {
+        border-radius: 8px;
+        padding: 10px 14px;
+    }
+
+    .main-container-claim-page .gift-submit-btn {
+        font-weight: 600;
+        color: #007bff;
+        text-decoration: underline;
+        background: none;
+        border: none;
+        padding: 0;
+    }
+
+        .main-container-claim-page .gift-submit-btn:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+    .main-container-claim-page .gift-section .alert.alert-danger.mb-4, .gift-section .alert.alert-danger.mb-4 * {
+        color: #78070B !important;
+        font-size: 14px;
+        font-weight: 600;
+        background: #FAB7B833;
+        border-radius: 12px;
+    }
+
+    .main-container-claim-page section.gift-section .mx-auto.p-4 {
+        padding: 20px !important;
+        margin-top: 30px;
+        box-sizing: border-box;
+        background: #FFFFFF;
+        box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+        border: 1px solid #E5E7EB !important;
+        border-radius: 12px !important;
+    }
+
+    .main-container-claim-page section.gift-section input {
+        background: #F9F9FA;
+        border: 1px solid #D1D5DB;
+        border-radius: 10px;
+        height: 40px;
+    }
+
+    .main-container-claim-page a.btn.btn-link.text-primary.text-decoration-underline.fw-semibold {
+        color: #2F80ED !important;
+        text-transform: capitalize !important;
+        font-size: 16px;
+        font-weight: 700 !important;
+        background-image: url(/images/uploaded/arrow-down-claim-btn.png);
+        background-repeat: no-repeat;
+        background-position: right 0px center;
+        padding: 0 0 0 0;
+        width: 155px;
+        border-bottom: 1px solid #2F80ED;
+        border-radius: 0 !important;
+        text-align: left;
+        text-decoration: none !important;
+        height: 26px;
+    }
+
+    .main-container-claim-page section.gift-section {
+        padding: 0 30px;
+    }
+
+    .main-container-claim-page .how-it-works {
+        padding: 50px 30px;
+        text-align: center;
+    }
+
+        .main-container-claim-page .how-it-works h3 {
+            font-weight: 600;
+            margin-bottom: 40px !important;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+    .main-container-claim-page .step-flow {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        position: relative;
+        gap: 10px;
+    }
+
+    .main-container-claim-page .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1 1 150px;
+        min-width: 150px;
+        position: relative;
+    }
+
+    .main-container-claim-page .extra-text img {
+        width: 16px;
+        margin-right: 5px;
+    }
+
+    .main-container-claim-page .step-circle {
+        background-color: #6C6F72;
+        color: #fff;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        margin-bottom: 10px;
+        position: relative;
+        z-index: 1;
+        font-size: 20px;
+    }
+
+    /* Dotted line between steps */
+    .main-container-claim-page .step:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 60%;
+        right: -60%;
+        height: 1px;
+        border-top: 2px dashed #999;
+        z-index: 0;
+    }
+
+    .main-container-claim-page .step-description {
+        font-size: 15px;
+        color: #000000;
+    }
+
+        .main-container-claim-page .step-description strong {
+            font-weight: 700;
+            color: #000;
+        }
+
+    .main-container-claim-page .py-5.gifts-main .row.g-4 {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+		    margin-top: 30px;
+    }
+	.field-validation-error {
+    margin-top: 0;
+    text-align: left;
+    padding-left: 0;
+}
+
+        .main-container-claim-page .py-5.gifts-main .row.g-4 .col-md-6 {
+            flex: 1 1 calc(50% - 20px);
+            max-width: calc(50% - 20px);
+            border: 2px solid #CCCCCC;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            background: #fff;
+            transition: all 0.3s ease;
+            min-height: 270px;
+            position: relative;
+        }
+
+    .main-container-claim-page .gift-card input {
+        margin-top: 0;
+        border: 1px solid #767676;
+        width: 15px;
+        height: 15px;
+        min-width: 15px;
+        min-height: 15px;
+        cursor: pointer;
+    }
+
+    .main-container-claim-page .gift-card {
+        font-size: 14px;
+    }
+
+        .main-container-claim-page .gift-card .form-check-input:checked {
+            background-color: #333;
+            border-color: #333;
+        }
+
+    .main-container-claim-page .gift-card {
+        align-items: center;
+        font-weight: bold;
+        color: #333333;
+        margin: 10px 0;
+    }
+
+    .main-container-claim-page .claim-gift-btn {
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 19px;
+        color: #444444;
+        border: 0;
+        background: 0;
+        width: 84px;
+        height: 29px;
+        border: 1px solid #444444;
+        border-radius: 20px;
+        cursor: pointer;
+    }
+    /* Hover effect (only when enabled) */
+    .claim-gift-btn:hover:not(:disabled) {
+        color: #444444;
+        background: #ECECEC;
+        border: 1px solid #444444;
+    }
+
+    /* Disabled state */
+    .claim-gift-btn:disabled {
+        background: #fff !important;
+        border: 1px solid #999999 !important;
+        color: #999999 !important;
+        cursor: auto;
+    }
+
+
+    .main-container-claim-page .py-5.gifts-main .col-md-6 {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        transition: all 0.3s ease;
+        background: #fff;
+    }
+
+        .main-container-claim-page .py-5.gifts-main .col-md-6:hover {
+            border-color: #aaa;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .main-container-claim-page .py-5.gifts-main .col-md-6 img {
+            margin-bottom: 10px;
+        }
+
+    .main-container-claim-page .btn-custom {
+        width: 100%;
+        border-radius: 8px;
+        padding: 10px;
+    }
+
+    .main-container-claim-page .note {
+        font-size: 14px;
+        color: #555;
+    }
+
+    .main-container-claim-page .claim-btn {
+        border: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 12px 65px;
+        width: 248px;
+        height: 52px;
+        background: #CCCCCC;
+        border-radius: 8px;
+        margin: 0 auto;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .main-container-claim-page .note-section.py-4 input {
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+        margin-top: -2px;
+    }
+
+    .main-container-claim-page .review-section {
+        margin-top: 30px;
+    }
+
+    .main-container-claim-page .checkbox-label {
+        font-size: 15px;
+    }
+
+    .main-container-claim-page .google-instagram {
+        margin-top: 35px;
+        text-align: center;
+    }
+
+        .main-container-claim-page .google-instagram img {
+            margin: 0 15px;
+        }
+
+    .main-container-claim-page section.full-sec-form {
+        padding: 0 30px;
+        padding-bottom: 30px;
+    }
+
+    .main-container-claim-page .py-5.gifts-main {
+        background: #F0F0F0;
+        padding: 30px;
+        border-radius: 20px;
+    }
+
+        .main-container-claim-page .py-5.gifts-main .col-md-6 {
+            margin: 0;
+        }
+
+    .main-container-claim-page section.full-sec-form h2 {
+        text-align: center;
+        font-size: 24px;
+        font-weight: 600;
+        color: #333333;
+        margin: 0 0 10px 0 !important;
+    }
+
+    .main-container-claim-page button.btn.btn-secondary.btn-custom {
+        background-image: url(/images/uploaded/arrow-down-claim.png);
+        background-repeat: no-repeat;
+        background-position: right 50px center;
+        width: 263px;
+        height: 57px;
+        font-size: 16px;
+        font-weight: 700;
+        text-transform: capitalize !important;
+        text-decoration: underline;
+        background-color: #ccc;
+        border: 1px solid #cccc;
+        margin: 10px 0 10px 0;
+    }
+
+    .main-container-claim-page p.mt-2.text-ps {
+        text-align: center;
+        font-size: 16px;
+        color: #000;
+        margin-bottom: 0;
+    }
+
+        .main-container-claim-page p.mt-2.text-ps strong {
+            color: #000;
+        }
+
+    .main-container-claim-page .quote-box {
+        text-align: center;
+        padding: 40px 70px;
+        font-size: 16px;
+        font-weight: 700;
+        position: relative;
+        color: #000;
+    }
+
+
+        .main-container-claim-page .quote-box::before, .quote-box::after {
+            content: "";
+            font-size: 3rem;
+            color: #d3d3d3;
+            position: absolute;
+            top: 0;
+            background-image: url(/images/uploaded/quote2.png);
+            width: 41px;
+            height: 29px;
+        }
+
+        .main-container-claim-page .quote-box::after {
+            content: "";
+            right: 20px;
+            bottom: 0;
+            top: auto;
+            background-image: url(/images/uploaded/quote1.png);
+        }
+
+        .main-container-claim-page .quote-box::before {
+            left: 20px;
+        }
+
+    .main-container-claim-page .review-title {
+        text-align: center;
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: #333333;
+        margin-top: 30px;
+    }
+
+        .main-container-claim-page .review-title img {
+            width: 32px;
+        }
+
+    .main-container-claim-page .card-custom {
+        max-width: 600px;
+        border-radius: 8px;
+        margin: 0px 0 60px 0;
+    }
+
+    .main-container-claim-page .d-flex.justify-content-center.align-items-center {
+        justify-content: space-between !important;
+    }
+
+    .main-container-claim-page button.btn.btn-custom2 {
+        text-transform: capitalize !important;
+        font-size: 16px;
+        font-weight: 700;
+        width: 100%;
+        min-height: 52px;
+        background: #ccc;
+        color: #fff;
+    }
+
+    .main-container-claim-page .btn-custom2 {
+        background-color: #d3d3d3;
+        color: #fff;
+        font-weight: 500;
+        padding: 10px 25px;
+        border-radius: 8px;
+        border: none;
+    }
+
+        .main-container-claim-page .btn-custom2:hover {
+            background-color: #bfbfbf;
+            color: #fff;
+        }
+
+    .main-container-claim-page .or-text {
+        margin: 0 15px;
+        font-weight: 500;
+        color: #6B7280;
+        font-size: 18px;
+    }
+
+    .main-container-claim-page .note-text {
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .main-container-claim-page .form-check {
+        margin-bottom: 12px;
+    }
+
+    .main-container-claim-page .extra-text {
+        font-size: 0.95rem;
+        color: #333;
+        margin-left: 0;
+        margin-top: 0;
+        margin-bottom: 12px;
+    }
+
+    .main-container-claim-page .note-section.py-4 .form-check {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .main-container-claim-page .extra-text a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+        .main-container-claim-page .extra-text a:hover {
+            text-decoration: underline;
+        }
+
+    html#rewardclaim-page .container-fluid.footer-top {
+        margin: 0;
+    }
+
+    .main-container-claim-page .card.card-custom p {
+        font-size: 16px;
+        line-height: 25.6px;
+        color: #444444;
+        font-weight: 600 !important;
+        text-align: left;
+    }
+
+        .main-container-claim-page .card.card-custom p a {
+            color: #2F80ED !important;
+        }
+
+    .main-container-claim-page .note-section.py-4 * {
+        color: #000;
+        font-size: 16px;
+        text-align: left;
+    }
+
+    .main-container-claim-page .note-section.py-4 a {
+        color: #2F80ED !important;
+    }
+
+    .main-container-claim-page .card.card-custom .card-body {
+        border: 1px solid #CCCCCC;
+        border-radius: 5px;
+    }
+
+    html#rewardclaim-page .modal-open .modal {
+        background: rgba(255, 255, 255, 0.8) !important;
+    }
+
+    html#rewardclaim-page button.btn-close {
+        background: none;
+        opacity: 1;
+    }
+
+    html#rewardclaim-page .modal-header {
+        padding: 10px 20px 0 0;
+    }
+
+    html#rewardclaim-page .modal-body {
+        font-size: 16px;
+        color: #333333;
+        line-height: 30px;
+        text-align: left;
+    }
+
+    html#rewardclaim-page .modal-dialog.modal-dialog-centered {
+        max-width: 371px;
+        border-radius: 0 !important;
+        right: 0 !important;
+        margin: 30px 30px 0 auto !important;
+        align-items: self-start;
+    }
+
+    .main-container-claim-page .review-box {
+        text-align: center;
+    }
+
+    .main-container-claim-page .divider {
+        border-left: 1px solid #ddd;
+        height: 60px;
+        margin: auto;
+        margin: 0 0 10px 0;
+        padding: 0;
+        position: relative;
+        top: -10px;
+    }
+
+    .main-container-claim-page .review-box img {
+        margin-bottom: 30px;
+		    width: 150px;
+    height: auto !important;
+    }
+
+    .main-container-claim-page .stars {
+        color: #f5c518; /* golden yellow */
+        font-size: 1.2rem;
+    }
+
+    .main-container-claim-page .review-section-outer {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .main-container-claim-page .col-md-1.d-none.d-md-flex.justify-content-center {
+        justify-content: space-evenly !important;
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .main-container-claim-page #userReview {
+        min-height: 75px;
+        border: 0;
+        padding: 0;
+        font-size: 16px !important;
+        font-weight: 400;
+        line-height: 26px;
+        color: #333333;
+    }
+
+    .main-container-claim-page #claimBtn.enabled, #googlebtncustom2.enabled, #instagrambtncustom2.enabled {
+        background-color: #444;
+    }
+
+    .main-container-claim-page #copyReviewBtn {    
+        display: flex !important;
+        justify-content: end;
+        cursor: pointer;
+		gap: 5px;
+    align-items: center;
+    color: #333333;
+	    WIDTH: 60PX;
+    MARGIN-LEFT: AUTO;
+    }
+
+    .main-container-claim-page .gift-section .alert.alert-danger.mb-4 {
+        border: 1px solid #E5E7EB;
+    }
+
+    .main-container-claim-page .error-popup {
+        position: fixed;
+        top: 50px;
+        right: 50px;
+        background-color: #fff;
+        color: red;
+        padding: 15px 20px;
+        border: 1px solid #666;
+        border-radius: 5px;
+        z-index: 9999;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        min-width: 250px;
+        max-width: 400px;
+    }
+
+        .main-container-claim-page .error-popup .close-btn {
+            background: none;
+            border: none;
+            float: right;
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+    .main-container-claim-page .review-errormessage {
+        color: red;
+    }
+
+    .main-container-claim-page .review-error {
+        color: red;
+    }
+	.main-container-claim-page .starbucks-image {
+        max-width:200px;
+		max-height:150px;
+    }
+	.main-container-claim-page .visibility-off {
+    visibility: hidden;
+    width: 0;
+    height: 0;
+   }
+	.main-container-claim-page .claim-alert-box {
+        color: #78070B !important;
+    font-size: 14px;
+    font-weight: 600;
+    background: #FAB7B833;
+    border-radius: 12px;
+    border: 1px solid #E5E7EB;
+    padding: 16px;
+    }
+	
+
+
+    @@media (max-width: 767px) {
+        .main-container-claim-page .col-md-1.d-none.d-md-flex.justify-content-center {
+            display: flex !important;
+        }
+.main-container-claim-page .starbucks-image {
+        max-width:118px;
+		
+    }
+            .main-container-claim-page .col-md-1.d-none.d-md-flex.justify-content-center .divider {
+                display: none !important;
+            }
+
+        .main-container-claim-page .col-md-1.d-none.d-md-flex.justify-content-center {
+            display: flex !important;
+            padding: 20px 0 !important;
+        }
+
+.main-container-claim-page .claim-alert-box {
+        
+    font-size: 13px;
+    padding: 13px;
+    }
+
+.main-container-claim-page section.gift-section .mx-auto.p-4 {
+        padding: 15px 10px !important;
+           margin-top: 20px;
+    }
+	.main-container-claim-page .card-custom{
+	margin: 0px 0 30px 0;
+	}
+
+        .main-container-claim-page .or-text {
+            font-size: 16px;
+        }
+
+        .main-container-claim-page .review-section-outer {
+            flex-direction: column;
+        }
+
+        html#rewardclaim-page footer {
+            padding-top: 0;
+        }
+
+        .main-container-claim-page .review-title img {
+            width: 24px;
+        }
+
+        html#rewardclaim-page .modal-dialog.modal-dialog-centered {
+            margin: auto !important;
+            align-items: center;
+        }
+
+        .main-container-claim-page .how-it-works {
+            padding: 50px 15px;
+            text-align: center;
+        }
+
+        .main-container-claim-page section.full-sec-form h2 {
+            font-size: 20px;
+        }
+
+        .main-container-claim-page .review-title {
+            font-size: 17px;
+        }
+
+        .main-container-claim-page .py-5.gifts-main .row.g-4 .col-md-6 {
+            padding: 10px 0;
+            min-height: 184px;
+        }
+
+        .main-container-claim-page .gift-card {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 0 10px;
+            line-height: 18px;
+        }
+
+        .main-container-claim-page .valued-section h2 {
+            font-size: 24px;
+            font-weight: 600 !important;
+        }
+
+        .main-container-claim-page .valued-section p {
+            font-size: 14px;
+            padding: 0 15px;
+			text-align:left;
+        }
+
+        .main-container-claim-page section.gift-section {
+            padding: 0 15px;
+        }
+
+        .main-container-claim-page .py-5.gifts-main .col-md-6 img {
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .main-container-claim-page section.full-sec-form {
+            padding: 0 15px;
+            padding-bottom: 30px;
+        }
+
+        .main-container-claim-page .py-5.gifts-main {
+            background: #F0F0F0;
+            padding: 15px;
+            border-radius: 20px;
+        }
+
+        .main-container-claim-page .d-flex.justify-content-center.align-items-center {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .main-container-claim-page .google-instagram img {
+            margin: 0 15px;
+            width: 300px;
+        }
+
+        .main-container-claim-page section.banner h2 {
+            font-size: 28px;
+        }
+
+        .main-container-claim-page section.banner p {
+            font-size: 14px;
+            padding: 6px 0 0 0;
+			max-width:300px;
+        }
+		.main-container-claim-page .pt-5.text-center.valued-section {
+            padding-top:36px !important;
+        }
+		.main-container-claim-page .quote-box::after{
+		    right:0px;
+		}
+		.main-container-claim-page .quote-box{
+		    padding: 40px 10px;
+		}
+		
+		.main-container-claim-page .quote-box::before{
+		    left:0px;
+		}
+
+        #rewardclaim-page .main-container-claim-page {
+            margin-top: 0;
+            margin-bottom: 0;
+            border-top: 0;
+        }
+
+        .main-container-claim-page section.banner {
+            min-height: 110px;
+        }
+
+        .main-container-claim-page .step-flow {
+            flex-wrap: nowrap;
+            gap: 6px;
+            line-height: 21px;
+        }
+
+        .main-container-claim-page .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1 1 100px;
+            min-width: 100px;
+            position: relative;
+        }
+
+        .main-container-claim-page .step-description {
+            font-size: 12px;
+            color: #000000;
+        }
+
+        .main-container-claim-page .step:not(:last-child)::after {
+            left: 70%;
+            right: -70%;
+        }
+
+        .main-container-claim-page .claim-gift-btn {
+            font-size: 12px;
+            width: 75px;
+            height: 26px;
+        }
+    }
+</style>
+
+<form asp-controller="Reward" asp-action="Index" method="post" asp-route-orderId="@Context.Request.Query["orderId"]"
+      asp-route-email="@Context.Request.Query["email"]" novalidate>
+    <div class="main-container-claim-page">
+        <!-- ErrorMessage Show -->
+        <!-- Banner -->
+        <section class="banner">
+            <h2>OUR WAY OF SAYING THANK YOU</h2>
+            <p>Share your experience on Google and receive a complimentary gift.</p>
+        </section>
+        <div class="container text-center m-0 p-0"><img class="img-fluid" src="/images/uploaded/hero-image-claim.png" alt="Promo Banner" /></div>
+        <!-- Banner -->
+        <section class="pt-5 text-center valued-section">
+            <h2>Dear Valued Customer!</h2>
+            <p class="mt-3 mx-auto" style="max-width: 600px;"><strong>Thank you for choosing Sierra Living Concepts!</strong> Your feedback helps us improve and inspires our artisans. Share your thoughts, and we’ll send you a <strong>special gift</strong> as thanks.</p>
+        </section>
+        <section class="gift-section">
+            <div class="mx-auto p-4" style="max-width: 700px;">
+
+
+                <!-- Alert Box -->
+                <div class="claim-alert-box mb-4" role="alert">Please verify your order details below to proceed.</div>
+                <!-- Form Fields -->
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" asp-for="OrderId"></label>
+                        <input id="orderIdInput" class="form-control" type="number"
+                               min="1" asp-for="OrderId" placeholder="Enter your order ID" />
+                        <span asp-validation-for="OrderId" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" asp-for="EmailAddress"></label>
+                        <input id="emailAddressInput" class="form-control" asp-for="EmailAddress" placeholder="Enter your email address" />
+                        <span asp-validation-for="EmailAddress" class="text-danger"></span>
+                    </div>
+                </div>
+                <!-- Submit Button Styled Like Link 
+                <div class="text-center"><a class="btn btn-link text-primary text-decoration-underline fw-semibold" href="#bottom"> Continue to Gifts </a></div> -->
+            </div>
+        </section>
+        <section class="how-it-works">
+            <h3>How It Works</h3>
+            <div class="step-flow">
+                <!-- Step 1 -->
+                <div class="step">
+                    <div class="step-circle">1</div>
+                    <div class="step-description">Leave a quick <strong>Google</strong>  <strong>review</strong> </div>
+                </div>
+                <!-- Step 2 -->
+                <div class="step">
+                    <div class="step-circle">2</div>
+                    <div class="step-description"><strong>Select</strong> your gift</div>
+                </div>
+                <!-- Step 3 -->
+                <div class="step">
+                    <div class="step-circle">3</div>
+                    <div class="step-description"><strong>We'll verify</strong> &amp; send it to you</div>
+                </div>
+            </div>
+        </section>
+        <section id="bottom" class="full-sec-form">
+
+            <div class="py-5 gifts-main">
+                <!-- Review Button -->
+                @if (!string.IsNullOrWhiteSpace(Model.ReviewComment))
+                {
+                    <div class="quote-box">We’ve pre-filled the text box with your feedback. Just copy and post it as it is, or edit it before sharing.</div>
+                    <div class="review-title">Post your review to unlock your gift <img src="/images/uploaded/giftbox.png" alt="giftbox" /></div>
+                    <!-- Card -->
+
+                    <div id="writeReviewPost" class="card card-custom">
+                        <div class="card-body">
+                            <div id="userReviewCopy">                              
+                                <div id="userReview" name="ReviewComment" class="form-control">@Model.ReviewComment</div>
+								<span id="copyReviewBtn" style="cursor:pointer;" class="reward-copy-content" data-bs-placement="bottom" data-placement="top" aria-label="Copied!" data-bs-original-title="Copied!"> Copy
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <g clip-path="url(#clip0_16225_16023)">
+                                            <path d="M13.3333 6H7.33333C6.59695 6 6 6.59695 6 7.33333V13.3333C6 14.0697 6.59695 14.6667 7.33333 14.6667H13.3333C14.0697 14.6667 14.6667 14.0697 14.6667 13.3333V7.33333C14.6667 6.59695 14.0697 6 13.3333 6Z" stroke="#444444" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M3.33203 10.0007H2.66536C2.31174 10.0007 1.9726 9.86017 1.72256 9.61013C1.47251 9.36008 1.33203 9.02094 1.33203 8.66732V2.66732C1.33203 2.3137 1.47251 1.97456 1.72256 1.72451C1.9726 1.47446 2.31174 1.33398 2.66536 1.33398H8.66536C9.01899 1.33398 9.35812 1.47446 9.60817 1.72451C9.85822 1.97456 9.9987 2.3137 9.9987 2.66732V3.33398" stroke="#444444" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+                                        </g>
+                                        <defs>
+                                            <clipPath id="clip0_16225_16023">
+                                                <rect width="16" height="16" fill="white" />
+                                            </clipPath>
+                                        </defs>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+
+                <div class="review-section-outer">
+                    <!-- Google Reviews -->
+                    <div class="col-md-12 review-box"><img src="/images/uploaded/google-review.svg" alt="Google" /> <button type="button" id="googlebtncustom2" class="btn btn-custom2 mobile-show" disabled>Post On Google</button></div>
+                   
+                  
+              
+                </div>
+                <div class="note-section visibility-off py-4">
+                    <div>
+                        <!-- Note -->
+                        <div class="note-text"><strong>Note:-</strong> Share your review to claim your gift!</div>
+                        <!-- Google Review -->
+                        <div class="form-check">
+                            <input asp-for="IsGoogleReview" class="form-check-input review-input" checked/>
+                            <label class="form-check-label" asp-for="IsGoogleReview"> <strong> Google Review Shared</strong> </label>
+                        </div>
+                      
+                    
+                        <!-- Video Review -->
+                        <div class="form-check">
+                            <input asp-for="IsPreferVideo" class="form-check-input review-input" disabled />
+                            <label class="form-check-label" asp-for="IsPreferVideo"> <strong> Prefer video?</strong> </label>
+                        </div>
+                       
+                       <div class="extra-text">Submit a 30–180 seconds testimonial video and get a <strong>$25 Amazon Gift Card</strong>.<br />Visit – <a href="https://www.sierralivingconcepts.com/video-review" target="_blank" rel="noopener"> www.sierralivingconcepts.com/video-review </a></div> 
+					    
+                    </div>
+                    <div asp-validation-summary="ModelOnly" class="message-error"></div>
+                </div>
+                <h2>Pick One of These Exclusive Gifts</h2>
+				 
+                <!-- Gift Options -->
+                <input type="hidden" id="SelectedGift" name="SelectedGift" value="" />
+                <div class="row g-4">
+                    
+
+                    <div class="col-md-6">
+                        <label class="form-check-label d-block">
+                            <img src="/images/uploaded/starbucks_image.png" class="starbucks-image" alt="Starbucks" />
+                        </label>
+                        <div class="gift-card">$15 STARBUCKS E-GIFT CARD</div>
+                        <button class="claim-gift-btn" type="submit" data-gift="@(RewardClaimGift.StarbucksGiftCard)" disabled>
+                            Claim Gift
+                        </button>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-check-label d-block">
+                            <img src="/images/uploaded/amazons.png" alt="Amazon" />
+                        </label>
+                        <div class="gift-card">$20 AMAZON E-GIFT CARD</div>
+                        <button class="claim-gift-btn" type="submit" data-gift="@(RewardClaimGift.AmazonGiftCard)" disabled>
+                            Claim Gift
+                        </button>
+                    </div>
+					<div class="col-md-6">
+                        <label class="form-check-label d-block">
+                            <img src="/images/uploaded/wooden-coasters.png" alt="Coaster" />
+                        </label>
+                        <div class="gift-card">COASTER SET (6 PIECES)</div>
+                        <button class="claim-gift-btn" type="submit" data-gift="@(RewardClaimGift.CoasterSet)" disabled>
+                            Claim Gift
+                        </button>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-check-label d-block">
+                            <img src="/images/uploaded/chopping.png" alt="Cutting Board" />
+                        </label>
+                        <div class="gift-card">CHOPPING / CUTTING BOARD</div>
+                        <button class="claim-gift-btn" type="submit" data-gift="@(RewardClaimGift.ChoppingBoard)" disabled>
+                            Claim Gift
+                        </button>
+                    </div>
+                </div>
+
+
+                <div class="text-center mt-4">
+                    <p class="mt-2 text-ps">We'll send your <strong>e-gift card or gift details</strong> to your registered email address.</p>
+                </div>
+
+                <div id="exampleModal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+
+                                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                                {
+                                    <button asp-route="Index" class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close">
+                                        <img src="/images/uploaded/cross-modal.png" />
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button asp-route="Index" class="btn-close" type="button" onclick="location.href='@Url.Action("Index", "Reward")'">
+                                        <img src="/images/uploaded/cross-modal.png" />
+                                    </button>
+                                }
+                            </div>
+
+                            <div class="modal-body">
+                                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                                {
+                                    <div class="review-errormessage">@Model.ErrorMessage</div>
+                                }
+                                else
+                                {
+                                    <div class="review-feedback">
+                                        <strong>Big thanks from Sierra Living Concepts!</strong> We’ll do a quick review check and disburse your gift to <strong>@Model.EmailAddress</strong> within 72 hours.Thanks for making our day!
+                                    </div>
+                                }
+                            </div>
+                            @if (Model.ShowModal)
+                            {
+                                <script>
+                                    document.addEventListener("DOMContentLoaded", function () {
+                                        var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+                                        myModal.show();
+                                    });
+                                </script>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // orderid and email get by query string
+        const orderIdInput = document.getElementById("orderIdInput");
+        const emailInput = document.getElementById("emailAddressInput");
+
+        // Get query string values
+        const urlParams = new URLSearchParams(window.location.search);
+
+
+
+
+        const googlebtncustom2 = document.getElementById("googlebtncustom2"); 
+        const reviewInputs = document.querySelectorAll(".review-input");
+        const claimGiftBtn = document.querySelectorAll(".claim-gift-btn");
+        const reviewNotice = document.getElementById("reviewNotice");
+        const userReview = document.getElementById("userReview");
+        const copyReviewBtn = document.getElementById("copyReviewBtn");
+        const userReviewCopy = document.getElementById("userReviewCopy");
+        const selectedGiftInput = document.getElementById("SelectedGift");
+
+        function isValidEmail(email) {
+            if (typeof email !== 'string') return false;
+            // basic sanity check: local@domain.tld
+            const re = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+            return re.test(email.trim());
+        }
+        // Function to toggle gifts and claim button
+        function toggleGiftSection() {
+		
+            const orderIdVal = parseInt(orderIdInput.value, 10);
+            const hasOrderId = !isNaN(orderIdVal) && orderIdVal > 0;
+            const hasEmail = isValidEmail(emailInput.value);
+            const isGiftSelected = !isNaN(selectedGiftInput.value) && selectedGiftInput.value > 0;
+            var isFormValid = hasOrderId && hasEmail;
+            reviewInputs.forEach(el => el.disabled = !isFormValid);
+             isFormValid = hasOrderId && hasEmail && (document.getElementById('IsGoogleReview').checked || 
+                document.getElementById('IsPreferVideo').checked);
+
+            claimGiftBtn.forEach(el => el.disabled = !isFormValid);
+
+            googlebtncustom2.disabled = !hasOrderId; 
+            // Toggle the enabled class for styling
+            if (hasOrderId) {
+                googlebtncustom2.classList.add('enabled'); 
+            } else {
+                googlebtncustom2.classList.remove('enabled'); 
+            }
+        }
+
+        // Function to show/hide review textarea
+
+        // When any Claim Gift button is clicked
+        claimGiftBtn.forEach(btn => {
+            btn.addEventListener("click", function (e) {
+                selectedGiftInput.value = btn.dataset.gift;
+            });
+        });
+
+        // Review text copied to clipboard
+        if (copyReviewBtn) {
+            copyReviewBtn.addEventListener("click", function () {
+				const reviewText = userReview.textContent.trim(); // FIXED
+                copyToClipboard(reviewText);
+            });
+        }
+		
+		let copyTooltip = null;
+
+		if (copyReviewBtn) {
+			copyTooltip = new bootstrap.Tooltip(copyReviewBtn, {
+				trigger: 'manual'
+			});
+		}
+        reviewInputs.forEach(cb => cb.addEventListener('change', toggleGiftSection));
+
+        function copyToClipboard(text) {		
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    console.log("Review text copied to clipboard!");
+					
+					if (copyTooltip) {
+						copyTooltip.hide();
+						setTimeout(() => {
+							copyTooltip.show();
+							setTimeout(() => copyTooltip.hide(), 1000);
+						}, 100);
+					}
+                })
+                .catch((error) => {
+                    console.error("Failed to copy review text to clipboard:", error);
+                });
+        }
+
+
+        // Initial toggle
+        toggleGiftSection();
+
+
+        // Event listeners for input changes
+        orderIdInput.addEventListener("input", function () {
+            toggleGiftSection();
+
+        });
+		       googlebtncustom2.addEventListener("click", function () {
+           window.open("https://www.google.com/search?q=Sierra Living Concepts Inc. 46560 Fremont Blvd, 414 Fremont, CA 94538&oq=Sierra Living Concepts Inc. 46560 Fremont Blvd, 414 Fremont, CA 94538&aqs=chrome..69i57&sourceid=chrome&ie=UTF-8#lrd=0x808fc6fd648aa0f9:0xe3cda53b61df6d47,1,,,", '_blank');
+       });
+     
+        emailInput.addEventListener("input", toggleGiftSection);
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+

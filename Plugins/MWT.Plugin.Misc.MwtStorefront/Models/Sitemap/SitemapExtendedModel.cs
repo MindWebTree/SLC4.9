@@ -10,12 +10,12 @@ namespace MWT.Plugin.Misc.MwtStorefront.Models.Sitemap
 {
     public partial record SitemapExtendedModel : SitemapModel
     {
-        
+
         #region Properties
 
-        public new List<SitemapItemExtendedModel> Items { get; set; }
+        public new List<SitemapItemExtendedModel> Items = new List<SitemapItemExtendedModel>();
 
-        public new SitemapPageExtendedModel PageModel { get; set; }
+        public new SitemapPageExtendedModel PageModel = new SitemapPageExtendedModel();
 
         #endregion
 

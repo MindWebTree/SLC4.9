@@ -45,6 +45,7 @@
 @using MWT.Plugin.Misc.MwtStorefront.Models.FAQModule;
 @using MWT.Plugin.Misc.MwtStorefront.Models.RelatedSearch;
 @using MWT.Plugin.Misc.MwtStorefront.Models.QuickFilter;
+@using MWT.Plugin.Misc.MwtStorefront.Models.Customer;
 @using Nop.Web.Extensions.Customizations;
 @using Nop.Services.Configuration;
 @using MWT.Nop.Core.Service.Catalog;
@@ -52,8 +53,11 @@
 @using Microsoft.AspNetCore.Http;
 @using MWT.Nop.Core.Services.Customers;
 @using Nop.Services.Html;
+@using MWT.Plugin.Misc.MwtStorefront.Models.Common
+@using Nop.Web.Framework.Mvc.Routing
 @inject INopHtmlHelper NopHtml;
 @inject IUserAgentHelper _useragentContext;
 @inject ICustomWorkContext _customworkContext;
 @inject IWorkContext _workContext;
 @inject IHtmlFormatter _htmlFormatter;
+@inject INopUrlHelper NopUrl;

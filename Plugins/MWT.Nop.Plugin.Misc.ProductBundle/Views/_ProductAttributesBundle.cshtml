@@ -1,0 +1,98 @@
+﻿@model MWT.Plugin.Misc.MwtStorefront.Models.Catalog.CustomProductOverviewModel
+@using Nop.Services.Catalog
+@using Nop.Core.Domain.Catalog
+@using System.Text
+@inject CatalogSettings catalogSettings
+
+@{
+    // Retrieve the unique IDs from the parent view
+    string bundleFormId = ViewData["bundleFormId"]?.ToString() ?? "#product-details-form";
+    string uniqueId = ViewData["uniqueId"]?.ToString() ?? Model.Id.ToString();
+    string refFormId = bundleFormId.Replace("#", "").Replace("-", "_");
+    var handlerName = $"bundle_attr_handler_{uniqueId.Replace("-", "_")}";
+}
+
+@if (Model.ProductAttributes.Count > 0)
+{
+    <div class="bundle-attributes-wrapper" id="attr-container-@uniqueId">
+        <table>
+            @foreach (var attribute in Model.ProductAttributes)
+            {
+                var controlId = $"{refFormId}{NopCatalogDefaults.ProductAttributePrefix}{attribute.Id}";
+                <tr>
+                    <td class="bundle-control-label accordion-header">
+                        <label>@attribute.Name :</label>
+                    </td>
+                    <td class="bundle-value-column">
+                        @switch (attribute.AttributeControlType)
+                        {
+                            case AttributeControlType.ColorSquares:
+                            case AttributeControlType.ImageSquares:
+                                <ul class="option-list bundle-squares" id="squares-@attribute.Id">
+                                    @foreach (var val in attribute.Values)
+                                    {
+                                        <li data-attr-value="@val.Id" class="@(val.IsPreSelected ? "selected-value" : "")">
+                                            <label class="bundle-swatch">
+                                                @if (attribute.AttributeControlType == AttributeControlType.ImageSquares)
+                                                {
+                                                    <span class="attribute-square" style="background: url('@val.ImageSquaresPictureModel.FullSizeImageUrl') 50% 50% no-repeat; background-size:cover;">&nbsp;</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="attribute-square" style="background-color:@val.ColorSquaresRgb">&nbsp;</span>
+                                                }
+                                                <input type="radio" name="@controlId" value="@val.Id" checked="@val.IsPreSelected" onchange="@(handlerName)(this)" />
+                                            </label>
+                                        </li>
+                                    }
+                                </ul>
+                                break;
+                            case AttributeControlType.DropdownList:
+                                <select name="@controlId" class="form-control" onchange="@(handlerName)(this)">
+                                    <option value="0">Select...</option>
+                                    @foreach (var val in attribute.Values)
+                                    {
+                                        <option value="@val.Id" selected="@val.IsPreSelected">@val.Name</option>
+                                    }
+                                </select>
+                                break;
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+
+    <script asp-location="Footer">
+        function @(handlerName)(element) {
+            // 1. Scoped data collection
+            var $form = $('#@bundleFormId');
+            var $container = $('#container-@uniqueId');
+
+            // 2. Visual feedback for selection
+            $(element).closest('ul').find('li').removeClass('selected-value');
+            $(element).closest('li').addClass('selected-value');
+
+            $.ajax({
+                cache: false,
+                url: "@Html.Raw(Url.Action("CustomProductDetails_AttributeChange", "shoppingcart", new { productId = Model.Id }))",
+                data: $form.serialize(),
+                type: "post",
+                success: function (data) {
+                    // 3. Update ONLY this bundle item's price
+                    if (data.price) {
+                        $container.find('.bundle-price-@Model.Id').text(data.price);
+                    }
+
+                    // 4. Update ONLY this bundle item's image
+                    if (data.pictureDefaultSizeUrl) {
+                        $container.find('.bundle-item-img').attr('src', data.pictureDefaultSizeUrl);
+                    }
+
+                    // 5. Trigger event but keep it scoped
+                    $(document).trigger({ type: "bundle_item_changed", id: "@uniqueId", data: data });
+                }
+            });
+        }
+    </script>
+}

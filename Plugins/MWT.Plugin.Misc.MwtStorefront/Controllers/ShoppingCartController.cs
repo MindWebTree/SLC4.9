@@ -2273,6 +2273,9 @@ public partial class ShoppingCartController : BasePublicController
     [HttpPost]
     public virtual async Task<IActionResult> EmailWishlistPopup(LoginRegisterModel model, bool captchaValid)
     {
+        if (!await _permissionService.AuthorizeAsync(StandardPermission.PublicStore.ENABLE_WISHLIST) || !_shoppingCartSettings.EmailWishlistEnabled)
+            return RedirectToRoute(NopRouteNames.General.HOMEPAGE);
+        var customer = await _workContext.GetCurrentCustomerAsync();
         string result = "";
         bool success = false;
         result = await _localizationService.GetResourceAsync("Wishlist.EmailAFriend.Failed");
@@ -2282,10 +2285,12 @@ public partial class ShoppingCartController : BasePublicController
         {
             if (ModelState.IsValid)
             {
+                var wishlistUrl = Url.RouteUrl(NopRouteNames.General.WISHLIST, new { customerGuid = customer.CustomerGuid }, _webHelper.GetCurrentRequestProtocol());
+
                 //email
                 await _workflowMessageService.CustomSendWishlistEmailAFriendMessageAsync(await _workContext.GetCurrentCustomerAsync(),
                         (await _workContext.GetWorkingLanguageAsync()).Id, model.Email,
-                        model.Email, _htmlFormatter.FormatText(await _localizationService.GetResourceAsync("Wishlist.Message"), false, true, false, false, false, false));
+                        model.Email, _htmlFormatter.FormatText(await _localizationService.GetResourceAsync("Wishlist.Message"), false, true, false, false, false, false), wishlistUrl);
 
 
                 result = await _localizationService.GetResourceAsync("Wishlist.EmailAFriend.Popup.SuccessfullySent");

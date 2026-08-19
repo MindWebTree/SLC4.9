@@ -1,0 +1,41 @@
+﻿@model CustomCatalogProductsModel
+@inject IThemeContext themeContext
+
+@{
+    var themeName = await themeContext.GetWorkingThemeNameAsync();
+}
+@{
+    NopHtml.AddScriptParts(ResourceLocation.Footer, $"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/public.catalogproducts.js?version=37");
+}
+
+<div class="products-container">
+    <div class="ajax-products-busy"></div>
+    <div class="products-wrapper">
+        @await Html.PartialAsync("_SearchProductsInGridOrLines-3x3", Model)
+    </div>
+</div>
+<script asp-location="Footer">
+    $(document).ready(function () {
+        CatalogProducts.init({
+            ajax: @Model.UseAjaxLoading.ToString().ToLower(),
+            browserPath: '@Context.Request.Path',
+            fetchUrl: '@ViewData["fetchUrl"]',
+            pageNumberParamName: '@T("Pagenumber.Query.Param").Value',
+            viewallParamName:'@T("viewall.Query.Param").Value'
+
+        });
+
+        addPagerHandlers();
+        $(CatalogProducts).on('loaded', function () {
+            addPagerHandlers();
+        });
+    });
+
+    function addPagerHandlers() {
+        $('[data-page]').on('click', function (e) {
+            e.preventDefault();
+            CatalogProducts.getProducts($(this).data('page'));
+            return false;
+        });
+    }
+</script>

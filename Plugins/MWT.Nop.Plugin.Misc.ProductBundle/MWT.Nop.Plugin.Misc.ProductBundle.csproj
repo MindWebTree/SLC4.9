@@ -1,0 +1,97 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Copyright>Copyright © MindWebTree</Copyright>
+		<Company>MindWebTree</Company>
+		<Authors>MindWebTree</Authors>
+		<PackageProjectUrl>https://www.mindwebtree.com/</PackageProjectUrl>
+		<RepositoryUrl>https://www.mindwebtree.com/</RepositoryUrl>
+		<RepositoryType>Git</RepositoryType>
+		<OutputPath>..\..\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.Misc.ProductBundle</OutputPath>
+		<OutDir>$(OutputPath)</OutDir>
+		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="plugin.json" />
+		<None Remove="Views\Configure.cshtml" />
+		<None Remove="Views\PublicInfo.cshtml" />
+		<None Remove="Views\BundleProductAddPopup.cshtml" />
+		<None Remove="Views\_BundleInfo.cshtml" />
+		<None Remove="Views\_BundleValues.cshtml" />
+		<None Remove="Views\Default.cshtml" />
+		<None Remove="Views\_ProductAttribute.cshtml" />
+		<None Remove="Views\_ProductBundleItem.cshtml" />
+		<None Remove="Views\_ProductVariantBundle.cshtml" />
+		<None Remove="Views\_NestedVariants.cshtml" />
+		<None Remove="Views\LogList.cshtml" />
+		<None Remove="Views\_ViewImports.cshtml" />
+		<None Remove="Content\css\style.css" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="Views\_BundleInfo.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Views\_BundleValues.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Views\_ProductBundleItem.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Views\Default.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>	
+			<Content Include="Views\LogList.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+
+		<Content Include="Views\_ProductAttribute.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="plugin.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Content\css\style.css">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Views\PublicInfo.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>	
+		<Content Include="Views\_NestedVariants.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Views\BundleProductAddPopup.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Views\_ProductVariantBundle.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Views\_ViewImports.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Views\Configure.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Tasks\GenerateProductBundlePriceInVariants.cs">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Presentation\Nop.Web.Framework\Nop.Web.Framework.csproj" />
+		<ProjectReference Include="..\..\Presentation\Nop.Web\Nop.Web.csproj" />
+		<ProjectReference Include="..\MWT.Plugin.Misc.MwtStorefront\MWT.Plugin.Misc.MwtStorefront.csproj" />
+		<ClearPluginAssemblies Include="$(MSBuildProjectDirectory)\..\..\Build\ClearPluginAssemblies.proj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Controllers\" />
+	</ItemGroup>
+
+	<Target Name="NopTarget" AfterTargets="Build">
+		<MSBuild Projects="@(ClearPluginAssemblies)" Properties="PluginPath=$(MSBuildProjectDirectory)\$(OutDir)" Targets="NopClear" />
+	</Target>
+
+</Project>

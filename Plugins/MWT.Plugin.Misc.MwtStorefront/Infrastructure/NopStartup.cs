@@ -37,6 +37,7 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Infrastructure
             services.AddScoped<IRelatedSearchModelFactory, RelatedSearchModelFactory>(); 
             services.AddScoped<IQuickFilterModelFactory, QuickFilterModelFactory>(); 
             services.AddScoped<IKwTermModelFactory, KwTermModelFactory>(); 
+            services.AddScoped<ISiteMapExtendedModelFactory, SiteMapExtendedModelFactory>(); 
             services.AddScoped<IShoppingCartExtendedModelFactory, ShoppingCartExtendedModelFactory>(); 
             if (DataSettingsManager.IsDatabaseInstalled())
                 services.AddScoped<SlugRouteExtendetTransformer>();

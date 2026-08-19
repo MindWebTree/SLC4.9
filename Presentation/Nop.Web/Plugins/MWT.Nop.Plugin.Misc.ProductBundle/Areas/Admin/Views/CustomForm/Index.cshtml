@@ -1,0 +1,134 @@
+ 
+@model CustomFormSearchModel
+
+@{
+    //page title
+    ViewBag.PageTitle = T("Admin.Catalog.Customforms").Text;
+    //active menu item (system name)
+    NopHtml.SetActiveMenuItemSystemName("Custom Forms");
+}
+
+
+
+<form asp-controller="CustomForm" asp-action="index" method="post" id="CustomForms-form">
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            @T("Admin.Catalog.Customforms")
+        </h1>
+        <div class="float-right">
+
+
+            <a href="@Url.ActionLink("Add","CustomForm")" type="button"  class="btn btn-danger">
+               
+                @T("Admin.Common.Add")
+            </a>
+
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="form-horizontal">
+                <div class="cards-group">
+                    <div class="card card-default card-search">
+                        <div class="card-body">
+                            <div class="row search-row">
+                                <div class="search-text">@T("Admin.Common.Search")</div>
+                                <div class="icon-search"><i class="fas fa-search" aria-hidden="true"></i></div>
+                                <div class="icon-collapse"><i class="far fa-angle-up" aria-hidden="true"></i></div>
+                            </div>
+                            <div class="search-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <nop-label asp-for="Name" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <nop-editor asp-for="Name" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="text-center col-12">
+                                        <button type="button" id="search-product-customforms" class="btn btn-primary btn-search">
+                                            <i class="fas fa-search"></i>
+                                            @T("Admin.Common.Search")
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cards-group">
+                    <div class="card card-default">
+                        <div class="card-body">
+
+
+                            @await Html.PartialAsync("Table", new DataTablesModel
+                            {
+                            Name = "customforms-grid",
+                            UrlRead = new DataUrl("index", "CustomForm", null),
+                            SearchButtonId = "search-product-customforms",
+                            Length = Model.PageSize,
+                            LengthMenu = Model.AvailablePageSizes,
+                            Filters = new List<FilterParameter>
+                            {
+                            new FilterParameter(nameof(Model.Name))
+                            },
+                            ColumnCollection = new List<ColumnProperty>
+                            {
+                            new ColumnProperty(nameof(CustomFormModel.FormName))
+                            {
+                            Title = T("Admin.Catalog.CustomFormModel.Fields.Name").Text
+                            },
+                            new ColumnProperty(nameof(CustomFormModel.SendCustomerNotification))
+                            {
+                            Title = T("Admin.Catalog.CustomFormModel.Fields.SendCustomerNotification").Text,
+                            Width = "150",
+                            ClassName =  NopColumnClassDefaults.CenterAll
+                            },
+                            new ColumnProperty(nameof(CustomFormModel.Subject))
+                            {
+                            Title = T("Admin.Catalog.CustomFormModel.Fields.Subject").Text,
+                            Width = "150",
+                            ClassName =  NopColumnClassDefaults.CenterAll
+                            },
+                            new ColumnProperty(nameof(CustomFormModel.ShowInPopup))
+                            {
+                            Title = T("Admin.Catalog.CustomFormModel.Fields.ShowInPopup").Text,
+                            Width = "150",
+                            ClassName =  NopColumnClassDefaults.CenterAll
+                            },
+                            new ColumnProperty(nameof(CustomFormModel.BccEmailAddresses))
+                            {
+                            Title = T("Admin.Catalog.CustomFormModel.Fields.BccEmailAddresses").Text,
+                            Width = "150",
+                            ClassName =  NopColumnClassDefaults.CenterAll
+                            },
+                            new ColumnProperty(nameof(CustomFormModel.Id))
+                            {
+                            Title = T("Admin.Common.Edit").Text,
+                            Width = "100",
+                            ClassName =  NopColumnClassDefaults.Button,
+                            Render = new RenderButtonEdit(new DataUrl("~/Admin/CustomForm/Edit/"))
+                            },
+                             new ColumnProperty(nameof(CustomFormModel.Id))
+                            {
+                            Title = T("Admin.Common.Leads").Text,
+                            Width = "100",
+                            ClassName =  NopColumnClassDefaults.Button,
+                            Render = new RenderButtonView(new DataUrl("~/Admin/CustomForm/Leads/"))
+                            }
+                            }
+                            })
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>

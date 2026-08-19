@@ -1,0 +1,46 @@
+﻿@using Nop.Core;
+@using MWT.Nop.Core.Infrastructure;
+@inject Nop.Services.Orders.IShoppingCartService _shoppingCartService;
+@inject Nop.Core.IStoreContext _storeContext;
+@inject MWT.Nop.Core.Services.Customers.ICustomerExtendedService _customerService;
+@{
+    string email = string.Empty;
+    string firstName = string.Empty, lastName = string.Empty, phoneNumber = string.Empty;
+    var customer = await _workContext.GetCurrentCustomerAsync();
+    if (customer != null)
+    {
+        email = customer.Email;
+        if (string.IsNullOrEmpty(email))
+        {
+            email = await _customerService.GetCustomerEmail(customer);
+        }
+        if (!string.IsNullOrEmpty(email))
+        {
+            string name = await _customerService.GetCustomerFullNameAsync(customer);
+            if (name != null)
+            {
+                firstName = CustomCommonHelper.GetCustomerFirstName(name);
+                lastName = CustomCommonHelper.GetCustomerLastName(name);
+            }
+        }
+        phoneNumber = await _customerService.GetCustomerPhone(customer);
+    }
+}
+
+<script>
+    var phoneNumber = '@(phoneNumber ?? "")';
+    phoneNumber = phoneNumber.replace(/ /g, "").replace(/-/g, "");
+    phoneNumber = "+1" + phoneNumber;
+    window.dataLayer = window.dataLayer || [];
+           dataLayer.push({
+        'user_data': {
+               "email": '@email',
+                "phone_number": "@phoneNumber",
+                "address": {
+                    "first_name": '@(firstName ?? string.Empty)',
+                    "last_name": '@(lastName ?? string.Empty)',
+                    "externalid":'@(customer?.Id ?? 0)'
+                }
+               }
+            });
+</script>

@@ -1,0 +1,19 @@
+﻿
+@inject Nop.Services.Configuration.ISettingService _settingService
+@inject IThemeContext themeContext
+
+@{
+    bool displayOfferTimer = await _settingService.GetSettingByKeyAsync<bool>("marketingsettings.Display.OfferTimer");
+    bool displayPromotionOffer = await _settingService.GetSettingByKeyAsync<bool>("marketingsettings.Display.header.promotion");
+    var date = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
+    var endDate = await _settingService.GetSettingByKeyAsync<DateTime>
+    ("marketingsettings.offer.enddate");
+}
+
+@if (((DateTime.Now > endDate && displayOfferTimer) || (!displayOfferTimer)) && displayPromotionOffer)
+{
+
+    @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "header-promotion" })
+}
+
+

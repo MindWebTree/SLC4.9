@@ -1,0 +1,81 @@
+﻿@model CustomCatalogProductsModel
+@inject ICustomWorkContext _workContext;
+
+@if (!Model.PriceRangeFilter.Enabled &&
+!Model.SpecificationFilter.Enabled &&
+!Model.ManufacturerFilter.Enabled)
+{
+    return;
+}
+
+
+<div class="selectedFilters @(_workContext.IsMobileDevice()?"d-lg-none d-md-none":"d-none d-md-flex") w-100">
+
+    @{
+        var totalNoOfSelectedFilters =
+        Model.SpecificationFilter.Attributes.Where(m => m.Values.Where(m => m.Selected == true).Count() > 0).Count();}
+
+    <div class="inline-clear-all" style="display:@(totalNoOfSelectedFilters>0?"block":"none");">
+        <div class="clear clear-all">
+            <a href="#" class="selections-clear-all">
+                @T("catalog.clear.all")
+            </a> <span class="hidden-selections-count-spacer">&nbsp;&nbsp;&nbsp;</span>
+        </div>
+    </div>
+    @if (Model.SpecificationFilter.Enabled)
+    {
+        @foreach (var filter in Model.SpecificationFilter.Attributes)
+        {
+            foreach (var childFilter in filter.Values)
+            {
+                if (childFilter.Selected && filter.Id!=-1)
+                {
+                    <span class="selections"><button data-style="button" aria-label="Clear @childFilter.Name " type="button" data-option-id="@childFilter.Id" class="cta"><span class="selections-close">×</span> <span>@childFilter.Name</span></button></span>
+                }
+            }
+        }
+    }
+</div>
+<script asp-location="Footer">
+    $(document).ready(function () {
+        $("body").on("click", ".selectedFilters button", function (e) {
+            var optionId = $(this).attr("data-option-id");
+            if ($("[data-option-id=" + optionId + "]")) {
+                $("[data-option-id=" + optionId + "]").prop("checked", false);
+            }
+            if ($("[popup-data-option-id=" + optionId + "]")) {
+                $("[popup-data-option-id=" + optionId + "]").prop("checked", false);
+            }
+            $(this).parent().remove();
+            CatalogProducts.getProducts();
+            if ($(".selectedFilters .selections").length == 0) {
+                $(".inline-clear-all a").parent().parent().hide();
+
+            }
+            else {
+                $(".inline-clear-all a").parent().parent().show();
+
+            }
+
+        });
+        $("body").on("click", ".inline-clear-all a", function (e) {
+         
+            e.preventDefault();
+            $(".filtercheckbox").each(function () {
+                $(this).prop("checked", false);
+            });
+
+            // Delete filters
+            $(".selectedFilters .selections").remove();
+            // end
+
+            // Hide Clear All
+            $(this).parent().parent().hide();
+
+            // Load Filters
+            CatalogProducts.getProducts();
+        });
+    });
+</script>
+
+

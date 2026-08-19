@@ -1,0 +1,41 @@
+﻿@model CustomProductDetailsModel
+
+
+@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsBeforePictures, additionalData = Model })
+<div class="col-sm-12 p-0 rectange-images-section">
+    @await Html.PartialAsync("_socialShare", Model)
+    <div class="product-rectange-images">
+        @foreach (var picture in Model.PictureModels)
+        {
+        <a href="@picture.FullSizeImageUrl" title="@Model.DefaultPictureModel.Title" id="main-product-img-lightbox-anchor-@Model.Id">
+            @*Tags*@
+            <div class="Tags">
+                @if (Model.ProductTags != null)
+                {
+                    foreach (var tag in Model.ProductTags)
+                    {
+                        <div class="@tag.Name">@tag.Name</div>
+                        break;
+                    }
+                }
+            </div>
+            <img style="width: 100%" class="lazy" src="/images/pixel.png" alt="@Model.DefaultPictureModel.AlternateText" data-src="@picture.FullSizeImageUrl" title="@Model.DefaultPictureModel.Title" id="main-product-img-@Model.Id" />
+        </a>
+    }
+    </div></div>
+
+@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsAfterPictures, additionalData = Model })
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        $('.product-rectange-images').slick({
+          dots: true,
+  arrows: true,
+  slidesToShow: 1,
+  centerMode: true,
+  centerPadding: '0px',
+            prevArrow: '<span class="slide-arrow prev-arrow"><i class="fas fa-chevron-left"></i></span>',
+            nextArrow: '<span class="slide-arrow next-arrow"><i class="fas fa-chevron-right"></i></span>',
+         
+        });
+    });
+</script>
