@@ -1,0 +1,350 @@
+@model CustomOrderSummaryModel
+@inject Nop.Services.Catalog.IPriceFormatter _priceFormatter
+@inject Nop.Services.Payments.IPaymentPluginManager _paymentPluginManager
+@inject Nop.Services.Customers.ICustomerService _customerService;
+@inject Nop.Core.IStoreContext _storeContext
+@inject Nop.Core.IWorkContext _workContext
+@using Nop.MWT.Nop.Core.Domain.CustomOrders
+@{
+
+    var storeId = (await _storeContext.GetCurrentStoreAsync()).Id;
+    var defautPrice = await _priceFormatter.FormatPriceAsync(0);
+    bool isPaid = Model.OrderStatus == OrderStatus.Paid.ToString() && Model.FullPaid ? true : false;
+}
+<div class="right-box-shop-cart mt-4">
+    @*   Order Notes Section*@
+    <div class="form-group">
+        <nop-label asp-for="InvoiceNotes" class="float-left mr-3" />
+
+        <h5>Customer will see this note in Invoice</h5>
+        <nop-textarea asp-for="InvoiceNotes" asp-disabled="@isPaid" class="form-control bg-light" />
+    </div>
+    <div class="form-group">
+        <nop-label asp-for="PrivateNotes" class="float-left mr-3" />
+        <h5>For internal purpose only, Not visible to customer</h5>
+        <nop-textarea asp-for="PrivateNotes" asp-disabled="@isPaid" class="form-control bg-light" />
+    </div>
+    <div class="form-group">
+        <nop-label asp-for="SpecialInstructionsfromBuyer" class="float-left mr-3" />
+        <h5>Special Instructions from Buyer</h5>
+        <nop-textarea asp-for="SpecialInstructionsfromBuyer" asp-disabled="@isPaid" class="form-control bg-light" />
+    </div>
+    <div class="col-12 orderNotesLog">
+
+        @await Component.InvokeAsync("CustomOrderNotesLog", new { orderId = Model.Id })
+    </div>
+
+    @if (!isPaid)
+    {
+        <button class="btn-save_orderandnotes float-right" type="button">Save</button>
+    }
+
+    @*end*@
+    <div class="form-group d-flex mt-5 pt-1">
+        <h6 class="text-white bg-success font-weight-bold px-2 py-1 mr-2">5</h6>
+        <label for="exampleFormControlInput1" class="text-muted">Payment</label>
+    </div>
+    <div class="row">
+        <table class="table bg-light rounded bg-light mx-3  px-3">
+            <thead>
+                <tr>
+                    <th scope="col" class="border-0 font-weight-bold pl-4 pt-4">Cart Total</th>
+                    <th scope="col" class="text-center border-0"> </th>
+                    <th scope="col" class="text-center border-0 font-weight-bold ordersummary-subtotal">@Model.SubTotal</th>
+                </tr>
+            </thead>
+            <tbody class="px-4">
+                <tr class="border-left border-0">
+                    <th scope="row" class="border-0 font-weight-normal pl-4">
+                        @if (isPaid)
+                        {
+                            <span>
+                                Discount
+                            </span>
+                        }
+                        else
+                        {
+                            <a class="btnSubtotalDiscount">Add Discount</a>
+                        }
+                        <span>@Model.SubTotalDiscountDetails?.Notes</span>
+                    </th>
+                    <td class="border-0 text-secondary"></td>
+                    <td class="text-center border-0 text-secondary orderDiscountInfo @(Model.SubTotalDiscountDetails?.ChargeType == ChargeType.Subtract.ToString() ?
+                            "text-success" : "text-danger")" data-charge-Type="@Model.SubTotalDiscountDetails?.ChargeType"
+                        data-discount-Type="@Model.SubTotalDiscountDetails?.DiscountType"
+                        data-discount="@(Model.SubTotalDiscountDetails?.DiscountAmount)">
+
+                        @(!string.IsNullOrEmpty(Model.SubTotalDiscountDetails?.TotalAdjustment) ? (Model.SubTotalDiscountDetails?.ChargeType == ChargeType.Subtract.ToString() ?
+                            "-" : "") + Model.SubTotalDiscountDetails.TotalAdjustment : defautPrice
+                            )
+
+                    </td>
+                    <span style="height: 0px;padding: 0px;width: 0px; float: left;visibility: hidden;" id="SubTotalAdjNotes">@Model.SubTotalDiscountDetails?.Notes</span>
+                </tr>
+                <tr class="border-0">
+                    <th scope="row" class="border-0 font-weight-normal pl-4">
+
+                        <span>
+                            Shipping
+                        </span>
+                        @* }
+                            else
+                            {
+                            <a class="btnaddshipping" data-shipping="@Model.Shipping">Add Shipping</a>
+                            }*@
+                    </th>
+                    <td class="border-0 text-secondary shippingMethod">@Model.ShippingMethod</td>
+                    <td class="text-center border-0 text-secondary shipping">
+
+                        @(!string.IsNullOrEmpty(Model.Shipping) ? Model.Shipping : defautPrice
+                            )
+
+                    </td>
+                    <span style="height:0px;padding:0px;visibility:hidden;" id="shippingAdjNotes">@(Model.ShippingDiscountDetails == null ? "" : (Model.ShippingDiscountDetails.Notes == null ? "" : Model.ShippingDiscountDetails.Notes))</span>
+                </tr>
+                <tr class="border-0 shippingadjustment">
+                    <th scope="row" class="border-0 font-weight-normal pl-4">
+                        <a class="btnaddshipping" data-discount-Type="@Model.ShippingDiscountDetails?.DiscountType"
+                           data-discount="@((Model.ShippingDiscountDetails?.ChargeType == ChargeType.Subtract.ToString() ?
+                            "-" : "")+Model.ShippingDiscountDetails?.DiscountAmount)">    Shipping Adjustment</a>
+                        <span>@Model.ShippingDiscountDetails?.Notes</span>
+                    </th>
+                    <td class="border-0 text-secondary shippingMethod"></td>
+                    <td class="text-center border-0 text-secondary shippingadjustmentAmount @(Model.ShippingDiscountDetails?.ChargeType == ChargeType.Subtract.ToString() ?
+                            "text-success" : "text-danger")">
+                        @(
+                            !string.IsNullOrEmpty(Model.ShippingDiscountDetails?.TotalAdjustment) ? (Model.ShippingDiscountDetails?.ChargeType == ChargeType.Subtract.ToString() ?
+                            "-" : "") + Model.ShippingDiscountDetails.TotalAdjustment : defautPrice
+                            )
+                    </td>
+
+                </tr>
+                <tr class="border-0">
+                    <th scope="row" class="border-0 font-weight-normal pl-4">
+                        <a class="btnAddWgs">WGS Adjustment</a>
+                        <span>@Model.WgsAdjustmentNotes</span>
+                    </th>
+                    <td class="border-0 text-secondary haswgscharges">@(string.IsNullOrEmpty(Model.Wgs) ? "No" : "Yes")</td>
+                    <td class="text-center border-0 text-secondary wgscharges"
+                        data-normal-wgs="@Model.NormalWgsCharges"
+                        data-complementry-wgs="@Model.ComplementryWgsFree"
+                        data-wgs="@(string.IsNullOrEmpty(Model.Wgs)?defautPrice:Model.Wgs)">
+                        @(string.IsNullOrEmpty(Model.Wgs) ? defautPrice : Model.Wgs)
+                    </td>
+                    <span style="height:0px;padding:0px;visibility:hidden;" id="wgsAdjNotes">@Model.WgsAdjustmentNotes</span>
+                </tr>
+                <tr class="border-0 customdutysection" style="@(Model.CustomDutyPercentage > 0 ? "":"display:none")">
+                    <th scope="row" class="border-0 font-weight-normal pl-4 customduty-label">
+                        Custom Duty(@Model.CustomDutyPercentage%)
+                    </th>
+                    <td class="border-0 text-secondary"></td>
+                    <td class="text-center border-0 text-secondary customduty-content">
+                        @(string.IsNullOrEmpty(Model.CustomDuty) ? defautPrice : Model.CustomDuty)
+                    </td>
+                </tr>
+                <tr class="border-0">
+                    <th scope="row" class="border-0 font-weight-normal pl-4">
+                        @if (isPaid)
+                        {
+                            @Html.CheckBoxFor(m => m.ApplyTax, new { disabled = false })
+                        }
+                        else
+                        {
+                            @Html.CheckBoxFor(m => m.ApplyTax)
+                        }
+                        <span class="tax-label float-none">
+                            @if (Model.TaxRate > 0)
+                            {
+                                @Html.Raw(Model.ZipCode + " - " + "Tax" + "(" + @Math.Round(Model.TaxRate, 2) + "%)")
+                            }
+                            else
+                            {
+                                @Html.Raw("Tax")
+                            }
+                        </span>
+                    </th>
+                    <td class="border-0 text-secondary"></td>
+                    <td class="text-center border-0 text-secondary taxInfo">@(string.IsNullOrEmpty(Model.Tax) ? defautPrice : Model.Tax)</td>
+                </tr>
+                <tr class="taxDetails border-0">
+                    <td colspan="3" class="border-0">
+
+                        <table class="w-100" style="margin-left: 20px;">
+                            @if (Model.TaxInfo.Where(t => t.TaxType != Nop.Services.Tax.TaxType.Tax && t.TaxRate > 0).Any())
+                            {
+                                @foreach (var tax in Model.TaxInfo.Where(t => t.TaxRate > 0))
+                                {
+                                    <tr>
+                                        <td class="border-0 text-uppercase">@T("Canada.Tax.Label", tax.TaxType.ToString(), tax.TaxRate.ToString("F2"))</td>
+                                        <td class="border-0 text-uppercase"></td>
+                                        <td class="border-0 text-uppercase">@await _priceFormatter.FormatPriceAsync(tax.Amount)</td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+
+                    </td>
+                </tr>
+                <tr class="border-top border-bottom paid-intialpayment"
+                    style="@(Model.OrderType==OrderTypes.AlreadyPaid.ToString() && !string.IsNullOrEmpty(Model.InitialPayment)?"":"display:none")">
+                    <th scope="row" class="border-0 pl-4">AlreadyPaid</th>
+                    <td class="border-0 text-right align-middle font-weight-bold"></td>
+                    <td class="border-0 text-center align-middle ordersummary-paid-InitialPayment">@Model.InitialPayment</td>
+                </tr>
+                <tr class="border-top border-bottom houzz-houzzfee"
+                    style="@(Model.OrderType==OrderTypes.HouzzOrder.ToString() && !string.IsNullOrEmpty(Model.HouzzFee)?"":"display:none")">
+                    <th scope="row" class="border-0 pl-4">Houzz Fee</th>
+                    <td class="border-0 text-right align-middle font-weight-bold"></td>
+                    <td class="border-0 text-center align-middle ordersummary-houzzfee">-@Model.HouzzFee</td>
+                </tr>
+                <tr class="border-top border-bottom">
+                    <th scope="row" class="border-0 pl-4">Order Total</th>
+                    <td class="border-0 text-right align-middle font-weight-bold"></td>
+                    <td class="border-0 text-center align-middle ordersummary-orderTotal">@Model.OrderTotal</td>
+                </tr>
+                @if (!isPaid)
+                {
+                    <tr class="border-top border-bottom customorder-intialpayment" style="@(Model.OrderType==OrderTypes.CustomOrder.ToString() && !string.IsNullOrEmpty(Model.InitialPayment)?"":"display:none")">
+                        <th scope="row" class="border-0 pl-4">
+                            @(
+                                Model.OrderStatus == OrderStatus.Paid.ToString() && !Model.FullPaid ? "Paid Amount" : "Initial Payment"
+                                )
+                        </th>
+                        <td class="border-0 text-right align-middle font-weight-bold"></td>
+                        <td class="border-0 text-center align-middle ordersummary-customorder-InitialPayment">@Model.InitialPayment</td>
+                    </tr>
+                    <tr class="border-top border-bottom customorder-pendingpayment" style="@(Model.OrderType==OrderTypes.CustomOrder.ToString() && !string.IsNullOrEmpty(Model.PendingPayment)?"":"display:none")">
+                        <th scope="row" class="border-0 pl-4">Pending Payment</th>
+                        <td class="border-0 text-right align-middle font-weight-bold"></td>
+                        <td class="border-0 text-center align-middle ordersummary-customorder-PendingPayment">@Model.PendingPayment</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr class="border-top border-bottom">
+                        <th scope="row" class="border-0 pl-4">Paid Amount</th>
+                        <td class="border-0 text-right align-middle font-weight-bold"></td>
+                        <td class="border-0 text-center align-middle ordersummary-orderTotal">@Model.OrderTotal</td>
+                    </tr>
+
+                }
+                @if (!isPaid)
+                {
+                    <tr>
+                        <th scope="row" class="border-0 pl-4">
+                            <button class="btn btn-light border-dark bg-white px-3" type="button" id="sendinvoice" onclick="sendInvoice('@Model.Email')">Send Invoice</button>
+                        </th>
+                        <td class="border-0 text-right align-middle" colspan="2">
+                            <div class="dropdown">
+
+                                <button class="btn btn-secondary dropdown-toggle px-3 text-center  btncollectpayment" type="button" id="dropdownMenuButton" data-target="@(Model.OrderType != OrderTypes.CustomOrder.ToString()?"cashondelivery":"collectpayment")">
+                                    @(Model.OrderType == OrderTypes.CustomOrder.ToString()? "Collect Payment":T("customform.button"))
+                                </button>
+
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item collectpayment @(Model.OrderType != OrderTypes.CustomOrder.ToString()?"d-none":"")" href="#" data-toggle="modal" data-target="#enter_Authorize_Net">Enter Credit Card</a>
+                                    <a class="dropdown-item cashondelivery @(Model.OrderType == OrderTypes.CustomOrder.ToString()?"d-none":"")">Mark as Paid</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+
+
+            </tbody>
+        </table>
+        @if (isPaid)
+        {
+            if (Model.PaymentDetails != null)
+            {
+                <ul class="order-details">
+                    <li class="payment_heading">Payment Confirm</li>
+                    <li>Order Number # @Model.PaymentDetails.LiveOrderNumber</li>
+                    @if (!string.IsNullOrEmpty(Model.PaymentDetails.TransactionId))
+                    {
+                        <li>Transaction# @Model.PaymentDetails.TransactionId</li>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.PaymentDetails.Card))
+                    {
+                        <li>Card# @Model.PaymentDetails.Card</li>
+                    }
+                    <li>Date  @Model.PaymentDetails.PaymentDate</li>
+                </ul>
+
+            }
+        }
+    </div>
+</div>
+@if (!isPaid)
+{
+    <div id="payment-method-block">
+        @for (var i = 0; i < Model.PaymentMethods.Count; i++)
+        {
+            var paymentMethod = Model.PaymentMethods[i];
+            var paymentMethodName = paymentMethod.Name;
+            if (paymentMethod.PaymentMethodSystemName.ToLower().IndexOf("paypal") < 0 && paymentMethod.PaymentMethodSystemName.ToLower().IndexOf("affirm") < 0)
+            {
+            if (!string.IsNullOrEmpty(paymentMethod.Fee))
+            {
+                paymentMethodName = T("Checkout.SelectPaymentMethod.MethodAndFee", paymentMethodName, paymentMethod.Fee).Text;
+            }
+                <div class="modal fade" id="enter_@(paymentMethodName.Replace(" ","_").Replace(".","_"))" tabindex="-1" role="dialog" aria-labelledby="enter_creditcardLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header p-2 m-4">
+                                @if (paymentMethodName.ToLower().Contains("authorize"))
+                                {
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <h5 class="modal-title" id="enter_creditcardLabel">Enter Credit Card</h5>
+                                        </div>
+                                        <div class="col-md-7 text-right">
+                                            <button class="text-danger border-0 bg-white pr-3" data-dismiss="modal">Cancel</button>
+                                            <button class="border-0 bg-danger text-white amounttobepaid creditCardAction" type="button">Charge @Model.PayableAmount <span class="load loading"></span></button>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="checkout-payment-methods @(paymentMethod.Selected ? "active" : "")" data-paymethodname="@paymentMethodName">
+                                    <input type="radio" id="paymentmethod_@(i)" name="paymentmethod" data-paymethodname="@paymentMethodName"
+                                           value="@(paymentMethod.PaymentMethodSystemName)" class="radio" checked="@paymentMethod.Selected" />
+                                    <label for="paymentmethod_@(i)" class="d-flex width w-100">
+                                        <span class="ml-0">     @paymentMethodName</span>
+                                        @if (!string.IsNullOrEmpty(paymentMethod.LogoUrl))
+                                        {
+                                            <span>
+                                                <img src="@paymentMethod.LogoUrl" alt="@paymentMethodName" />
+                                            </span>
+                                        }
+                                    </label>
+                                </div>
+
+
+
+
+                                @{
+                                    var paymentMethodInst = await _paymentPluginManager
+                                    .LoadPluginBySystemNameAsync(paymentMethod.PaymentMethodSystemName,
+                                    Model.Customer, storeId);
+                                }
+
+
+                                <div class="paymentinfo @(paymentMethod.Selected ? "active" : "")" data-paymentinfo="@paymentMethodName">
+                                    @await Html.PartialAsync("OpcPaymentInfo", new Nop.Web.Models.Checkout.CheckoutPaymentInfoModel
+                               {
+                                   PaymentViewComponentName = ((Nop.Services.Payments.IPaymentMethod)paymentMethodInst).GetPublicViewComponentName(),
+                                   DisplayOrderTotals = true,
+                                   AdditionaData = Model
+                               })
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+
+        }
+
+    </div>
+}

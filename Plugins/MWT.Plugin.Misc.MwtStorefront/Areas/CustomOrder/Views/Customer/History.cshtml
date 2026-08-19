@@ -1,0 +1,101 @@
+﻿@model CustomerModel
+@using Nop.Core
+@using Nop.Services.Customers
+@inject IWebHelper webHelper
+@inject IWorkContext workContext
+@inject ICustomerService _customerService
+@{
+    var storeLocation = webHelper.GetStoreLocation();
+}
+<script>
+    customOrderModule.init();
+</script>
+<div class="bg-light">
+    <div class="partial-payment p-3 mt-3 pl-4 bg-light">
+        <a href="@Url.ActionLink("List","Customer")"> <img src="/css/Customizations/Areas/CustomOrder/images/back.png"> </a>
+        <h3 class="float-left pr-3 pt-2">@Model.FullName</h3>
+        <h5 class="pt-2">@Model.Location @Model.CustomerFromCreatedString</h5>
+    </div>
+    <div class="customer-history">
+        <div class="row mt-3 px-3">
+            <div class="col-lg-6 col-md-12 col-sm-12 bg-white py-3 my-3 px-0" style="border-radius: 10px;">
+                <div class="border-bottom py-3 px-3">
+                    <img src="/css/Customizations/Areas/CustomOrder/images/Contact Info.png" class="float-left">
+                    <h4 class="">@T("CustomOrder.Customer.Label.ContactInfo")
+                @*        <a onclick="customOrderProcess.get('/Customorder/customer/CreateUpdateCustomer/?customerId=@Model.Id')">
+   @T("Common.Edit")</a>*@
+                    </h4>
+                    <h5 class="">
+                        <a href="mailto:@Model.Email">@Model.Email<br></a>
+                        @(Model.DefaultShippingAddress.Id > 0 ? Model.DefaultShippingAddress.PhoneNumber : (Model.DefaultBillingAddress.Id > 0
+                            ? Model.DefaultBillingAddress.PhoneNumber : ""))
+                    </h5>
+
+                    <script asp-location="Footer">
+                        customOrderProcess.init('#co-customerinfo-form', '@(storeLocation)/Customorder/customer/CreateUpdateCustomer/');
+                    </script>
+                    <div id="customorder-customer_create_update" class="modal" tabindex="-1" role="dialog">
+                        <div class="modal-content">
+                            <div id="customorder-customer_create_update-load">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="border-bottom py-3 px-3">
+                    <img src="/css/Customizations/Areas/CustomOrder/images/Default Address.png" class="float-left">
+                    @if (Model.DefaultBillingAddress.Id > 0 || Model.DefaultBillingAddress.Id > 0)
+                    {
+                        <h4 class="">@T("CustomOrder.Customer.Label.DefaultAddress")
+                            @*<a href="#">@T("CustomOrder.Common.Label.Manage")</a>*@
+                            
+                        </h4>
+                    }
+                    <h5>
+                        @if (Model.DefaultShippingAddress.Id > 0)
+                        {
+                            <text>
+                                @Model.DefaultShippingAddress.Address1<br>@Model.DefaultShippingAddress.City, @Model.DefaultShippingAddress.StateProvinceName @Model.DefaultShippingAddress.ZipPostalCode
+                                <br>@Model.DefaultShippingAddress.CountryName
+                            </text>
+                        }
+                        else if (Model.DefaultBillingAddress.Id > 0)
+                        {
+                            <text>
+                                @Model.DefaultBillingAddress.Address1<br>@Model.DefaultBillingAddress.City, @Model.DefaultBillingAddress.StateProvinceName @Model.DefaultBillingAddress.ZipPostalCode
+                                <br>@Model.DefaultBillingAddress.CountryName
+                            </text>
+                        }
+                        <br>@*<a href="#">@T("CustomOrder.Common.Label.AddnewAdress")</a>*@
+                    </h5>
+                </div>
+                <div class="py-3 px-3">
+                    <img src="/css/Customizations/Areas/CustomOrder/images/Marketing status.png" class="float-left">
+                    <h4 class="">@T("CustomOrder.Customer.Label.Marketing")</h4>
+                    <h5 class="@(Model.IsSubscribedForEmail?"text-success":"text-danger")">
+                        @T(Model.IsSubscribedForEmail? "CustomOrder.Customer.Label.EmailMarketing.Subscribed":"CustomOrder.Customer.Label.EmailMarketing.UnSubscribed")
+                        @*   <a href="#" class="text-danger"><br>SMS not subscribed</a>*@
+                    </h5>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-12 col-sm-12 bg-white pt-3 my-3 px-0" style="border-radius: 10px;">
+                @await Component.InvokeAsync("CustomerLastOrder", new { customerId = Model.Id })
+            </div>
+            <!--<div class="col-lg-4 col-md-12 col-sm-12 bg-white py-3 my-3 px-0" style="border-radius: 10px;">
+                <div class="py-3 px-3">
+                    <h4 class="last-order">
+                        @T("CustomOrder.Label.Tickets")-->
+                        @*    <a href="#"><img src="/css/Customizations/Areas/CustomOrder/images/plus.png"></a>
+                        *@
+                    <!--</h4>
+                    <div class="comingsoon h1">
+                        @T("Common.ComingSoon")
+                    </div>
+                </div>
+
+            </div>-->
+        </div>
+        @*@await Component.InvokeAsync("ActivityLog", new { customerId = Model.Id })*@
+
+    </div>
+</div>

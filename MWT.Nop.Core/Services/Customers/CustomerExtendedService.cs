@@ -209,23 +209,25 @@ namespace MWT.Nop.Core.Services.Customers
         public virtual async Task<string> GetCustomerPhone(Customer customer)
         {
 
-            string phonenumber = "";
+            string phonenumber =customer.Phone;
 
-
-            var _addressService = EngineContext.Current.Resolve<IAddressService>();
-            if (customer.BillingAddressId.HasValue)
-            {
-                var address = await _addressService.GetAddressByIdAsync(Convert.ToInt32(customer.BillingAddressId));
-                phonenumber = address.PhoneNumber;
-            }
-            if (customer.ShippingAddressId.HasValue && string.IsNullOrEmpty(phonenumber))
-            {
-                var address = await _addressService.GetAddressByIdAsync(Convert.ToInt32(customer.ShippingAddressId));
-                phonenumber = address.PhoneNumber;
-            }
             if (string.IsNullOrEmpty(phonenumber))
             {
-                phonenumber = await _genericAttributeService.GetAttributeAsync<string>(customer, "Phone");
+                var _addressService = EngineContext.Current.Resolve<IAddressService>();
+                if (customer.BillingAddressId.HasValue)
+                {
+                    var address = await _addressService.GetAddressByIdAsync(Convert.ToInt32(customer.BillingAddressId));
+                    phonenumber = address.PhoneNumber;
+                }
+                if (customer.ShippingAddressId.HasValue && string.IsNullOrEmpty(phonenumber))
+                {
+                    var address = await _addressService.GetAddressByIdAsync(Convert.ToInt32(customer.ShippingAddressId));
+                    phonenumber = address.PhoneNumber;
+                }
+                if (string.IsNullOrEmpty(phonenumber))
+                {
+                    phonenumber = await _genericAttributeService.GetAttributeAsync<string>(customer, "Phone");
+                }
             }
             return phonenumber;
 

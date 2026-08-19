@@ -1,0 +1,159 @@
+﻿@model CustomOrderSearchModel
+@inject Nop.Services.Localization.ILocalizationService _localizedService;
+@inject IWebHelper webHelper
+@inject Nop.Core.IStoreContext _storeContext
+@inject Nop.Services.Payments.IPaymentPluginManager _paymentPluginManager
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor httpContextAccessor
+@using Nop.MWT.Nop.Core.Domain.CustomOrders;
+@{
+
+    //page title
+    ViewBag.PageTitle = T("CustomOrder.orders").Text;
+    //active menu item (system name)
+    Html.SetActiveMenuItemSystemName("Customers");
+
+    bool IsPartialOrderScreen = false; bool.TryParse(Context.Request.Query["IsPartialOrderScreen"].ToString(), out IsPartialOrderScreen);
+    var storeLocation = webHelper.GetStoreLocation();
+    var storeId = (await _storeContext.GetCurrentStoreAsync()).Id;
+    Model.SearchTerm = httpContextAccessor.HttpContext.Request.Query["searchterm"];
+}
+<!--Additional Service by Nikhil Mind Web tree-->
+<form asp-controller="AdditionalService" asp-action="List" method="post">
+    <div class="partial-payment1 p-3 mt-3 pl-4">
+        <h3 class="float-left heading">@T("CustomOrder.AdditionalService.Heading","")</h3>
+
+
+        <div class="dropdown ml-4">
+            <div class="" aria-labelledby="dropdownMenuButton">
+                <nop-select asp-for="searchStatusId" asp-items="Model.orderStatuses.Where(s=>s.Text!=OrderStatus.OrderSaved.ToString()
+&& s.Text!=OrderStatus.SavedDraft.ToString()).ToList()" />
+
+            </div>
+        </div>
+        @Html.TextBoxFor(m=>m.SearchTerm,null,new {@class= "form-control mr-sm-2 dropdown-search",@placeholder="search" })
+        <button type="button" id="search-orders" class="btn btn-primary btn-search d-none">
+            <i class="fas fa-search"></i>
+            @T("Admin.Common.Search")
+        </button>
+        <div class="dropdown ml-auto">
+            <a class="btn-neworder" href="@Url.Action("Create","AdditionalService", new { area="customorder"})">+ New Order</a>
+        </div>
+    </div>
+    <input type="hidden" name="IsPartialOrderScreen" id="IsPartialOrderScreen" value="@IsPartialOrderScreen.ToString().ToLower()" />
+
+    <div class="customers-details">
+
+        @{
+            var gridModel = new DataTablesModel
+            {
+                Name = "orders-grid",
+                UrlRead = new DataUrl("OrderList", "AdditionalService", null),
+                SearchButtonId = "search-orders",
+                Length = Model.PageSize,
+                LengthMenu = Model.AvailablePageSizes,
+                Filters = new List<FilterParameter>
+        {
+        new FilterParameter(nameof(Model.SearchTerm)),
+        new FilterParameter(nameof(Model.searchStatusId)),
+        new FilterParameter("IsPartialOrderScreen"),
+        }
+            };
+
+            gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomOrderModel.Id))
+            {
+                Title = T("CustomOrder.Orders.Fields.Orderid").Text
+            });
+            gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomOrderModel.FormattedCreatedOn))
+            {
+                Title = T("CustomOrder.Orders.Fields.Created").Text
+            });
+            gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomOrderModel.FormattedPromiseDayDate))
+            {
+                Title = T("CustomOrder.Orders.Fields.PromiseDayDate").Text
+            });
+            gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomOrderModel.CustomerEmail))
+            {
+                Title = T("CustomOrder.Orders.Fields.Customer").Text,
+                Render = new RenderCustom("renderhtml")
+            });
+            gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomOrderModel.OrderTotal))
+            {
+                Title = T("CustomOrder.Orders.Fields.OrderTotal").Text
+            });
+
+
+
+            gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomOrderModel.NoOfItems))
+            {
+                Title = T("CustomOrder.Orders.Fields.NoOfItems").Text
+            });
+
+            gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomOrderModel.OrderStatus))
+                {
+                    Title = T("CustomOrder.Orders.Fields.OrderStatus").Text,
+                    Render = new RenderCustom("renderStatus")
+                });
+
+            // New field
+
+
+        gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomerModel.Id))
+        {
+            Title = T("Admin.Common.View").Text,
+            Width = "300",
+       Render = new RenderCustom("orderactions")
+        });
+        
+
+
+        }
+        @await Html.PartialAsync("Table", gridModel)
+    </div>
+</form>
+<script type="text/javascript" asp-location="Footer">
+    var getOrderSummarryUrl = '@(storeLocation)Customorder/order/GetBriefSummaryOfOrder/';
+    var partialOrderSendLink = '@(storeLocation)Customorder/order/UpdateOrder/';
+    var paymentProcessUrl = '@(storeLocation)Customorder/order/ProcessPayment/';
+    var orderViewUrl='@Url.ActionLink("create")/';
+    function renderhtml(data, type, row, meta) {
+        return '<div class="text-center">' + row.CustomerName + '<br><code class="text-primary">' + row.CustomerEmail + '</code></div>';
+    }
+
+    function renderStatus(data, type, row, meta) {
+        if (data == "@(await this._localizedService.GetResourceAsync("CustomOrder.Status.Paid"))")
+            return '<button class="btn-infos confirm-green">Completed</button>';
+        else if (data == '@(await this._localizedService.GetResourceAsync("CustomOrder.Status.Pending"))')
+            return '<button class="btn-infos pending-color">@(await this._localizedService.GetResourceAsync("CustomOrder.Status.Pending"))</button>';
+        else if (data == '@(await this._localizedService.GetResourceAsync("CustomOrder.Status.PartiallyPaid"))')
+            return '<button class="btn-infos pending-color">@(await this._localizedService.GetResourceAsync("CustomOrder.Status.PartiallyPaid"))</button>';
+    }
+    $('#SearchTerm').on("keypress", function (e) {
+
+        if (e.keyCode == 13) {
+            e.preventDefault();
+            $("#search-orders").click()
+        }
+    });
+    $("#searchStatusId").change(function () {
+        $("#search-orders").click()
+    });
+    $("body").on("DOMSubtreeModified", ".dataTables_info", function (e) {
+        if ($(this).text().indexOf("items") > 0) {
+
+            var text = $(this).text();
+            $(".heading span").html("(" + text.substring(text.indexOf("of") + 2, text.length).replace("items", "").trim() + ")");
+        }
+        else {
+            $(".heading span").html("(0)");
+        }
+
+    });
+
+    function orderactions(data, type, row, meta) {
+        html = '<a class="actionOrderSummary" href="' + orderViewUrl + row.Id + '">@T("Common.View")</a>';
+        return html;
+ 
+    }
+</script>
+

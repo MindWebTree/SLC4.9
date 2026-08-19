@@ -1,0 +1,92 @@
+﻿@model CustomerSearchModel
+
+@{
+    //page title
+    ViewBag.PageTitle = T("CustomOrder.Customers").Text;
+    //active menu item (system name)
+    Html.SetActiveMenuItemSystemName("Customers");
+}
+
+<form asp-controller="Customer" asp-action="List" method="post">
+    <div class="partial-payment1 p-3 mt-3 pl-4">
+        <h3 class="float-left heading">@T("CustomOrder.Customers.Heading","")</h3>
+        @Html.TextBoxFor(m=>m.SearchTerm,null,new {@class= "form-control mr-sm-2 dropdown-search",@placeholder="search" })
+     
+        <button type="button" id="search-customers" class="btn btn-primary btn-search d-none">
+            <i class="fas fa-search"></i>
+            @T("Admin.Common.Search")
+        </button>
+    </div>
+
+
+    <div class="customers-details">
+
+            @{
+                var gridModel = new DataTablesModel
+                {
+                    Name = "customers-grid",
+                    UrlRead = new DataUrl("CustomerList", "Customer", null),
+                    SearchButtonId = "search-customers",
+                    Length = Model.PageSize,
+                    LengthMenu = Model.AvailablePageSizes,
+                    Filters = new List<FilterParameter>
+                                                                                                                                            {
+                                    new FilterParameter(nameof(Model.SearchTerm)),
+                                  }
+                };
+
+            
+
+
+
+                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomerModel.FullName))
+                {
+                    Title = T("CustomOrder.Customers.Fields.FullName").Text
+                });
+                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomerModel.Email))
+                {
+                    Title = T("CustomOrder.Customers.Fields.Email").Text
+                });
+                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomerModel.Location))
+                {
+                    Title = T("CustomOrder.Customers.Fields.Location").Text
+                });
+                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomerModel.NoOforders))
+                {
+                    Title = T("CustomOrder.Customers.Fields.NoOforders").Text
+                });
+                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomerModel.Spent))
+                {
+                    Title = T("CustomOrder.Customers.Fields.Spent").Text
+                });
+            gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomerModel.Id))
+            {
+                Title = T("Admin.Common.Edit").Text,
+                Width = "80",
+     
+                Render = new RenderButtonView (new DataUrl("History"))
+            });
+            }
+            @await Html.PartialAsync("Table", gridModel)
+    </div>
+</form>
+<script type="text/javascript" asp-location="Footer">
+    $('#SearchTerm').on("keypress", function (e) {
+    
+        if (e.keyCode == 13) {
+            e.preventDefault();
+            $("#search-customers").click()
+        }
+    });
+    $("body").on("DOMSubtreeModified", ".dataTables_info", function (e) {
+        if ($(this).text().indexOf("items") > 0) {
+        
+           var text = $(this).text();
+            $(".heading span").html("("+text.substring(text.indexOf("of") + 2, text.length).replace("items", "").trim()+")");
+        }
+        else {
+            $(".heading span").html("(0)");
+        }
+        console.log($(this).html());
+    });
+</script>

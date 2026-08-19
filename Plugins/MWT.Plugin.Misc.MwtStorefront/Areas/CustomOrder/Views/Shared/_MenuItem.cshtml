@@ -1,0 +1,34 @@
+﻿@model SiteMapNode
+@using Nop.Core.Domain.Localization
+@using Nop.Web.Framework.Menu
+@inject IWorkContext workContext
+@inject LocalizationSettings localizationSettings
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl && !localizationSettings.IgnoreRtlPropertyForAdminArea;
+    string url = null;
+    if (!string.IsNullOrEmpty(Model.ControllerName) && !string.IsNullOrEmpty(Model.ActionName))
+    {
+        url = Url.Action(Model.ActionName, Model.ControllerName, new { area="customorder"}, null, null);
+    }
+    else if (!string.IsNullOrEmpty(Model.Url))
+    {
+        url = Model.Url.StartsWith("~/", StringComparison.Ordinal) ? Url.Content(Model.Url) : Model.Url;
+    }
+    var isActive = Model.ContainsSystemName(Html.GetActiveMenuItemSystemName());
+}
+@if (!string.IsNullOrEmpty(url))
+{
+<li class="text-center pt-4">
+
+    <a href="@url" @(isActive ? Html.Raw("class=\"nav-link active\"") : Html.Raw("class=\"nav-link\"")) @(Model.OpenUrlInNewTab ? Html.Raw(" target=\"_blank\"") : null)>
+        @if (!string.IsNullOrEmpty(Model.IconClass))
+        {
+            <text>
+                <img src="@Model.IconClass"/>
+            </text>
+        }
+
+        <h6> @Html.Raw(Model.Title)</h6>
+    </a>
+</li>
+}

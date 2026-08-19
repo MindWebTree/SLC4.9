@@ -1,0 +1,178 @@
+@model CustomOrderShoppingCartItemModel
+@using Nop.MWT.Nop.Core.Domain.CustomOrders;
+@inject Nop.Core.Infrastructure.INopFileProvider _nopFileProvider;
+@{
+    string filePath = _nopFileProvider.MapPath("/wwwroot/images/shades/squareimage/");
+}
+@if (Model.Items.Count > 0)
+{
+    <div class="row">
+        <table class="table bg-light ml-5 mr-3 rounded">
+            <thead>
+                <tr style="border-bottom: 1px solid #000">
+                    <th scope="col" class="text-center border-0">Item</th>
+                    <th scope="col" class="text-center border-0"></th>
+                    <th scope="col" class="text-center border-0">Price/Unit</th>
+                    <th scope="col" class="text-center border-0">Qty</th>
+                    <th scope="col" class="text-center border-0">Item Adjustments</th>
+                    <th scope="col" class="text-center border-0">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr class="border-left border-0" id="tr-@(item.Id)">
+                        <th scope="row" class="text-center border-0 image-under-text">
+                            <img src="@item.Picture" width="100px">
+                            @if (Model.isEditable)
+                            {
+                                <h3>
+                                    <a data-id="@item.Id" class="itemremove" onclick="productsection.deleteItem(@item.Id)">Remove</a>
+                                    <a data-id="@item.Id" class="itemedit"> Edit</a>
+                                    <a data-id="@item.Id" class="itemupdate" style="display:none;"> Update</a>
+                                    <a data-id="@item.Id" class="itemUpdateCancel" style="display:none;"> Cancel</a>
+                                    <br>
+                                </h3>
+                            }
+                            
+
+
+                            
+
+
+                        </th>
+                        <td class="border-0 text-secondary">
+                            @item.Name<br>
+                            <spam class="sku"> @item.Sku</spam><br>
+                            @if (!string.IsNullOrEmpty(item.AttributesDescription))
+                            {
+
+                                <span class="attr">
+                                    @{
+                                        var attrs = item.AttributesDescription.Split(new string[] { "<br />" }, StringSplitOptions.RemoveEmptyEntries);
+                                        foreach (var attr in attrs)
+                                        {
+                                            var parts = attr.Split(':');
+                                            string imagePath = "";
+                                            if (parts.Length > 1)
+                                            {
+                                                var imgPath = "";
+                                                var attrValue = parts.Length > 2 ? string.Join(':', parts.Skip(1)) : parts[1];
+                                                if ((parts[0].ToLower().IndexOf("stain") >= 0 ||
+                                                parts[0].ToLower().IndexOf("shade") >= 0) &&
+                                                _nopFileProvider.FileExists(filePath + attrValue.Trim() + ".jpg")
+                                                )
+                                                {
+                                                    imagePath = "/images/shades/squareimage/" + attrValue.Trim() + ".jpg";
+                                                }
+
+
+
+                                                <p>
+                                                    @if (imagePath!=""){
+                                                        <text>
+                                                        @parts[0]:<img class="shadeimage" src="@imagePath"/> @attrValue
+                                                        </text>
+                                                    }else{
+                                                         <text>
+                                                        @parts[0]: @Html.Raw(System.Net.WebUtility.HtmlDecode(attrValue))
+                                                        </text>
+                                                    }
+                                                   
+                                                </p>
+                                            }
+                                        }
+                                    }
+
+                                </span>
+                            }
+                            else if (!string.IsNullOrEmpty(item.CustomAttributesDescription))
+                            {
+                                
+                                <span class="attr">
+                                    @{
+                                        var attrs = item.CustomAttributesDescription.Split(new string[] { "<br />" }, StringSplitOptions.RemoveEmptyEntries);
+                                        foreach (var attr in attrs)
+                                        {
+                                            var parts = attr.Split(':');
+                                            string imagePath = "";
+                                            if (parts.Length > 1)
+                                            {
+                                                var imgPath = "";
+                                                var attrValue = parts.Length > 2 ? string.Join(':', parts.Skip(1)) : parts[1];
+                                                if ((parts[0].ToLower().IndexOf("stain") >= 0 ||
+                                                parts[0].ToLower().IndexOf("shade") >= 0) &&
+                                                _nopFileProvider.FileExists(filePath + attrValue.Trim() + ".jpg")
+                                                )
+                                                {
+                                                    imagePath = "/images/shades/squareimage/" + attrValue.Trim() + ".jpg";
+                                                }
+
+
+
+                                                <p>
+                                                    @if (imagePath!=""){
+                                                        <text>
+                                                        @parts[0]:<img class="shadeimage" src="@imagePath"/> @attrValue
+                                                        </text>
+                                                    }else{
+                                                         <text>
+                                                        @parts[0]: @attrValue
+                                                        </text>
+                                                    }
+                                                   
+                                                </p>
+                                            }
+                                        }
+                                    }
+
+                                </span>
+
+                                
+                            }
+                            <span class="itemnotes" id="item-@item.Id-notes">@Html.Raw(item.Notes)</span>
+                            <a class="add-item-note" data-toggle="modal" data-id="@item.Id">
+                                @(string.IsNullOrEmpty(item.Notes) ? "Add Item Note" : "Edit Item Note")
+                            </a>
+                        </td>
+                        <td class="text-center border-0 text-secondary">@item.Price</td>
+                        <td class="text-center border-0 text-secondary">
+                            <input type="number" name="quantity" data-qty="@item.Quantity" value="@item.Quantity" style="width:60px;" disabled class="disabled" />
+                        </td>
+
+                        @if (item.DiscountType == DiscountType.Percentage.ToString())
+                        {
+                            <td class="text-center border-0 notedit @(item.ChargeType==ChargeType.Subtract.ToString()?"text-success":"text-danger")">
+                                @(item.TotalAdjustment != "$0.00" ? item.TotalAdjustment : "") 
+                                <input type="text" name="discount" data-discount="@(item.DiscountPercentage>0?(item.ChargeType==ChargeType.Subtract.ToString()?"-":"")+item.DiscountPercentage+"%":"")" style="width:60px;" value="@((item.ChargeType==ChargeType.Subtract.ToString()?"-":"")+(item.DiscountPercentage!=0?item.DiscountPercentage+"%":""))" disabled class="disabled" />
+                            </td>
+                        }
+                        else
+                        {
+                            <td class="text-center border-0 notedit @(item.ChargeType==ChargeType.Subtract.ToString()?"text-success":"text-danger")">
+                                @(item.TotalAdjustment != "$0.00" ? item.TotalAdjustment : "")<br>
+                                <input type="text" name="discount" data-discount="@(item.DiscountAmount!=0?(item.ChargeType==ChargeType.Subtract.ToString()?"-":"")+item.DiscountAmount:"")" style="width:60px;" value="@((item.ChargeType==ChargeType.Subtract.ToString()?"-":"")+(item.DiscountAmount!=0?item.DiscountAmount:""))" class="disabled" />
+                            </td>
+                        }
+                        <td class="text-center border-0 text-secondary">
+                            @item.Total
+
+                        </td>
+
+                    </tr>
+
+                }
+
+
+                <tr class="border-top">
+                    <th scope="row" class="text-center border-0"></th>
+                    <td class="border-0 text-center align-middle"></td>
+                    <td class="border-0 text-center align-middle"></td>
+                    <td class="border-0 text-center align-middle"></td>
+                    <td class="border-0 text-right align-middle font-weight-bold">Cart Total</td>
+                    <td class="border-0 text-center align-middle">@Model.Total</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+}

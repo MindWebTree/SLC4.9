@@ -1,0 +1,70 @@
+@model OrderDetailSummarryModel
+
+@if (!string.IsNullOrEmpty(Model.OrderStatus))
+{
+    <div class="orderdetails">
+        <h1>Order Details</h1>
+        <div class="row">
+            <div class="col-4">
+                CustomOrderNumber:@Model.Orderid
+            </div>
+            <div class="col-4">
+                OrderNumber:@Model.LiveOrderNumber
+            </div>
+            <div class="col-4">
+                OrderStatus:@Model.OrderStatus
+            </div>
+            <div class="col-4">
+                LastUpdated:@Model.LastUpdatedOn
+            </div>
+            <div class="col-4">
+                LastUpdatedBy:@Model.LastUpdatedBy
+            </div>
+        </div>
+    </div>
+
+}
+
+@if (Model.Logs != null && Model.Logs.Count > 0  )
+{
+    <div class="statuslog">
+        <h1>Order Status Log</h1>
+        <table>
+            <tr>
+                <th>OrderNumber</th>
+                <th>UpdatedBy</th>
+                <th>UpdatedON</th>
+                <th>Status</th>
+                <th>Comments</th>
+				<th>Payment Info</th>
+            </tr>
+            @foreach (var log in Model.Logs)
+            {
+                <tr>
+                    <td>@log.Orderid</td>
+                    <td>@(string.IsNullOrEmpty((log.CustomerName??"").Trim())?"Automation":log.CustomerName)</td>
+                    <td>@log.CreatedOn</td>
+                    <td>
+                        @{
+                            if (string.IsNullOrEmpty(log.InvoiceSendTo))
+                            {
+                                @log.Status
+                            }
+                            else
+                            {
+                                @( log.EmailStatus+ "[" +log.InvoiceSendTo + "]")
+
+
+                            }
+                        }
+
+
+                    </td>
+                    <td>@log.Comments</td>
+					  <td>@log.TransactionInfo</td>
+                </tr>
+            }
+        </table>
+    </div>
+
+}

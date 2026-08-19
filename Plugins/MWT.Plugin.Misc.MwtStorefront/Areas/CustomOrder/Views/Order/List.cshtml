@@ -1,0 +1,521 @@
+﻿@model CustomOrderSearchModel
+@inject Nop.Services.Localization.ILocalizationService _localizedService;
+@inject IWebHelper webHelper
+@inject Nop.Core.IStoreContext _storeContext
+@inject Nop.Services.Payments.IPaymentPluginManager _paymentPluginManager
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor httpContextAccessor
+@{
+
+    //page title
+    ViewBag.PageTitle = T("CustomOrder.orders").Text;
+    //active menu item (system name)
+    Html.SetActiveMenuItemSystemName("Customers");
+
+    bool IsPartialOrderScreen = false; bool.TryParse(Context.Request.Query["IsPartialOrderScreen"].ToString(), out IsPartialOrderScreen);
+    var storeLocation = webHelper.GetStoreLocation();
+    var storeId = (await _storeContext.GetCurrentStoreAsync()).Id;
+    Model.SearchTerm = httpContextAccessor.HttpContext.Request.Query["searchterm"];
+}
+
+<form asp-controller="Order" asp-action="List" method="post">
+    <div class="partial-payment1 p-3 mt-3 pl-4">
+
+        <h3 class="float-left heading">@T((IsPartialOrderScreen ? "CustomOrder.Partial.orders.Heading" : "CustomOrder.orders.Heading"), "")</h3>
+
+
+        <div class="dropdown ml-4">
+            <div class="" aria-labelledby="dropdownMenuButton">
+                <nop-select asp-for="searchStatusId" asp-items="Model.orderStatuses" />
+
+            </div>
+        </div>
+        <nop-editor asp-for="IsArchived" />
+        <label class="form-check-label" for="IsArchived">@T("CustomOrder.Partial.orders.label.IsArchived")</label>
+
+        @Html.TextBoxFor(m => m.SearchTerm, null, new { @class = "form-control mr-sm-2 dropdown-search", @placeholder = "search" })
+        <button type="button" id="search-orders" class="btn btn-primary btn-search d-none">
+            <i class="fas fa-search"></i>
+            @T("Admin.Common.Search")
+        </button>
+        <div class="dropdown ml-auto">
+            <a class="btn-neworder" href="@Url.Action("CreateOrder","Order", new { area="customorder"})">+ New Order</a>
+        </div>
+    </div>
+    <input type="hidden" name="IsPartialOrderScreen" id="IsPartialOrderScreen" value="@IsPartialOrderScreen.ToString().ToLower()" />
+
+    <div class="customers-details">
+
+        @{
+            var gridModel = new DataTablesModel
+            {
+                Name = "orders-grid",
+                UrlRead = new DataUrl("OrderList", "Order", null),
+                SearchButtonId = "search-orders",
+                Length = Model.PageSize,
+                LengthMenu = Model.AvailablePageSizes,
+                Filters = new List<FilterParameter>
+        {
+        new FilterParameter(nameof(Model.SearchTerm)),
+           new FilterParameter(nameof(Model.IsArchived),typeof(bool)),
+        new FilterParameter(nameof(Model.searchStatusId)),
+        new FilterParameter("IsPartialOrderScreen"),
+        }
+            };
+
+            gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomOrderModel.OrderNumberWithPrefix))
+            {
+                Title = T("CustomOrder.Orders.Fields.OrderNumberWithPrefix").Text,
+                Width = "100"
+            });
+            gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomOrderModel.FormattedCreatedOn))
+            {
+                Title = T("CustomOrder.Orders.Fields.Created").Text,
+                Width = "100"
+            });
+            gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomOrderModel.CustomerEmail))
+            {
+                Title = T("CustomOrder.Orders.Fields.Customer").Text,
+                Width = "100",
+                Render = new RenderCustom("renderhtml")
+            });
+            gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomOrderModel.OrderTotal))
+            {
+                Width = "100",
+                Title = T("CustomOrder.Orders.Fields.OrderTotal").Text
+            });
+            if (IsPartialOrderScreen)
+            {
+                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomOrderModel.Pending))
+                {
+                    Title = T("CustomOrder.Orders.Fields.Pending").Text,
+                    ClassName = "pending"
+                });
+            }
+            gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomOrderModel.NoOfItems))
+            {
+                Width = "80",
+                Title = T("CustomOrder.Orders.Fields.NoOfItems").Text
+            });
+            if (!IsPartialOrderScreen)
+            {
+                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomOrderModel.OrderStatus))
+                {
+                    Title = T("CustomOrder.Orders.Fields.OrderStatus").Text,
+                    Width = "100",
+                    Render = new RenderCustom("renderStatus")
+                });
+            }
+            if (!IsPartialOrderScreen)
+            {
+                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomerModel.Id))
+                {
+                    Title = T("Admin.Common.View").Text,
+                    Width = "80",
+                    Render = new RenderButtonView(new DataUrl("OrderDetails"))
+                });
+            }
+            else
+            {
+                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomerModel.Id))
+                {
+                    Title = T("Admin.Common.View").Text,
+                    Width = "300",
+
+                    Render = new RenderCustom("orderactions")
+                });
+            }
+            if (!IsPartialOrderScreen)
+            {
+                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomOrderModel.DeletedBy))
+                {
+                    Title = T("CustomOrder.Orders.Fields.DeletedBy").Text,
+                    Width = "80",
+                    ClassName = "Deletedby-column ms-2 " + NopColumnClassDefaults.Button
+                });
+
+                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(CustomOrderModel.DeletedOn))
+                {
+                    Title = T("CustomOrder.Orders.Fields.DeletedOn").Text,
+                    Width = "80",
+                    ClassName = "DeletedOn-column ms-2 " + NopColumnClassDefaults.Button
+                });
+
+                gridModel.ColumnCollection.Add(
+                    new ColumnProperty(nameof(CustomOrderModel.Id))
+                    {
+                        Title = T("admin.catalog.products.pictures.fields.action").Text,
+                        Render = new RenderCustom("renderRestoreButton"),
+                        Width = "80",
+                        ClassName = "restore-button-column " + NopColumnClassDefaults.Button
+                    });
+
+                gridModel.ColumnCollection.Add(
+                new ColumnProperty(nameof(CustomOrderModel.Id))
+                {
+                    Title = T("admin.catalog.products.pictures.fields.action").Text,
+                    Render = new RenderCustom("renderDeleteButton"),
+                    Width = "80",
+                    ClassName = "delete-button-column " + NopColumnClassDefaults.Button
+                });
+            }
+        }
+        @await Html.PartialAsync("Table", gridModel)
+    </div>
+</form>
+<script type="text/javascript" asp-location="Footer">
+    var getOrderSummarryUrl = '@(storeLocation)Customorder/order/GetBriefSummaryOfOrder/';
+    var partialOrderSendLink = '@(storeLocation)Customorder/order/UpdateOrder/';
+    var paymentProcessUrl = '@(storeLocation)Customorder/order/ProcessPayment/';
+    function renderhtml(data, type, row, meta) {
+        return '<div class="text-center">' + row.CustomerName + '<br><code class="text-primary">' + row.CustomerEmail + '</code></div>';
+    }
+
+    function renderStatus(data, type, row, meta) {
+        if (data == "@(await this._localizedService.GetResourceAsync("CustomOrder.Status.Paid"))")
+            return '<button class="btn-infos confirm-green">Completed</button>';
+        else if (data == '@(await this._localizedService.GetResourceAsync("CustomOrder.Status.Pending"))')
+            return '<button class="btn-infos pending-color">@(await this._localizedService.GetResourceAsync("CustomOrder.Status.Pending"))</button>';
+        else if (data == '@(await this._localizedService.GetResourceAsync("CustomOrder.Status.PartiallyPaid"))')
+            return '<button class="btn-infos pending-color">@(await this._localizedService.GetResourceAsync("CustomOrder.Status.PartiallyPaid"))</button>';
+    }
+    $('#SearchTerm').on("keypress", function (e) {
+
+        if (e.keyCode == 13) {
+            e.preventDefault();
+            $("#search-orders").click()
+        }
+    });
+    $("#searchStatusId").change(function () {
+        $("#search-orders").click()
+    });
+    $("body").on("DOMSubtreeModified", ".dataTables_info", function (e) {
+        if ($(this).text().indexOf("items") > 0) {
+
+            var text = $(this).text();
+            $(".heading span").html("(" + text.substring(text.indexOf("of") + 2, text.length).replace("items", "").trim() + ")");
+        }
+        else {
+            $(".heading span").html("(0)");
+        }
+
+    });
+
+    function orderactions(data, type, row, meta) {
+
+        var html = '<div class="orderactions"><div><button class="btn-infos btnpartialordersendlink" type="button" data-email="' + row.CustomerEmail + '" data-orderid="' + row.Id + '">Send Link</button></div><div></div>';
+        html = html + '<div><a class="actionOrderSummary" data-orderid="' + row.Id + '"><i class="fa fa-angle-up"></i></a></div></div>';
+        return html;
+    }
+    $("body").on("click", ".actionOrderSummary", function () {
+        var islastTr = false;
+        var nextElement = $(this).parent().parent().parent().parent().next();
+
+        if (nextElement.length == 0) {
+            nextElement = $(this).parent().parent().parent().parent();
+            islastTr = true;
+        }
+        var obj = $(this);
+        if ($(this).find("i").hasClass("fa-angle-down")) {
+
+
+            if (nextElement.hasClass("ordersummary")) {
+                $(nextElement).addClass("d-none");
+
+                $(this).find("i").removeClass("fa-angle-down");
+                $(this).find("i").addClass("fa-angle-up");
+            }
+        }
+        else {
+            if (nextElement.hasClass("ordersummary")) {
+                $(nextElement).removeClass("d-none");
+                $(this).find("i").removeClass("fa-angle-up");
+                $(this).find("i").addClass("fa-angle-down");
+            }
+            else {
+                $.ajax({
+                    cache: false,
+                    url: getOrderSummarryUrl + "?orderId=" + $(this).attr("data-orderid"),
+                    type: "Get",
+                    success: function (result) {
+                        if (islastTr)
+                            $(result).insertAfter(nextElement);
+                        else
+                            $(result).insertBefore(nextElement);
+                        $(obj).find("i").removeClass("fa-angle-up");
+                        $(obj).find("i").addClass("fa-angle-down");
+                    }
+                })
+            }
+        }
+    });
+    $("body").on("click", ".btnpartialordersendlink", function (e) {
+        var orderId = $(this).attr("data-orderid");
+        var email = $(this).attr("data-email");
+        $(".btnsendinvoice").attr("data-orderid", orderId);
+        $("#invoice_email").val(email);
+        $("#customorder-invoice-model").modal('show')
+
+    });
+    $("body").on("click", ".btnsendinvoice", function (e) {
+        if (!ValidateEmail($("#invoice_email").val())) {
+            $("#invoice_email").focus();
+            return;
+        }
+        $("#customorder-invoice-model").modal('hide');
+        var formdata = new URLSearchParams();
+        formdata.append(`Id`, $(".btnsendinvoice").attr("data-orderid"));
+        formdata.append(`CustomerEmail`, $("#invoice_email").val());
+        formdata.append(`orderTypeUpdate`, "PartialOrderPaymentLink");
+        formdata.append(`orderId`, $(".btnsendinvoice").attr("data-orderid"));
+
+        var tokenInput = $('input[name=__RequestVerificationToken]');
+        if (tokenInput.length) {
+            formdata += "&__RequestVerificationToken=" + tokenInput.val();
+        }
+        $.ajax({
+            cache: false,
+            url: partialOrderSendLink,
+            type: "Post",
+            data: formdata,
+            success: function (data) {
+                if (data.response.notificationMessage && data.response.notificationMessage != null) {
+                    swal.fire(
+                        {
+                            icon: 'success',
+                            html: data.response.notificationMessage
+                        })
+                }
+            }
+        })
+    });
+    $("body").on("click", ".btn-charge", function (e) {
+        $('#enter_Authorize_Net').modal('show');
+
+        $('#enter_Authorize_Net .paymentinfo input').val('');
+        $('#orderId').val($(this).attr("data-orderid"));
+        $('.amountToPay').html($(this).attr("data-amount"));
+    });
+    $("body").on("click", ".creditCardAction", function (e) {
+        var formData = $("#paymentForm").serialize();
+        var tokenInput = $('input[name=__RequestVerificationToken]');
+        if (tokenInput.length) {
+            formData += "&__RequestVerificationToken=" + tokenInput.val();
+        }
+        $(".creditCardAction").attr("disabled",true);
+        $(".creditCardAction").addClass("activeLoading");
+        $.ajax({
+            cache: false,
+            url: paymentProcessUrl,
+            type: "Post",
+            data: formData,
+            success: function (data) {
+             $(".creditCardAction").removeAttr("disabled",true);
+             $(".creditCardAction").removeClass("activeLoading");
+                if (data.response.statuscode == 200) {
+                    if (data.response.notificationMessage && data.response.notificationMessage != null) {
+                        swal.fire(
+                            {
+                                icon: 'success',
+                                html: data.response.notificationMessage
+                            })
+                            .then(function () {
+                                window.location = window.location.href;
+                            });
+                    }
+
+                }
+                else {
+                    if (data.response.notificationMessage && data.response.notificationMessage != null) {
+
+                        swal.fire(
+                            {
+                                title: 'Oops...',
+                                icon: 'error',
+                                html: data.response.notificationMessage
+                            })
+                    }
+                    else if (data.response.message && data.response.message != null) {
+                        swal.fire(
+                            {
+                                title: 'Oops...',
+                                icon: 'error',
+                                html: data.response.message
+                            })
+
+                    }
+                }
+            },
+            error: function (data) {
+                $(".creditCardAction").removeAttr("disabled", true);
+                $(".creditCardAction").removeClass("activeLoading");
+                swal.fire(
+                    {
+                        title: 'Oops...',
+                        icon: 'error',
+                        html: data
+                    })
+            }
+        });
+    });
+    function ValidateEmail(input) {
+
+        var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+        if (input.match(validRegex)) {
+   return true;
+  } else {
+  return false;
+
+        }
+    }
+
+
+
+   let selectedOrderId = null;
+    let selectedAction = null;
+function renderRestoreButton(data, type, row, meta) {
+        return `<button type="button" class="btn btn-default restore-order" data-id="${row.Id}">
+                <i class="fa fa-undo"></i>  @T("Common.Restore")
+            </button>`;
+    }
+
+  $(document).on("click", ".restore-order", function () {
+        selectedOrderId = $(this).data("id");
+        selectedAction = "restore";
+        $("#order-action-title").text("@T("CustomOrder.Orders.Restore.Popup.Heading")");
+        $("#order-action-body").text("@T("CustomOrder.Orders.Restore.Popup.Body")");
+        $("#order-action-confirm-btn").removeClass("btn-danger").addClass("btn-primary").text("@T("common.restore")");
+        $('#order-action-confirmation').modal('show');
+  });
+
+ function renderDeleteButton(data, type, row, meta) {
+       
+     return `<button type="button" class="btn btn-default delete-order" data-id="${row.Id}" style="visibility:${row.OrderStatus && row.OrderStatus.trim().toLowerCase() === "pending" ?"visible":"hidden"}">
+                    <i class="far fa-trash-alt"></i> @T("Common.Delete")
+                </button>`;
+       
+    }
+       $(document).on("click", ".delete-order", function () {
+        selectedOrderId = $(this).data("id");
+        selectedAction = "delete";
+
+        $("#order-action-title").text("@T("CustomOrder.Orders.Delete.Popup.Heading")");
+        $("#order-action-body").text("@T("CustomOrder.Orders.Delete.Popup.Body")");
+        $("#order-action-confirm-btn").removeClass("btn-primary").addClass("btn-danger").text("@T("common.delete")");
+
+        $('#order-action-confirmation').modal('show');
+    });
+    $("#order-action-confirm-btn").on("click", function () {
+        if (!selectedOrderId || !selectedAction) return;
+
+        var token = $('input[name="__RequestVerificationToken"]').val();
+        var url = selectedAction === "restore"
+            ? "/CustomOrder/Order/RestoreOrder"
+            : "/CustomOrder/Order/Archive";
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: {
+                id: selectedOrderId,
+                __RequestVerificationToken: token
+            },
+            success: function () {
+                $('#order-action-confirmation').modal('hide');
+                $("#orders-grid").DataTable().ajax.reload(); // reload the table
+            },
+            error: function () {
+                alert("Something went wrong.");
+            }
+        });
+
+        // Clear state
+        selectedOrderId = null;
+        selectedAction = null;
+    });
+
+    $("#IsArchived").change(function () {
+        $("#search-orders").click();
+        toggleArchivedColumns();
+    });
+    $(document).ready(function () {
+      toggleArchivedColumns();
+    });
+
+    function toggleArchivedColumns() {
+        var isArchived = $("#IsArchived").is(":checked"); // or use actual checkbox ID
+        var table = $("#orders-grid").DataTable();
+        table.columns('.Deletedby-column').visible(isArchived);
+        table.columns('.DeletedOn-column').visible(isArchived);
+        table.columns('.restore-button-column').visible(isArchived);
+        table.columns('.delete-button-column').visible(!isArchived);
+
+        if (isArchived) {
+            $(".dataTables_scroll").addClass("archived");
+        } else {
+            $(".dataTables_scroll").removeClass("archived");
+        }
+    }
+</script>
+
+
+
+
+@***Invoice***@
+<div class="modal fade" id="customorder-invoice-model" tabindex="-1" role="dialog" aria-labelledby="add_invoiceLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header p-2 m-4">
+                <div class="row">
+                    <div class="col-md-7">
+                        <h5 class="modal-title" id="add_shippingLabel">Invoice</h5>
+                    </div>
+                    <div class="col-md-5">
+
+                        <button class="text-danger border-0 bg-white pr-3" data-dismiss="modal">Cancel</button>
+                        <button class="border-0 bg-white pl-3 btnsendinvoice" data-orderid="">Send</button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body p-0 ml-4 mr-4">
+                <form>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3>Email</h3>
+                            <input type="email" step="1" name="invoice_email" placeholder="Enter Email" id="invoice_email" required="required">
+
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@*Confirmation box*@
+
+<div id="order-action-confirmation" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="order-action-title">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="order-action-title">Are you sure?</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body" id="order-action-body">
+                Are you sure you want to perform this action?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">No, Cancel</button>
+                <button type="button" class="btn btn-danger" id="order-action-confirm-btn">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

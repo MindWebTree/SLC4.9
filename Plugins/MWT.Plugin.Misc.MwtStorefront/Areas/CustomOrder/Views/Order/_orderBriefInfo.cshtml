@@ -1,0 +1,122 @@
+﻿@model CustomOrderModel
+@using Nop.MWT.Nop.Core.Domain.CustomOrders
+<tr class="ordersummary">
+    <td colspan="7">
+        <div class="row mt-4">
+            <div class="cols-md-3 pl-4 border-right p-0 pt-3">
+                @if (Model.ShippingAddress != null)
+                {
+                    <h6>Ship To</h6>
+                    <p>
+                        <small>
+                            @Model.ShippingAddress.FirstName @Model.ShippingAddress.LastName<br>
+                            @Model.CustomerEmail<br>
+                            @Model.ShippingAddress.PhoneNumber<br>
+                            @Model.ShippingAddress.Address1,<br>
+                            @Model.ShippingAddress.Address2   @Model.ShippingAddress.County, @Model.ShippingAddress.StateProvinceName @Model.ShippingAddress.ZipPostalCode.  @Model.ShippingAddress.CountryName
+                        </small>
+                    </p>
+                }
+                @if (Model.BillingAddress != null)
+                {
+                    <h6>Bill To</h6>
+                    <p>
+                        <small>
+                            @Model.BillingAddress.FirstName @Model.BillingAddress.LastName<br>
+                            @Model.BillingAddress.Email<br>
+                            @Model.BillingAddress.PhoneNumber<br>
+                            @Model.BillingAddress.Address1,<br>
+                            @Model.BillingAddress.Address2   @Model.BillingAddress.County, @Model.BillingAddress.StateProvinceName @Model.BillingAddress.ZipPostalCode.  @Model.BillingAddress.CountryName
+                        </small>
+                    </p>
+                }
+
+            </div>
+            @if (Model.customOrderShoppingCartItemModel.Items.Count > 0)
+            {
+                <div class="col-md-7 border-right px-5">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="text-center border-0">Image</th>
+                                <th scope="col" class="text-center border-0">SKU</th>
+                                <th scope="col" class="text-center border-0">Price</th>
+                                <th scope="col" class="text-center border-0">	Adjustment</th>
+                                <th scope="col" class="text-center border-0">Qty</th>
+                                <th scope="col" class="text-center border-0">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.customOrderShoppingCartItemModel.Items)
+                            {
+                                <tr class="border-left border-0">
+                                    <th scope="row" class="text-center border-0"><img width="100px" src="@item.Picture"></th>
+                                    <td class="text-center border-0 align-middle">@item.Sku</td>
+                                    <td class="text-center border-0 align-middle">@item.Price</td>
+                                    <td class="text-center border-0 align-middle @(item.ChargeType==ChargeType.Subtract.ToString()?"text-success":"text-danger")"> @(item.TotalAdjustment != "$0.00" ? item.TotalAdjustment : "")</td>
+                                    <td class="text-center border-0 align-middle">@item.Quantity</td>
+                                    <td class="text-center border-0 align-middle">@item.Total</td>
+                                </tr>
+                            }
+                            <tr class="border-top border-0">
+                                <th scope="row" class="text-center border-0"></th>
+                                <td class="text-center align-middle"></td>
+                                <td class="text-center align-middle"></td>
+                                <td class="text-center align-middle"></td>
+                                <td class="text-right align-middle font-weight-bold">Sub Total</td>
+                                <td class="text-center align-middle">@Model.customOrderSummaryModel.SubTotal</td>
+                            </tr>
+                            @if (!string.IsNullOrEmpty(Model.customOrderSummaryModel.SubTotalDiscount))
+                            {
+                                <tr class="border-top border-0">
+                                    <th scope="row" class="text-center border-0"></th>
+                                    <td class="text-center border-0 align-middle"></td>
+                                    <td class="text-center border-0 align-middle"></td>
+                                    <td class="text-center border-0 align-middle"></td>
+                                    <td class="text-right border-0 align-middle font-weight-bold pt-0">SubTotal Discount</td>
+                                    <td class="text-center border-0 align-middle pt-0">@Model.customOrderSummaryModel.SubTotalDiscount</td>
+                                </tr>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.customOrderSummaryModel.InitialPayment))
+                            {
+                                <tr class="border-top border-0">
+                                    <th scope="row" class="text-center border-0"></th>
+                                    <td class="text-center border-0 align-middle"></td>
+                                    <td class="text-center border-0 align-middle"></td>
+                                    <td class="text-center border-0 align-middle"></td>
+                                    <td class="text-right border-0 align-middle font-weight-bold pt-0">Partial Payment</td>
+                                    <td class="text-center border-0 align-middle pt-0">@Model.customOrderSummaryModel.InitialPayment</td>
+                                </tr>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.customOrderSummaryModel.PendingPayment))
+                            {
+                                <tr class="border-top border-0">
+                                    <th scope="row" class="text-center border-0"></th>
+                                    <td class="text-center border-0 align-middle"></td>
+                                    <td class="text-center border-0 align-middle"></td>
+                                    <td class="text-center border-0 align-middle"></td>
+                                    <td class="text-right border-0 align-middle font-weight-bold pt-0">Payment Due</td>
+                                    <td class="text-center border-0 align-middle pt-0">@Model.customOrderSummaryModel.PendingPayment</td>
+                                </tr>
+                            }
+                            <tr class="border-bottom border-0">
+                                <th scope="row" class="text-center border-0"></th>
+                                <td class="text-center align-middle"></td>
+                                <td class="text-center align-middle"></td>
+                                <td class="text-center align-middle"></td>
+                                <td class="text-right align-middle font-weight-bold">Total</td>
+                                <td class="text-center align-middle">@Model.customOrderSummaryModel.OrderTotal</td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+            }
+            <div class="col-md-2 text-center card-btns">
+                <a class="btn-light border px-4 rounded-pill py-1" href="@Url.Action("OrderDetails", "Order", new { area="customorder",Id=Model.Id}, null, null)"><small>View Order Detail</small></a>
+                <button class="btn-infos mt-2 px-5 rounded-pill border-0 py-1 btnpartialordersendlink" type="button" data-orderid="@Model.Id"><small>Send Link</small></button>
+                <button class="btn-charge mt-2 pl-4 pr-5 rounded-pill border-0 py-1" type="button" data-orderid="@Model.Id" data-amount="@Model.customOrderSummaryModel.PendingPayment"><small>Charge Now</small></button>
+            </div>
+        </div>
+    </td>
+</tr>

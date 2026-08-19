@@ -1,0 +1,902 @@
+﻿@model CustomOrderModel
+@inject IWebHelper webHelper
+@using Nop.MWT.Nop.Core.Domain.CustomOrders
+@inject Nop.Services.Localization.ILocalizationService _localizationService;
+@inject IStoreContext _storeContext
+@{
+    ViewBag.headingextraData = string.Format((await _localizationService.GetResourceAsync("CustomOrder.Order.Heading.ExtraInfo")), Model.Id);
+    var storeLocation = (await _storeContext.GetCurrentStoreAsync()).Url;
+    bool isPaid = Model.OrderStatus == OrderStatus.Paid.ToString() ? true : false;
+    bool isComplementryWgsFree = Model.ComplementryWgsFree;
+}
+<link href="https://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+
+<script>
+    var paidOrderPaymenmethod = "cashondelivery";
+    var pendingOrderPaymenmethod = "collectpayment";
+    var btnSubmit = "@T("customform.button")";
+    var collectPaymentVtn = "Collect Payment";
+    var cashPaymentMethodName = "cash";
+    var creditPaymentMethodName = "authorize";
+    var paymentMethodNotExist = " {0} Payment method not exist";
+    customOrderModule.init('@OrderTypes.CustomOrder.ToString()');
+    var phoneValidationError = '@await _localizationService.GetResourceAsync("Account.Fields.Phone.NotValid")';
+</script>
+<script>
+    $(function () {
+        $.widget("custom.iconselectmenu", $.ui.selectmenu, {
+            _renderItem: function (ul, item) {
+                var li = $("<li>"),
+                    wrapper = $("<div>", { text: item.label });
+
+                if (item.disabled) {
+                    li.addClass("ui-state-disabled");
+                }
+
+                $("<span>", {
+                    style: item.element.attr("data-style"),
+                    "class": "ui-icon " + item.element.attr("data-class")
+                })
+                    .appendTo(wrapper);
+
+                return li.append(wrapper).appendTo(ul);
+            }
+        });
+    });
+
+</script>
+<div class="col-md-12">
+    <div class="headingActionSection">
+        <a href="@Url.Action("List","Order", new { area="customorder"})" class="cancel-btn">Cancel</a>
+        @if (string.IsNullOrEmpty(Model.OrderStatus))
+        {
+            <a id="btndraft" class="save-btn">Save as Draft</a>
+        }
+    </div>
+</div>
+
+
+<form class="form-page1" id="customorder-form">
+    <div class="row px-4 pt-5 form-main">
+        <div class="col-8 custom-order-steps">
+            @*------------- Order Type Section-----------------------*@
+            <input type="hidden"
+                   value="@Model.Id" id="orderId" name="orderId" />
+            <script asp-location="Footer">
+                orderTypeSection.init('@(storeLocation)Customorder/order/UpdateOrderType/', '@(storeLocation)Customorder/order/SaveOrderTypeDetails/', '#customorder-UpdateOrderType', '@(storeLocation)Customorder/order/UpdateCustomer/', '@(storeLocation)Customorder/order/CreateUpdateCustomer/', '#CustomOrder_CustomerSection-form');
+            </script>
+
+
+
+            <div class="form-group d-flex">
+                <h6 class="text-white @(Model.EnableCustomerSearch || isPaid?"bg-success":"bg-dark") font-weight-bold px-2 py-1 mr-2 ordertypestep">1</h6>
+
+                <nop-label asp-for="@Model.orderTypes" />
+                @if (Model.OrderStatus == null || Model.OrderStatus != OrderStatus.Paid.ToString())
+                {
+                    <div class="custom-select1" style="width:220px;">
+                        <select name="OrderTypeId" id="OrderTypeId" class="form-control">
+                            <option disabled selected> -- select an option -- </option>
+                            @foreach (var item in Model.orderTypes)
+                            {
+                                if (item.Selected)
+                                {
+                                    <option selected value="@item.Value"> @item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value"> @item.Text</option>
+                                }
+                            }
+                        </select>
+
+                    </div>
+                    <div class="custom-select1" style="width:220px;">
+                        <select name="SubOrderTypeId" id="SubOrderTypeId" class="form-control"
+                                style="@(Model.orderTypes.Where(m => m.Selected).FirstOrDefault()?.Text=="AlreadyPaid"?"":"display:none;")">
+                            <option disabled selected> -- select an option -- </option>
+                            @foreach (var item in Model.subOrderTypes)
+                            {
+                                if (item.Selected)
+                                {
+                                    <option selected value="@item.Value"> @item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value"> @item.Text</option>
+                                }
+                            }
+                        </select>
+
+                    </div>
+
+
+                    <script>
+                        $("#OrderTypeId").change(function () {
+
+                            processOrdertypeUpdates();
+                        })
+                        $("#SubOrderTypeId").change(function () {
+
+                            processOrdertypeUpdates();
+                        })
+                        function processOrdertypeUpdates() {
+                            if ($("#OrderTypeId option:selected").text().trim()== "AlreadyPaid") {
+                                $("#SubOrderTypeId").show();
+                            }
+                            else {
+                                $("#SubOrderTypeId").hide();
+                            }
+                            orderTypeSection.save('@Model.Id', $("#OrderTypeId").val(), $("#OrderTypeId option:selected").text().trim() == "AlreadyPaid" ?
+                                $("#SubOrderTypeId").val():0)
+                        }
+                    </script>
+                }
+                else
+                {
+                    <div class="custom-select1" style="width:220px;">
+                        @Model.orderTypes.Where(m => m.Selected).FirstOrDefault()?.Text @(Model.subOrderTypes.Where(m => m.Selected).Count()>0?" - "+
+                    Model.subOrderTypes.Where(m => m.Selected).FirstOrDefault().Text:"")
+                    </div>
+
+                }
+            </div>
+
+
+            @*Order Type sectiond details*@
+            @*            <form asp-controller="Order" asp-action="SaveOrderTypeDetails" asp-area="CustomOrder" method="post" id="ordertypeinfo-form">*@
+            <div id="customorder-UpdateOrderType">
+
+                @if (Model.OrderTypeId != null && Model.OrderTypeId != 0)
+                {
+                    @await Component.InvokeAsync("CustomOrder_OrderTypeSection", new { orderId = Model.Id })
+
+                }
+            </div>
+            @*            </form>*@
+
+            @*end*@
+
+            @*----------------- end----------------------------------*@
+
+
+            @*---------------Customer Section---------------------*@
+            <div class="form-group d-flex">
+                <h6 class="text-white  @(Model.EnableProductSearch || isPaid?"bg-success":"bg-dark") font-weight-bold px-2 py-1 mr-2 customerstep">2</h6>
+                <label for="exampleFormControlInput1" class="text-muted">Customer</label>
+                <div class="dropdown">
+                    <input @(Model.EnableCustomerSearch ? "" : "disabled") class="dropdown-toggle pt-1" id="searchCustomer" data-toggle="dropdown" aria-expanded="false" data-url="@(storeLocation)Customorder/order/Searchcustomer/"
+                           style="width: 280px; color: #6c757d" placeholder="Search or Create Customer" />
+                    <div class="dropdown-menu drpcustomer-menu" aria-labelledby="dropdownMenuButton" data-toggle="modal">
+
+                        <a class="dropdown-item btn" role="button" id="CreateNewCustomer" data-toggle="modal" style="font-size:20px; border-bottom: 1px solid #b3b3b3; padding-bottom: 10px;" href="#myModal">+ Create New Customer</a>
+
+
+                    </div>
+                    @*        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item btn" role="button" id="CreateNewCustomer" data-toggle="modal" style="font-size:20px; border-bottom: 1px solid #b3b3b3; padding-bottom: 10px;" href="#myModal">+ Create New Customer</a>
+                        <a class="dropdown-item" style="padding-top: 20px; padding-bottom: 20px;" href="#">
+                        <strong>Karan Solanki</strong><br>
+                        skaran@gmail.com
+                        </a>
+                        <a class="dropdown-item" href="#">
+                        <strong>Pawandeep Batra</strong> <br>
+                        pawan@gmail.com
+                        </a>
+                        </div>*@
+
+
+                </div>
+
+            </div>
+            <div class="">
+                <div id="customorder-UpdateCustomerAddress">
+                    @if (Model.CustomerId != null && Model.CustomerId != 0)
+                    {
+                        @await Component.InvokeAsync("CustomOrder_AddressSection", new { orderId = Model.Id })
+                    }
+                </div>
+            </div>
+            @*----------------- end----------------------------------*@
+
+            @*---------------Product Section---------------------*@
+            <script asp-location="Footer">
+                productsection.init('@(storeLocation)Customorder/order/SearchProduts/', '@(storeLocation)Customorder/order/AddUpdateCartItems/'
+                    , '@(storeLocation)Customorder/order/DeleteCartItems/'
+                    , '#customorder_SearchProduct_section-form'
+                );
+            </script>
+            <div class="form-group d-flex">
+                <h6 class="text-white @(Model.DisplayCartSummary?"bg-success":"bg-dark") font-weight-bold px-2 py-1 mr-2 productstep">3</h6>
+                <label for="exampleFormControlInput1" class="text-muted">Products</label>
+                <div class="dropdown">
+                    <a id="prdsearch">
+                        <button class="productssearch_btn" type="button">
+                            <img src="/css/Customizations/Areas/CustomOrder/images/btn_search.png">
+                        </button>
+                    </a>
+                    <input type="search" @(Model.EnableProductSearch ? "" : "disabled") id="product_search" placeholder="Search product with name, sku or Id" class="btn bg-white dropdown-toggle pt-1 border rounded-pill">
+
+                </div>
+
+            </div>
+
+            <div class="form-group d-flex shoppingcartsection  @(Model.DisplayCartSummary?"":"float-left")">
+                <h6 class="text-white  @(Model.DisplayCartSummary?"bg-success":"bg-dark") font-weight-bold px-2 py-1 mr-2 cartstep">4</h6>
+                <label for="exampleFormControlInput1" class="text-muted">Shopping Cart</label>
+            </div>
+            <div class="form-group d-flex paymentEmptysection  @(Model.DisplayCartSummary?"d-none":"")">
+                <h6 class="text-white bg-dark font-weight-bold px-2 py-1 mr-2">5</h6>
+                <label for="exampleFormControlInput1" class="text-muted">Payment</label>
+            </div>
+            <div id="customorder-Items_section">
+                @await Component.InvokeAsync("CustomOrder_Items", new { orderId = Model.Id })
+            </div>
+            <script asp-location="Footer">
+                $('#product_search').keypress(function (e) {
+                    var key = e.which;
+                    if (key == 13)  // the enter key code
+                    {
+                        e.preventDefault();
+                        productsection.searchProducts($("#product_search").val());
+                    }
+                });
+                $(".productssearch_btn").click(function () {
+                    productsection.searchProducts($("#product_search").val());
+                });
+                $("body").on("change", "input[name=\"option\"]", function (e) {
+                    if ($(this).prop("checked")) {
+                        var selectedValue = $(this).val();
+                        var productId = $(this).attr("data-productid");
+
+                        if (selectedValue.toLowerCase() == "custom") {
+
+                            $("div[data-custom-productId=\"" + productId + "\"]").show();
+                        }
+                        else {
+                            $("div[data-custom-productId=\"" + productId + "\"]").hide();
+                        }
+
+                        $(this).parent().parent().parent().parent().find("input[type=\"checkbox\"]").each(function (index, item) {
+                            if ($(item).val() != selectedValue) {
+                                $(item).prop('checked', false).trigger("change");
+                            }
+                        });
+                    }
+                })
+                $("body").on("click", ".itemedit", function (e) {
+                    var id = $(this).attr("data-id");
+                    console.log("tr[id='tr-" + id + "']");
+                    console.log($("tr[id='tr-" + id + "']"));
+                    $(this).hide();
+                    $("tr[id='tr-" + id + "']").find(".itemupdate").show();
+                    $("tr[id='tr-" + id + "']").find(".itemUpdateCancel").show();
+                    $("tr[id='tr-" + id + "']").find("input").removeClass("disabled");
+                    $("tr[id='tr-" + id + "']").find("input").removeAttr("disabled");
+                });
+                $("body").on("click", ".itemUpdateCancel", function (e) {
+                    var id = $(this).attr("data-id");
+                    $("tr[id='tr-" + id + "']").find(".itemupdate").hide();
+                    $("tr[id='tr-" + id + "']").find(".itemedit").show()
+                    $("tr[id='tr-" + id + "']").find(".itemUpdateCancel").hide();
+                    $("tr[id='tr-" + id + "']").find("input").addClass("disabled");
+                    $("tr[id='tr-" + id + "']").find("input").addAttr("disabled");
+                    $("tr[id='tr-" + id + "']").find("input[name='quantity']").
+                        val($("tr[id='tr-" + id + "']").find("input[name='quantity']").attr("data-qty"));
+                    $("tr[id='tr-" + id + "']").find("input[name='discount']").
+                        val($("tr[id='tr-" + id + "']").find("input[name='discount']").attr("data-discount"));
+
+                });
+
+                $("body").on("click", ".itemupdate", function (e) {
+                    var products = [];
+                    var id = $(this).attr("data-id");
+                    var qty = $("tr[id='tr-" + id + "']").find("input[name='quantity']").val();
+                    var discountType = "Fixed";
+                    var adjustmentText = $("tr[id='tr-" + id + "']").find("input[name='discount']").val();
+                    if (adjustmentText.indexOf("%") > 0) {
+                        discountType = "Percentage";
+                    }
+                    var adj = parseFloat(adjustmentText.replace("%", "").replace(",", ""));
+                    adj = isNaN(adj) ? 0 : adj;
+
+                    if ((adj < -100) && discountType == "Percentage") {
+                        $("tr[id='tr-" + id + "']").find("input[name='discount']").focus();
+                        return;
+                    }
+
+                    products.push({
+                        Id: id,
+                        Quantity: qty, DiscountAmount: (discountType == "Fixed" ? adj : 0),
+                        DiscountPercentage: (discountType == "Percentage" ? adj : 0), ChargeType: (adj > 0 ? "Add" : "Subtract"), DiscountType: discountType
+                    })
+                    productsection.itemUpdate(products)
+                });
+                $("body").on("click", ".add-item-note", function (e) {
+
+                    var id = $(this).attr("data-id");
+                    var notes = $("tr[id='tr-" + id + "']").find(".itemnotes").html();
+                    $("#add_ItemNoteModel").find("textarea[name='itemNotes']").val(notes);
+                    $("#add_ItemNoteModel").find(".applybtn").attr("data-id", id);
+                    $("#add_ItemNoteModel").modal('show')
+                });
+                $("body").on("click", "#add_ItemNoteModel .applybtn", function (e) {
+                    var products = [];
+                    var obj = this;
+                    if ($('.custom-file-input-1').val() == '') {
+                        products.push({
+                            Id: $(this).attr("data-id"),
+                            Notes: $("#add_ItemNoteModel").find("textarea[name='itemNotes']").val()
+                        });
+                        productsection.itemNotesUpdate(products)
+                    }
+                    else {
+                        var _file = $('.custom-file-input-1').get(0).files[0];
+                        var file = _file.file;
+                        var reader = new FileReader();
+                        reader.readAsDataURL(_file);
+                        reader.onloadend = function () {
+                            documentbaseFile = reader.result;
+                            var ext = "." + $('.custom-file-input-1').val().split('\\').pop().split(".").pop();
+                            products.push({
+                                Id: $(obj).attr("data-id"),
+                                Notes: $("#add_ItemNoteModel").find("textarea[name='itemNotes']").val(),
+                                ext: ext,
+                                base64: documentbaseFile
+                            });
+                            $(".custom-file-input-1").val('');
+                            $(".selectedfile").html('');
+                            productsection.itemNotesUpdate(products)
+                        }
+                    }
+
+                    $("#add_ItemNoteModel").modal('hide');
+
+                });
+
+            </script>
+            @*----------------- end----------------------------------*@
+
+
+        </div>
+
+        @* Order Summary*@
+        <script asp-location="Footer">
+            orderSummarySection.init('@(storeLocation)Customorder/order/UpdateOrder/'
+            );
+        </script>
+        <div class="col-4 border-left" id="customorder-orderSummary_section">
+            @if (Model.DisplayCartSummary)
+            {
+                @await Component.InvokeAsync("CustomOrder_OrderSummary", new { orderId = Model.Id })
+            }
+        </div>
+        <script asp-location="Footer">
+            $("body").on("click", ".btn-save_orderandnotes", function () {
+                var formdata = new URLSearchParams();
+                formdata.append(`Id`, parseInt($("#orderId").val()));
+                formdata.append(`PrivateOrderNotes`, $("#PrivateNotes").val());
+                formdata.append(`InvoiceNote`, $("#InvoiceNotes").val());
+                formdata.append(`SpecialInstructionsfromBuyer`, $("#SpecialInstructionsfromBuyer").val());
+                formdata.append(`orderTypeUpdate`, "Notes");
+                orderSummarySection.orderUpdate(formdata);
+            });
+
+
+            $("body").on("click", ".btnSubtotalDiscount", function () {
+
+                $("#customorder-orderSummary_Discount-model").find("textarea[name='subtotaladjustmentNotes']").val($("#SubTotalAdjNotes").html());
+                $("#customorder-orderSummary_Discount-model").find("input[name='discount_amount']").val($(".orderDiscountInfo").attr("data-discount"));
+                $("#customorder-orderSummary_Discount-model").find("#subtotal_discount_type").val($(".orderDiscountInfo").attr("data-discount-Type"));
+                $('#customorder-orderSummary_Discount-model').modal('show')
+            })
+            $("body").on("click", ".btnSubTotalapply", function () {
+                var discount = $("#customorder-orderSummary_Discount-model").find("input[name='discount_amount']").val();
+                discount = parseFloat(discount);
+                if (isNaN(discount)) {
+                    $("#customorder-orderSummary_Discount-model").find("input[name='discount_amount']").focus();
+                    return;
+                }
+                if (!$("#customorder-orderSummary_Discount-model").find("#subtotal_discount_type").val()) {
+                    $("#customorder-orderSummary_Discount-model").find("#subtotal_discount_type").focus();
+                    return;
+                }
+                if ($("#customorder-orderSummary_Discount-model").find("#subtotal_discount_type").val() == "Percentage" && discount > 100) {
+                    $("#customorder-orderSummary_Discount-model").find("input[name='discount_amount']").focus();
+                    return;
+                }
+
+                var formdata = new URLSearchParams();
+                formdata.append(`Id`, parseInt($("#orderId").val()));
+                formdata.append(`SubTotalDiscountType`, $("#customorder-orderSummary_Discount-model").find("#subtotal_discount_type").val());
+                formdata.append(`SubTotalDiscount`, discount);
+                formdata.append(`SubTotalAdjustmentNotes`, $("#customorder-orderSummary_Discount-model").find("textarea[name='subtotaladjustmentNotes']").val());
+                formdata.append(`orderTypeUpdate`, "Discount");
+                orderSummarySection.orderUpdate(formdata);
+            });
+
+            //wgs
+            $("body").on("click", ".btnAddWgs", function () {
+                $("#customorder-orderSummary_Wgs-model").find("input[name='wgs_amount']").val($(".wgscharges").attr("data-wgs").replace("$", "").replace(",", ""));
+                $("#customorder-orderSummary_Wgs-model").find(".defaultwgscharges").html($(".wgscharges").attr("data-normal-wgs").replace("$", "").replace(",", ""));
+                $("#customorder-orderSummary_Wgs-model").find("input[name='complementryWgsFree']").prop('checked',
+                    $(".wgscharges").attr("data-complementry-wgs") == "False" ? false : true);
+                $("#customorder-orderSummary_Wgs-model").find("textarea[name='wgsadjustmentNotes']").val($("#wgsAdjNotes").html());
+                $('#customorder-orderSummary_Wgs-model').modal('show');
+           
+                if ($(".wgscharges").attr("data-complementry-wgs") == "True") {
+                    $("#customorder-orderSummary_Wgs-model").find("input[name='wgs_amount']").attr("disabled", true);
+                }
+                else {
+                    $("#customorder-orderSummary_Wgs-model").find("input[name='wgs_amount']").removeAttr("disabled");
+
+                }
+            })
+            $("body").on("click", ".btnWgsapply", function () {
+                var discount = $("#customorder-orderSummary_Wgs-model").find("input[name='wgs_amount']").val();
+                discount = parseFloat(discount);
+                if (isNaN(discount)) {
+                    $("#customorder-orderSummary_Wgs-model").find("input[name='wgs_amount']").focus();
+                    return;
+                }
+                if ($("#customorder-orderSummary_Wgs-model").find("textarea[name='wgsadjustmentNotes']").val() == "" &&
+                    parseFloat($("#customorder-orderSummary_Wgs-model").find("input[name='wgs_amount']").val().trim()).toFixed(2) != parseFloat($(".defaultwgscharges").html().trim()).toFixed(2)) {
+                    $("#customorder-orderSummary_Wgs-model").find("textarea[name='wgsadjustmentNotes']").focus();
+
+                    return;
+                }
+
+                var formdata = new URLSearchParams();
+                formdata.append(`Id`, parseInt($("#orderId").val()));
+                formdata.append(`Wgs`, discount);
+                formdata.append(`WgsAdjustmentNotes`, $("#customorder-orderSummary_Wgs-model").find("textarea[name='wgsadjustmentNotes']").val());
+                formdata.append(`complementryWgsFree`, $("#customorder-orderSummary_Wgs-model").find("input[name='complementryWgsFree']").is(":checked"));
+                formdata.append(`orderTypeUpdate`, "Wgs");
+                orderSummarySection.orderUpdate(formdata);
+            })
+
+            $("body").on("change", "input[name='complementryWgsFree']", function () {
+                if ($(this).is(":checked")) {
+                    $("#customorder-orderSummary_Wgs-model").find("input[name='wgs_amount']").attr("disabled", true);
+                    $("#customorder-orderSummary_Wgs-model").find("input[name='wgs_amount']").val(0);
+                }
+                else {
+                    $("#customorder-orderSummary_Wgs-model").find("input[name='wgs_amount']").removeAttr("disabled");
+                }
+            });
+            // shipping
+            $("body").on("click", ".btnaddshipping", function () {
+                //var shipping = $(this).attr("data-shipping");
+                //if (shipping == "" || shipping == null)
+                //    shipping = 0;
+                //else
+                //    shipping = shipping.replace(",", "").replace("$", "");
+                //$("#customorder-orderSummary_Shipping-model").find("textarea[name='ShippingAdjustmentNotes']").val($("#shippingAdjNotes").html());
+                //$("#customorder-orderSummary_Shipping-model").find("input[name='shipping_amount']").val(shipping);
+                //$('#customorder-orderSummary_Shipping-model').modal('show')
+
+                $("#customorder-orderSummary_Shipping-model").find("textarea[name='ShippingAdjustmentNotes']").val($("#shippingAdjNotes").html());
+                $("#customorder-orderSummary_Shipping-model").find("input[name='shipping_adjustment_amount']").val($(".btnaddshipping").attr("data-discount"));
+                $("#customorder-orderSummary_Shipping-model").find("#shipping_adjustment_type").val($(".btnaddshipping").attr("data-discount-Type"));
+                $('#customorder-orderSummary_Shipping-model').modal('show');
+
+            });
+
+            $("body").on("click", ".btnShippingapply", function () {
+                var discount = $("#customorder-orderSummary_Shipping-model").find("input[name='shipping_adjustment_amount']").val();
+                discount = parseFloat(discount);
+                if (isNaN(discount)) {
+                    $("#customorder-orderSummary_Shipping-model").find("input[name='shipping_adjustment_amount']").focus();
+                    return;
+                }
+
+                if (!$("#customorder-orderSummary_Shipping-model").find("#shipping_adjustment_type").val()) {
+                    $("#customorder-orderSummary_Shipping-model").find("#shipping_adjustment_type").focus();
+                    return;
+                }
+
+                if ($("#customorder-orderSummary_Shipping-model").find("#shipping_adjustment_type").val() == "Percentage" &&
+                    (discount < -100)) {
+
+                    $("#customorder-orderSummary_Shipping-model").find("input[name='shipping_adjustment_amount']").focus();
+                    return;
+                }
+
+                var formdata = new URLSearchParams();
+                formdata.append(`Id`, parseInt($("#orderId").val()));
+                formdata.append(`ShippingDiscountType`, $("#customorder-orderSummary_Shipping-model").find("#shipping_adjustment_type").val());
+                formdata.append(`ShippingDiscount`, discount);
+                formdata.append(`ShippingAdjustmentNotes`, $("#customorder-orderSummary_Shipping-model").find("textarea[name='ShippingAdjustmentNotes']").val());
+                formdata.append(`orderTypeUpdate`, "Shipping");
+
+
+                orderSummarySection.orderUpdate(formdata);
+                $('#customorder-orderSummary_Shipping-model').modal('hide');
+            })
+            // end
+
+            $("body").on("click", "#btndraft", function (e) {
+                var formdata = new URLSearchParams();
+                formdata.append(`Id`, parseInt($("#orderId").val()));
+                formdata.append(`OrderStatus`, "SavedDraft");
+                formdata.append(`orderTypeUpdate`, "StatusUpdate");
+                orderSummarySection.orderUpdate(formdata, "#btndraft", true);
+            });
+            function sendInvoice(email) {
+                $("#invoice_email").val(email);
+                $("#customorder-invoice-model").modal('show')
+            }
+            $("body").on("click", ".btnsendinvoice", function (e) {
+
+                if (!ValidateEmail($("#invoice_email").val())) {
+                    $("#invoice_email").focus();
+                    return;
+                }
+                $("#customorder-invoice-model").modal('hide')
+                var formdata = new URLSearchParams();
+                formdata.append(`Id`, parseInt($("#orderId").val()));
+                formdata.append(`OrderStatus`, "InvoiceSent");
+                formdata.append(`CustomerEmail`, $("#invoice_email").val());
+                formdata.append(`orderTypeUpdate`, "StatusUpdate");
+                orderSummarySection.orderUpdate(formdata);
+            });
+            function ValidateEmail(input) {
+
+                var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+                if (input.match(validRegex)) {
+
+                    return true;
+
+                } else {
+
+
+                    return false;
+
+                }
+            }
+
+        </script>
+        @* Order Summary End*@
+
+        @********* Payment********@
+        <script asp-location="Footer">
+            paymentModuleSection.init("#customorder-form", '@(storeLocation)Customorder/order/ProcessPayment/'
+            );
+        </script>
+
+        <script>
+
+            $("body").on("click", ".btncollectpayment", function (e) {
+                var el = $("." + $(this).attr("data-target"))[0]; // native DOM element
+
+                if (el) el.click();
+            });
+            $("body").on("click", ".cashondelivery", function (e) {
+                var isMethodExist = false;
+                $.each($('input[name="paymentmethod"]'), function (index, element) {
+                    console.log($(element).attr("data-paymethodname"));
+                    if ($(element).attr("data-paymethodname").toLowerCase().indexOf(cashPaymentMethodName) >= 0) {
+                        $(element).prop("checked", true).trigger('change');
+                        isMethodExist = true;
+                        return false;
+                    }
+                });
+                if (!isMethodExist) {
+                    swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        html: paymentMethodNotExist.replace("{0}", cashPaymentMethodName)
+                    })
+
+                }
+                else {
+                    paymentModuleSection.processPayment(".cashondelivery");
+                }
+            });
+
+
+            $("body").on("click", ".creditCardAction", function (e) {
+                var isMethodExist = false;
+                $.each($('input[name="paymentmethod"]'), function (index, element) {
+                    console.log($(element).attr("data-paymethodname"));
+                    if ($(element).attr("data-paymethodname").toLowerCase().indexOf(creditPaymentMethodName) >= 0) {
+                        $(element).prop("checked", true).trigger('change');
+                        isMethodExist = true;
+                        return false;
+                    }
+                });
+                if (!isMethodExist) {
+
+                    swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        html: paymentMethodNotExist.replace("{0}", creditPaymentMethodName)
+                    })
+                }
+                else {
+                    paymentModuleSection.processPayment(".creditCardAction");
+                }
+            });
+
+
+            $("body").on("change", "#ApplyTax", function () {
+
+                var formdata = new URLSearchParams();
+                formdata.append(`Id`, parseInt($("#orderId").val()));
+                formdata.append(`ApplyTax`, $(this).is(':checked'));
+                formdata.append(`orderTypeUpdate`, "TaxUpdate");
+                orderSummarySection.orderUpdate(formdata);
+            })
+
+        </script>
+        @***********************end*****@
+    </div>
+</form>
+
+<div class="orderdetailssection col-12 custom-order-steps">
+
+    @await Component.InvokeAsync("CustomOrderStatusLog", new { orderId = Model.Id })
+</div>
+
+@*Popups*@
+
+@*  Customer*@
+<div id="customorder-CustomOrder_CustomerSection-model" class="modal" tabindex="-1" role="dialog" aria - labelledby="customorder-CustomOrder_CustomerSection-model" aria-hidden="true" style="">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-0 px-4 pt-4 pb-0">
+                <button type="button" class="text-danger border-0 bg-white pr-3" data-dismiss="modal" aria-hidden="true">
+                    Cancel
+                </button>
+                <button type="button" class="border-0 bg-white pl-3" onclick="orderTypeSection.updateCustomerinfo()"> Save Address </button>
+            </div>
+            <div class="modal-body bg-white">
+                <div id="customorder-CustomOrder_CustomerSection">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*  Customer*@
+
+
+@*Product*@
+
+<div id="customorder-SearchProduct_section-model" class="modal products_popup" tabindex="-1" role="dialog" aria - labelledby="customorder_SearchProduct_section-model" aria-hidden="true" style="">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-0 px-4 pt-4 pb-0">
+                <button type="button" class="text-danger border-0 bg-white pr-3" data-dismiss="modal" aria-hidden="true">
+                    Cancel
+                </button>
+                <button type="button" class="border-0 bg-white pl-3 search-product-addtocart" onclick="productsection.addtocart()"> Add to Cart </button>
+            </div>
+            <div class="modal-body bg-white">
+                <div id="customorder-SearchProduct_section">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="add_ItemNoteModel" tabindex="-1" role="dialog" aria-labelledby="add_itemLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header p-2 m-4">
+                <div class="row">
+                    <div class="col-md-5">
+                        <h5 class="modal-title" id="add_itemLabel">Add Order Note</h5>
+                    </div>
+                    <div class="col-md-7">
+                        <div>
+                            <input type="file" id="myFile" class="custom-file-input-1" accept="image/*" name="filename">
+
+                            <button class="text-danger border-0 bg-white pr-3" data-dismiss="modal">Cancel</button>
+                            <button class="border-0 bg-white pl-3 applybtn">Apply</button>
+                        </div>
+                        <span class="selectedfile">&nbsp;</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body p-0 ml-4 mr-4">
+
+                <textarea rows="4" cols="50" name="itemNotes"></textarea>
+
+                <div class="add_item_note">
+                    <h2>Customer will see this note in Invoice</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*Product*@
+
+@*OrderSummary*@
+<div class="modal fade" id="customorder-orderSummary_Discount-model" tabindex="-1" aria-labelledby="add_discountLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header p-2 m-4">
+                <div class="row">
+                    <div class="col-md-7">
+                        <h5 class="modal-title" id="add_discountLabel">Add Discount</h5>
+                    </div>
+                    <div class="col-md-5">
+                        <button class="text-danger border-0 bg-white pr-3" data-dismiss="modal">Cancel</button>
+                        <button class="border-0 bg-white pl-3 btnSubTotalapply">Apply</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body p-0 ml-4 mr-4">
+                <form>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3>Discount Type</h3>
+                            <select id="subtotal_discount_type" name="Amount" @(isPaid ? "disabled" : "")>
+                                <option value="Fixed">Fixed</option>
+                                <option value="Percentage">Percentage</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <h3>Amount</h3>
+                            <input @(isPaid ? "disabled" : "") type="number" min="0" max="10000" step="1" name="discount_amount" placeholder="$ 0.00" id="discount_amount">
+                        </div>
+                    </div>
+                    <div class="reason_addiscount">
+                        <h3 class="pt-3">Reason</h3>
+                        <textarea rows="4" cols="50" name="subtotaladjustmentNotes" form="usrform"></textarea>
+                    </div>
+                </form>
+                <div class="add_item_note">
+                    <h2>Customer will see this reason</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="customorder-orderSummary_Wgs-model" tabindex="-1" aria-labelledby="add_discountLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header p-2 m-4">
+                <div class="row">
+                    <div class="col-md-7">
+                        <h5 class="modal-title" id="add_wgsLabel">WGS Adjustment</h5>
+                    </div>
+                    <div class="col-md-5">
+                        @if (!isPaid)
+                        {
+                            <button class="text-danger border-0 bg-white pr-3" data-dismiss="modal">Cancel</button>
+                            <button class="border-0 bg-white pl-3 btnWgsapply">Apply</button>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body p-0 ml-4 mr-4">
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <input @(isPaid ? "disabled" : "") type="checkbox" style="line-height: normal; height: auto; width: auto;" name="complementryWgsFree" id="complementryWgsFree">
+                        <span>Complementry Wgs Free</span>
+
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <h3>Amount</h3>
+                        <input @(isPaid || isComplementryWgsFree ? "disabled" : "") type="number" min="0" max="10000" step="1" name="wgs_amount" placeholder="$ 0.00" id="wgs_amount" required="required">
+                    </div>
+                    <div class="col-md-6">
+                        <h3>Defaul WgsCharges</h3>
+                        <span class="defaultwgscharges"></span>
+                    </div>
+                </div>
+                <div class="reason_addiscount">
+                    <h3 class="pt-3">Comment</h3>
+                    <textarea @(isPaid || isComplementryWgsFree ? "disabled" : "") rows="4" cols="50" name="wgsadjustmentNotes"></textarea>
+                </div>
+
+                <div class="add_item_note">
+                    <h2>This is for Internal Purpose Only, Customer will not see this comment</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="customorder-orderSummary_Shipping-model" tabindex="-1" role="dialog" aria-labelledby="add_shippingLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header p-2 m-4">
+                <div class="row">
+                    <div class="col-md-7">
+                        <h5 class="modal-title" id="add_shippingLabel"> Shipping Adjustment</h5>
+                    </div>
+                    <div class="col-md-5">
+                        @if (!isPaid)
+                        {
+                            <button class="text-danger border-0 bg-white pr-3" data-dismiss="modal">Cancel</button>
+                            <button class="border-0 bg-white pl-3 btnShippingapply">Apply</button>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body p-0 ml-4 mr-4">
+                <form>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3>Adjustment Type</h3>
+                            <select id="shipping_adjustment_type" name="shipping_adjustment_type" @(isPaid ? "disabled" : "")>
+                                <option value="Fixed">Fixed</option>
+                                <option value="Percentage">Percentage</option>
+
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <h3>Amount</h3>
+                            <input type="number" @(isPaid ? "disabled" : "") min="0" max="10000" step="1" name="shipping_adjustment_amount" placeholder="$ 0.00" id="shipping_adjustment_amount" required="required">
+                        </div>
+                    </div>
+                    <div class="comment_addshipping">
+                        <h3 class="pt-3">Comment</h3>
+                        <textarea @(isPaid ? "disabled" : "") rows="4" cols="50" name="ShippingAdjustmentNotes" form="usrform"></textarea>
+                    </div>
+                </form>
+                <div class="add_item_note">
+                    <h2>This is for Internal Purpose Only, Customer will not see this comment</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*OrderSummary*@
+
+
+@***Invoice***@
+<div class="modal fade" id="customorder-invoice-model" tabindex="-1" role="dialog" aria-labelledby="add_invoiceLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header p-2 m-4">
+                <div class="row">
+                    <div class="col-md-7">
+                        <h5 class="modal-title" id="add_shippingLabel">Invoice</h5>
+                    </div>
+                    <div class="col-md-5">
+
+                        <button class="text-danger border-0 bg-white pr-3" data-dismiss="modal">Cancel</button>
+                        <button class="border-0 bg-white pl-3 btnsendinvoice">Send</button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body p-0 ml-4 mr-4">
+                <form>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3>Email</h3>
+                            <input type="email" step="1" name="invoice_email" placeholder="Enter Email" id="invoice_email" required="required">
+
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(".custom-file-input-1").change(function () {
+        var filename = $('.custom-file-input-1').val().split('\\').pop();
+        $(".selectedfile").html(filename);
+    });
+
+</script>
+<script>
+    $('body').on('hidden.bs.modal', '#receiptmodel', function (e) {
+        window.location = window.location.href;
+    })
+
+</script>
