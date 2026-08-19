@@ -45,6 +45,10 @@
 	  </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Remove="Views\Customer\Login.cshtml" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<ClearPluginAssemblies Include="$(MSBuildProjectDirectory)\..\..\Build\ClearPluginAssemblies.proj" />
 	</ItemGroup>
@@ -71,6 +75,12 @@
 
 	<ItemGroup>
 	  <Folder Include="Factories\Api\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Views\Customer\Login.cshtml">
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </None>
 	</ItemGroup>
 
 	 

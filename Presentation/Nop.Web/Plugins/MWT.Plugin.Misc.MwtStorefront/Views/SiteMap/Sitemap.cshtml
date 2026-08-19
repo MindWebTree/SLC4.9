@@ -1,4 +1,4 @@
-﻿@model MWT.Plugin.Misc.MwtStorefront.Models.Sitemap.SitemapExtendedModel
+﻿@model Nop.Web.Models.Customizations.Common.CustomSitemapModel
 @using Nop.Core.Domain.Seo
 @inject SeoSettings seoSettings
 @inject Nop.Core.IWebHelper webHelper
@@ -7,14 +7,14 @@
     Layout = "_ColumnsOne";
 
     //title
-    NopHtml.AddTitleParts(T("PageTitle.Sitemap").Text);
+    Html.AddTitleParts(T("PageTitle.Sitemap").Text);
     //page class
-    NopHtml.AppendPageCssClassParts("html-sitemap-page");
+    Html.AppendPageCssClassParts("html-sitemap-page");
     if (seoSettings.CanonicalUrlsEnabled)
     {
-        NopHtml.AddCanonicalUrlParts(Url.RouteUrl("Sitemap", null, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant(), seoSettings.QueryStringInCanonicalUrlsEnabled);
+        Html.AddCanonicalUrlParts(Url.RouteUrl("Sitemap", null, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant(), seoSettings.QueryStringInCanonicalUrlsEnabled);
     }
-    NopHtml.AddMetaDescriptionParts(await _settingService.GetSettingByKeyAsync<string>("seosettings.sitemapmetadescription"));
+    Html.AddMetaDescriptionParts(await _settingService.GetSettingByKeyAsync<string>("seosettings.sitemapmetadescription"));
 }
 <div class="page sitemap-page">
     <div class="page-title">

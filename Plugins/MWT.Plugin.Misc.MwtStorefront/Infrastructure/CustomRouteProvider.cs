@@ -209,16 +209,16 @@
 
                 endpointRouteBuilder.MapControllerRoute(name: "CustomerInfo",
                        pattern: $"{lang}/customer/info",
-                       defaults: new { controller = "Customer", action = "CustomInfo" });
+                       defaults: new { controller = "CustomerExtended", action = "CustomInfo" });
 
                 endpointRouteBuilder.MapControllerRoute(name: "CustomerAddressAdd",
                     pattern: $"{lang}/customer/addressadd",
-                    defaults: new { controller = "Customer", action = "CustomAddressAdd" }); ;
+                    defaults: new { controller = "CustomerExtended", action = "CustomAddressAdd" }); ;
 
 
                 endpointRouteBuilder.MapControllerRoute(name: "CustomerAddressEdit",
                        pattern: $"{lang}/customer/addressedit/{{addressId:min(0)}}",
-                       defaults: new { controller = "Customer", action = "CustomAddressEdit" });
+                       defaults: new { controller = "CustomerExtended", action = "CustomAddressEdit" });
 
 
                 endpointRouteBuilder.MapControllerRoute(name: "CartItem-Update",

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Nop.Core;
 using Nop.Web.Framework.Models;
 using Nop.Web.Framework.Mvc.ModelBinding;
 using Nop.Web.Models.Customer;
@@ -66,16 +67,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Models.Customer
         public bool DateOfBirthRequired { get; set; }
         public DateTime? ParseDateOfBirth()
         {
-            if (!DateOfBirthYear.HasValue || !DateOfBirthMonth.HasValue || !DateOfBirthDay.HasValue)
-                return null;
-
-            DateTime? dateOfBirth = null;
-            try
-            {
-                dateOfBirth = new DateTime(DateOfBirthYear.Value, DateOfBirthMonth.Value, DateOfBirthDay.Value);
-            }
-            catch { }
-            return dateOfBirth;
+            return CommonHelper.ParseDate(DateOfBirthYear, DateOfBirthMonth, DateOfBirthDay);
         }
 
         public bool CompanyEnabled { get; set; }
@@ -163,6 +155,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Models.Customer
 
         public IList<GdprConsentModel> GdprConsents { get; set; }
 
+        public bool NeutralGenderEnabled { get; set; }
+
+        public bool VatNumberRequired { get; set; }
         #region Nested classes
 
 

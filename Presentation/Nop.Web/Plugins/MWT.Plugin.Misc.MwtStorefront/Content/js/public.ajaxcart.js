@@ -44,7 +44,6 @@ var AjaxCart = {
 
     //add a product to the cart/wishlist from the catalog pages
     addproducttocart_catalog: function (urladd) {
-        debugger;
         if (this.loadWaiting !== false) {
             return;
         }
@@ -71,7 +70,7 @@ var AjaxCart = {
     },
 
     //add a product to the cart/wishlist from the product details page
-    addproducttocart_details: function (urladd, formselector) {
+    addproducttocart_details: function (urladd, formselector) { 
         if (this.loadWaiting !== false) {
             return;
         }

@@ -176,6 +176,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Infrastructure.Mapping
             destination.AllowUsersToChangeUsernames = model.AllowUsersToChangeUsernames;
             destination.UsernamesEnabled = model.UsernamesEnabled;
             destination.Username = model.Username;
+            destination.NeutralGenderEnabled = model.NeutralGenderEnabled;
+            destination.VatNumberRequired = model.VatNumberRequired;
             destination.GenderEnabled = model.GenderEnabled;
             destination.Gender = model.Gender;
             destination.City = model.City;
@@ -276,6 +278,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Infrastructure.Mapping
             destination.CheckUsernameAvailabilityEnabled = model.CheckUsernameAvailabilityEnabled;
             destination.AllowUsersToChangeUsernames = model.AllowUsersToChangeUsernames;
             destination.UsernamesEnabled = model.UsernamesEnabled;
+            destination.NeutralGenderEnabled = model.NeutralGenderEnabled;
+            destination.VatNumberRequired = model.VatNumberRequired;
             destination.Username = model.Username;
             destination.GenderEnabled = model.GenderEnabled;
             destination.Gender = model.Gender;
