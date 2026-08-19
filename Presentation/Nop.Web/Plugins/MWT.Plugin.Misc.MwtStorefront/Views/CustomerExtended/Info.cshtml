@@ -24,9 +24,9 @@
     @await Component.InvokeAsync("CustomerNavigation", new { selectedTabId = CustomerNavigationEnum.Info })
 }
 
-<div class="page account-page customer-info-page">
+<div aria-labelledby="page-heading" role="region" class="page account-page customer-info-page">
     <div class="page-title">
-        <h1>@T("Account.MyAccount") - @T("Account.CustomerInfo")</h1>
+        <h1 id="page-heading" >@T("Account.MyAccount") - @T("Account.CustomerInfo")</h1>
     </div>
     <div class="page-body">
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CustomerInfoTop, additionalData = Model })
@@ -75,7 +75,7 @@
                             <div class="row">
 
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 px-0">
-                                    <input asp-for="FullName" placeholder="First Name" class="form-control" />
+                                    <input asp-for="FullName" aria-label="FullName" placeholder="First Name" class="form-control" />
                                 </div>
 
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-start px-0">
@@ -115,7 +115,7 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 px-0">
-                                <input asp-for="Email" placeholder="Email Address" class="form-control" />
+                                <input aria-label="Email" asp-for="Email" placeholder="Email Address" class="form-control" />
                             </div>
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
                                 <nop-required />
@@ -144,7 +144,7 @@
                             <div class="row">
 
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 px-0">
-                                    <input asp-for="Phone" placeholder="Phone" class="form-control" />
+                                    <input aria-label="Phone" asp-for="Phone" placeholder="Phone" class="form-control" />
                                 </div>
                                 <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
                                     @if (Model.PhoneRequired)
@@ -165,7 +165,7 @@
                             <div class="row">
 
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 px-0">
-                                    <input asp-for="Fax" placeholder="Fax" class="form-control" />
+                                    <input aria-label="Fax" asp-for="Fax" placeholder="Fax" class="form-control" />
                                 </div>
                                 <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
                                     @if (Model.FaxRequired)

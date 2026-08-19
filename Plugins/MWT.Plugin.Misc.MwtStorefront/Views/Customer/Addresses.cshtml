@@ -19,11 +19,11 @@
 {
     @await Component.InvokeAsync("CustomerNavigation", new { selectedTabId = CustomerNavigationEnum.Addresses })
 }
-<div class="page account-page address-list-page">
+<div  class="page account-page address-list-page">
     <div class="page-title">
-        <h1>@T("Account.MyAccount") - @T("Account.CustomerAddresses")</h1>
+        <h1 id="Adress-List" >@T("Account.MyAccount") - @T("Account.CustomerAddresses")</h1>
     </div>
-    <div class="page-body">
+    <div aria-labelledby="Adress-List" role="region" class="page-body">
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CustomerAddressesTop, additionalData = Model })
         <nop-antiforgery-token />
         @if (Model.Addresses.Count > 0)
@@ -41,20 +41,20 @@
                                 @address.FirstName @address.LastName
                             </li>
                             <li class="email">
-                                <label>@T("Address.Fields.Email"):</label>
+                                <span>@T("Address.Fields.Email"):</span>
                                 @address.Email
                             </li>
                             @if (address.PhoneEnabled)
                             {
                                 <li class="phone">
-                                    <label>@T("Address.Fields.PhoneNumber"):</label>
+                                    <span>@T("Address.Fields.PhoneNumber"):</span>
                                     @address.PhoneNumber
                                 </li>
                             }
                             @if (address.FaxEnabled)
                             {
                                 <li class="fax">
-                                    <label>@T("Address.Fields.FaxNumber"):</label>
+                                    <span>@T("Address.Fields.FaxNumber"):</span>
                                     @address.FaxNumber
                                 </li>
                             }

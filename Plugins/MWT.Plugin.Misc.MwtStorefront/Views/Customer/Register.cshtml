@@ -72,7 +72,7 @@
                             <div class="row">
 
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 px-0">
-                                    <input asp-for="FirstName" placeholder="First Name" class="form-control" />
+                                    <input asp-for="FirstName" aria-label="First Name" placeholder="First Name" class="form-control" />
                                 </div>
 
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-start px-0">
@@ -87,7 +87,7 @@
                             <div class="row">
 
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 px-0">
-                                    <input asp-for="LastName" placeholder="Last Name" class="form-control" />
+                                    <input asp-for="LastName" aria-label="Last Name" placeholder="Last Name" class="form-control" />
                                 </div>
 
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-start px-0">
@@ -127,7 +127,7 @@
                         <div class="row">
 
                             <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 px-0">
-                                <input asp-for="Email" placeholder="Email Addresss" class="form-control" />
+                                <input asp-for="Email" aria-label="Email Adress" placeholder="Email Addresss" class="form-control" />
                             </div>
 
                             <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-start px-0">
@@ -141,7 +141,7 @@
                             <div class="row">
                                 <label asp-for="ConfirmEmail" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
                                 <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
-                                    <input asp-for="ConfirmEmail" class="form-control" />
+                                    <input aria-label="Confirm Email" asp-for="ConfirmEmail" class="form-control" />
                                 </div>
                                 <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
                                     <nop-required />
@@ -158,7 +158,7 @@
                             <div class="row">
                                 <label asp-for="Username" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
                                 <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
-                                    <input asp-for="Username" class="form-control" />
+                                    <input aria-label="User Name" asp-for="Username" class="form-control" />
                                 </div>
                                 <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
                                     <nop-required />
@@ -180,7 +180,7 @@
                             <div class="row">
                                 <label asp-for="ZipPostalCode" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
                                 <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
-                                    <input asp-for="ZipPostalCode" class="form-control" />
+                                    <input aria-label="Zip Postal Code Name" asp-for="ZipPostalCode" class="form-control" />
                                 </div>
                                 <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
                                     @if (Model.ZipPostalCodeRequired)
@@ -201,7 +201,7 @@
                             <div class="row">
 
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 px-0">
-                                    <input asp-for="Phone" placeholder="Phone" class="form-control" />
+                                    <input aria-label="Phone" asp-for="Phone" placeholder="Phone" class="form-control" />
                                 </div>
 
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-start px-0">
@@ -214,7 +214,7 @@
                         <div class="row">
 
                             <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 px-0">
-                                <input asp-for="Password" placeholder="Password" class="form-control" />
+                                <inpu aria-label="Password"  asp-for="Password" placeholder="Password" class="form-control" />
                             </div>
 
                             <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-start px-0">
@@ -226,7 +226,7 @@
                         <div class="row">
 
                             <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 px-0">
-                                <input asp-for="ConfirmPassword" placeholder="Confirm Password" class="form-control" />
+                                <input aria-label="Confirm Password" asp-for="ConfirmPassword" placeholder="Confirm Password" class="form-control" />
                             </div>
 
                             <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-start px-0">

@@ -22,9 +22,9 @@
 <form asp-route="CustomerAddressAdd" method="post">
     <div class="page account-page address-edit-page">
         <div class="page-title">
-            <h1>@T("Account.MyAccount") - @T("Account.CustomerAddresses.AddNew")</h1>
+            <h1 id="addresses-add-heading">@T("Account.MyAccount") - @T("Account.CustomerAddresses.AddNew")</h1>
         </div>
-        <div class="page-body">
+        <div class="page-body" aria-labelledby="addresses-add-heading" role="region">
             <div asp-validation-summary="ModelOnly" class="message-error"></div>
             @{
                 var dataDictAddress = new ViewDataDictionary(ViewData);

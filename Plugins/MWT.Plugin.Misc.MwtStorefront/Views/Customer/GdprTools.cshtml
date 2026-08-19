@@ -34,7 +34,7 @@
                         @T("Account.Gdpr.Export.Hint")
                     </div>
                     <div class="buttons">
-                        <button type="submit" name="export-data" class="button-1 btn btn-default gdpr-export-data-button">@T("Account.Gdpr.Export.Button")</button>
+                        <button aria-label="Export personal Data" type="submit" name="export-data" class="button-1 btn btn-default gdpr-export-data-button">@T("Account.Gdpr.Export.Button")</button>
                     </div>
                 </div>
                 <div class="fieldset col-lg-6">
@@ -45,7 +45,7 @@
                         @T("Account.Gdpr.Delete.Hint")
                     </div>
                     <div class="buttons">
-                        <button type="submit" id="delete-account" name="delete-account" class="button-1 btn btn-primary gdpr-delete-account-button">@T("Account.Gdpr.Delete.Button")</button>
+                        <button type="submit" aria-label="Delete Account" id="delete-account" name="delete-account" class="button-1 btn btn-primary gdpr-delete-account-button">@T("Account.Gdpr.Delete.Button")</button>
                         <script asp-location="Footer">
                             $(document).ready(function() {
                                 $('#delete-account').on('click', function() {
