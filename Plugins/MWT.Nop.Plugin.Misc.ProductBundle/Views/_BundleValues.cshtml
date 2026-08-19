@@ -1,0 +1,118 @@
+﻿@model MWT.Nop.Plugin.Misc.ProductBundle.Models.BundleConfigurationModel
+@using Nop.Web.Framework.Models.DataTables
+@using Microsoft.AspNetCore.Routing
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, Nop.Web.Framework
+
+<div class="card card-default">
+    <div class="card-header">
+        <div class="card-title">
+            <i class="fas fa-cubes"></i>
+            Bundle Items Configuration
+        </div>
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        @* Add New Product Button *@
+        <div class="margin-b-10">
+            <button type="button" id="btnAddbundleItem"
+                    onclick="javascript:OpenWindow('@(Url.Action("BundleItemProductAddPopup", "ProductBundle", new { bundleId = Model.Id, btnId = "btnRefreshBundleItems", formId = "bundle-form" }))', 800, 800, true); return false;"
+                    class="btn btn-primary">
+                <i class="fas fa-plus-square"></i>
+                @T("Admin.Catalog.AddNew")
+            </button>
+
+            @* Hidden refresh button triggered by the popup *@
+            <button type="button" id="btnRefreshBundleItems" style="display: none;"></button>
+
+            <script>
+                $(document).ready(function () {
+                    $('#btnRefreshBundleItems').click(function (e) {
+                        e.preventDefault();
+                        updateTable('#bundle-items-grid');
+                        return false;
+                    });
+                });
+            </script>
+        </div>
+
+        @* Bundle Items DataGrid *@
+        @await Html.PartialAsync("Table", new DataTablesModel
+   {
+       Name = "bundle-items-grid",
+       UrlRead = new DataUrl("BulkEditBundleItemList", "ProductBundle", new RouteValueDictionary
+       {
+           ["BundleId"] = Model.Id
+       }),
+       UrlUpdate = new DataUrl("EditBundleItems", "ProductBundle", null),
+       UrlDelete = new DataUrl("DeleteBundleItems", "ProductBundle", null),
+       Length = Model.BundleItemSearchModel.PageSize,
+       LengthMenu = Model.BundleItemSearchModel.AvailablePageSizes,
+       ColumnCollection = new List<ColumnProperty>
+            {
+
+                new ColumnProperty("VariantId")
+                {
+                    Title = T("Admin.Common.Bundle.VariantId").Text,
+                    Width = "100"
+                },
+                new ColumnProperty("ProductId")
+                {
+                    Title = T("Admin.Common.Bundle.ProductId").Text,
+                    Width = "100"
+                },
+                new ColumnProperty("Attributes")
+                {
+                    Title = T("Admin.Common.Bundle.Attributes").Text,
+                    Width = "100"
+                },
+                new ColumnProperty("Picture")
+                {
+                    Title = T("Admin.Catalog.Products.Fields.Picture").Text,
+                    Width = "100",
+                    Render = new RenderPicture()
+                },
+                new ColumnProperty("ProductName")
+                {
+                    Title = T("Admin.Catalog.Products.Fields.Name").Text,
+                    Width = "300"
+                },
+                new ColumnProperty("Quantity")
+                {
+                    Title = T("Admin.Catalog.Products.Fields.StockQuantity").Text,
+                    Width = "100",
+                    ClassName = NopColumnClassDefaults.CenterAll,
+                    Editable = true,
+                    EditType = EditType.Number
+                },
+                new ColumnProperty("Id")
+                {
+                    Title = T("Admin.Common.Edit").Text,
+                    Width = "100",
+                    ClassName = NopColumnClassDefaults.Button,
+                    Render = new RenderButtonsInlineEdit()
+                },
+                new ColumnProperty("Id")
+                {
+                    Title = T("Admin.Common.Delete").Text,
+                    Width = "100",
+                    ClassName = NopColumnClassDefaults.Button,
+                    Render = new RenderButtonRemove(T("Admin.Common.Delete").Text)
+                }
+            }
+   })
+    </div>
+</div>
+
+<script>
+    // Custom render for the edit button if needed elsewhere
+    function renderEditButton(data, type, row, meta) {
+        return `<a class="btn btn-default" href="/Admin/ProductBundle/BundleItemEdit/${row.Id}">
+                <i class="fas fa-pencil-alt"></i> Edit
+            </a>`;
+    }
+</script>
