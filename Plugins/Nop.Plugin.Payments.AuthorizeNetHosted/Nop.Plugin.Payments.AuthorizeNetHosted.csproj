@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net5.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<Company>Mindwebtree</Company>
 		<Authors>Mindwebtree</Authors>
 		<OutputPath>..\..\Presentation\Nop.Web\Plugins\Payments.AuthorizeNetHosted</OutputPath>
@@ -32,6 +32,7 @@
 	  </EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\..\MWT.Nop.Core\MWT.Nop.Core.csproj" />
 		<ProjectReference Include="..\..\Presentation\Nop.Web.Framework\Nop.Web.Framework.csproj" />
 	</ItemGroup>
 	<ItemGroup>

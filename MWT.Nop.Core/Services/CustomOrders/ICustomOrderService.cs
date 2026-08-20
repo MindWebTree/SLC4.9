@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Nop.Services.Customizations.CustomOrders
+namespace MWT.Nop.Core.Services.Customizations.CustomOrders
 {
     public partial interface ICustomOrderService
     {

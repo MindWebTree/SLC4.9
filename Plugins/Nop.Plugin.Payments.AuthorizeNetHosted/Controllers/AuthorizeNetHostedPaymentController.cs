@@ -207,8 +207,7 @@ if (window.addEventListener) {
             string token = string.Empty;
 
 
-            var paymentRequest = new ProcessPaymentRequest();
-            _paymentService.GenerateOrderGuid(paymentRequest);
+            var paymentRequest = new ProcessPaymentRequest(); 
             await _paymentLogger.InformationAsync(
    $"GetToken: hosted payment token refresh started. " +
    $"OrderGuid={paymentRequest.OrderGuid}" +

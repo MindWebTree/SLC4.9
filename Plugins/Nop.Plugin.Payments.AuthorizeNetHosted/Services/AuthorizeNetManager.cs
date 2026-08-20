@@ -4,10 +4,11 @@ using AuthorizeNet.Api.Controllers.Bases;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
+using MWT.Nop.Core.Services.Customers;
+using MWT.Nop.Core.Services.Customizations.CustomOrders;
+using MWT.Nop.Core.Services.Orders;
 using Newtonsoft.Json;
 using Nop.Core;
-using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Customization.PhoneOrder;
 using Nop.Core.Domain.Directory;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Payments;
@@ -16,20 +17,13 @@ using Nop.Plugin.Payments.AuthorizeNetHosted.Logging;
 using Nop.Plugin.Payments.AuthorizeNetHosted.Models;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
-using Nop.Services.Customers;
-using Nop.Services.Customizations.Phone_Order;
 using Nop.Services.Directory;
 using Nop.Services.Logging;
 using Nop.Services.Orders;
 using Nop.Services.Payments;
 using Nop.Services.Tax;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using Customer = Nop.Core.Domain.Customers.Customer;
 using Order = Nop.Core.Domain.Orders.Order;
 
@@ -37,7 +31,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
 {
     public class AuthorizeNetManager : IAuthorizeNetManager
     {
-        private readonly IOrderService _orderService;
+        private readonly IOrderExtendedService _orderService;
         private readonly IOrderProcessingService _orderProcessingService;
         private readonly IOrderTotalCalculationService _orderTotalCalculationService;
         private readonly ICurrencyService _currencyService;
@@ -48,7 +42,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
         private readonly IProductService _productService;
         private readonly IPriceCalculationService _priceCalculationService;
         private readonly ITaxService _taxService;
-        private readonly ICustomerService _customerService;
+        private readonly ICustomerExtendedService _customerService;
         private readonly IWebHelper _webHelper;
         private readonly ILogger _logger;
         private readonly AuthorizeNetHostedPaymentSettings _authorizeNetHostedPaymentSettings;
@@ -62,7 +56,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
         private readonly HttpClient _httpClient;
         private readonly IGenericAttributeService _genericAttributeService;
         public AuthorizeNetManager(
-            IOrderService orderService,
+            IOrderExtendedService orderService,
             IOrderProcessingService orderProcessingService,
             IOrderTotalCalculationService orderTotalCalculationService,
             ICurrencyService currencyService,
@@ -73,7 +67,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
             IProductService productService,
             IPriceCalculationService priceCalculationService,
             ITaxService taxService,
-            ICustomerService customerService,
+            ICustomerExtendedService customerService,
             IWebHelper webHelper,
             ILogger logger,
             AuthorizeNetHostedPaymentSettings authorizeNetHostedPaymentSettings,
@@ -988,10 +982,8 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
             string lastName = address.LastName;
             if (string.IsNullOrEmpty(firstName))
             {
-                firstName = await _genericAttributeService.GetAttributeAsync<string>(
-    customer, NopCustomerDefaults.FirstNameAttribute);
-                lastName = await _genericAttributeService.GetAttributeAsync<string>(
-    customer, NopCustomerDefaults.LastNameAttribute);
+                firstName = customer.FirstName;
+                lastName = customer.LastName;
             }
             return new
             {
@@ -1027,23 +1019,26 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
         {
             if (addr == null) return null;
             var ordered = new System.Collections.Generic.Dictionary<string, object>();
-            if (!string.IsNullOrEmpty(addr.company)) ordered.Add("company", addr.company);
+        
             ordered.Add("firstName", addr.firstName);
             ordered.Add("lastName", addr.lastName);
+            if (!string.IsNullOrEmpty(addr.company)) ordered.Add("company", addr.company);
             ordered.Add("address", addr.address);
             ordered.Add("city", addr.city);
             ordered.Add("state", addr.state);
             ordered.Add("zip", addr.zip);
             ordered.Add("country", addr.country);
+
             return ordered;
         };
         Func<dynamic, object> formatBillingAddress = (dynamic addr) =>
         {
             if (addr == null) return null;
             var ordered = new System.Collections.Generic.Dictionary<string, object>();
-            if (!string.IsNullOrEmpty(addr.company)) ordered.Add("company", addr.company);
+          
             ordered.Add("firstName", addr.firstName);
             ordered.Add("lastName", addr.lastName);
+            if (!string.IsNullOrEmpty(addr.company)) ordered.Add("company", addr.company);
             ordered.Add("address", addr.address);
             ordered.Add("city", addr.city);
             ordered.Add("state", addr.state);
@@ -1051,6 +1046,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
             ordered.Add("country", addr.country);
             ordered.Add("phoneNumber", addr.phoneNumber);
             ordered.Add("email", addr.email);
+         
             return ordered;
         };
 
