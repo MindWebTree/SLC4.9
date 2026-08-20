@@ -1,0 +1,336 @@
+﻿@model Nop.Plugin.Payments.AuthorizeNetHosted.Models.PaymentInfoModel
+@{
+    Layout = "";
+}
+<style>
+    #authorizenethostedpayment-button, #authorizenethostedpayment-button-custom {
+        display: inline-block;
+        min-width: 140px;
+        border: none;
+        background-color: #444444;
+        padding: 10px 30px;
+        text-align: center;
+        font-size: 15px;
+        color: #fff;
+        text-transform: uppercase;
+    }
+
+    .authorizenethostedpayment-loading-image {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1104;
+    }
+
+    .authorizenethostedpayment-secure-popup-message {
+        font-size: 16px;
+        margin: 0px 0 0 0;
+        display: block;
+        font-weight: 400;
+        color: #000;
+    }
+
+        .authorizenethostedpayment-secure-popup-message span {
+            opacity: .8;
+        }
+
+    p.authorizenethostedpayment-poweredby {
+        opacity: 0.8;
+        margin-bottom: 10px !important;
+    }
+
+    #authorizenethostedpayment-form .payment-section button {
+        border-radius: 5px;
+    }
+
+    #authorizenethostedpayment-form p {
+        margin-bottom: 20px;
+    }
+
+    #authorizenethostedpayment-form img {
+        margin: 0px;
+    }
+
+    @@media (max-width: 768px) {
+        #AcceptUIContainer {
+            top: 30% !important;
+            margin-left: 5px !important;
+        }
+    }
+</style>
+@if (Model.UseSandbox)
+{
+    <!script src="https://jstest.authorize.net/v3/AcceptUI.js">
+    </!script>
+}
+else
+{
+    <!script src="https://js.authorize.net/v3/AcceptUI.js">
+    </!script>
+}
+@if (Model.Warnings.Any())
+{
+    <div class="message-error">
+        <ul>
+            @foreach (var warning in Model.Warnings)
+            {
+                <li>@warning</li>
+            }
+        </ul>
+    </div>
+}
+else
+{
+    <div id="authorizenethostedpayment-was-sent" style="display:none;">
+        @T("Plugin.Payments.AuthorizeNetHostedPayment.PaymentWasSent")
+    </div>
+    <div id="authorizenethostedpayment-form">
+        <input type="hidden" asp-for="AuthorizeNetHostedPaymentDataValue">
+        <input type="hidden" asp-for="AuthorizeNetHostedPaymentDataDescriptor">
+        <input type="hidden" asp-for="AuthorizeNetHostedPaymentErrors">
+        <div class="payment-section">
+            <p><img src="/images/uploaded/payment-labels-checkout.svg" class="payment-cards-supported"></p>
+            <p class="authorizenethostedpayment-secure-popup-message">@T("Plugin.Payments.AuthorizeNetHostedPayment.SecurePopupMessage")</p>
+            <p class="authorizenethostedpayment-poweredby">@T("Plugin.Payments.AuthorizeNetHostedPayment.PoweredBy")</p>
+            <button type="button" id="authorizenethostedpayment-button" style="display:none;"
+                    class="AcceptUI button-1 payment-stripe-next-step-button"
+                    data-billingAddressOptions='{"show":false, "required":false}'
+                    data-apiLoginID="@Model.LoginId"
+                    data-clientKey="@Model.PublicClientKey"
+                    data-acceptUIFormBtnTxt="Pay Now"
+                    data-acceptUIFormHeaderTxt="Card Information"
+                    data-containerStyleOptions='{"headerColor": "#444444", "backgroundColor": "#444444", "borderColor": "#444444"}'
+                    data-paymentOptions='{"showCreditCard": true, "showBankAccount": @(Model.EnableBankAccount.ToString().ToLower()),"customStyles": {"buttonBackgroundColor": "#444444", "buttonTextColor": "#444444" }}'
+                    data-responseHandler="authorizenethostedpaymentResponseHandler">
+                @T("Plugin.Payments.AuthorizeNetHostedPayment.ButtonPay.SubmitButton")
+            </button>
+
+            @if (Model.OnePageCheckoutPlugin)
+            {
+                <text>
+                    <button type="button" id="authorizenethostedpayment-button-custom"
+                            class="button-1 payment-stripe-next-step-button"
+                            onclick="authorizenethostedpaymentclick(event);">
+                        @T("Plugin.Payments.AuthorizeNetHostedPayment.ButtonPay.SubmitButton")
+                    </button>
+                </text>
+            }
+        </div>
+        <div id="authorizenethostedpayment-errors" role="alert"></div>
+    </div>
+    <script>
+        var savedScrollY = 0;
+    var authorizenethostedpaymentdatavalue = authorizenethostedpaymentdatavalue || "";
+    var authorizenethostedpaymentdatadescriptor = authorizenethostedpaymentdatadescriptor || "";
+
+    function authorizeNethostedPaymentInit() {
+
+        $(document).ready(function () {
+            if (authorizenethostedpaymentdatavalue.length === 0) {
+               if (selectedPaymentMethod.indexOf("Authorize") > 0)
+                $('.payment-info-next-step-button').hide();
+
+            }
+            else {
+                $('#AuthorizeNetHostedPaymentDataValue').val(authorizenethostedpaymentdatavalue);
+                $('#AuthorizeNetHostedPaymentDataDescriptor').val(authorizenethostedpaymentdatadescriptor);
+                $("#authorizenethostedpayment-form").hide();
+                $("#authorizenethostedpayment-was-sent").show();
+               if (selectedPaymentMethod.indexOf("Authorize") > 0)
+                $('.payment-info-next-step-button, .confirm-order-button').show();
+                $("#checkoutForm").find("button[data-complete]").show();
+                $('.payment-info-next-step-button').show();
+            }
+        });
+
+        $(document).on('accordion_section_opened', function (data) {
+            if (data && (data.currentSectionId === 'opcpayment_methodbilling' || data.previousSectionId === 'opc-payment_info')) {
+                $('.payment-info-next-step-button, .confirm-order-button').show();
+            }
+            if (data && (data.currentSectionId === 'opc-payment_method' && data.previousSectionId === 'opc-confirm_order')) {
+                if ($('#checkout-step-confirm-order').find('.confirm-order > .message-error').length > 0) {
+                    authorizenethostedpaymentdatavalue = '';
+                    authorizenethostedpaymentdatadescriptor = '';
+                }
+            }
+            if (data && (data.currentSectionId === 'opc-payment_info' && data.previousSectionId === 'opc-confirm_order')) {
+                if ($('#checkout-step-confirm-order').find('.confirm-order > .message-error').length > 0) {
+                    authorizenethostedpaymentdatavalue = '';
+                    authorizenethostedpaymentdatadescriptor = '';
+                    authorizeNethostedPaymentInit();
+                }
+            }
+        });
+    }
+
+    function authorizenethostedpaymentclick(e) {
+        if (document.getElementById("AuthorizeNetHostedPaymentDataValue").value.length > 0) {
+            return true;
+        }
+        savedScrollY = window.scrollY || window.pageYOffset;
+
+        var authorizenethostedpaymentdatavaluebutton = $(this);
+        authorizenethostedpaymentdatavaluebutton.attr('disabled', 'disabled');
+
+        var termOfServiceOk = true;
+        var termsofservice = $('#termsofservice');
+        if ($('#termsofservice').length === 0)
+            termsofservice = $('#terms-of-service');
+        if (termsofservice.length > 0 && !termsofservice.is(":hidden")) {
+            //terms of service element exists
+            if (!termsofservice.is(':checked')) {
+                var readterms = $("#terms-of-service-warning-box");
+                if (readterms.length === 0)
+                    readterms = $('#read-terms');
+                readterms.dialog();
+                termOfServiceOk = false;
+            } else {
+                termOfServiceOk = true;
+            }
+        }
+        authorizenethostedpaymentdatavaluebutton.removeAttr('disabled');
+        if (!termOfServiceOk) {
+            e.preventDefault();
+            return false;
+        }
+        e.preventDefault();
+        $('#authorizenethostedpayment-button').click();
+    }
+        function authorizenethostedpaymentResponseHandler(response) {
+
+
+        var authorizenethostedpaymentdatavaluebutton = $(this);
+        authorizenethostedpaymentdatavaluebutton.attr('disabled', 'disabled');
+            $("body").append('<div id="authorizenetoverlay" style="background-color:grey;position:fixed;top:0;left:0;height:100%;width:100%;z-index:999;"><div class="authorizenethostedpayment-loading-image"><img alt="" src="/Plugins/Payments.AuthorizeNetHostedPayment/Images/ajax_loader_large.gif"></div></div>');
+
+        if (response.messages.resultCode === "Error") {
+            var error = "";
+            var code = "";
+            var i = 0;
+            while (i < response.messages.message.length) {
+                code = response.messages.message[i].code;
+                console.log(
+                    response.messages.message[i].code + ": " +
+                    response.messages.message[i].text
+                );
+                if (i > 0)
+                    error = error + ", ";
+                error = error + response.messages.message[i].code + ": " +
+                    response.messages.message[i].text;
+                i = i + 1;
+            }
+            document.getElementById("authorizenethostedpayment-errors").innerHTML = error;
+            document.getElementById("AuthorizeNetHostedPaymentErrors").innerHTML = error;
+            authorizenethostedpaymentdatavaluebutton.removeAttr('disabled');
+            $("#authorizenetoverlay").remove();
+
+            if (code == "11" || code == "Error #11")
+            {
+                alert(error);
+                location.reload();
+            }
+
+            return false;
+        }
+
+        document.getElementById("authorizenethostedpayment-errors").innerHTML = "";
+        document.getElementById("AuthorizeNetHostedPaymentErrors").innerHTML = "";
+
+        document.getElementById("AuthorizeNetHostedPaymentDataDescriptor").value = response.opaqueData.dataDescriptor;
+        document.getElementById("AuthorizeNetHostedPaymentDataValue").value = response.opaqueData.dataValue;
+
+        $("#authorizenethostedpayment-form").hide();
+        $("#authorizenethostedpayment-was-sent").show();
+
+
+
+        @*@if (Model.OnePageCheckoutPlugin)
+        {
+            <text>
+                $('.confirm-order-button').show().click();
+                $("#checkoutForm").find("button[data-complete]").show().click();
+            </text>
+        }
+        else
+        {
+            <text>
+                 //fix, the JS doesn't show the popup window
+                 setTimeout(function () {
+                    $('.confirm-order-button, .confirm-order-next-step-button').show().click();
+                 }, 500);
+            </text>
+        }*@
+        authorizenethostedpaymentdatavaluebutton.removeAttr('disabled');
+        $("#authorizenetoverlay").remove();
+
+        if ($('button.payment-info-next-step-button').length > 0) {
+            $('button.payment-info-next-step-button').show().trigger("click");
+        }
+        else if ($('button#btnplaceOrder').length > 0) {
+
+            $('button#btnplaceOrder').show().trigger("click");
+        }
+        else {
+
+            $('button.creditCardAction').show().trigger("click");
+        }
+
+            setTimeout(function () {
+                document.body.style.overflow = "";
+                document.documentElement.style.overflow = "";
+                window.scrollTo(0, savedScrollY);
+            }, 100);
+
+        return false;
+    }
+        (function () {
+            var origSend = XMLHttpRequest.prototype.send;
+            XMLHttpRequest.prototype.send = function (data) {
+                this.addEventListener("loadend", function () {
+                    var url = this.responseURL || "";
+                    var isProcessPayment = url.indexOf("order/ProcessPayment/") > -1
+                        || url.indexOf("CheckoutCustomOrder/ProcessPayment/") > -1;
+                    if (!isProcessPayment) return;
+
+                    var dataStr = (typeof data === "string") ? data : "";
+                    var isAuthorizeNet = (dataStr && dataStr.indexOf("Authorize") > -1);
+                    if (!isAuthorizeNet) return;
+
+                    var failed = false;
+                    try {
+                        var res = JSON.parse(this.responseText);
+                        if (res.response && res.response.statuscode === 500) {
+                            failed = true;
+                        }
+                    } catch (e) { }
+
+                    if (failed) {
+                        $("#authorizenethostedpayment-form").show();
+                        $("#authorizenethostedpayment-was-sent").hide();
+                        authorizenethostedpaymentdatavalue = "";
+                        authorizenethostedpaymentdatadescriptor = "";
+                        document.getElementById("AuthorizeNetHostedPaymentDataDescriptor").value = "";
+                        document.getElementById("AuthorizeNetHostedPaymentDataValue").value = "";
+                    }
+                });
+                return origSend.apply(this, arguments);
+            };
+        })();
+    function deferjqueryloading(method) {
+        if (window.jQuery && typeof $ == 'function' && window.AcceptUI)
+            method();
+        else
+            setTimeout(function () { deferjqueryloading(method) }, 50);
+    }
+        deferjqueryloading(authorizeNethostedPaymentInit);
+        window.CommunicationHandler = {
+            customStyles: {
+                // Change the background color of the primary action button
+                "buttonBackgroundColor": "#FF5733",
+                // Change the text color on the button
+                "buttonTextColor": "#FFFFFF"
+            }
+        };
+    </script>
+}

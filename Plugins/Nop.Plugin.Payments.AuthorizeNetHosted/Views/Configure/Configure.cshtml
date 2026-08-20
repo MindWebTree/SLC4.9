@@ -1,0 +1,253 @@
+@model Nop.Plugin.Payments.AuthorizeNetHosted.Models.ConfigurationModel
+@using Nop.Plugin.Payments.AuthorizeNetHosted
+@using Nop.Plugin.Payments.AuthorizeNetHosted.Domain
+@await Component.InvokeAsync("StoreScopeConfiguration")
+@{
+    Layout = "_ConfigurePlugin";
+}
+
+
+<form asp-controller="AuthorizeNetHostedPaymentSettings" asp-action="Configure" method="post">
+    <script>
+        $(document).ready(function () {
+            $("#showDebugInfo").click(toggleshowDebugInfo);
+            $("#@Html.IdFor(model => model.EnableVisaClicktoPay)").click(toggleEnableVisaClicktoPay);
+
+            toggleshowDebugInfo();
+            toggleEnableVisaClicktoPay();
+        });
+
+        function toggleshowDebugInfo() {
+            if ($('#showDebugInfo').is(':checked')) {
+                $('#pnlclearlogfile, #pnlgetlogfile').showElement();
+            }
+            else {
+                $('#pnlclearlogfile, #pnlgetlogfile').hideElement();
+            }
+        }
+        function toggleEnableVisaClicktoPay() {
+            if ($("#@Html.IdFor(model => model.EnableVisaClicktoPay)").is(':checked')) {
+                $('#pnlVisaClicktoPayAPIKey').showElement();
+            }
+            else {
+                $('#pnlVisaClicktoPayAPIKey').hideElement();
+            }
+        }
+    </script>
+    <div class="cards-group">
+        <div class="card card-default">
+            <div class="card-body">
+               
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="LoginId_OverrideForStore" asp-input="LoginId" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="LoginId" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="LoginId" />
+                        <span asp-validation-for="LoginId"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="PublicClientKey_OverrideForStore" asp-input="PublicClientKey" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="PublicClientKey" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="PublicClientKey" />
+                        <span asp-validation-for="PublicClientKey"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="TransactionKey_OverrideForStore" asp-input="TransactionKey" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="TransactionKey" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="TransactionKey" />
+                        <span asp-validation-for="TransactionKey"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="UseSandbox_OverrideForStore" asp-input="UseSandbox" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="UseSandbox" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="UseSandbox" />
+                        <span asp-validation-for="UseSandbox"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="TransactModeId_OverrideForStore" asp-input="TransactModeId" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="TransactModeId" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-select asp-for="TransactModeId" asp-items="Model.TransactModeValues" />
+                        <span asp-validation-for="TransactModeId"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card card-default">
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="EnableAcceptDirectCheckout_OverrideForStore" asp-input="EnableAcceptDirectCheckout" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="EnableAcceptDirectCheckout" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="EnableAcceptDirectCheckout" />
+                        <span asp-validation-for="EnableAcceptDirectCheckout"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card card-default">
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="EnableBankAccount_OverrideForStore" asp-input="EnableBankAccount" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="EnableBankAccount" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="EnableBankAccount" />
+                        <span asp-validation-for="EnableBankAccount"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="EnableVisaClicktoPay_OverrideForStore" asp-input="EnableVisaClicktoPay" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="EnableVisaClicktoPay" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="EnableVisaClicktoPay" />
+                        <span asp-validation-for="EnableVisaClicktoPay"></span>
+                    </div>
+                </div>
+                <nop-nested-setting asp-for="EnableVisaClicktoPay">
+                    <div class="form-group row" id="pnlVisaClicktoPayAPIKey">
+                        <div class="col-md-3">
+                            <nop-override-store-checkbox asp-for="VisaClicktoPayAPIKey_OverrideForStore" asp-input="VisaClicktoPayAPIKey" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                            <nop-label asp-for="VisaClicktoPayAPIKey" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="VisaClicktoPayAPIKey" />
+                            <span asp-validation-for="VisaClicktoPayAPIKey"></span>
+                        </div>
+                    </div>
+                </nop-nested-setting>
+            </div>
+        </div>
+        <div class="card card-default">
+            <div class="card-body">
+                <p>
+                    @T("Admin.Plugin.Payments.AuthorizeNetDirectPayment.WebhookDescription")
+                </p>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="SignatureKey_OverrideForStore" asp-input="SignatureKey" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="SignatureKey" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SignatureKey" />
+                        <span asp-validation-for="SignatureKey"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="WebhookId" />
+                    </div>
+                    <div class="col-md-9">
+                        <div class="input-group">
+                            <input class="form-control text-box single-line" id="WebhookId" name="WebhookId" value="@Model.WebhookId" type="text" readonly="readonly">
+                            <div class="input-group-btn">
+                                @if (string.IsNullOrWhiteSpace(Model.WebhookId))
+                                {
+                                <button type="submit" name="createwebhook" class="btn btn-info">
+                                    @T("Admin.Plugin.Payments.AuthorizeNetHostedPayment.WebhookCreate")
+                                </button>
+                                }
+                                else
+                                {
+                                <button type="submit" name="removewebhook" class="btn btn-info">
+                                        @T("Admin.Plugin.Payments.AuthorizeNetHostedPayment.WebhookRemove")
+                                </button>
+                                }
+                            </div>
+                        </div>
+                        <span asp-validation-for="WebhookId"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card card-default">
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="AdditionalFeePercentage_OverrideForStore" asp-input="AdditionalFeePercentage" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="AdditionalFeePercentage" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="AdditionalFeePercentage" />
+                        <span asp-validation-for="AdditionalFeePercentage"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="AdditionalFee_OverrideForStore" asp-input="AdditionalFee" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="AdditionalFee" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="AdditionalFee" />
+                        <span asp-validation-for="AdditionalFee"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card card-default">
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="showDebugInfo" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="showDebugInfo" />
+                        <span asp-validation-for="showDebugInfo"></span>
+                        <div id="pnlclearlogfile">
+                            <a href="@Url.Action("ClearLogFile")" class="btn btn-primary">@T("Admin.Plugin.Payments.AuthorizeNetHostedPayment.ClearLogFile")</a>
+                        </div>
+                        <div id="pnlgetlogfile">
+                            <a href="@Url.Action("GetLogFile")" class="btn btn-primary">@T("Admin.Plugin.Payments.AuthorizeNetHostedPayment.GetLogFile")</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="StoreUrl" />
+                    </div>
+                    <div class="col-md-9">
+                        <input class="form-control text-box single-line" id="StoreUrl" name="StoreUrl" value="@Model.StoreUrl" type="text" readonly="readonly">
+                        <span asp-validation-for="StoreUrl"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SerialNumber" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SerialNumber" />
+                        <span asp-validation-for="SerialNumber"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-9 offset-md-3">
+                        <input type="submit" name="save" class="btn bg-primary" value="@T("Admin.Common.Save")" />
+                    </div>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+</form>

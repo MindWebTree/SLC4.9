@@ -1,0 +1,501 @@
+﻿@model Nop.Plugin.Payments.AuthorizeNetHosted.Models.PaymentInfoModel
+@{ Layout = ""; }
+
+<style>
+    #authnet-iframe-wrapper {
+        width: 100%;
+        max-width: 550px;
+    }
+
+    #authnet-iframe {
+        width: 488px;
+        min-height: 300px;
+        border: none;
+        border: 1px solid rgb(216, 216, 216);
+    }
+
+
+    #authnet-loading {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+        font-size: 14px;
+    }
+
+    #authnet-error {
+        display: none;
+        background: #fff0f0;
+        border: 1px solid #e74c3c;
+        border-radius: 4px;
+        padding: 12px 16px;
+        color: #c0392b;
+        margin-bottom: 12px;
+        font-size: 14px;
+    }
+
+    #authorizenethostedpayment-was-sent {
+        display: none;
+        background: #f0fff4;
+        border: 1px solid #27ae60;
+        border-radius: 4px;
+        padding: 12px 16px;
+        color: #1e8449;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    iframe#authnet-iframe {
+        padding: 20px;
+        background: #fff;
+    }
+
+    .col-xs-offset-1.col-md-offset-2.col-xs-10.col-sm-10.col-md-4.ccFixAlign {
+        padding: 0 !important;
+        width: 100%;
+        margin: 0;
+    }
+
+    .col-xs-offset-1.col-sm-offset-0.col-xs-10.col-sm-5.col-md-2 {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
+
+    .testCardNumberInput {
+        border-bottom: 1px solid !important;
+    }
+
+    .inValidBorderBottom[_ngcontent-c4] {
+        border-bottom: 1px solid #ed0000 !important;
+    }
+
+    @@media (max-width:1024px) {
+        #authnet-iframe {
+            width: 100%;
+            min-height: 300px;
+            border: 1px solid rgb(216, 216, 216);
+        }
+    }
+    @@media (min-width: 769px) and (max-width: 900px) {
+        iframe#authnet-iframe {
+            padding: 0px;
+          
+        }
+    }
+        @@media (min-width: 768px) and (max-width: 768px) {
+            [data-paymentinfo="Authorize.Net"] .checkout-data .section.payment-info {
+                padding-top: 10px !important;
+            }
+
+            #authnet-iframe {
+                width: 318px;
+                min-height: 300px;
+            }
+
+            iframe#authnet-iframe {
+                padding: 0px;
+                background: #fff;
+            }
+        }
+
+        @@media (max-width:767px) {
+            [data-paymentinfo="Authorize.Net"] .checkout-data .section.payment-info {
+                padding-top: 10px !important;
+            }
+
+            #authnet-iframe {
+                width: 450px;
+                min-height: 300px;
+            }
+
+            iframe#authnet-iframe {
+                padding: 0px;
+                background: #fff;
+            }
+        }
+
+        @@media (max-width:500px) {
+            [data-paymentinfo="Authorize.Net"] .checkout-data .section.payment-info {
+                padding-top: 10px !important;
+            }
+
+            #authnet-iframe {
+                width: 100%;
+            }
+        }
+    @@media (min-width: 300px) and (max-width: 400px) {
+        .checkout-pages .paymentinfo.active .checkout-data .info {
+            padding: 0px 0px;
+        }
+        .authorizenethostedpayment-poweredby {
+            padding: 5px 15px;
+        }
+    }
+        [data-paymentinfo="Authorize.Net"] .checkout-data .section.payment-info {
+            border-top: 0px solid #ccc;
+            border-bottom: 0px solid #ccc;
+            padding-top: 0px;
+        }
+
+        [data-paymentinfo="Authorize.Net"] img.payment-cards-supported {
+            margin: 0 0 5px 0;
+        }
+
+        .authorizenethostedpayment-poweredby {
+            opacity: 0.8;
+            font-size: 11px;
+        }
+
+    .authorizenethostedpayment-poweredby {
+        font-size: 12.5px !important;
+    }
+		.hidepaymentsection{
+		visibility: hidden;
+    height: 0px !important;
+    width: 0px !important;
+    min-height: 0px !important;
+		}
+	
+</style>
+<p class="authorizenethostedpayment-poweredby">@T("plugin.payments.authorizenethostedpayment.poweredby")</p>
+@{
+    var invoiceId = (Model.CustomProperties.Where(k => k.Key == "invoiceId").FirstOrDefault().Value ?? 0);
+}
+<input type="hidden" name="@AuthorizeNetHostedPaymentDefaults.TransactionValue" />
+<input type="hidden" name="@AuthorizeNetHostedPaymentDefaults.OrderId" value="@Model.OrderId" />
+@if (Model.Warnings != null && Model.Warnings.Any())
+{
+    <div class="message-error">
+        <ul>
+            @foreach (var warning in Model.Warnings)
+            {
+                <li>@warning</li>
+            }
+        </ul>
+    </div> }
+else
+{
+    <div id="authorizenethostedpayment-was-sent">
+        @T("Plugin.Payments.AuthorizeNetHostedPayment.PaymentWasSent")
+    </div>
+
+    <div id="authorizenethostedpayment-form">
+        <div id="authnet-error"></div>
+
+        <div id="authnet-iframe-wrapper">
+            <div id="authnet-loading">Loading secure payment form...</div>
+
+            <iframe id="authnet-iframe"
+                    name="authnet-iframe" class="hidepaymentsection"
+                    scrolling="no">
+            </iframe>
+        </div>
+    </div>
+
+    <script>
+    (function () {
+        "use strict";
+        if (!window.AuthorizeNetPopup) window.AuthorizeNetPopup = {};
+        var orderId = '@Html.Raw(Model.OrderId)';
+        var hostedPaymentToken = '@Model.Token';
+        var tokenUrl = "/AuthorizeNetHosted/GetIframeToken?invoiceId=@invoiceId";
+        var handleUrl = "/AuthorizeNetHosted/HandleResponse";
+        var tokenRefreshTimer = null;
+        var TOKEN_LIFETIME_MS = 14 * 60 * 1000; // refresh at 14 min, 1 min before the 15 min expiry
+        var iframe = document.getElementById("authnet-iframe");
+        var currentHeight = iframe.offsetHeight;
+
+        function scheduleTokenRefresh() {
+            if (tokenRefreshTimer) clearTimeout(tokenRefreshTimer);
+            tokenRefreshTimer = setTimeout(function () {
+
+                // Only refresh if the form is still on screen and not yet submitted
+                var form = document.getElementById("authorizenethostedpayment-form");
+                if (form && form.style.display !== "none") {
+
+                    resetToLoading();
+                    loadIframe(false);   // fetches a fresh token and reposts
+                }
+            }, TOKEN_LIFETIME_MS);
+        }
+
+
+
+
+        function postTokenToIframe(formActionUrl, token) {
+
+                            var old = document.getElementById("authnet-temp-form");
+                            if (old && old.parentNode) old.parentNode.removeChild(old);
+                            var wrapper = document.createElement("div");
+                            wrapper.innerHTML =
+                                '<form id="authnet-temp-form" method="POST" action="' + formActionUrl + '" ' +
+                                'target="authnet-iframe" enctype="application/x-www-form-urlencoded" accept-charset="UTF-8">' +
+                                '<input type="hidden" name="token" value="' + token + '">' +
+                                '</form>';
+
+                            document.body.appendChild(wrapper);
+                            document.getElementById("authnet-temp-form").submit();
+
+                            // Safe to remove immediately; POST is already dispatched
+
+                        }
+                        AuthorizeNetPopup.onReceiveCommunication = function (response) {
+
+                            var params = new URLSearchParams(response);
+
+                            var action = params.get("action");
+                            if (action === "transactResponse") {
+
+                                var responseDetails;
+                                try {
+                                    responseDetails = JSON.parse(params.get("response"));
+                                    if (!responseDetails.transId || responseDetails.transId === "0") {
+                                        resetToLoading();
+                                        loadIframe(false);
+                                        return;
+                                    }
+
+                                } catch (e) {
+
+                                }
+
+
+                                if (tokenRefreshTimer) {
+                                    clearTimeout(tokenRefreshTimer);
+                                    tokenRefreshTimer = null;
+                                }
+                                document.querySelector('input[name="@AuthorizeNetHostedPaymentDefaults.TransactionValue"]').value =
+    responseDetails?.transId || 0;
+                                document.querySelector('input[name="@AuthorizeNetHostedPaymentDefaults.OrderId"]').value =orderId;
+
+
+                                if ($('button.payment-info-next-step-button').length > 0) {
+                                    $('button.payment-info-next-step-button').trigger("click");
+                               }
+                               else if ($('button#btnplaceOrder').length > 0) {
+
+                                  $('button#btnplaceOrder').trigger("click");
+                                }
+                               else {
+
+                                   $('button.creditCardAction').trigger("click");
+                               }
+
+
+                            } else if (action === "cancel") {
+                                resetToLoading();
+                                loadIframe(false);   // fetch fresh token for retry
+                            }
+                            else if (action == "resizeWindow") {
+                                var hMatch = response.match(/height=([\d.]+)/);
+                                if (hMatch) {
+                                  var reportedHeight = Math.ceil(parseFloat(hMatch[1] ));
+
+                                    setIframeHeight(reportedHeight + 80);
+                                }
+
+                            }
+                        };
+
+                        // ── Load the iframe ───────────────────────────────────────────────
+                        function loadIframe(useModelToken) {
+                            if (useModelToken) {
+                                // Token baked into view model on page render — use directly
+
+                                if (hostedPaymentToken != "") {
+                                    postTokenToIframe('@Model.FormActionUrl', hostedPaymentToken);
+                                    setTimeout(function () {
+                                        showIframe();
+                                    }, 800);
+                                }
+                    } else {
+                // Fetch a fresh token (after cancel or failed retry)
+                fetch(tokenUrl + "&orderId=" + orderId, { method: "GET" })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (!data.success) {
+                            showError(data.message || "Unable to load payment form. Please try again.");
+                            return;
+                        }
+                        hostedPaymentToken = data.token;
+                        orderId = data.orderId;
+                        document.querySelector('input[name="@AuthorizeNetHostedPaymentDefaults.OrderId"]').value =orderId;
+                        postTokenToIframe(data.formUrl, data.token);
+                        
+                        setTimeout(function () {
+                            showIframe();
+                        }, 800);
+						 scheduleTokenRefresh();
+                    })
+                    .catch(function () {
+                        showError("Failed to initialize payment. Please refresh and try again.");
+                });
+            }
+        }
+        function setIframeHeight(extra) {
+           var newHeight = currentHeight + extra;
+            iframe.style.height = newHeight + "px";
+            iframe.style.minHeight = newHeight + "px";
+
+
+        }
+        function showIframe() {
+            document.getElementById("authnet-iframe").classList.remove("hidepaymentsection");
+document.getElementById("authnet-loading").classList.add("hidepaymentsection");
+            
+            }
+
+            function resetToLoading() {
+
+                 document.getElementById("authnet-iframe").classList.add("hidepaymentsection");
+document.getElementById("authnet-loading").classList.remove("hidepaymentsection");
+          document.getElementById("authnet-error").classList.add("hidepaymentsection");
+            }
+
+            // ── postMessage from IframeCommunicator ───────────────────────────
+        window.addEventListener("message", function (event) {
+
+                if (!event.data || typeof event.data !== "object") return;
+
+                var action = event.data.action;
+
+                if (action === "resizeWindow") {
+
+                    var h = parseInt(event.data.height, 10);
+                    if (h > 100) {
+                        setIframeHeight(50);
+                    }
+                }
+
+                //if (action === "cancel" || action === "transactResponse") {
+                //    window.parent.parent.AuthorizeNetPopup.onReceiveCommunication(str);
+                //}
+
+
+            }, false);
+
+            // ── Handle payment response ───────────────────────────────────────
+
+
+            // ── Helpers ───────────────────────────────────────────────────────
+            function showError(msg) {
+                var el = document.getElementById("authnet-error");
+                el.textContent    = msg;
+              document.getElementById("authnet-error").classList.remove("hidepaymentsection");
+               document.getElementById("authnet-loading").classList.add("hidepaymentsection");
+            }
+
+            function hideNextStepButton() {
+            $('.payment-info-next-step-button').hide();
+            @if (Model.OnePageCheckoutPlugin)
+            {
+                <text>
+                $('.confirm-order-button').hide();
+                $("#checkoutForm").find("button[data-complete]").hide();
+                </text>
+            }
+        }
+        document.querySelectorAll(".paymentmethod").forEach(function (el) {
+            el.addEventListener("click", function () {
+
+                    var methodName = el.getAttribute("paymethodname") || "";
+
+                if (methodName.toLowerCase().indexOf("authorize") !== -1) {
+                    resetToLoading();
+                        loadIframe(false);
+
+                        // your logic here
+                    }
+
+            });
+        });
+
+     document.querySelectorAll("input[name=\"paymentmethod\"]").forEach(function (el) {
+
+            el.addEventListener("click", function () {
+
+                var methodName = el.getAttribute("value") || "";
+
+                if (methodName.toLowerCase().indexOf("authorize") !== -1) {
+
+                    resetToLoading();
+
+                    loadIframe(true);
+
+                    // your logic here
+                }
+
+            });
+        });
+        // ── Init ──────────────────────────────────────────────────────────
+        function init() {
+            if (!orderId || orderId <= 0) {
+                showError("Order not found. Please go back and try again.");
+                return;
+            }
+            hideNextStepButton();
+            loadIframe(true);
+			scheduleTokenRefresh();
+        }
+
+        function deferInit(fn) {
+
+
+            if (window.jQuery && typeof $ === "function") fn();
+            else setTimeout(function () { deferInit(fn); }, 50);
+        }
+        deferInit(init);
+
+
+        // refresh iframe on load
+
+        document.addEventListener("click", function (e) {
+            var target = e.target;
+
+            if (!(target instanceof Element)) target = target.parentElement;
+            var el = target ? target.closest(".collectpayment") : null;
+
+            if (!el) return;
+
+            var methodName = el.getAttribute("data-target") || "";
+            if (methodName.toLowerCase().indexOf("authorize") !== -1) {
+                resetToLoading();
+                loadIframe(false);
+            }
+        });
+        (function () {
+            var origSend = XMLHttpRequest.prototype.send;
+            XMLHttpRequest.prototype.send = function (data) {
+                this.addEventListener("loadend", function () {
+                    var url = this.responseURL || "";
+                    var isProcessPayment = url.indexOf("order/ProcessPayment/") > -1
+                        || url.indexOf("CheckoutCustomOrder/ProcessPayment/") > -1;
+                    if (!isProcessPayment) return;
+
+                    var dataStr = (typeof data === "string") ? data : "";
+                    var isAuthorizeNet = (dataStr && dataStr.indexOf("Authorize") > -1);
+                    if (!isAuthorizeNet) return;
+
+                    var failed = false;
+                    try {
+                        var res = JSON.parse(this.responseText);
+                        if (res.response && res.response.statuscode === 500) {
+                            failed = true;
+                        }
+                    } catch (e) { }
+
+                    if (failed) {
+                        loadIframe(false);
+                    }
+                });
+                return origSend.apply(this, arguments);
+            };
+        })();
+
+        // end
+
+    }());
+
+
+    </script>
+}
