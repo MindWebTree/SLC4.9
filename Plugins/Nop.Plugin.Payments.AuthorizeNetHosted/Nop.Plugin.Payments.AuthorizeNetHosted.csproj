@@ -1,0 +1,71 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+		<Company>Mindwebtree</Company>
+		<Authors>Mindwebtree</Authors>
+		<OutputPath>..\..\Presentation\Nop.Web\Plugins\Payments.AuthorizeNetHosted</OutputPath>
+		<OutDir>$(OutputPath)</OutDir>
+		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="plugin.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<EmbeddedResource Include="Views\**\*.cshtml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Content\Communicator.shtml" />
+	  <None Remove="Views\Communicator.cshtml" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<ClearPluginAssemblies Include="$(MSBuildProjectDirectory)\..\..\Build\ClearPluginAssemblies.proj" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <EmbeddedResource Include="Content\Communicator.html">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Presentation\Nop.Web.Framework\Nop.Web.Framework.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Update="Views\AcceptPaymentInfo.cshtml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Views\Configure\Configure.cshtml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Views\Configure\_ViewImports.cshtml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Views\ErrorInfo.cshtml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	 
+	  <EmbeddedResource Update="Views\PaymentInfo.cshtml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Views\_ViewImports.cshtml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Logs\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Reference Include="AuthorizeNet">
+	    <HintPath>AuthorizeNet.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+
+	<Target Name="NopTarget" AfterTargets="Build">
+		<!-- Delete unnecessary libraries from plugins path -->
+		<MSBuild Projects="@(ClearPluginAssemblies)" Properties="PluginPath=$(MSBuildProjectDirectory)\$(OutDir)" Targets="NopClear" />
+	</Target>
+</Project>

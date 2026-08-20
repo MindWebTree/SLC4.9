@@ -1,0 +1,23 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript">
+        function callParentFunction(str) {
+            if (str && str.length > 0 && window.parent.parent &&
+                typeof window.parent.parent.AuthorizeNetIFrameResponse === "function") {
+                window.parent.parent.AuthorizeNetIFrameResponse(str);
+            }
+        }
+
+        function receiveMessage() {
+            if (window.location.hash && window.location.hash.length > 1) {
+                callParentFunction(window.location.hash.substring(1));
+            }
+        }
+
+        window.onload = receiveMessage;
+    </script>
+</head>
+<body>
+</body>
+</html>
