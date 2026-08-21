@@ -19,6 +19,8 @@ public partial class StandardPermission
         public const string CUSTOM_FAQ_CATEGORY_ACCESS= $"{nameof(CustomPermission)}.FAQCategoryAccess";
         public const string CUSTOM_FAQ_PRODUCT_ACCESS= $"{nameof(CustomPermission)}.FAQProductAccess";
         public const string CUSTOM_ACCESS_UTILITITES = $"{nameof(CustomPermission)}.AccessUtilities";
+        public const string CUSTOM_ACCESS_CUSTOMORDER = $"{nameof(CustomPermission)}.CustomOrder";
+
 
 
     }

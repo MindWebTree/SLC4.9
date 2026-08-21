@@ -1,45 +1,44 @@
-﻿using Nop.Core.Caching;
-using Nop.Core;
-using Nop.MWT.Nop.Core.Domain.CustomOrders;
-using Nop.Services.Catalog;
-using Nop.Services.Customizations.Phone_Order;
-using Nop.Services.Orders;
-using Nop.Web.Areas.Admin.Infrastructure.Mapper.Extensions;
-using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Orders;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Common;
-using Nop.Services.Media;
-using Nop.Services.Localization;
-using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Media;
-using Nop.Core.Domain.Customers;
-using System;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Linq;
-using Nop.Web.Framework.Models.Extensions;
-using Nop.Services.Customers;
-using Nop.Services.Common;
-using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Product;
+using MWT.Nop.Core.Domain.CustomOrders;
+using MWT.Nop.Core.Service.Catalog;
+using MWT.Nop.Core.Service.Zoho;
+using MWT.Nop.Core.Services.Catalog;
+using MWT.Nop.Core.Services.Customers;
+using MWT.Nop.Core.Services.Manage;
+using MWT.Nop.Core.Services.Media;
+using MWT.Nop.Core.Services.Message;
+using MWT.Nop.Core.Services.Orders;
+using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Common;
 using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Customers;
-using Nop.Services.Messages;
-using Nop.Core.Configuration;
+using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Orders;
+using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Products;
+using MWT.Plugin.Misc.MwtStorefront.Models.Api;
+using Nop.Core;
+using Nop.Core.Domain.Catalog;
+using Nop.Core.Domain.Common;
+using Nop.Core.Domain.Customers;
+using Nop.Core.Domain.Media;
+using Nop.Core.Domain.Orders;
+using Nop.Core.Domain.Payments;
+using Nop.Core.Domain.Shipping;
+using Nop.Services.Catalog;
+using Nop.Services.Common;
 using Nop.Services.Configuration;
-using Nop.Web.Models.Checkout;
+using Nop.Services.Customers;
+using Nop.Services.Customizations.CustomOrders;
+using Nop.Services.Directory;
+using Nop.Services.Localization;
+using Nop.Services.Logging;
+using Nop.Services.Messages;
+using Nop.Services.Orders;
 using Nop.Services.Payments;
 using Nop.Services.Security;
-using Nop.Core.Domain.Payments;
-
-using Nop.Services.Logging;
-using Nop.Core.Domain.Shipping;
 using Nop.Services.Shipping;
-using Nop.Core.Domain.Orders;
-using Nop.Core.Domain.Common;
-using Nop.Services.Directory;
-using Microsoft.AspNetCore.Http;
 using Nop.Services.Tax;
-using Nop.Web.Models.Customizations.Order;
-using Nop.Services.Customizations.Custom;
+using Nop.Web.Areas.Admin.Infrastructure.Mapper.Extensions;
+using Nop.Web.Framework.Models.Extensions;
+using Nop.Web.Models.Checkout;
 using System.Dynamic;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
@@ -49,20 +48,20 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
 
         #region Fields
 
-        private readonly IOrderService _orderService;
-        private readonly IProductService _productService;
+        private readonly IOrderExtendedService _orderService;
+        private readonly IProductExtendedService _productService;
         private readonly IPriceFormatter _priceFormatter;
         private ICustomOrderService _customOrderService;
-        private IPictureService _pictureService;
+        private IPictureExtendedService _pictureService;
         private readonly ILocalizationService _localizationService;
         private readonly MediaSettings _mediaSettings;
-        private readonly ICustomerService _customerService;
+        private readonly ICustomerExtendedService _customerService;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly ICustomerModelFactory _customerModelFactory;
         private readonly IProductAttributeService _productAttributeService;
         private readonly IProductAttributeParser _productAttributeParser;
         private readonly IWorkContext _workContext;
-        private readonly IWorkflowMessageService _workflowMessageService;
+        private readonly ICustomWorkflowMessageService _workflowMessageService;
         private readonly ISettingService _settingService;
         private readonly IPaymentPluginManager _paymentPluginManager;
         private readonly PaymentSettings _paymentSettings;
@@ -72,7 +71,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
         private readonly IStoreContext _storeContext;
         private readonly ShippingSettings _shippingSettings;
         private readonly IShippingService _shippingService;
-        private readonly IShoppingCartService _shoppingCartService;
+        private readonly IShoppingCartExtendedService _shoppingCartService;
         private readonly IAddressService _addressService;
         private readonly ICountryService _countryService;
         private readonly IStateProvinceService _stateProvinceService;
@@ -80,30 +79,31 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
         private readonly IPriceCalculationService _priceCalculationService;
         private readonly ShoppingCartSettings _shoppingCartSettings;
         protected readonly ITaxPluginManager _taxPluginManager;
-        private readonly IOrderTotalCalculationService _orderTotalCalculationService;
+        private readonly IOrderTotalCalculationExtendedService _orderTotalCalculationService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IZohoService _zohoService;
         private readonly IManageService _manageService;
+        private readonly IWarehouseService _warehouseService;
 
         #endregion
 
         #region Ctor
 
         public CustomOrderModelFactory(
-            IOrderService orderService,
-            IProductService productService,
+            IOrderExtendedService orderService,
+            IProductExtendedService productService,
             IPriceFormatter priceFormatter,
             ICustomOrderService customOrderService,
-             IPictureService pictureService,
+             IPictureExtendedService pictureService,
              ILocalizationService localizationService,
              MediaSettings mediaSettings,
-             ICustomerService customerService,
+             ICustomerExtendedService customerService,
              IGenericAttributeService genericAttributeService,
              ICustomerModelFactory customerModelFactory,
              IProductAttributeService productAttributeService,
              IProductAttributeParser productAttributeParser,
              IWorkContext workContext,
-             IWorkflowMessageService workflowMessageService,
+             ICustomWorkflowMessageService workflowMessageService,
              ISettingService settingService,
              IPaymentPluginManager paymentPluginManager,
              PaymentSettings paymentSettings,
@@ -113,7 +113,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
              IStoreContext storeContext,
              ShippingSettings shippingSettings,
              IShippingService shippingService,
-             IShoppingCartService shoppingCartService,
+             IShoppingCartExtendedService shoppingCartService,
              IAddressService addressService,
              ICountryService countryService,
              IStateProvinceService stateProvinceService,
@@ -121,11 +121,11 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
              IPriceCalculationService priceCalculationService,
              ShoppingCartSettings shoppingCartSettings,
              ITaxPluginManager taxPluginManager,
-             IOrderTotalCalculationService orderTotalCalculationService,
+             IOrderTotalCalculationExtendedService orderTotalCalculationService,
              IHttpContextAccessor httpContextAccessor,
              IZohoService zohoService,
-             IManageService manageService
-             )
+             IManageService manageService,
+             IWarehouseService warehouseService)
         {
             this._orderService = orderService;
             this._productService = productService;
@@ -162,6 +162,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
             this._httpContextAccessor = httpContextAccessor;
             this._zohoService = zohoService;
             this._manageService = manageService;
+            _warehouseService = warehouseService;
         }
 
         #endregion
@@ -233,7 +234,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                     searchModel.orderStatuses.Add(new SelectListItem { Value = orderStatus.Id.ToString(), Text = await _localizationService.GetResourceAsync("customorder.status" + orderStatus.Name) });
             }
             var paymentMethods = await (await _paymentPluginManager
-     .LoadActivePluginsAsyncAsync(null, 0, 0))
+     .LoadActivePluginsAsync(null, 0, 0))
      .Where(pm => pm.PaymentMethodType == PaymentMethodType.Standard)
      .ToListAsync();
 
@@ -290,7 +291,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
         #region Steps
 
         #region Order Steps
-        public virtual async Task<CustomOrderModel> PrepareCustomerOrderModel(Nop.MWT.Nop.Core.Domain.CustomOrders.CustomOrder order)
+        public virtual async Task<CustomOrderModel> PrepareCustomerOrderModel(MWT.Nop.Core.Domain.CustomOrders.CustomOrder order)
         {
             var model = order.ToModel<CustomOrderModel>();
             var orderTypes = (await _customOrderService.GetOrderTypes());
@@ -313,8 +314,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                 model.OrderStatus = statuses.Where(m => m.Id == order.StatusId).FirstOrDefault()?.Name;
             }
 
-            model.EnableCustomerSearch = model.OrderStatus == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString() ? false : await this.CustomerSearchEnableDisable(order);
-            model.EnableProductSearch = model.OrderStatus == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString() ? false : await this.ProductSearchEnableDisable(order);
+            model.EnableCustomerSearch = model.OrderStatus == Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString() ? false : await this.CustomerSearchEnableDisable(order);
+            model.EnableProductSearch = model.OrderStatus == Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString() ? false : await this.ProductSearchEnableDisable(order);
             model.DisplayCartSummary = (await this._customOrderService.GetOrderItems(order.Id)).Count > 0 ? true : false;
             model.ShippingMethods = await this.GetShippingMethods();
             model.EnableCartSummary = !(await IsOrderPaid(order));
@@ -367,7 +368,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
         public async Task<CustomOrderCustomerSectionModel> PrepareCustomerSection(int orderId, int customerId = 0, bool byCustomerId = false)
         {
             var customer = new Customer();
-            var order = new Nop.MWT.Nop.Core.Domain.CustomOrders.CustomOrder();
+            var order = new MWT.Nop.Core.Domain.CustomOrders.CustomOrder();
             if (!byCustomerId)
                 order = await _customOrderService.GetById(orderId);
             CustomOrderCustomerSectionModel model = new CustomOrderCustomerSectionModel();
@@ -389,7 +390,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                         {
                             var orderTypes = await _customOrderService.GetOrderTypes();
                             var statusIdAlreadyPaidoBJ = orderTypes.Where(m => String.Compare(m.Name,
-                                Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.SavedDraft.ToString(), StringComparison.OrdinalIgnoreCase) == 0).FirstOrDefault();
+                                MWT.Nop.Core.Domain.CustomOrders.OrderStatus.SavedDraft.ToString(), StringComparison.OrdinalIgnoreCase) == 0).FirstOrDefault();
                             if (statusIdAlreadyPaidoBJ == null)
                                 model.EnableCustomerSearch = true;
                         }
@@ -402,27 +403,25 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
 
             if (customer != null && customer.Id != 0)
             {
-                model.FirstName = await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.FirstNameAttribute);
-                model.LastName = await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.LastNameAttribute);
+                model.FirstName = customer.FirstName;
+                model.LastName = customer.LastName;
                 string phone = "";
                 string email = customer.Email;
-                if (string.IsNullOrEmpty(email))
-                    email = await _genericAttributeService.GetAttributeAsync<string>(customer, "Email");
-                phone = await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.PhoneAttribute);
+                phone = customer.Phone;
                 model.Email = string.IsNullOrEmpty(email) ? "" : email;
                 model.Id = customer.Id;
                 if (customer.ShippingAddressId != null && customer.ShippingAddressId != 0)
-                    model.ShippingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, Core.Domain.Common.AddressType.IsShippingAddress, Convert.ToInt32(customer.ShippingAddressId),
+                    model.ShippingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, MWT.Nop.Core.Domain.Address.AddressType.IsShippingAddress, Convert.ToInt32(customer.ShippingAddressId),
                         null, prePopulateNewAddressWithCustomerFields: true);
                 else
-                    model.ShippingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, Core.Domain.Common.AddressType.IsShippingAddress, 0,
+                    model.ShippingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, MWT.Nop.Core.Domain.Address.AddressType.IsShippingAddress, 0,
                            null, prePopulateNewAddressWithCustomerFields: true);
 
                 if (customer.BillingAddressId != null && customer.BillingAddressId != 0)
-                    model.BillingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, Core.Domain.Common.AddressType.IsBillingAddress, Convert.ToInt32(customer.BillingAddressId),
+                    model.BillingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, MWT.Nop.Core.Domain.Address.AddressType.IsBillingAddress, Convert.ToInt32(customer.BillingAddressId),
                         null, prePopulateNewAddressWithCustomerFields: true);
                 else
-                    model.BillingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, Core.Domain.Common.AddressType.IsBillingAddress, 0,
+                    model.BillingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, MWT.Nop.Core.Domain.Address.AddressType.IsBillingAddress, 0,
                            null, prePopulateNewAddressWithCustomerFields: true);
 
                 if (string.IsNullOrEmpty(model.ShippingAddress?.PhoneNumber) && !string.IsNullOrEmpty(phone))
@@ -438,9 +437,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
             }
             else
             {
-                model.ShippingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, Core.Domain.Common.AddressType.IsShippingAddress, 0,
+                model.ShippingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, MWT.Nop.Core.Domain.Address.AddressType.IsShippingAddress, 0,
                               null, prePopulateNewAddressWithCustomerFields: true);
-                model.BillingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, Core.Domain.Common.AddressType.IsBillingAddress, 0,
+                model.BillingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, MWT.Nop.Core.Domain.Address.AddressType.IsBillingAddress, 0,
            null, prePopulateNewAddressWithCustomerFields: true);
             }
 
@@ -468,8 +467,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                 CustomerModel model = new CustomerModel();
                 model.Id = customer.Id;
                 string email = customer.Email;
-                if (string.IsNullOrEmpty(email))
-                    email = await _genericAttributeService.GetAttributeAsync<string>(customer, "Email");
+
                 model.Email = string.IsNullOrEmpty(email) ? "" : email;
                 model.FullName = await _customerService.GetCustomerFullNameAsync(customer);
                 model.FullName = model.FullName == null ? "" : model.FullName;
@@ -810,9 +808,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                 model.Id = order.Id;
                 model.customOrderSummaryModel = await this.PrepareOderSummaryModel(orderId);
                 model.customOrderShoppingCartItemModel = await this.PrepareCartModel(order.Id);
-                model.ShippingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, Core.Domain.Common.AddressType.IsShippingAddress, 0,
+                model.ShippingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, MWT.Nop.Core.Domain.Address.AddressType.IsShippingAddress, 0,
                           null, prePopulateNewAddressWithCustomerFields: true);
-                model.BillingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, Core.Domain.Common.AddressType.IsBillingAddress, 0,
+                model.BillingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, MWT.Nop.Core.Domain.Address.AddressType.IsBillingAddress, 0,
            null, prePopulateNewAddressWithCustomerFields: true);
             }
             return model;
@@ -830,7 +828,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                 model.OrderStatus = orderStatuses.Where(o => o.Id == order.StatusId).FirstOrDefault()?.Name;
                 model.FullPaid = order.FullPaid;
                 if (items.Count == 0 &&
-                    model.OrderStatus != Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString())
+                    model.OrderStatus != Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString())
                     return null;
                 await this.UpdateOrderTotal(orderId);
                 decimal orderTotal = order.OrderTotal == null ? 0 : (Convert.ToDecimal(order.OrderTotal));
@@ -1003,7 +1001,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
 
                 // Payment Section
                 var paymentMethods = await (await _paymentPluginManager
-             .LoadActivePluginsAsyncAsync(model.Customer, 0, 0))
+             .LoadActivePluginsAsync(model.Customer, 0, 0))
              .Where(pm => pm.PaymentMethodType == PaymentMethodType.Standard)
              .ToListAsync();
 
@@ -1055,7 +1053,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                 // end
                 // Payment Details
 
-                if (model.OrderStatus == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString() && order.LiveOrderNumber != null)
+                if (model.OrderStatus == Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString() && order.LiveOrderNumber != null)
                 {
                     var liveOrder = await _orderService.GetOrderByIdAsync(Convert.ToInt32(order.LiveOrderNumber));
                     if (liveOrder != null)
@@ -1066,7 +1064,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                         paymentDetails.TransactionId = string.IsNullOrEmpty(liveOrder.AuthorizationTransactionId) ?
                             liveOrder.CaptureTransactionId : liveOrder.AuthorizationTransactionId;
                         paymentDetails.Card = String.IsNullOrEmpty(liveOrder.MaskedCreditCardNumber) ? "" : _encryptionService.DecryptText(liveOrder.MaskedCreditCardNumber);
-                        var paidStatusId = orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString()).FirstOrDefault()?.Id;
+                        var paidStatusId = orderStatuses.Where(s => s.Name == Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString()).FirstOrDefault()?.Id;
                         if (paidStatusId != null)
                         {
                             var logs = await _customOrderService.GetOrderStatusLogs(order.Id);
@@ -1122,7 +1120,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                 model.OrderStatus = orderStatuses.Where(o => o.Id == order.StatusId).FirstOrDefault()?.Name;
                 model.FullPaid = order.FullPaid;
                 if (items.Count == 0 &&
-                    model.OrderStatus != Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString())
+                    model.OrderStatus != Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString())
                     return null;
                 await this.UpdateOrderTotal(orderId);
                 decimal orderTotal = order.OrderTotal == null ? 0 : (Convert.ToDecimal(order.OrderTotal));
@@ -1254,7 +1252,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                 if (liveOrder != null)
                 {
                     var taxes = _orderService.GetTaxDetails(liveOrder);
-                    if (taxes.Where(t => t.TaxType != Nop.Services.Tax.TaxType.Tax && t.TaxRate > 0).Any())
+                    if (taxes.Where(t => t.TaxType != TaxType.Tax && t.TaxRate > 0).Any())
                     {
                         foreach (var taxInfo in taxes.Where(t => t.TaxRate > 0))
                         {
@@ -1303,8 +1301,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
 
                     if (order.StatusId == 0)
                     {
-                        order.StatusId = orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.SavedDraft.ToString()).Any() ?
-                               orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.SavedDraft.ToString()).FirstOrDefault().Id : order.StatusId;
+                        order.StatusId = orderStatuses.Where(s => s.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.SavedDraft.ToString()).Any() ?
+                               orderStatuses.Where(s => s.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.SavedDraft.ToString()).FirstOrDefault().Id : order.StatusId;
                     }
 
                     await _customOrderService.UpdateAsync(order);
@@ -1313,8 +1311,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                     {
                         CreatedOn = DateTime.UtcNow,
                         OrderId = order.Id,
-                        StatusId = orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.OrderSaved.ToString()).Any() ?
-                        orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.OrderSaved.ToString()).FirstOrDefault().Id : order.StatusId,
+                        StatusId = orderStatuses.Where(s => s.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.OrderSaved.ToString()).Any() ?
+                        orderStatuses.Where(s => s.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.OrderSaved.ToString()).FirstOrDefault().Id : order.StatusId,
                         UserId = customerId == 0 ? (await _workContext.GetCurrentCustomerAsync()).Id : customerId
                     });
 
@@ -1458,21 +1456,21 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                 }
                 else if (orderTypeUpdate == OrderTypeUpdate.StatusUpdate)
                 {
-                    if (model.OrderStatus == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.SavedDraft.ToString())
+                    if (model.OrderStatus == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.SavedDraft.ToString())
                     {
                         var orderStatuses = await _customOrderService.GetOrderStatuses();
                         if (order.CreatedOn == null)
                             order.CreatedOn = DateTime.UtcNow;
-                        order.StatusId = orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.SavedDraft.ToString()).Any() ?
-                            orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.SavedDraft.ToString()).FirstOrDefault().Id : order.StatusId;
+                        order.StatusId = orderStatuses.Where(s => s.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.SavedDraft.ToString()).Any() ?
+                            orderStatuses.Where(s => s.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.SavedDraft.ToString()).FirstOrDefault().Id : order.StatusId;
                         await this._customOrderService.UpdateAsync(order);
 
                         await this._customOrderService.InsertOrderStatusLogAsync(new CustomorderOrderStatusLog()
                         {
                             CreatedOn = DateTime.UtcNow,
                             OrderId = order.Id,
-                            StatusId = orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.SavedDraft.ToString()).Any() ?
-                           orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.SavedDraft.ToString()).FirstOrDefault().Id : order.StatusId,
+                            StatusId = orderStatuses.Where(s => s.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.SavedDraft.ToString()).Any() ?
+                           orderStatuses.Where(s => s.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.SavedDraft.ToString()).FirstOrDefault().Id : order.StatusId,
                             UserId = customerId == 0 ? (await _workContext.GetCurrentCustomerAsync()).Id : customerId
                         });
 
@@ -1484,14 +1482,14 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                        $"Order status for  {order.Id} changed to Draft");
                         }
                     }
-                    else if (model.OrderStatus == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString())
+                    else if (model.OrderStatus == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString())
                     {
                         var orderStatuses = await _customOrderService.GetOrderStatuses();
                         if (order.CreatedOn == null)
                             order.CreatedOn = DateTime.UtcNow;
 
-                        order.StatusId = orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).Any() ?
-                            orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).FirstOrDefault().Id : order.StatusId;
+                        order.StatusId = orderStatuses.Where(s => s.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).Any() ?
+                            orderStatuses.Where(s => s.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).FirstOrDefault().Id : order.StatusId;
 
 
                         var customer = new Customer();
@@ -1520,7 +1518,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
 
                         var iPAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress == null ? "" : _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
-                       
+
 
                         order.ZohoPotentialId = await _zohoService.CreateUpdateOrderContactPotential(order.LiveOrderNumber ?? order.Id, order.ZohoPotentialId, customer, MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString(), description, iPAddress, string.Empty, (order.SubTotal ?? 0) + (order.TotalDiscount ?? 0), order.CreatedBy, $"{_storeContext.GetCurrentStore().Url}checkoutCustomOrder?orderid={order.Id}&customerid={order.CustomerId}", true);
 
@@ -1542,8 +1540,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                             CreatedOn = DateTime.UtcNow,
                             InvoiceSendTo = model.CustomerEmail,
                             OrderId = order.Id,
-                            StatusId = orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).Any() ?
-                                 orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).FirstOrDefault().Id : order.StatusId,
+                            StatusId = orderStatuses.Where(s => s.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).Any() ?
+                                 orderStatuses.Where(s => s.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).FirstOrDefault().Id : order.StatusId,
                             UserId = customerId == 0 ? (await _workContext.GetCurrentCustomerAsync()).Id : customerId,
                             NotificationId = notificationIds.Any() ? notificationIds.First() : 0
                         });
@@ -1579,13 +1577,13 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
 
         #region Common Methods
 
-        public async Task<bool> IsOrderPaid(Nop.MWT.Nop.Core.Domain.CustomOrders.CustomOrder order)
+        public async Task<bool> IsOrderPaid(MWT.Nop.Core.Domain.CustomOrders.CustomOrder order)
         {
             var orderTypes = (await _customOrderService.GetOrderTypes()).Where(o => o.ParentId == 0);
-            var isOrderPaid = orderTypes.Where(m => m.Id == order.StatusId && m.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString()).Any();
+            var isOrderPaid = orderTypes.Where(m => m.Id == order.StatusId && m.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString()).Any();
             return isOrderPaid;
         }
-        public async Task<bool> ProductSearchEnableDisable(Nop.MWT.Nop.Core.Domain.CustomOrders.CustomOrder order)
+        public async Task<bool> ProductSearchEnableDisable(MWT.Nop.Core.Domain.CustomOrders.CustomOrder order)
         {
             var customer = new Customer();
             bool enableProductSearch = false;
@@ -1598,14 +1596,14 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
             {
                 var orderTypes = await _customOrderService.GetOrderTypes();
                 var statusIdAlreadyPaidoBJ = orderTypes.Where(m => String.Compare(m.Name,
-                    Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString(), StringComparison.OrdinalIgnoreCase) == 0).FirstOrDefault();
+                    MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString(), StringComparison.OrdinalIgnoreCase) == 0).FirstOrDefault();
                 if (statusIdAlreadyPaidoBJ == null)
                     enableProductSearch = true;
 
             }
             return enableProductSearch;
         }
-        public async Task<bool> CustomerSearchEnableDisable(Nop.MWT.Nop.Core.Domain.CustomOrders.CustomOrder order)
+        public async Task<bool> CustomerSearchEnableDisable(MWT.Nop.Core.Domain.CustomOrders.CustomOrder order)
         {
             var customer = new Customer();
             bool enableCustomerSearch = false;
@@ -1627,7 +1625,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                     {
                         var orderTypes = await _customOrderService.GetOrderTypes();
                         var statusIdAlreadyPaidoBJ = orderTypes.Where(m => String.Compare(m.Name,
-                            Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.SavedDraft.ToString(), StringComparison.OrdinalIgnoreCase) == 0).FirstOrDefault();
+                            MWT.Nop.Core.Domain.CustomOrders.OrderStatus.SavedDraft.ToString(), StringComparison.OrdinalIgnoreCase) == 0).FirstOrDefault();
                         if (statusIdAlreadyPaidoBJ == null)
                             enableCustomerSearch = true;
                     }
@@ -1659,9 +1657,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
             if (customer == null || customer.ShippingAddressId == null || customer.ShippingAddressId == 0)
                 return false;
             string email = customer.Email;
-            if (string.IsNullOrEmpty(email))
-                email = await _genericAttributeService.GetAttributeAsync<string>(customer, "Email");
-
+      
             if (String.Compare(email.Trim(), emailAddress.Trim(), StringComparison.OrdinalIgnoreCase) != 0 && String.Compare((order.CustomerCCEmail ?? string.Empty).Trim(), emailAddress.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
                 return false;
             else
@@ -1727,12 +1723,12 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
             return (taxdetails, html);
         }
 
-        public async Task<bool> IsOrderEditable(Nop.MWT.Nop.Core.Domain.CustomOrders.CustomOrder order)
+        public async Task<bool> IsOrderEditable(MWT.Nop.Core.Domain.CustomOrders.CustomOrder order)
         {
             var orderStatuses = await this._customOrderService.GetOrderStatuses();
             var status = orderStatuses.Where(s => s.Id == order.StatusId).FirstOrDefault();
             if (status == null || String.Compare(status.Name,
-                            Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString(), StringComparison.OrdinalIgnoreCase) != 0)
+                            MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString(), StringComparison.OrdinalIgnoreCase) != 0)
                 return true;
             return false;
 
@@ -1743,7 +1739,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
             var order = await _customOrderService.GetById(orderId);
             var orderStatuses = await this._customOrderService.GetOrderStatuses();
             var status = orderStatuses.Where(m => m.Id == order.StatusId).FirstOrDefault()?.Name;
-            if (status != Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString())
+            if (status != MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString())
             {
 
 
@@ -1801,14 +1797,14 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                     decimal customDutyPercentage = 0;
                     List<TaxInfo> taxes = new List<TaxInfo>();
 
-                    if (status != Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString())
+                    if (status != MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString())
                         order.Shipping = shipping;
                     order.SubTotal = subTotal;
 
                     var customer = await this._customerService.GetCustomerByIdAsync(Convert.ToInt32(order.CustomerId));
                     bool includeShipping = false;
                     if (subTotal > 0 && order.CustomerId != null && order.CustomerId != 0 &&
-         (status != Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString()))
+         (status != MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString()))
                     {
 
                         if (customer != null && customer.ShippingAddressId != null && customer.ShippingAddressId > 0)
@@ -1837,16 +1833,16 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                     {
                         taxInfo += $"{_tax.TaxType.ToString()}:{_tax.TaxRate.ToString()}:{_tax.Amount};";
                     }
-                    order.TaxInfo = status == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString() ? order.TaxInfo : taxInfo;
+                    order.TaxInfo = status == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString() ? order.TaxInfo : taxInfo;
 
-                    order.TaxRate = status == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString() ? order.TaxRate : taxRate;
-                    order.OrderTax = status == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString() ?
+                    order.TaxRate = status == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString() ? order.TaxRate : taxRate;
+                    order.OrderTax = status == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString() ?
                         order.OrderTax : tax;
 
-                    order.CustomDuty = status == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString() ?
+                    order.CustomDuty = status == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString() ?
                    order.CustomDuty : customDuty;
 
-                    order.CustomDutyPercentage = status == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString() ?
+                    order.CustomDutyPercentage = status == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString() ?
                    order.CustomDutyPercentage : customDutyPercentage;
 
                     order.TotalDiscount = subTotalDiscount;
@@ -1901,9 +1897,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
             }
             return shipping;
         }
-        protected async Task<List<MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Product.ProductAttribute>> PrepareProductAttributes(List<AttributeCombination> attributeCombinations)
+        protected async Task<List<MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Products.ProductAttribute>> PrepareProductAttributes(List<AttributeCombination> attributeCombinations)
         {
-            List<MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Product.ProductAttribute> attributes = new List<Models.Product.ProductAttribute>();
+            List<MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Products.ProductAttribute> attributes = new List<Models.Products.ProductAttribute>();
 
             if (attributeCombinations.Count > 0)
             {
@@ -1915,11 +1911,11 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                         var obj = attributes.Where(m => m.ParentAttributeId == prdAttr.ParentAttributeId).FirstOrDefault();
                         if (obj == null)
                         {
-                            attributes.Add(new Models.Product.ProductAttribute()
+                            attributes.Add(new Models.Products.ProductAttribute()
                             {
                                 ParentAttributeId = prdAttr.ParentAttributeId,
                                 ParentAtributeName = prdAttr.ParentAtributeName,
-                                Values = new List<Models.Product.Attribute>()
+                                Values = new List<Models.Products.Attribute>()
                             });
                             obj = attributes.Where(m => m.ParentAttributeId == prdAttr.ParentAttributeId).FirstOrDefault();
                         }
@@ -1928,7 +1924,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                         {
                             var childAttr = obj.Values.Where(m => m.AttributeId == prdAttr.AttributeId).FirstOrDefault();
                             if (childAttr == null)
-                                obj.Values.Add(new Models.Product.Attribute()
+                                obj.Values.Add(new Models.Products.Attribute()
                                 {
                                     AttributeId = prdAttr.AttributeId,
                                     AttributeName = prdAttr.AttributeName
@@ -1950,7 +1946,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
             {
                 AttributeCombination model = new AttributeCombination();
                 model.Stock = prdCombination.StockQuantity;
-                List<MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Product.Attribute> _productAttributes = new List<Models.Product.Attribute>();
+                List<MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Products.Attribute> _productAttributes = new List<Models.Products.Attribute>();
                 decimal price =
                     prdCombination.OverriddenOldPrice == null || prdCombination.OverriddenOldPrice <= 0 ? (
                     prdCombination.OverriddenPrice == null ? product.Price : Convert.ToDecimal(prdCombination.OverriddenPrice)
@@ -1961,7 +1957,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                     var productAttribute = await _productAttributeService.GetProductAttributeByIdAsync(attribute.ProductAttributeId);
                     if (productAttribute != null)
                     {
-                        MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Product.Attribute _productAttribute = new Models.Product.Attribute();
+                        MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Products.Attribute _productAttribute = new Models.Products.Attribute();
                         var attributeName = await _localizationService.GetLocalizedAsync(productAttribute, a => a.Name, (await _workContext.GetWorkingLanguageAsync()).Id);
                         _productAttribute.ParentAttributeId = productAttribute.Id;
                         _productAttribute.ParentAtributeName = productAttribute.Name;
@@ -2027,7 +2023,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
 
             return pictureModel;
         }
-        protected async Task<CustomOrderModel> PrepareCustomOrderModelByOrderDomain(Nop.Core.Domain.Orders.Order order)
+        protected async Task<CustomOrderModel> PrepareCustomOrderModelByOrderDomain(Order order)
         {
             CustomOrderModel model = new CustomOrderModel();
             model.OrderTotal = order.OrderTotal > 0 ? await _priceFormatter.FormatPriceAsync(order.OrderTotal) : "";
@@ -2035,12 +2031,12 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
             model.CreatedOn = order.CreatedOnUtc;
             model.LiveOrderNumber = order.Id;
             model.CustomerId = order.CustomerId;
-            model.isShipped = order.ShippingStatus == Core.Domain.Shipping.ShippingStatus.Shipped ? true : false;
-            model.isDelivered = order.ShippingStatus == Core.Domain.Shipping.ShippingStatus.Delivered ? true : false;
+            model.isShipped = order.ShippingStatus == ShippingStatus.Shipped ? true : false;
+            model.isDelivered = order.ShippingStatus == ShippingStatus.Delivered ? true : false;
             model.Items = await this.BindOfOrderItemsByOrderItemDomain(order.Id);
             return model;
         }
-        protected virtual async Task<CustomOrderModel> PrepareCustomerOrderModel(Nop.MWT.Nop.Core.Domain.CustomOrders.CustomOrder order, int alreadyPaidStatusId)
+        protected virtual async Task<CustomOrderModel> PrepareCustomerOrderModel(MWT.Nop.Core.Domain.CustomOrders.CustomOrder order, int alreadyPaidStatusId)
         {
             var customOrderModel = new CustomOrderModel();
             try
@@ -2069,8 +2065,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                     var customer = await _customerService.GetCustomerByIdAsync(Convert.ToInt32(order.CustomerId));
                     if (customer != null)
                     {
-                        var FirstName = await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.FirstNameAttribute);
-                        var LastName = await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.LastNameAttribute);
+                        var FirstName = customer.FirstName;
+                        var LastName = customer.LastName;
                         var email = await _genericAttributeService.GetAttributeAsync<string>(customer, "Email");
                         customOrderModel.CustomerName = (FirstName == null ? "" : FirstName) + " " +
                             (LastName == null ? "" : LastName);
@@ -2167,7 +2163,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
             return shippingMethods;
 
         }
-        public async Task<(decimal wgsCharges, decimal defaultWgsCharges, decimal surchargeAmount)> GetWgsCharges(Nop.MWT.Nop.Core.Domain.CustomOrders.CustomOrder order, decimal subTotal, bool IsSurchargeApplicable = false)
+        public async Task<(decimal wgsCharges, decimal defaultWgsCharges, decimal surchargeAmount)> GetWgsCharges(MWT.Nop.Core.Domain.CustomOrders.CustomOrder order, decimal subTotal, bool IsSurchargeApplicable = false)
         {
             decimal wgsCharges = 0;
             decimal defaultWgsCharges = 0;
@@ -2323,17 +2319,18 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                         //multiple warehouses supported
                         foreach (var pwi in await _productService.GetAllProductWarehouseInventoryRecordsAsync(product.Id))
                         {
-                            var tmpWarehouse = await this._shippingService.GetWarehouseByIdAsync(pwi.WarehouseId);
+                            var tmpWarehouse = await _warehouseService.GetWarehouseByIdAsync(pwi.WarehouseId);
+
                             if (tmpWarehouse != null)
                                 allWarehouses.Add(tmpWarehouse);
                         }
 
-                        warehouse = await this._shippingService.GetNearestWarehouseAsync(shippingAddress, allWarehouses);
+                        warehouse = await _warehouseService.GetNearestWarehouseAsync(shippingAddress, allWarehouses);
                     }
                     else
                     {
                         //multiple warehouses are not supported
-                        warehouse = await this._shippingService.GetWarehouseByIdAsync(product.WarehouseId);
+                        warehouse = await this._warehouseService.GetWarehouseByIdAsync(product.WarehouseId);
                     }
                 }
 
@@ -2423,7 +2420,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
 
             return (result, shippingFromMultipleLocations);
         }
-        protected async Task AddItemsToCart(Nop.MWT.Nop.Core.Domain.CustomOrders.CustomOrder order, Customer customer)
+        protected async Task AddItemsToCart(MWT.Nop.Core.Domain.CustomOrders.CustomOrder order, Customer customer)
         {
             var storID = (await _storeContext.GetCurrentStoreAsync()).Id;
             var cartItems = await _shoppingCartService.GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart, storID);
@@ -2480,7 +2477,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
         #region Additioal Services
 
 
-        public async Task AdditionalServiceSendInvoice(Nop.MWT.Nop.Core.Domain.CustomOrders.CustomOrder order, decimal previousWgsAmount, decimal previousWgsDiscount, decimal currentWgsAmount, decimal currentWgsDiscount, decimal defaultWgsCharges = 0, decimal surchargeAmount = 0)
+        public async Task AdditionalServiceSendInvoice(MWT.Nop.Core.Domain.CustomOrders.CustomOrder order, decimal previousWgsAmount, decimal previousWgsDiscount, decimal currentWgsAmount, decimal currentWgsDiscount, decimal defaultWgsCharges = 0, decimal surchargeAmount = 0)
         {
             if (order != null)
             {
@@ -2488,8 +2485,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                 if (order.CreatedOn == null)
                     order.CreatedOn = DateTime.UtcNow;
 
-                order.StatusId = orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).Any() ?
-                    orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).FirstOrDefault().Id : order.StatusId;
+                order.StatusId = orderStatuses.Where(s => s.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).Any() ?
+                    orderStatuses.Where(s => s.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).FirstOrDefault().Id : order.StatusId;
                 await this._customOrderService.UpdateAsync(order);
 
                 var customer = new Customer();
@@ -2516,8 +2513,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                     CreatedOn = DateTime.UtcNow,
                     InvoiceSendTo = string.IsNullOrEmpty(order.CustomerCCEmail) ? customer.Email : order.CustomerCCEmail,
                     OrderId = order.Id,
-                    StatusId = orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).Any() ?
-                         orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).FirstOrDefault().Id : order.StatusId,
+                    StatusId = orderStatuses.Where(s => s.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).Any() ?
+                         orderStatuses.Where(s => s.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).FirstOrDefault().Id : order.StatusId,
                     UserId = (await _workContext.GetCurrentCustomerAsync()).Id,
                     Comments = (currentWgsAmount <= 0 ? $"WGS created, Order Total {await _priceFormatter.FormatPriceAsync(previousWgsAmount - previousWgsDiscount)}" :
                     previousWgsAmount == currentWgsAmount && previousWgsDiscount == currentWgsDiscount ? $"WGS Invoice Sent Order Total {await _priceFormatter.FormatPriceAsync(previousWgsAmount - previousWgsDiscount)}" : (
@@ -2531,7 +2528,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
         }
 
 
-        public async Task<AdditionalServiceModel> PrepareAdditionalServiceModel(AdditionalServiceModel model, Nop.MWT.Nop.Core.Domain.CustomOrders.CustomOrder Customorder = null,
+        public async Task<AdditionalServiceModel> PrepareAdditionalServiceModel(AdditionalServiceModel model, MWT.Nop.Core.Domain.CustomOrders.CustomOrder Customorder = null,
             Order order = null,
 
             MWT.Nop.Core.Domain.CustomOrders.OrderStatus status = MWT.Nop.Core.Domain.CustomOrders.OrderStatus.SavedDraft)
@@ -2575,7 +2572,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
         }
 
         public async Task<(Dictionary<int, dynamic> pairedOrders, string validPairedOrders, decimal orderSubTotal, decimal orderTotal, bool isSurchargeApplicable)> GetAdditionalServiceOrderInfo
-            (Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus status, Order order, Nop.MWT.Nop.Core.Domain.CustomOrders.CustomOrder customOrder, string pairedOrderIds)
+            (MWT.Nop.Core.Domain.CustomOrders.OrderStatus status, Order order, MWT.Nop.Core.Domain.CustomOrders.CustomOrder customOrder, string pairedOrderIds)
         {
             decimal orderTotal = order.OrderTotal;
             decimal orderSubtotal = 0;
@@ -2693,12 +2690,12 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
             if (customer != null)
             {
                 if (order.ShippingAddressId != null && order.ShippingAddressId != 0)
-                    model.ShippingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, Core.Domain.Common.AddressType.IsShippingAddress, Convert.ToInt32(order.ShippingAddressId),
+                    model.ShippingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, MWT.Nop.Core.Domain.Address.AddressType.IsShippingAddress, Convert.ToInt32(order.ShippingAddressId),
                         null, prePopulateNewAddressWithCustomerFields: true);
                 model.ShippingAddress.IsShippingAddress = true;
 
                 if (order.BillingAddressId != null && order.BillingAddressId != 0)
-                    model.BillingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, Core.Domain.Common.AddressType.IsBillingAddress, Convert.ToInt32(order.BillingAddressId),
+                    model.BillingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, MWT.Nop.Core.Domain.Address.AddressType.IsBillingAddress, Convert.ToInt32(order.BillingAddressId),
                         null, prePopulateNewAddressWithCustomerFields: true);
 
                 if (order.BillingAddressId == 0)
@@ -2711,7 +2708,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
         }
 
 
-        public async Task BindPaymentDetails(AdditionalServiceModel model, Nop.MWT.Nop.Core.Domain.CustomOrders.CustomOrder order)
+        public async Task BindPaymentDetails(AdditionalServiceModel model, MWT.Nop.Core.Domain.CustomOrders.CustomOrder order)
         {
             var orderStatuses = await this._customOrderService.GetOrderStatuses();
             var liveOrder = await _orderService.GetOrderByIdAsync(Convert.ToInt32(order.LiveOrderNumber));
@@ -2723,7 +2720,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                 paymentDetails.TransactionId = string.IsNullOrEmpty(liveOrder.AuthorizationTransactionId) ?
                     liveOrder.CaptureTransactionId : liveOrder.AuthorizationTransactionId;
                 paymentDetails.Card = String.IsNullOrEmpty(liveOrder.MaskedCreditCardNumber) ? "" : _encryptionService.DecryptText(liveOrder.MaskedCreditCardNumber);
-                var paidStatusId = orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString()).FirstOrDefault()?.Id;
+                var paidStatusId = orderStatuses.Where(s => s.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString()).FirstOrDefault()?.Id;
                 if (paidStatusId != null)
                 {
                     var logs = await _customOrderService.GetOrderStatusLogs(order.Id);

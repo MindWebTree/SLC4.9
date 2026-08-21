@@ -60,7 +60,7 @@ public partial class ShoppingCartExtendedModelFactory : ShoppingCartModelFactory
 {
     #region Fields
     private readonly ISettingService _settingService;
-    private readonly IShoppingCartExtendedCartService _shoppingCartExtendedCartService;
+    private readonly IShoppingCartExtendedService _shoppingCartExtendedCartService;
     private readonly IProductExtendedService _productExtendedService;
     private readonly ICustomerExtendedService _customerExtendedService;
     private readonly ICustomProductAttributeFormatter _customProductAttributeFormatter;
@@ -95,7 +95,7 @@ public partial class ShoppingCartExtendedModelFactory : ShoppingCartModelFactory
         IWebHelper webHelper, IWorkContext workContext, MediaSettings mediaSettings, OrderSettings orderSettings,
         RewardPointsSettings rewardPointsSettings, ShippingSettings shippingSettings, ShoppingCartSettings shoppingCartSettings,
         TaxSettings taxSettings, VendorSettings vendorSettings, ISettingService settingService,
-        IShoppingCartExtendedCartService shoppingCartExtendedCartService, IProductExtendedService productExtendedService,
+        IShoppingCartExtendedService shoppingCartExtendedCartService, IProductExtendedService productExtendedService,
         ICustomerExtendedService customerExtendedService, ICustomProductAttributeFormatter customProductAttributeFormatter,
         IPriceCalculationExtendedService priceCalculationService, IOrderTotalCalculationExtendedService orderTotalCalculationExtendedService,
         IPictureExtendedService pictureExtendedService, IProductAttributeParser productAttributeParser) :

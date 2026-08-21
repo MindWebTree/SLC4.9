@@ -7,6 +7,7 @@ using MWT.Nop.Core.Services.AbandonedCarts;
 using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.Customers;
 using MWT.Nop.Core.Services.Message;
+using MWT.Nop.Core.Services.Orders;
 using MWT.Plugin.Misc.MwtStorefront.Components;
 using MWT.Plugin.Misc.MwtStorefront.Factories;
 using MWT.Plugin.Misc.MwtStorefront.Models.Customer;
@@ -87,7 +88,7 @@ public partial class ShoppingCartController : BasePublicController
     protected readonly IProductExtendedService _productService;
     protected readonly IShippingService _shippingService;
     protected readonly IShoppingCartExtendedModelFactory _shoppingCartModelFactory;
-    protected readonly IShoppingCartExtendedCartService _shoppingCartService;
+    protected readonly IShoppingCartExtendedService _shoppingCartService;
     protected readonly IStaticCacheManager _staticCacheManager;
     protected readonly IStoreContext _storeContext;
     protected readonly IStoreMappingService _storeMappingService;
@@ -133,7 +134,7 @@ public partial class ShoppingCartController : BasePublicController
         IProductExtendedService productService,
         IShippingService shippingService,
         IShoppingCartExtendedModelFactory shoppingCartModelFactory,
-        IShoppingCartExtendedCartService shoppingCartService,
+        IShoppingCartExtendedService shoppingCartService,
         IStaticCacheManager staticCacheManager,
         IStoreContext storeContext,
         IStoreMappingService storeMappingService,

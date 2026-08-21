@@ -13,7 +13,7 @@ using MWT.Nop.Core.Domain.CustomOrders;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Components
 {
-    public class CustomOrderStatusLog : NopViewComponent
+    public class CustomOrderStatusLogViewComponent : NopViewComponent
     {
         #region Fields
         private readonly ICustomOrderService _customOrderService;
@@ -24,7 +24,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Components
 
         #region Ctor
 
-        public CustomOrderStatusLog(ICustomOrderService customOrderService, ICustomerService customerService,ILocalizationService localizationService,
+        public CustomOrderStatusLogViewComponent(ICustomOrderService customOrderService, ICustomerService customerService,ILocalizationService localizationService,
              IQueuedEmailService queuedEmailService)
         {
             this._customOrderService = customOrderService;

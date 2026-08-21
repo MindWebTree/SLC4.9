@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using MWT.Plugin.Misc.MwtStorefront.Infrastructure;
+using MWT.Plugin.Misc.MwtStorefront.Infrastructure.Filters;
 using Newtonsoft.Json;
 using Nop.Core.Domain.Common;
 using Nop.Core.Infrastructure;
-using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
-using Nop.Web.Framework.Customizations;
 using Nop.Web.Framework.Mvc.Filters;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 {
-    [Area(CustomAreaNames.CustomOrder)]
+    [Area(ExtendedAreaNames.CustomOrder)]
     [AutoValidateAntiforgeryToken]
     [ValidateIpAddress]
     [AuthorizeAdminCustomOrderAccess]

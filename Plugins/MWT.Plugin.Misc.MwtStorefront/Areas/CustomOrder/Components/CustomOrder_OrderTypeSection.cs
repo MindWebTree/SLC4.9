@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Components
 {
-    public class CustomOrder_OrderTypeSection : NopViewComponent
+    public class CustomOrder_OrderTypeSectionViewComponent : NopViewComponent
     {
 
         #region Fields
@@ -16,7 +16,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Components
 
         #region Ctor
 
-        public CustomOrder_OrderTypeSection(ICustomOrderModelFactory customOrderModelFactory)
+        public CustomOrder_OrderTypeSectionViewComponent(ICustomOrderModelFactory customOrderModelFactory)
         {
             this._customOrderModelFactory = customOrderModelFactory;
         }

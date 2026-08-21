@@ -8,7 +8,7 @@ using Nop.Web.Framework.Components;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Components
 {
-    public class OrderReceipt : NopViewComponent
+    public class OrderReceiptViewComponent : NopViewComponent
     {
         #region Fields
 
@@ -19,7 +19,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Components
 
         #endregion
 
-        public OrderReceipt(IOrderService orderService, ICustomWorkflowMessageService workflowMessageService,
+        public OrderReceiptViewComponent(IOrderService orderService, ICustomWorkflowMessageService workflowMessageService,
             ICustomOrderService customOrderService, IWorkContext workContext)
         {
             this._orderService = orderService;

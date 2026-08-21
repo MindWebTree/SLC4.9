@@ -69,7 +69,7 @@ namespace MWT.Nop.Core.Services.Message
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IWebHelper _webHelper;
         private readonly ICustomProductAttributeFormatter _productAttributeFormatter;
-        private readonly IShoppingCartExtendedCartService _shoppingCartService;
+        private readonly IShoppingCartExtendedService _shoppingCartService;
         private readonly IProductExtendedService _productExtendedService;
         private readonly ITaxService _taxService;
         private readonly ICategoryService _categoryService;
@@ -83,7 +83,7 @@ namespace MWT.Nop.Core.Services.Message
             TaxSettings taxSettings, ICustomerExtendedService customCustomerService,
             IPictureExtendedService pictureService, MediaSettings mediaSettings,
             IHttpContextAccessor httpContextAccessor, IWebHelper webHelper,
-            ICustomProductAttributeFormatter productAttributeFormatter, IShoppingCartExtendedCartService shoppingCartService,
+            ICustomProductAttributeFormatter productAttributeFormatter, IShoppingCartExtendedService shoppingCartService,
             ITaxService taxService, ICategoryService categoryService, IEncryptionService encryptionService, IProductExtendedService productExtendedService, ICustomOrderService customOrderService,
             IOrderExtendedService orderExtendedService, ISettingService settingService, IOrderTotalCalculationExtendedService orderTotalCalculationService) : base(catalogSettings, currencySettings, actionContextAccessor, addressService, addressAttributeFormatter, customerAttributeFormatter, vendorAttributeFormatter, blogService, countryService, currencyService, customerService, dateTimeHelper, eventPublisher, genericAttributeService, giftCardService, htmlFormatter, languageService, localizationService, logger, newsService, orderService, paymentPluginManager, paymentService, priceFormatter, productService, rewardPointService, shipmentService, stateProvinceService, storeContext, storeService, urlHelperFactory, urlRecordService, workContext, templatesSettings, paymentSettings, storeInformationSettings, taxSettings)
         {

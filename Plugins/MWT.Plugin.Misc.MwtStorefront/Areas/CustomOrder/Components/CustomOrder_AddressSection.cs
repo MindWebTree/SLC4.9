@@ -5,7 +5,7 @@ using Nop.Web.Framework.Components;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Components
 {
-    public class CustomOrder_AddressSection : NopViewComponent
+    public class CustomOrder_AddressSectionViewComponent : NopViewComponent
     {
 
         #region Fields
@@ -16,7 +16,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Components
 
         #region Ctor
 
-        public CustomOrder_AddressSection(ICustomOrderModelFactory customOrderModelFactory)
+        public CustomOrder_AddressSectionViewComponent(ICustomOrderModelFactory customOrderModelFactory)
         {
             this._customOrderModelFactory = customOrderModelFactory;
         }

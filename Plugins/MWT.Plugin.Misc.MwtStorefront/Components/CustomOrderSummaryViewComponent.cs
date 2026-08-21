@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MWT.Nop.Core.Services.Catalog;
+using MWT.Nop.Core.Services.Orders;
 using MWT.Plugin.Misc.MwtStorefront.Factories;
 using Nop.Core;
 using Nop.Core.Domain.Orders;
@@ -19,14 +20,14 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
     public class CustomOrderSummaryViewComponent : NopViewComponent
     {
         private readonly IShoppingCartExtendedModelFactory _shoppingCartModelFactory;
-        private readonly IShoppingCartExtendedCartService _shoppingCartService;
+        private readonly IShoppingCartExtendedService _shoppingCartService;
         private readonly IStoreContext _storeContext;
         private readonly IWorkContext _workContext;
         private readonly IOrderTotalCalculationService _orderTotalCalculationService;
         private readonly ICurrencyService _currencyService;
         private readonly IPriceFormatter _priceFormatter;
         public CustomOrderSummaryViewComponent(IShoppingCartExtendedModelFactory shoppingCartModelFactory,
-            IShoppingCartExtendedCartService shoppingCartService,
+            IShoppingCartExtendedService shoppingCartService,
             IStoreContext storeContext,
             IWorkContext workContext,
             IOrderTotalCalculationService orderTotalCalculationService,

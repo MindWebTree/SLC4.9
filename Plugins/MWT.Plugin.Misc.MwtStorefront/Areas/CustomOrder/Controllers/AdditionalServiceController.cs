@@ -23,6 +23,9 @@ using MWT.Nop.Core.Service.Zoho;
 using MWT.Nop.Core.Services.Manage;
 using MWT.Nop.Core.Services.Message;
 using MWT.Plugin.Misc.MwtStorefront.Models.Common;
+using MWT.Nop.Core.Services.Orders;
+using MWT.Nop.Core.Service.Catalog;
+using MWT.Nop.Core.Domain.CustomOrders;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 {
@@ -34,15 +37,14 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
         private readonly ICustomOrderModelFactory _customOrderModelFactory;
         private readonly ICustomOrderService _customOrderService;
         private readonly ICustomerService _customerService;
-        private readonly IGenericAttributeService _genericAttributeService;
-        private readonly IOrderService _orderService;
+        private readonly IOrderExtendedService _orderService;
         private readonly INotificationService _notificationService;
         private readonly ILocalizationService _localizationService;
         private readonly ICustomerModelFactory _customerModelFactory;
         private readonly IPriceFormatter _priceFormatter;
         private readonly IWorkContext _workContext;
-        private readonly IOrderProcessingService _orderProcessingService;
-        private readonly IProductService _productService;
+        private readonly IOrderProcessingExtendedService _orderProcessingService;
+        private readonly IProductExtendedService _productService;
         private readonly IAddressService _addressService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IZohoService _zohoService;
@@ -61,15 +63,14 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                                ICustomOrderModelFactory customOrderModelFactory,
                                ICustomOrderService customOrderService,
                                 ICustomerService customerService,
-                         IGenericAttributeService genericAttributeService,
-                         IOrderService orderService,
+                         IOrderExtendedService orderService,
                          INotificationService notificationService,
                          ILocalizationService localizationService,
                           ICustomerModelFactory customerModelFactory,
                           IPriceFormatter priceFormatter,
                           IWorkContext workContext,
-                          IOrderProcessingService orderProcessingService,
-                          IProductService productService,
+                          IOrderProcessingExtendedService orderProcessingService,
+                          IProductExtendedService productService,
                           IHttpContextAccessor httpContextAccessor,
                          IAddressService addressService,
                           IZohoService zohoService,
@@ -85,7 +86,6 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
             this._customOrderModelFactory = customOrderModelFactory;
             this._customOrderService = customOrderService;
             this._customerService = customerService;
-            this._genericAttributeService = genericAttributeService;
             this._orderService = orderService;
             this._notificationService = notificationService;
             this._localizationService = localizationService;
@@ -109,15 +109,17 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
         #region Methods
         //Additional Service by Nikhil Mind Web tree
+
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public virtual IActionResult Index()
         {
             return RedirectToAction("List");
         }
 
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public virtual async Task<IActionResult> List()
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageOrders))
-                return AccessDeniedView();
+  
             //prepare model
             var model = await _customOrderModelFactory.PrepareCustomerOrderSearchModelAsync(new CustomOrderSearchModel());
 
@@ -127,17 +129,17 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
         [HttpPost]
         /// <returns>A task that represents the asynchronous operation</returns>
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public virtual async Task<IActionResult> OrderList(CustomOrderSearchModel searchModel, bool IsPartialOrderScreen)
         {
             searchModel.DisplayAdditionalService = true;
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageOrders))
-                return await AccessDeniedDataTablesJson();
-
             //prepare model
             var model = await _customOrderModelFactory.PrepareCustomOrderListModelAsync(searchModel, IsPartialOrderScreen);
 
             return Json(model);
         }
+
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public async Task<IActionResult> Create(int? id)
         {
             var model = new AdditionalServiceModel();
@@ -169,7 +171,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                         {
                             var customer = await _customerService.GetCustomerByIdAsync(Convert.ToInt32(order.CustomerId));
                             if (customer != null)
-                                model.Email = await _genericAttributeService.GetAttributeAsync<string>(customer, "Email");
+                                model.Email = customer.Email;
                         }
                     }
                     List<CustomOrderShoppingCartItem> customOrderShoppingCartItems = await _customOrderService.GetOrderItems(Convert.ToInt32(id));
@@ -195,13 +197,16 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
             return View(await _customOrderModelFactory.PrepareAdditionalServiceModel(model));
         }
+
+
         [HttpPost, ParameterBasedOnFormName("placeOrder", "processOrder")]
         [HttpPost]
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public virtual async Task<IActionResult> Create(AdditionalServiceModel model, bool processOrder, IFormCollection form)
         {
 
             var order = await _orderService.GetOrderByIdAsync(model.OrderId);
-            var customOrder = new Nop.MWT.Nop.Core.Domain.CustomOrders.CustomOrder();
+            var customOrder = new MWT.Nop.Core.Domain.CustomOrders.CustomOrder();
             decimal previousWgsAmount = 0;
             decimal previousWgsDiscount = 0;
             decimal currentWgsAmount = 0;
@@ -220,8 +225,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                         currentWgsAmount = model.ServicePrice ?? 0;
                         currentWgsDiscount = model.DiscountPrice ?? 0;
 
-                        customOrder.StatusId = orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).Any() ?
-                            orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).FirstOrDefault().Id : 4;
+                        customOrder.StatusId = orderStatuses.Where(s => s.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).Any() ?
+                            orderStatuses.Where(s => s.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).FirstOrDefault().Id : 4;
                         customOrder.ParentOrderID = model.OrderId;
                         customOrder.SubTotal = (model.ServicePrice ?? 0) - (model.DiscountPrice ?? 0);
                         customOrder.PairedOrderIds = model.PairedOrderIds;
@@ -268,7 +273,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                     previousWgsAmount = model.ServicePrice ?? 0;
                     previousWgsDiscount = model.DiscountPrice ?? 0;
                     var tax = !model.ApplyTax ? 0 : (await _customOrderModelFactory.GetOrderTax(customer, (model.ServicePrice ?? 0) - (model.DiscountPrice ?? 0), 0))?.TaxTotal ?? 0;
-                    customOrder = new Nop.MWT.Nop.Core.Domain.CustomOrders.CustomOrder()
+                    customOrder = new MWT.Nop.Core.Domain.CustomOrders.CustomOrder()
                     {
                         ParentOrderID = model.OrderId,
                         CreatedBy = (await _workContext.GetCurrentCustomerAsync())?.Id ?? 0,
@@ -280,8 +285,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                         PromiseDayDate = model.Exp,
                         ApplyTax = model.ApplyTax,
                         PairedOrderIds = model.PairedOrderIds,
-                        StatusId = orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).Any() ?
-                            orderStatuses.Where(s => s.Name == Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).FirstOrDefault().Id : 4,
+                        StatusId = orderStatuses.Where(s => s.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).Any() ?
+                            orderStatuses.Where(s => s.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString()).FirstOrDefault().Id : 4,
                         CustomerId = customer.Id,
                         OrderTypeId = (int)OrderTypes.CustomOrder
 
@@ -342,12 +347,18 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                         filterByCountryId = (await _customerService.GetCustomerBillingAddressAsync(customer))?.CountryId ?? 0;
                     }
                     //get payment info
+                  
+
+
                     var paymentInfo = await _paymentMethod.GetPaymentInfoAsync(form);
-                    //set previous order GUID (if exists)
-                    _paymentService.GenerateOrderGuid(paymentInfo);
                     paymentInfo.StoreId = (await _storeContext.GetCurrentStoreAsync()).Id;
                     paymentInfo.CustomerId = customer.Id;
                     paymentInfo.PaymentMethodSystemName = paymentMethod;
+
+                    await this._orderProcessingService.SetProcessPaymentRequestAsync(await _paymentMethod.GetPaymentInfoAsync(form), customer);
+
+                    paymentInfo = await this._orderProcessingService.GetProcessPaymentRequestAsync(customer);
+
                     //session save
 
                     (HttpStatusCode statusCode, string message) = await ConfirmOrder(customOrder, customer, paymentMethod, paymentInfo, filterByCountryId, _paymentMethod, Convert.ToInt32(order.CustomerId));
@@ -374,12 +385,13 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
             return View(model);
         }
 
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public virtual async Task<IActionResult> Validate(int Id, string pairedOrderIds)
         {
             var order = await _orderService.GetOrderByIdAsync(Id);
             string email = " ";
-            AddressExtendedModel ShippingAddress = new AddressExtendedModel();
-            AddressExtendedModel BillingAddress = new AddressExtendedModel();
+            AddressModel ShippingAddress = new AddressModel();
+            AddressModel BillingAddress = new AddressModel();
             decimal orderTotal = 0;
             decimal orderSubtotal = 0;
             bool isSurchargeApplicable = false;
@@ -396,13 +408,13 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
                     orderTotal = order.OrderTotal;
                     var customer = await _customerService.GetCustomerByIdAsync(Convert.ToInt32(order.CustomerId));
-                    email = await _genericAttributeService.GetAttributeAsync<string>(customer, "Email");
+                    email = customer.Email;
                     if (email == null)
                         email = customer.Email;
-                    MWT.Plugin. CustomOrder customOrder = await _customOrderService.GetByOrderNumber(Id);
+                    MWT.Nop.Core.Domain.CustomOrders.CustomOrder customOrder = await _customOrderService.GetByOrderNumber(Id);
 
 
-                    (pairedOrders, validOrderIds, orderSubtotal, orderTotal, isSurchargeApplicable) = await this._customOrderModelFactory.GetAdditionalServiceOrderInfo(Nop.MWT.Nop.Core.Domain.CustomOrders.OrderStatus.OrderSaved, order, customOrder, pairedOrderIds);
+                    (pairedOrders, validOrderIds, orderSubtotal, orderTotal, isSurchargeApplicable) = await this._customOrderModelFactory.GetAdditionalServiceOrderInfo(MWT.Nop.Core.Domain.CustomOrders.OrderStatus.OrderSaved, order, customOrder, pairedOrderIds);
 
                     if (customOrder != null)
                     {
@@ -414,13 +426,13 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                     }
                     if (order.ShippingAddressId != null)
                     {
-                        ShippingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, Core.Domain.Common.AddressType.IsShippingAddress, Convert.ToInt32(order.ShippingAddressId),
+                        ShippingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, MWT.Nop.Core.Domain.Address.AddressType.IsShippingAddress, Convert.ToInt32(order.ShippingAddressId),
                             null, prePopulateNewAddressWithCustomerFields: true);
                         ShippingAddress.IsShippingAddress = true;
                     }
                     if (order.BillingAddressId != 0)
                     {
-                        BillingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, Core.Domain.Common.AddressType.IsBillingAddress, Convert.ToInt32(order.BillingAddressId),
+                        BillingAddress = await _customerModelFactory.PrepareCustomAddressModelAsync(customer, MWT.Nop.Core.Domain.Address.AddressType.IsBillingAddress, Convert.ToInt32(order.BillingAddressId),
                             null, prePopulateNewAddressWithCustomerFields: true);
                         if (order.ShippingAddressId == null)
                         {
@@ -449,6 +461,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public virtual async Task<IActionResult> GetTax(AdditionalServiceModel model)
         {
             decimal tax = 0;
@@ -473,7 +486,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
         #region Utilities
 
-        public virtual async Task<(HttpStatusCode, string)> ConfirmOrder(Nop.MWT.Nop.Core.Domain.CustomOrders.CustomOrder order,
+        public virtual async Task<(HttpStatusCode, string)> ConfirmOrder(MWT.Nop.Core.Domain.CustomOrders.CustomOrder order,
           Customer customer, string paymentMethodName,
           ProcessPaymentRequest processPaymentRequest, int filterByCountryId, IPaymentMethod paymentMethod, int customerId = 0, bool chargeFromInitialaOrder = false)
         {

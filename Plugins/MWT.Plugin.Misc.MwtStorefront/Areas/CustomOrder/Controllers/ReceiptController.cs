@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MWT.Nop.Core.Services.Message;
 using Nop.Core;
-using Nop.Services.Customizations.Phone_Order;
+using Nop.Services.Customizations.CustomOrders;
 using Nop.Services.Messages;
 using Nop.Services.Orders;
-using Nop.Web.Controllers;
-using SkiaSharp;
-using System.Threading.Tasks;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 {
@@ -14,12 +12,12 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
         #region Fields
 
         private readonly IOrderService _orderService;
-        private readonly IWorkflowMessageService _workflowMessageService;
+        private readonly ICustomWorkflowMessageService _workflowMessageService;
         private readonly ICustomOrderService _customOrderService;
         private readonly IWorkContext _workContext;
 
         #endregion
-        public ReceiptController(IOrderService orderService, IWorkflowMessageService workflowMessageService,
+        public ReceiptController(IOrderService orderService, ICustomWorkflowMessageService workflowMessageService,
                ICustomOrderService customOrderService, IWorkContext workContext)
         {
             this._orderService = orderService;
@@ -27,7 +25,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
             this._customOrderService = customOrderService;
             this._workContext = workContext;
         }
-        public async Task<IActionResult> Index(int orderId=0,int liveOrderNumber=0)
+        public async Task<IActionResult> Index(int orderId = 0, int liveOrderNumber = 0)
         {
             string content = "";
             if (liveOrderNumber != 0 || orderId != 0)

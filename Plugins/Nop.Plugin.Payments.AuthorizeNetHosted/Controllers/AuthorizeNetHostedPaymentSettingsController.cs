@@ -24,7 +24,7 @@ using Nop.Web.Framework.Mvc.Filters;
 namespace Nop.Plugin.Payments.AuthorizeNetHosted.Controllers
 {
     [AuthorizeAdmin]
-    [Area(AreaNames.Admin)]
+    [Area(AreaNames.ADMIN)]
     [AutoValidateAntiforgeryToken]
     public class AuthorizeNetHostedPaymentSettingsController : BasePaymentController
     {

@@ -4,7 +4,7 @@
 @inject Nop.Services.Customers.ICustomerService _customerService;
 @inject Nop.Core.IStoreContext _storeContext
 @inject Nop.Core.IWorkContext _workContext
-@using Nop.MWT.Nop.Core.Domain.CustomOrders
+@using Nop.Core.Domain.Customization.PhoneOrder
 @{
 
     var storeId = (await _storeContext.GetCurrentStoreAsync()).Id;

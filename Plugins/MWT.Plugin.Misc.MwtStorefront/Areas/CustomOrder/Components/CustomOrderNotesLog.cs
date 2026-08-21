@@ -9,7 +9,7 @@ using Nop.Services.Customizations.CustomOrders;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Components
 {
-    public class CustomOrderNotesLog : NopViewComponent
+    public class CustomOrderNotesLogViewComponent : NopViewComponent
     {
         #region Fields
         private readonly ICustomOrderService _customOrderService;
@@ -20,7 +20,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Components
 
         #region Ctor
 
-        public CustomOrderNotesLog(ICustomOrderService customOrderService, ICustomerService customerService,
+        public CustomOrderNotesLogViewComponent(ICustomOrderService customOrderService, ICustomerService customerService,
             IAddressService addressService, ILocalizationService localizationService)
         {
             this._customOrderService = customOrderService;

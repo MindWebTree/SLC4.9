@@ -1,34 +1,37 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Nop.Services.Security;
-using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories;
-using System.Threading.Tasks;
-using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Orders;
-using Nop.Services.Customizations.Phone_Order;
-using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Common;
-using Nop.Services.Localization;
-using System;
-using Nop.Services.Logging;
-using Newtonsoft.Json;
-using System.Linq;
-using Nop.MWT.Nop.Core.Domain.CustomOrders;
-using Nop.Core.Domain.Customers;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using MWT.Nop.Core.Domain.CustomOrders;
+using MWT.Nop.Core.Service.Catalog;
+using MWT.Nop.Core.Service.Zoho;
+using MWT.Nop.Core.Services.Customers;
+using MWT.Nop.Core.Services.Manage;
+using MWT.Nop.Core.Services.Message;
+using MWT.Nop.Core.Services.Orders;
+using MWT.Nop.Core.Services.Zoho;
+using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Components;
 using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Extensions;
-using Nop.Services.Customers;
-using Nop.Services.Common;
+using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories;
+using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Common;
+using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Orders;
+using Newtonsoft.Json;
 using Nop.Core;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using Nop.Services.Payments;
 using Nop.Core.Domain.Common;
-using Nop.Core.Http.Extensions;
-using Nop.Services.Orders;
-using Nop.Services.Catalog;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
-using static LinqToDB.SqlQuery.SqlPredicate;
-using System.Globalization;
-using Nop.Services.Customizations.Custom;
+using Nop.Core.Domain.Customers;
+using Nop.Core.Domain.Payments;
+using Nop.Core.Domain.Orders;
 using Nop.Core.Infrastructure;
-using Nop.Services.Messages;
+using Nop.Services.Catalog;
+using Nop.Services.Common;
+using Nop.Services.Customers;
+using Nop.Services.Customizations.CustomOrders;
+using Nop.Services.Localization;
+using Nop.Services.Logging;
+using Nop.Services.Orders;
+using Nop.Services.Payments;
+using Nop.Services.Security;
+using Nop.Web.Framework.Mvc.Filters;
+using System.Globalization;
+using NopOrderStatus = Nop.Core.Domain.Orders.OrderStatus;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 {
@@ -42,7 +45,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly ILogger _loggerService;
         private readonly CustomerSettings _customerSettings;
-        private readonly ICustomerService _customerService;
+        private readonly ICustomerExtendedService _customerService;
         private readonly IAddressService _addressService;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IStoreContext _storeContext;
@@ -50,13 +53,13 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
         private readonly IPaymentPluginManager _paymentPluginManager;
         private readonly AddressSettings _addressSettings;
         private readonly IPaymentService _paymentService;
-        private readonly IOrderProcessingService _orderProcessingService;
-        private readonly IProductService _productService;
+        private readonly IOrderProcessingExtendedService _orderProcessingService;
+        private readonly IProductExtendedService _productService;
         private readonly IWorkContext _workContext;
-        private readonly IOrderService _orderService;
+        private readonly IOrderExtendedService _orderService;
         private readonly IZohoService _zohoService;
         private readonly INopFileProvider _nopFileProvider;
-        private readonly IWorkflowMessageService _workflowMessageService;
+        private readonly ICustomWorkflowMessageService _workflowMessageService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IProductAttributeService _productAttributeService;
         private readonly IProductAttributeParser _productAttributeParser;
@@ -71,7 +74,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                                ILocalizationService localizationService,
                                ILogger loggerService,
                                CustomerSettings customerSettings,
-                               ICustomerService customerService,
+                               ICustomerExtendedService customerService,
                                IAddressService addressService,
                                IGenericAttributeService genericAttributeService,
                                IStoreContext storeContext,
@@ -79,13 +82,13 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                                IPaymentPluginManager paymentPluginManager,
                                AddressSettings addressSettings,
                                IPaymentService paymentService,
-                               IOrderProcessingService orderProcessingService,
-                               IProductService productService,
+                               IOrderProcessingExtendedService orderProcessingService,
+                               IProductExtendedService productService,
                                IWorkContext workContext,
-                               IOrderService orderService,
+                               IOrderExtendedService orderService,
                                 IZohoService zohoService,
                                 INopFileProvider nopFileProvider,
-                                IWorkflowMessageService workflowMessageService,
+                                ICustomWorkflowMessageService workflowMessageService,
                                 IHttpContextAccessor httpContextAccessor,
                                 IProductAttributeService productAttributeService,
                                 IProductAttributeParser productAttributeParser,
@@ -122,27 +125,25 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
         #region Methods
 
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public virtual IActionResult Index()
         {
             return RedirectToAction("List");
         }
 
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public virtual async Task<IActionResult> List()
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageOrders))
-                return AccessDeniedView();
-            //prepare model
+
             var model = await _customOrderModelFactory.PrepareCustomerOrderSearchModelAsync(new CustomOrderSearchModel());
 
             return View(model);
         }
 
         [HttpPost]
-        /// <returns>A task that represents the asynchronous operation</returns>
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public virtual async Task<IActionResult> OrderList(CustomOrderSearchModel searchModel, bool IsPartialOrderScreen)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageOrders))
-                return await AccessDeniedDataTablesJson();
 
             //prepare model
             var model = await _customOrderModelFactory.PrepareCustomOrderListModelAsync(searchModel, IsPartialOrderScreen);
@@ -150,19 +151,23 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
             return Json(model);
         }
 
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public virtual async Task<IActionResult> GetBriefSummaryOfOrder(int orderId)
         {
             return PartialView("_orderBriefInfo", await this._customOrderModelFactory.PrepareBriefSummaryOfOrder(orderId));
         }
 
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public virtual async Task<IActionResult> CreateOrder()
         {
-            var order = new Nop.MWT.Nop.Core.Domain.CustomOrders.CustomOrder();
+            var order = new MWT.Nop.Core.Domain.CustomOrders.CustomOrder();
             order.CreatedBy = (await _workContext.GetCurrentCustomerAsync())?.Id ?? 0;
             var orderTypes = await _customOrderService.GetOrderTypes();
             await _customOrderService.InsertAsync(order);
             return RedirectToAction("OrderDetails", new { id = order.Id });
         }
+
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public virtual async Task<IActionResult> OrderDetails(int Id)
         {
             var order = await _customOrderService.GetById(Id);
@@ -189,6 +194,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
 
         [HttpPost]
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public virtual async Task<IActionResult> UpdateOrderType(int orderId, int typeId, int SubOrderTypeId)
         {
             try
@@ -199,7 +205,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                     response = await PrepareResponse(
                         orderid: orderId,
                       statuscode: 200,
-                      html: await RenderViewComponentToStringAsync("CustomOrder_OrderTypeSection", new { orderId = orderId }),
+                      html: await RenderViewComponentToStringAsync(typeof(CustomOrder_OrderTypeSectionViewComponent), new { orderId = orderId }),
                       message: "",
                       bindSectionId: "UpdateOrderType"
                  )
@@ -222,6 +228,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
 
         [HttpPost]
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public virtual async Task<IActionResult> SaveOrderTypeDetails(CustomOrderOrderTypeSectionModel model, bool isReset)
         {
 
@@ -237,7 +244,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                             response = await PrepareResponse(
                                  orderid: model.Id,
                    statuscode: 200,
-                   html: await RenderViewComponentToStringAsync("CustomOrder_OrderTypeSection", new { orderId = model.Id }),
+                   html: await RenderViewComponentToStringAsync(typeof(CustomOrder_OrderTypeSectionViewComponent), new { orderId = model.Id }),
                    message: "",
                    bindSectionId: "UpdateOrderType"
               )
@@ -295,6 +302,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
         #region Customer Step
 
         [HttpPost]
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public virtual async Task<IActionResult> UpdateCustomer(int customerId, int orderId)
         {
             try
@@ -305,7 +313,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                     response = await PrepareResponse(
                        orderid: orderId,
                       statuscode: 200,
-                      html: await RenderViewComponentToStringAsync("CustomOrder_AddressSection",
+                      html: await RenderViewComponentToStringAsync(typeof(CustomOrder_AddressSectionViewComponent),
                       new
                       {
                           orderId = orderId,
@@ -359,6 +367,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
         //        });
         //    }
         //}
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public virtual async Task<IActionResult> CreateUpdateCustomer(int customerId, int orderId)
         {
             try
@@ -368,7 +377,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                     response = await PrepareResponse(
                         orderid: orderId,
                       statuscode: 200,
-                      html: await RenderViewComponentToStringAsync("CustomOrder_CustomerSection", new { customerId = customerId }),
+                      html: await RenderViewComponentToStringAsync(typeof(CustomOrder_CustomerSectionViewComponent), new { customerId = customerId }),
                       message: "",
                       bindSectionId: "CustomOrder_CustomerSection",
                       isPopup: true,
@@ -393,6 +402,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
 
         [HttpPost]
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public virtual async Task<IActionResult> CreateUpdateCustomer(CustomOrderCustomerSectionModel model, IFormCollection form)
         {
             int.TryParse(form["orderId"], out var orderId);
@@ -427,24 +437,27 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                             await _customerRegistrationService.SetEmailAsync(customer, email, requireValidation);
                         }
 
+
                         if (!isRegistered)
                         {
-                            await _genericAttributeService.SaveAttributeAsync(customer, "Email", model.Email);
+                            customer.Email = model.Email;
+
                             if (_customerSettings.UsernamesEnabled && _customerSettings.AllowUsersToChangeUsernames && isRegistered)
-                                await _genericAttributeService.SaveAttributeAsync(customer, "UserName", model.Email);
+                                customer.Username = model.Email;
 
                         }
-                        await _genericAttributeService.SaveAttributeAsync(customer, "Email", model.Email);
-                        await _genericAttributeService.SaveAttributeAsync(customer, NopCustomerDefaults.PhoneAttribute, model.ShippingAddress?.PhoneNumber);
+                        customer.Phone = model.ShippingAddress?.PhoneNumber;
+
                         //form fields
                         if (_customerSettings.FirstNameEnabled)
-                            await _genericAttributeService.SaveAttributeAsync(customer, NopCustomerDefaults.FirstNameAttribute, model.FirstName);
+                            customer.FirstName = model.FirstName;
+
                         if (_customerSettings.LastNameEnabled)
-                            await _genericAttributeService.SaveAttributeAsync(customer, NopCustomerDefaults.LastNameAttribute, model.LastName);
-                        if (_customerSettings.StreetAddress2Enabled)
-                            await _genericAttributeService.SaveAttributeAsync(customer, NopCustomerDefaults.ZipPostalCodeAttribute, model.ShippingAddress?.ZipPostalCode);
-                        if (_customerSettings.PhoneEnabled)
-                            await _genericAttributeService.SaveAttributeAsync(customer, NopCustomerDefaults.PhoneAttribute, model.ShippingAddress?.PhoneNumber);
+                            customer.LastName = model.LastName;
+
+                        if (_customerSettings.ZipPostalCodeEnabled)
+                            customer.ZipPostalCode = model.ShippingAddress?.ZipPostalCode;
+
 
 
                         // Save Shipping Address
@@ -545,7 +558,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                             response = await PrepareResponse(
                                         orderid: orderId,
                             statuscode: 200,
-                            html: await RenderViewComponentToStringAsync("CustomOrder_AddressSection",
+                            html: await RenderViewComponentToStringAsync(typeof(CustomOrder_AddressSectionViewComponent),
                             new
                             {
                                 orderId = orderId,
@@ -604,7 +617,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
             }
         }
 
-
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public virtual async Task<IActionResult> Searchcustomer(string searchTerm)
         {
             try
@@ -638,6 +651,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
 
         [HttpPost]
+
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public virtual async Task<IActionResult> GetCustomerDetailsFromZoho(string email, string phone)
         {
             email = email == null ? "" : email;
@@ -675,6 +690,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
         #region Prouduct Step
 
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public virtual async Task<IActionResult> SearchProduts(string searchTerm)
         {
             try
@@ -708,6 +724,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public async Task<IActionResult> AddUpdateCartItems(List<ItemModel> Items, IFormCollection form)
         {
             int orderId = 0;
@@ -768,7 +785,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                 await _customOrderModelFactory.AddUpdateCartItems(Items, orderId, isItemNotes);
                 string orderSummaryHtml = "";
                 if (renderCartSummary)
-                    orderSummaryHtml = await RenderViewComponentToStringAsync("CustomOrder_OrderSummary",
+                    orderSummaryHtml = await RenderViewComponentToStringAsync(typeof(CustomOrder_OrderSummaryViewComponent),
                        new
                        {
                            orderId = orderId
@@ -778,7 +795,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                     response = await PrepareResponse(
                       orderid: orderId,
                       statuscode: 200,
-                       html: await RenderViewComponentToStringAsync("CustomOrder_Items",
+                       html: await RenderViewComponentToStringAsync(typeof(CustomOrder_ItemsViewComponent),
                         new
                         {
                             orderId = orderId
@@ -809,6 +826,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public async Task<IActionResult> DeleteCartItems(ItemModel item, int orderId)
         {
             try
@@ -820,7 +838,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                     response = await PrepareResponse(
                                orderid: orderId,
                       statuscode: 200,
-                       html: await RenderViewComponentToStringAsync("CustomOrder_Items",
+                       html: await RenderViewComponentToStringAsync(typeof(CustomOrder_ItemsViewComponent),
                         new
                         {
                             orderId = orderId
@@ -853,6 +871,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
         #region order Summary
 
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public async Task<IActionResult> UpdateOrder(CustomOrderModel model, string orderTypeUpdate)
         {
             Enum.TryParse<OrderTypeUpdate>(orderTypeUpdate, out OrderTypeUpdate updateType);
@@ -866,18 +885,18 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                         response = await PrepareResponse(
                             orderid: model.Id,
                           statuscode: 200,
-                           html: await RenderViewComponentToStringAsync("CustomOrder_OrderSummary",
+                           html: await RenderViewComponentToStringAsync(typeof(CustomOrder_OrderSummaryViewComponent),
                             new
                             {
                                 orderId = model.Id
                             }),
                           message: "",
                           goto_section: "orderSummary_section",
-                           orderDetails: await RenderViewComponentToStringAsync("CustomOrderStatusLog", new
+                           orderDetails: await RenderViewComponentToStringAsync(typeof(CustomOrderStatusLogViewComponent), new
                            {
                                orderId = model.Id
                            }),
-                           notesLog: updateType == OrderTypeUpdate.Notes ? await RenderViewComponentToStringAsync("CustomOrderNotesLog", new
+                           notesLog: updateType == OrderTypeUpdate.Notes ? await RenderViewComponentToStringAsync(typeof(CustomOrderNotesLogViewComponent), new
                            {
                                orderId = model.Id
                            }) : "",
@@ -887,9 +906,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                           bindSectionId: "orderSummary_" + updateType.ToString(),
                           notificationMessage: updateType ==
                           OrderTypeUpdate.StatusUpdate ?
-                          (model.OrderStatus == OrderStatus.SavedDraft.ToString() ?
+                          (model.OrderStatus == Nop.Core.Domain.CustomOrders.OrderStatus.SavedDraft.ToString() ?
                           await _localizationService.GetResourceAsync("CustomOrder.Message.StatusUpdate.Draft")
-                          : (model.OrderStatus == OrderStatus.InvoiceSent.ToString() ?
+                          : (model.OrderStatus == Nop.Core.Domain.CustomOrders.OrderStatus.InvoiceSent.ToString() ?
                              await _localizationService.GetResourceAsync("CustomOrder.Message.StatusUpdate.InvoiceSent") : null)) : null
                      )
                     });
@@ -926,6 +945,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public async Task<IActionResult> ProcessPayment(string paymentMethod, int orderId, IFormCollection form)
         {
             try
@@ -985,13 +1005,13 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
                     //get payment info
                     var paymentInfo = await _paymentMethod.GetPaymentInfoAsync(form);
-                    //set previous order GUID (if exists)
-                    _paymentService.GenerateOrderGuid(paymentInfo);
                     paymentInfo.StoreId = (await _storeContext.GetCurrentStoreAsync()).Id;
                     paymentInfo.CustomerId = customer.Id;
                     paymentInfo.PaymentMethodSystemName = paymentMethod;
 
+                    await this._orderProcessingService.SetProcessPaymentRequestAsync(await _paymentMethod.GetPaymentInfoAsync(form), customer);
 
+                    paymentInfo = await this._orderProcessingService.GetProcessPaymentRequestAsync(customer);
 
                     return await ConfirmOrder(order, customer, paymentMethod, paymentInfo, filterByCountryId, _paymentMethod);
                 }
@@ -1030,6 +1050,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
 
         [HttpPost]
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         public async Task<IActionResult> ProcessPartialPayment(int orderId)
         {
             try
@@ -1049,13 +1070,15 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                         filterByCountryId = (await _customerService.GetCustomerBillingAddressAsync(customer))?.CountryId ?? 0;
 
                     var initialOrder = await _orderService.GetOrderByIdAsync(Convert.ToInt32(order.LiveOrderNumber));
+                    var customvalues = new CustomValues();
+                    customvalues.FillByXml(initialOrder.CustomValuesXml);
                     var processPaymentRequest = new ProcessPaymentRequest
                     {
                         StoreId = initialOrder.StoreId,
                         CustomerId = customer.Id,
                         OrderGuid = Guid.NewGuid(),
                         InitialOrder = initialOrder,
-                        CustomValues = _paymentService.DeserializeCustomValues(initialOrder)
+                        CustomValues = customvalues
                     };
                     var _paymentMethod = await _paymentPluginManager
                        .LoadPluginBySystemNameAsync(initialOrder.PaymentMethodSystemName, customer, (await _storeContext.GetCurrentStoreAsync()).Id)
@@ -1102,23 +1125,20 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
         #endregion
 
         [HttpPost]
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> Archive(int id)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageOrders))
-                await AccessDeniedDataTablesJson();
 
             await _customOrderModelFactory.ArchiveCustomOrderAsync(id);
             return Ok();
         }
 
         [HttpPost]
-        /// <returns>A task that represents the asynchronous operation</returns>
+        [CheckPermission(StandardPermission.CustomPermission.CUSTOM_ACCESS_CUSTOMORDER)]
+
         public virtual async Task<IActionResult> RestoreOrder(int Id)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageOrders))
-                await AccessDeniedDataTablesJson();
-
             await _customOrderModelFactory.RestoreCustomOrderAsync(Id);
             return Ok();
         }
@@ -1130,7 +1150,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
         public async Task<AjaxReponseModel> PrepareResponse(int orderid, int statuscode = 200, string message = "", string html = "", string json = "",
             string goto_section = "", string bindSectionId = "", bool closeContainer = false, bool isPopup = false, bool showContainer = false,
             string orderSummaryHtml = "",
-            string notificationMessage = "", bool redirect = false, Zoho contactDetails = null, string receipt = "", string orderDetails = "", string notesLog = "")
+            string notificationMessage = "", bool redirect = false, ZohoDto contactDetails = null, string receipt = "", string orderDetails = "", string notesLog = "")
         {
             AjaxReponseModel model = new AjaxReponseModel();
             model.closeContainer = closeContainer;
@@ -1183,7 +1203,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
         }
 
-        public virtual async Task<IActionResult> ConfirmOrder(Nop.MWT.Nop.Core.Domain.CustomOrders.CustomOrder order,
+        public virtual async Task<IActionResult> ConfirmOrder(MWT.Nop.Core.Domain.CustomOrders.CustomOrder order,
             Customer customer, string paymentMethodName,
             ProcessPaymentRequest processPaymentRequest, int filterByCountryId, IPaymentMethod paymentMethod, int customerId = 0, bool chargeFromInitialaOrder = false)
         {
@@ -1226,7 +1246,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
 
                     var orderStatuses = await _customOrderService.GetOrderStatuses();
-                    var paidStatus = orderStatuses.Where(m => m.Name == OrderStatus.Paid.ToString()).FirstOrDefault();
+                    var paidStatus = orderStatuses.Where(m => m.Name == Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString()).FirstOrDefault();
 
 
                     decimal paidAmount = placeOrderResult.PlacedOrder.OrderTotal;
@@ -1265,8 +1285,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                     var orderType = orderTypes.Where(t => t.Id == order.OrderTypeId).FirstOrDefault();
                     if (orderType != null && orderType.Name != OrderTypes.CustomOrder.ToString())
                     {
-                        orderEntity.OrderStatus = Core.Domain.Orders.OrderStatus.Processing;
-                        orderEntity.PaymentStatus = Core.Domain.Payments.PaymentStatus.Paid;
+                        orderEntity.OrderStatus = NopOrderStatus.Processing;
+                        orderEntity.PaymentStatus = PaymentStatus.Paid;
                     }
                     await this._orderService.UpdateOrderAsync(orderEntity);
                     // end 

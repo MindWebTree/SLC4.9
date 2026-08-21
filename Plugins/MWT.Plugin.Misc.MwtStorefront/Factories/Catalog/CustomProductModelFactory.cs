@@ -8,6 +8,7 @@ using MWT.Nop.Core.Service.Discounts;
 using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.Configuration;
 using MWT.Nop.Core.Services.Media;
+using MWT.Nop.Core.Services.Orders;
 using MWT.Nop.Core.Services.Shared;
 using MWT.Plugin.Misc.MwtStorefront.Models.Api;
 using MWT.Plugin.Misc.MwtStorefront.Models.Catalog;
@@ -62,7 +63,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
         private readonly ICustomProductAttributeService _customProductAttributeService;
         private readonly IPictureExtendedService _customPictureService;
         private readonly ICustomSpecificationAttributeService _customSpecificationAttributeService;
-        private readonly IShoppingCartExtendedCartService _customShoppingCartService;
+        private readonly IShoppingCartExtendedService _customShoppingCartService;
         private readonly IProductExtendedService _customProductService;
         private readonly ISettingService _settingService;
         private readonly IActionContextAccessor _actionContextAccessor;
@@ -97,7 +98,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
             IVideoService videoService, IWebHelper webHelper, IWorkContext workContext,
             MediaSettings mediaSettings, OrderSettings orderSettings, SeoSettings seoSettings,
             ShippingSettings shippingSettings, VendorSettings vendorSettings, ICustomProductAttributeService customProductAttributeService, IPictureExtendedService customPictureService,
-            IShoppingCartExtendedCartService customShoppingCartService,
+            IShoppingCartExtendedService customShoppingCartService,
             IProductExtendedService customProductService,
             ISettingService settingService,
             ICustomSpecificationAttributeService customSpecificationAttributeService,

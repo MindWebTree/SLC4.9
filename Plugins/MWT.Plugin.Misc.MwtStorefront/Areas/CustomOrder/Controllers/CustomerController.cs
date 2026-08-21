@@ -1,34 +1,32 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Nop.Services.Security;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Primitives;
+using MWT.Nop.Core.Domain.Address;
+using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Extensions;
 using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories;
+using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Common;
 using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Customers;
-using Nop.Services.Customers;
-using Microsoft.AspNetCore.Http;
+using Nop.Core;
+using Nop.Core.Domain.Catalog;
+using Nop.Core.Domain.Common;
+using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Forums;
 using Nop.Core.Domain.Gdpr;
 using Nop.Core.Domain.Localization;
-using Nop.Core.Domain.Tax;
-using Nop.Services.Helpers;
-using Nop.Services.Tax;
-using Nop.Core.Domain.Customers;
-using Nop.Services.Logging;
-using Microsoft.Extensions.Primitives;
-using Nop.Core.Domain.Catalog;
-using Nop.Services.Gdpr;
-using Nop.Services.Common;
-using Nop.Services.Localization;
-using Nop.Core.Domain.Common;
+using Nop.Core.Domain.Logging;
 using Nop.Core.Domain.Shipping;
-using Nop.Core;
-using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Extensions;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
-using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Common;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Nop.Core.Domain.Tax;
+using Nop.Services.Attributes;
+using Nop.Services.Common;
+using Nop.Services.Customers;
+using Nop.Services.Gdpr;
+using Nop.Services.Helpers;
+using Nop.Services.Localization;
+using Nop.Services.Logging;
+using Nop.Services.Security;
+using Nop.Services.Tax;
+using Nop.Web.Framework.Mvc.Filters;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 {
@@ -40,10 +38,10 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
         private readonly IPermissionService _permissionService;
         private readonly ICustomerModelFactory _customerModelFactory;
         private readonly ICustomerService _customerService;
-        private readonly ICustomerAttributeParser _customerAttributeParser;
+        protected readonly IAttributeParser<CustomerAttribute, CustomerAttributeValue> _customerAttributeParser;
         private readonly GdprSettings _gdprSettings;
         private readonly LocalizationSettings _localizationSettings;
-        private readonly ICustomerAttributeService _customerAttributeService;
+        protected readonly IAttributeService<CustomerAttribute, CustomerAttributeValue> _customerAttributeService;
         private readonly DateTimeSettings _dateTimeSettings;
         private readonly TaxSettings _taxSettings;
         private readonly ITaxService _taxService;
@@ -55,9 +53,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly ILocalizationService _localizationService;
         private readonly IAddressService _addressService;
-        private readonly IAddressAttributeParser _addressAttributeParser;
+        private readonly IAttributeParser<AddressAttribute, AddressAttributeValue> _addressAttributeParser;
         private readonly IStoreContext _storeContext;
-
+        private static readonly char[] _separator = [','];
         #endregion
 
 
@@ -65,10 +63,10 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
         public CustomerController(IPermissionService permissionService,
             ICustomerModelFactory customerModelFactory, ICustomerService customerService,
-            ICustomerAttributeParser customerAttributeParser,
+             IAttributeParser<CustomerAttribute, CustomerAttributeValue> customerAttributeParser,
             GdprSettings gdprSettings,
             LocalizationSettings localizationSettings,
-            ICustomerAttributeService customerAttributeService,
+            IAttributeService<CustomerAttribute, CustomerAttributeValue> customerAttributeService,
             DateTimeSettings dateTimeSettings,
             TaxSettings taxSettings,
             ITaxService taxService,
@@ -80,7 +78,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
             IGenericAttributeService genericAttributeService,
             ILocalizationService localizationService,
             IAddressService addressService,
-            IAddressAttributeParser addressAttributeParser,
+            IAttributeParser<AddressAttribute, AddressAttributeValue> addressAttributeParser,
             IStoreContext storeContext)
         {
             this._permissionService = permissionService;
@@ -114,10 +112,10 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
             return RedirectToAction("List");
         }
 
+        [CheckPermission(StandardPermission.Customers.CUSTOMERS_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> List()
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCustomers))
-                return AccessDeniedView();
+
             //prepare model
             var model = await _customerModelFactory.PrepareCustomerSearchModelAsync(new CustomerSearchModel());
 
@@ -125,22 +123,19 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Customers.CUSTOMERS_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> CustomerList(CustomerSearchModel searchModel)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCustomers))
-                return await AccessDeniedDataTablesJson();
-
             //prepare model
             var model = await _customerModelFactory.PrepareCustomerListModelAsync(searchModel);
 
             return Json(model);
         }
 
+        [CheckPermission(StandardPermission.Customers.CUSTOMERS_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> History(int id)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCustomers))
-                return AccessDeniedView();
             //prepare model
             //try to get a customer with the specified id
             var customer = await _customerService.GetCustomerByIdAsync(id);
@@ -150,6 +145,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
             return View(await this._customerModelFactory.PrepareCustomerModel(customer, true, true));
         }
 
+        [CheckPermission(StandardPermission.Customers.CUSTOMERS_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> CreateUpdateCustomer(int customerId)
         {
             var customer = new Customer();
@@ -182,6 +178,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Customers.CUSTOMERS_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> CreateUpdateCustomer(CustomerInfoModel model, IFormCollection form)
         {
             var customer = new Customer();
@@ -212,29 +209,28 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
                         if (!isRegistered)
                         {
-                            await _genericAttributeService.SaveAttributeAsync(customer, "Email", model.Email);
+                            customer.Email = email;
+           
                             if (_customerSettings.UsernamesEnabled && _customerSettings.AllowUsersToChangeUsernames && isRegistered)
-                                await _genericAttributeService.SaveAttributeAsync(customer, "UserName", model.Email);
-
+                                customer.Username = email;
                         }
 
                         //form fields
                         if (_customerSettings.FirstNameEnabled)
-                            await _genericAttributeService.SaveAttributeAsync(customer, NopCustomerDefaults.FirstNameAttribute, model.FirstName);
+                            customer.FirstName = model.FirstName;
                         if (_customerSettings.LastNameEnabled)
-                            await _genericAttributeService.SaveAttributeAsync(customer, NopCustomerDefaults.LastNameAttribute, model.LastName);
+                            customer.LastName = model.LastName;
                         if (_customerSettings.StreetAddress2Enabled)
-                            await _genericAttributeService.SaveAttributeAsync(customer, NopCustomerDefaults.ZipPostalCodeAttribute, model.ZipPostalCode);
+                            customer.ZipPostalCode = model.ZipPostalCode;
                         if (_customerSettings.PhoneEnabled)
-                            await _genericAttributeService.SaveAttributeAsync(customer, NopCustomerDefaults.PhoneAttribute, model.Phone);
+                            customer.Phone = model.Phone;
 
                         if (model.Id == 0)
                         {
-                            var customerAttributesXml = await ParseCustomCustomerAttributesAsync(form, _customerAttributeParser, _customerAttributeService);
-                            //save customer attributes
-                            await _genericAttributeService.SaveAttributeAsync(customer,
-                                NopCustomerDefaults.CustomCustomerAttributes, customerAttributesXml);
+                            var customerAttributesXml = await ParseCustomCustomerAttributesAsync(form);
+                            customer.CustomCustomerAttributesXML = customerAttributesXml;
                         }
+                        await this._customerService.UpdateCustomerAsync(customer);
                         return Json(new
                         {
                             response = PrepareResponse(200,
@@ -284,7 +280,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
             else
             {
                 await _logger.InsertLogAsync(
-                    Core.Domain.Logging.LogLevel.Error,
+                   LogLevel.Error,
                     "Custom Order -- Action CreateUpdateCustomer Method  Post",
                     "Failed to find customer with Id " + model.Id, customer);
                 return Json(new
@@ -352,7 +348,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                 {
                     //existing address
                     var address = model.ToEntity();
-                    var customAttributes = await _addressAttributeParser.ParseCustomAddressAttributesAsync(form);
+                    var customAttributes = await _addressAttributeParser.ParseCustomAttributesAsync(form, NopCommonDefaults.AddressAttributeControlName);
                     var customAttributeWarnings = await _addressAttributeParser.GetAttributeWarningsAsync(customAttributes);
                     foreach (var error in customAttributeWarnings)
                     {
@@ -396,7 +392,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                     var newAddress = model;
 
                     //custom address attributes
-                    var customAttributes = await _addressAttributeParser.ParseCustomAddressAttributesAsync(form);
+                    var customAttributes = await _addressAttributeParser.ParseCustomAttributesAsync(form, NopCommonDefaults.AddressAttributeControlName); ;
                     var customAttributeWarnings = await _addressAttributeParser.GetAttributeWarningsAsync(customAttributes);
                     foreach (var error in customAttributeWarnings)
                     {
@@ -553,14 +549,12 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
         #region Utilities
 
-        protected virtual async Task<string> ParseCustomCustomerAttributesAsync(IFormCollection form, ICustomerAttributeParser _customerAttributeParser,
-        ICustomerAttributeService _customerAttributeService)
+        protected virtual async Task<string> ParseCustomCustomerAttributesAsync(IFormCollection form)
         {
-            if (form == null)
-                throw new ArgumentNullException(nameof(form));
+            ArgumentNullException.ThrowIfNull(form);
 
             var attributesXml = "";
-            var attributes = await _customerAttributeService.GetAllCustomerAttributesAsync();
+            var attributes = await _customerAttributeService.GetAllAttributesAsync();
             foreach (var attribute in attributes)
             {
                 var controlId = $"{NopCustomerServicesDefaults.CustomerAttributePrefix}{attribute.Id}";
@@ -574,7 +568,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                             {
                                 var selectedAttributeId = int.Parse(ctrlAttributes);
                                 if (selectedAttributeId > 0)
-                                    attributesXml = _customerAttributeParser.AddCustomerAttribute(attributesXml,
+                                    attributesXml = _customerAttributeParser.AddAttribute(attributesXml,
                                         attribute, selectedAttributeId.ToString());
                             }
                         }
@@ -584,11 +578,11 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                             var cblAttributes = form[controlId];
                             if (!StringValues.IsNullOrEmpty(cblAttributes))
                             {
-                                foreach (var item in cblAttributes.ToString().Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                                foreach (var item in cblAttributes.ToString().Split(_separator, StringSplitOptions.RemoveEmptyEntries))
                                 {
                                     var selectedAttributeId = int.Parse(item);
                                     if (selectedAttributeId > 0)
-                                        attributesXml = _customerAttributeParser.AddCustomerAttribute(attributesXml,
+                                        attributesXml = _customerAttributeParser.AddAttribute(attributesXml,
                                             attribute, selectedAttributeId.ToString());
                                 }
                             }
@@ -597,13 +591,13 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                     case AttributeControlType.ReadonlyCheckboxes:
                         {
                             //load read-only (already server-side selected) values
-                            var attributeValues = await _customerAttributeService.GetCustomerAttributeValuesAsync(attribute.Id);
+                            var attributeValues = await _customerAttributeService.GetAttributeValuesAsync(attribute.Id);
                             foreach (var selectedAttributeId in attributeValues
-                                .Where(v => v.IsPreSelected)
-                                .Select(v => v.Id)
-                                .ToList())
+                                         .Where(v => v.IsPreSelected)
+                                         .Select(v => v.Id)
+                                         .ToList())
                             {
-                                attributesXml = _customerAttributeParser.AddCustomerAttribute(attributesXml,
+                                attributesXml = _customerAttributeParser.AddAttribute(attributesXml,
                                     attribute, selectedAttributeId.ToString());
                             }
                         }
@@ -615,7 +609,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                             if (!StringValues.IsNullOrEmpty(ctrlAttributes))
                             {
                                 var enteredText = ctrlAttributes.ToString().Trim();
-                                attributesXml = _customerAttributeParser.AddCustomerAttribute(attributesXml,
+                                attributesXml = _customerAttributeParser.AddAttribute(attributesXml,
                                     attribute, enteredText);
                             }
                         }

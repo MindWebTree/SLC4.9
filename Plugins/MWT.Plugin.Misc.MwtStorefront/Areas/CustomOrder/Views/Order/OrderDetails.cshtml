@@ -1,11 +1,10 @@
 ﻿@model CustomOrderModel
 @inject IWebHelper webHelper
-@using Nop.MWT.Nop.Core.Domain.CustomOrders
+@using Nop.Core.Domain.Customization.PhoneOrder
 @inject Nop.Services.Localization.ILocalizationService _localizationService;
-@inject IStoreContext _storeContext
 @{
     ViewBag.headingextraData = string.Format((await _localizationService.GetResourceAsync("CustomOrder.Order.Heading.ExtraInfo")), Model.Id);
-    var storeLocation = (await _storeContext.GetCurrentStoreAsync()).Url;
+    var storeLocation = webHelper.GetStoreLocation();
     bool isPaid = Model.OrderStatus == OrderStatus.Paid.ToString() ? true : false;
     bool isComplementryWgsFree = Model.ComplementryWgsFree;
 }

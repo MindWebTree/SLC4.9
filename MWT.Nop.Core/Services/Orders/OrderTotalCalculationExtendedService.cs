@@ -45,7 +45,7 @@ namespace MWT.Nop.Core.Services.Orders
         private readonly ILogger _logger;
         private readonly ILocalizationService _localizationService;
         private readonly IPriceFormatter _priceFormatter;
-        private readonly IShoppingCartExtendedCartService _shoppingCartExtendedCartService;
+        private readonly IShoppingCartExtendedService _shoppingCartExtendedCartService;
         private readonly ICurrencyService _currencyService;
         private readonly IDiscountExtendedService _discountExtendedService;
         private readonly IPriceCalculationExtendedService _priceCalculationExtendedService;
@@ -59,7 +59,7 @@ namespace MWT.Nop.Core.Services.Orders
             IShippingService shippingService, IShoppingCartService shoppingCartService, IStoreContext storeContext, ITaxService taxService, IWorkContext workContext, RewardPointsSettings rewardPointsSettings,
             ShippingSettings shippingSettings, ShoppingCartSettings shoppingCartSettings, TaxSettings taxSettings, ISettingService settingService,
             ICustomerExtendedService customerExtendedService, ILogger logger, ILocalizationService localizationService, IPriceFormatter priceFormatter,
-            IShoppingCartExtendedCartService shoppingCartExtendedCartService, ICurrencyService currencyService, IDiscountExtendedService discountExtendedService, IPriceCalculationExtendedService priceCalculationExtendedService)
+            IShoppingCartExtendedService shoppingCartExtendedCartService, ICurrencyService currencyService, IDiscountExtendedService discountExtendedService, IPriceCalculationExtendedService priceCalculationExtendedService)
             : base(catalogSettings, addressService, checkoutAttributeParser, customerService, discountService, genericAttributeService, giftCardService, orderService, paymentService, priceCalculationService, productService, rewardPointService, shippingPluginManager, shippingService, shoppingCartService, storeContext, taxService, workContext, rewardPointsSettings, shippingSettings, shoppingCartSettings, taxSettings)
         {
             _settingService = settingService;

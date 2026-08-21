@@ -1,5 +1,5 @@
 ﻿@model CustomOrderModel
-@using Nop.MWT.Nop.Core.Domain.CustomOrders
+@using Nop.Core.Domain.Customization.PhoneOrder
 <tr class="ordersummary">
     <td colspan="7">
         <div class="row mt-4">
@@ -115,7 +115,7 @@
             <div class="col-md-2 text-center card-btns">
                 <a class="btn-light border px-4 rounded-pill py-1" href="@Url.Action("OrderDetails", "Order", new { area="customorder",Id=Model.Id}, null, null)"><small>View Order Detail</small></a>
                 <button class="btn-infos mt-2 px-5 rounded-pill border-0 py-1 btnpartialordersendlink" type="button" data-orderid="@Model.Id"><small>Send Link</small></button>
-                <button class="btn-charge mt-2 pl-4 pr-5 rounded-pill border-0 py-1" type="button" data-orderid="@Model.Id" data-amount="@Model.customOrderSummaryModel.PendingPayment"><small>Charge Now</small></button>
+              
             </div>
         </div>
     </td>
