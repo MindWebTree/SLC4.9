@@ -1,6 +1,7 @@
 ﻿    using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Routing;
-    using Nop.Services.Installation;
+using MWT.Plugin.Misc.MwtStorefront.Infrastructure;
+using Nop.Services.Installation;
     using Nop.Web.Framework.Mvc.Routing;
     using Nop.Web.Infrastructure;
 
@@ -233,11 +234,42 @@
        pattern: $"{lang}/rewardclaim",
        defaults: new { controller = "Reward", action = "Index" });
 
-                #region  SiteMap Version2
+            #region ProductTag
+            endpointRouteBuilder.MapControllerRoute(
+              name: "TagCategoryProducts",
+              pattern: $"tagcatalog/products",
+              defaults: new
+              {
+                  controller = "TagCategory",
+                  action = "GetProducts"
+              }
+          );
+            endpointRouteBuilder.MapControllerRoute(
+                name: "TagCategoryPage",
+                pattern: "/{tagSlug}/{segmentSlug}",
+                defaults: new { controller = "TagCategory", action = "Index" },
+                constraints: new { tagSlug = new TagSlugConstraint() }
+            );
 
 
 
-                endpointRouteBuilder.MapControllerRoute(name: "Sitemap_Products",
+            endpointRouteBuilder.MapControllerRoute(
+                name: "TagPage",
+                pattern: "{tagSlug}",
+                defaults: new
+                {
+                    controller = "TagCategory",
+                    action = "Index",
+                    segmentSlug = "all"
+                },
+                constraints: new { tagSlug = new TagSlugConstraint() }
+            );
+            #endregion
+            #region  SiteMap Version2
+
+
+
+            endpointRouteBuilder.MapControllerRoute(name: "Sitemap_Products",
                  pattern: $"products_sitemap.xml",
                  defaults: new { controller = "SiteMap", action = "GenerateProductSitemapXml" });
 

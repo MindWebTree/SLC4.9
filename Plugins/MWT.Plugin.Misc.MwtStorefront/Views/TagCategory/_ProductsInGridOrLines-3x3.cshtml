@@ -1,0 +1,117 @@
+﻿@model CustomCatalogProductsModel
+@inject ICustomWorkContext _workContext
+@inject Nop.Services.Configuration.ISettingService _settingService;
+@inject ICustomCategoryService _categoryService
+@{
+    var EnableInfiniteScroll = false;
+    bool.TryParse((string)ViewBag.EnableInfiniteScroll, out EnableInfiniteScroll);
+}
+@if (!string.IsNullOrEmpty(Model.WarningMessage))
+{
+
+    <div class="warning">
+        @Model.WarningMessage
+    </div>
+}
+@{
+    int entityId = 0;
+    int.TryParse(ViewData["entityId"] == null ? "" : ViewData["entityId"].ToString(), out entityId);
+    var catModel = new CategoryModel();
+    if (entityId != 0)
+        catModel.Id = entityId;
+    else
+        catModel.Id = Model.CategoryID;
+    bool hasThirdBanner = await _categoryService.IsMwtWidgetApplied(CustomPublicWidgetZones.CategoryDetailsProductListThirdPosition, catModel.Id, "Category", _workContext.IsMobileDevice());
+}
+@if (Model.Products.Count > 0)
+{
+    int rowPosition = (Model.Products.Count / 3) / 2;
+    if (rowPosition > 1)
+    {
+        if ((rowPosition * 3) % 2 == 1)
+        {
+            rowPosition = (rowPosition - 1) * 3;
+        }
+        else
+        {
+            rowPosition = rowPosition * 3;
+        }
+        if (_workContext.IsMobileDevice())
+            rowPosition = rowPosition - 1;
+    }
+    else
+        rowPosition = 0;
+
+    <div class="row">
+        @{
+            int counter = 1;
+        }
+        @foreach (var product in Model.Products)
+        {
+            <div class="col-sm-6 col-lg-4 cat-box">
+                @await Html.PartialAsync(product.Inventory <= 0 ? "_Catgory_ProductBox_OutOfStock" : "_Catgory_ProductBox", product)
+            </div>
+            if (counter == 2)
+            {
+                if (hasThirdBanner)
+                {
+                    counter++;
+                }
+                if (hasThirdBanner)
+                {
+                    <div class="col-sm-6 col-lg-4 cat-box">
+                        @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsProductListThirdPosition, additionalData = catModel })
+                    </div>
+                }
+            }
+            if (counter == rowPosition)
+            {
+                @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsProductListMiddle, additionalData = catModel })
+            }
+            counter++;
+        }
+    </div>
+
+    var pager = Html.CustomPager(Model, Model.defaultPageSize)
+        .QueryParam(T("Pagenumber.Query.Param").Value)
+        // for search page
+        .BooleanParameterName("advs")
+        .BooleanParameterName("isc")
+        .BooleanParameterName("sid")
+        .RenderEmptyParameters(true);
+
+    @if (!await pager.IsEmpty())
+    {
+        <div class="pager">
+            <div class="showing">
+                @Html.Raw(string.Format(T("Label.Showing").Text, (Model.PageIndex + 1) * Model.PageSize > Model.TotalItems ? Model.TotalItems : (Model.PageIndex + 1) * Model.PageSize, Model.TotalItems))
+                @pager
+            </div>
+        </div>
+    }
+
+
+    @if (EnableInfiniteScroll && Model.HasNextPage)
+    {
+        <a href="#" class="btn-load-more">@T("Common.Load.More")</a>
+    }
+}
+else if (!string.IsNullOrEmpty(Model.NoResultMessage))
+{
+    <div class="no-result">
+        @Model.NoResultMessage
+    </div>
+}
+<div class="infinite-scroll-loader">Loading  ...</div>
+<script>
+     var headings = document.getElementsByClassName("page-heading");
+if (headings.length > 0) {
+    headings[0].innerHTML = "@Model.CategoryName";
+    }
+    headings = document.getElementsByClassName("filter-heading");
+    if (headings.length > 0) {
+    headings[0].innerHTML = "@Model.CategoryName";
+    }
+    if (document.getElementById("noofprdDisplay") != null)
+        document.getElementById("noofprdDisplay").innerHTML = "@(Html.Raw(string.Format(T("Label.Showing").Text, (Model.PageIndex + 1) * Model.PageSize > Model.TotalItems ? Model.TotalItems : (Model.PageIndex + 1) * Model.PageSize, Model.TotalItems)))";
+</script>

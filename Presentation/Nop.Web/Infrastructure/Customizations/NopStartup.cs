@@ -32,6 +32,7 @@ using MWT.Nop.Core.Services.Search;
 using MWT.Nop.Core.Services.Search.RewardClaim;
 using MWT.Nop.Core.Services.Seo;
 using MWT.Nop.Core.Services.Shared;
+using MWT.Nop.Core.Services.TagPage;
 using Nop.Core.Infrastructure;
 using Nop.Services.Customizations.IpAddress;
 using Nop.Services.Orders;
@@ -94,8 +95,15 @@ namespace Nop.Web.Infrastructure.Customizations
 
 
             services.AddScoped<IIpAddressService, IpAddressService>();
-            services.AddScoped<IIPLiteService, IPLiteService>();  
+            services.AddScoped<IIPLiteService, IPLiteService>();
 
+            #region Tag
+            services.AddScoped<ITagSlugService, TagSlugService>();
+            services.AddScoped<ISegmentSlugService, SegmentSlugService>();
+            services.AddScoped<ITagSpecificationAttributeService, TagSpecificationAttributeService>();
+            services.AddScoped<ITagProductService, TagProductService>();
+
+            #endregion
             #region  Campagin Management
             services.AddScoped<ICampaignManagementService, CampaignManagementService>();
             #endregion

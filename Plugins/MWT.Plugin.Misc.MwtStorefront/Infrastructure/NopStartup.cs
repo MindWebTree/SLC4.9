@@ -6,6 +6,7 @@ using MWT.Nop.Core.Infrastructure;
 using MWT.Plugin.Misc.MwtStorefront.Factories;
 using MWT.Plugin.Misc.MwtStorefront.Factories.Catalog;
 using MWT.Plugin.Misc.MwtStorefront.Factories.QA;
+using MWT.Plugin.Misc.MwtStorefront.Factories.TagPage;
 using MWT.Plugin.Misc.MwtStorefront.Factories.Topics;
 using MWT.Plugin.Misc.MwtStorefront.Infrastructure;
 using MWT.Plugin.Misc.MwtStorefront.ViewLocations;
@@ -38,6 +39,7 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Infrastructure
             services.AddScoped<IQuickFilterModelFactory, QuickFilterModelFactory>(); 
             services.AddScoped<IKwTermModelFactory, KwTermModelFactory>(); 
             services.AddScoped<ISiteMapExtendedModelFactory, SiteMapExtendedModelFactory>(); 
+            services.AddScoped<ITagModelFactory, TagModelFactory>(); 
             services.AddScoped<IShoppingCartExtendedModelFactory, ShoppingCartExtendedModelFactory>(); 
             if (DataSettingsManager.IsDatabaseInstalled())
                 services.AddScoped<SlugRouteExtendetTransformer>();

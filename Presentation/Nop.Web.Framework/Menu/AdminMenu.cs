@@ -1083,6 +1083,24 @@ public partial class AdminMenu : IAdminMenu
                         }
                     }
                 },
+                  new()
+                {
+                    SystemName = "Custom.TagPages",
+                    Title = await _localizationService.GetResourceAsync("Admin.TagPages"),
+                    IconClass = "fa fa-tags",
+                      ChildNodes = new List<AdminMenuItem>
+                    {
+                        new()
+                        {
+                            SystemName = "Custom.TagPages.TagSlugs",
+                            Title ="Tag Slugs (1st segment)",
+                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES},
+                            Url = GetMenuItemUrl("TagAdmin", "TagSlugs"),
+                            IconClass = "fa fa-tag"
+                        },
+
+                    }
+                  },
                 //third party plugins
                 new()
                 {

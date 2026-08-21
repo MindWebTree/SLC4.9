@@ -1,95 +1,158 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Copyright>Copyright ©, Ltd</Copyright>
-    <Authors>MindWebTree</Authors>
-    <PackageLicenseUrl></PackageLicenseUrl>
-	  <OutputPath>..\..\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront</OutputPath>
-    <OutDir>$(OutputPath)</OutDir>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="Migrations\**" />
-    <Compile Remove="Models\Seo\**" />
-    <Compile Remove="PackageFiles\**" />
-    <EmbeddedResource Remove="Migrations\**" />
-    <EmbeddedResource Remove="Models\Seo\**" />
-    <EmbeddedResource Remove="PackageFiles\**" />
-    <None Remove="Migrations\**" />
-    <None Remove="Models\Seo\**" />
-    <None Remove="PackageFiles\**" />
-  </ItemGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Copyright>Copyright ©, Ltd</Copyright>
+		<Authors>MindWebTree</Authors>
+		<PackageLicenseUrl></PackageLicenseUrl>
+		<OutputPath>..\..\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront</OutputPath>
+		<OutDir>$(OutputPath)</OutDir>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="Migrations\**" />
+		<Compile Remove="Models\Seo\**" />
+		<Compile Remove="PackageFiles\**" />
+		<EmbeddedResource Remove="Migrations\**" />
+		<EmbeddedResource Remove="Models\Seo\**" />
+		<EmbeddedResource Remove="PackageFiles\**" />
+		<None Remove="Migrations\**" />
+		<None Remove="Models\Seo\**" />
+		<None Remove="PackageFiles\**" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Remove="logo.jpg" />
-    <None Remove="plugin.json" />
-    <None Remove="Views\_ViewImports.cshtml" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="logo.jpg" />
+		<None Remove="plugin.json" />
+		<None Remove="Views\_ViewImports.cshtml" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Content Include="logo.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="plugin.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-	  <Content Include="Views\**\*.cshtml">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Areas\Admin\Views\**\*.cshtml">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Content\**\*">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="logo.jpg">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="plugin.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Views\**\*.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Areas\Admin\Views\**\*.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<!-- This handles CSS, Images, etc. -->
+		<Content Update="Content\**\*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 
-  <ItemGroup>
-    <Content Remove="Views\Customer\Login.cshtml" />
-  </ItemGroup>
+		<!-- ADD THIS: This forces JS files (and any other ignored files) to copy -->
+		<None Update="Content\**\*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Remove="Content\TagPages\css\style.css" />
+		<Content Remove="Content\TagPages\js\public.catalogproducts.js" />
+		<Content Remove="Views\Customer\Login.cshtml" />
+		<Content Remove="Views\TagCategory\CategoryTemplate-FilterOnSide-3x3.cshtml" />
+		<Content Remove="Views\TagCategory\_AjaxFilterSpecsBox.cshtml" />
+		<Content Remove="Views\TagCategory\_AjaxFilterSpecsBoxTop.cshtml" />
+		<Content Remove="Views\TagCategory\_CatalogFilters.cshtml" />
+		<Content Remove="Views\TagCategory\_CatalogFiltersHorizontal.cshtml" />
+		<Content Remove="Views\TagCategory\_CatalogFiltersSideBar.cshtml" />
+		<Content Remove="Views\TagCategory\_CatalogProducts-FilterOnTop-3x3.cshtml" />
+		<Content Remove="Views\TagCategory\_CatalogSelectors.cshtml" />
+		<Content Remove="Views\TagCategory\_categoryTemplate_sidebar.cshtml" />
+		<Content Remove="Views\TagCategory\_FilterSpecsBox.cshtml" />
+		<Content Remove="Views\TagCategory\_ProductsInGridOrLines-3x3.cshtml" />
+		<Content Remove="Views\TagCategory\_SelectedtFilters.cshtml" />
+		<Content Remove="Views\TagCategory\_version2ProductsInGridOrLines-3x3.cshtml" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<ClearPluginAssemblies Include="$(MSBuildProjectDirectory)\..\..\Build\ClearPluginAssemblies.proj" />
 	</ItemGroup>
 
-  <ItemGroup>
-    <Content Include="logo.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\_ViewImports.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="30.0.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="logo.jpg">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Views\_ViewImports.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 
 	<ItemGroup>
-		
+		<PackageReference Include="CsvHelper" Version="30.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+
 		<ProjectReference Include="..\..\MWT.Nop.Core\MWT.Nop.Core.csproj" />
-		
-		<ProjectReference Include="..\..\Presentation\Nop.Web\Nop.Web.csproj" /> 
+
+		<ProjectReference Include="..\..\Presentation\Nop.Web\Nop.Web.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Factories\Api\" />
+		<Folder Include="Factories\Api\" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="Views\Customer\Login.cshtml">
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </None>
+		<None Update="Content\TagPages\css\style.css">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Views\Customer\Login.cshtml">
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</None>
+		<None Update="Views\TagCategory\CategoryTemplate-FilterOnSide-3x3.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Views\TagCategory\_AjaxFilterSpecsBox.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Views\TagCategory\_AjaxFilterSpecsBoxTop.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Views\TagCategory\_CatalogFilters.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Views\TagCategory\_CatalogFiltersHorizontal.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Views\TagCategory\_CatalogFiltersSideBar.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Views\TagCategory\_CatalogProducts-FilterOnTop-3x3.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Views\TagCategory\_CatalogSelectors.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Views\TagCategory\_categoryTemplate_sidebar.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Views\TagCategory\_FilterSpecsBox.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Views\TagCategory\_ProductsInGridOrLines-3x3.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Views\TagCategory\_SelectedtFilters.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Views\TagCategory\_version2ProductsInGridOrLines-3x3.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
-	 
 
 
-  <!-- This target execute after "Build" target -->
-  <Target Name="NopTarget" AfterTargets="Build">
-    <!-- Delete unnecessary libraries from plugins path -->
-    <MSBuild Projects="@(ClearPluginAssemblies)" Properties="PluginPath=$(MSBuildProjectDirectory)\$(OutDir)" Targets="NopClear" />
-  </Target>
+
+	<!-- This target execute after "Build" target -->
+	<Target Name="NopTarget" AfterTargets="Build">
+		<!-- Delete unnecessary libraries from plugins path -->
+		<MSBuild Projects="@(ClearPluginAssemblies)" Properties="PluginPath=$(MSBuildProjectDirectory)\$(OutDir)" Targets="NopClear" />
+	</Target>
 
 </Project>
