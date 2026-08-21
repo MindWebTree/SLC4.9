@@ -4,6 +4,7 @@ using MWT.Nop.Core.Data.Discounts;
 using MWT.Nop.Core.Infrastructure;
 using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Core.Services.Catalog;
+using MWT.Nop.Core.Services.Orders;
 using MWT.Nop.Plugin.Misc.ProductBundle.Consumer;
 using MWT.Nop.Plugin.Misc.ProductBundle.Domain;
 using MWT.Nop.Plugin.Misc.ProductBundle.Domain.MWT.Nop.Plugin.Misc.ProductBundle.Domain;
@@ -36,7 +37,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Services
         private readonly IProductAttributeParser _productAttributeParser;
         private readonly IProductAttributeService _productAttributeService;
         private readonly ILocalizationService _localizationService;
-        private readonly IShoppingCartExtendedCartService _shoppingCartService;
+        private readonly IShoppingCartExtendedService _shoppingCartService;
         private readonly ISettingService _settingService;
         private readonly IPriceCalculationService _priceCalculationService;
         private readonly IWorkContext _workContext;
@@ -56,7 +57,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Services
             IProductAttributeParser productAttributeParser,
             IProductAttributeService productAttributeService,
             ILocalizationService localizationService,
-            IShoppingCartExtendedCartService shoppingCartService,
+            IShoppingCartExtendedService shoppingCartService,
             ISettingService settingService,
             IPriceCalculationService priceCalculationService,
             IWorkContext workContext,

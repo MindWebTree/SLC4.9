@@ -23,7 +23,7 @@ namespace MWT.Nop.Core.Services.Customers
         Task<IPagedList<Customer>> CustomGetAllCustomersAsync(string searchterm,
             int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false);
 
-      //  Task<IList<Customer>> CustomGetAllCustomersByStoreProcedureAsync(string searchterm);
+       Task<IList<Customer>> CustomGetAllCustomersByStoreProcedureAsync(string searchterm);
 
         Task<string> GetCustomerEmail(Customer customer);
 

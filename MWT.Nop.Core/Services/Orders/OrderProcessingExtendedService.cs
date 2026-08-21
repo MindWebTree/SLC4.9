@@ -2,6 +2,7 @@
 using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.Customizations.CustomOrders;
 using MWT.Nop.Core.Services.Message;
+using Newtonsoft.Json;
 using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Domain.Customers;
@@ -39,7 +40,7 @@ namespace MWT.Nop.Core.Services.Orders
 
         private readonly Message.ICustomWorkflowMessageService _customWorkflowMessageService;
         private readonly ICustomOrderService _customOrderService;
-        private readonly IShoppingCartExtendedCartService _shoppingCartExtendedCartService;
+        private readonly IShoppingCartExtendedService _shoppingCartExtendedCartService;
 
         #endregion
 
@@ -55,7 +56,7 @@ namespace MWT.Nop.Core.Services.Orders
             IStoreMappingService storeMappingService, IStoreService storeService, ITaxService taxService, IVendorService vendorService, IWebHelper webHelper, IWorkContext workContext,
           ICustomWorkflowMessageService workflowMessageService, LocalizationSettings localizationSettings, OrderSettings orderSettings, PaymentSettings paymentSettings,
             RewardPointsSettings rewardPointsSettings, ShippingSettings shippingSettings, TaxSettings taxSettings,
-            Message.ICustomWorkflowMessageService customWorkflowMessageService, ICustomOrderService customOrderService, IShoppingCartExtendedCartService shoppingCartExtendedCartService) :
+            Message.ICustomWorkflowMessageService customWorkflowMessageService, ICustomOrderService customOrderService, IShoppingCartExtendedService shoppingCartExtendedCartService) :
             base(currencySettings, addressService, affiliateService, checkoutAttributeFormatter, countryService, currencyService, customerActivityService, customerService, customNumberFormatter,
                 discountService, encryptionService, eventPublisher, genericAttributeService, giftCardService, languageService, localizationService, logger, orderService, orderTotalCalculationService,
                 paymentPluginManager, paymentService, pdfService, priceCalculationService, priceFormatter, productAttributeFormatter, productAttributeParser, productService, returnRequestService,
@@ -119,7 +120,7 @@ namespace MWT.Nop.Core.Services.Orders
             {
                 var result = new PlaceOrderResult();
                 var processPaymentResult = new ProcessPaymentResult();
-              
+
                 try
                 {
                     if (refOrderno != 0 && chargeFromInitialaOrder)
@@ -178,7 +179,7 @@ namespace MWT.Nop.Core.Services.Orders
                             await CustomOrderMoveShoppingCartItemsToOrderItemsAsync(placeOrderContainer, order, customOrder);
 
 
-                            await CustomOrderSendNotificationsAndSaveNotesAsync(order,customOrder);
+                            await CustomOrderSendNotificationsAndSaveNotesAsync(order, customOrder);
 
                             //reset checkout data
                             await _customerActivityService.InsertActivityAsync(customer, "CustomerRelatedActivity", string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.PlaceOrder"), order.Id));
@@ -267,6 +268,52 @@ namespace MWT.Nop.Core.Services.Orders
 
             return (result, processPaymentResult);
         }
+
+
+        public virtual async Task SetProcessPaymentRequestAsync(ProcessPaymentRequest processPaymentRequest, Customer customer, bool useNewOrderGuid = false)
+        {
+          
+            var store = await _storeContext.GetCurrentStoreAsync();
+
+            if (processPaymentRequest is null)
+            {
+                await _genericAttributeService.SaveAttributeAsync<string>(customer, NopCustomerDefaults.ProcessPaymentRequestAttribute, null, store.Id);
+
+                return;
+            }
+
+            if (_paymentSettings.RegenerateOrderGuidInterval > 0 && !useNewOrderGuid)
+            {
+                //we should use the same GUID for multiple payment attempts
+                //this way a payment gateway can prevent security issues such as credit card brute-force attacks
+                //in order to avoid any possible limitations by payment gateway we reset GUID periodically
+                var previousPaymentRequest = await GetProcessPaymentRequestAsync(customer);
+
+                //set previous order GUID (if exists)
+                if (previousPaymentRequest is { OrderGuidGeneratedOnUtc: not null })
+                {
+                    var interval = DateTime.UtcNow - previousPaymentRequest.OrderGuidGeneratedOnUtc.Value;
+                    if (interval.TotalSeconds < _paymentSettings.RegenerateOrderGuidInterval)
+                    {
+                        processPaymentRequest.OrderGuid = previousPaymentRequest.OrderGuid;
+                        processPaymentRequest.OrderGuidGeneratedOnUtc = previousPaymentRequest.OrderGuidGeneratedOnUtc;
+                    }
+                }
+            }
+
+            var json = JsonConvert.SerializeObject(processPaymentRequest);
+            await _genericAttributeService.SaveAttributeAsync(customer, NopCustomerDefaults.ProcessPaymentRequestAttribute, json, store.Id);
+        }
+
+        public virtual async Task<ProcessPaymentRequest> GetProcessPaymentRequestAsync(Customer customer)
+        {
+     
+            var store = await _storeContext.GetCurrentStoreAsync();
+            var json = await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.ProcessPaymentRequestAttribute, store.Id);
+
+            return string.IsNullOrEmpty(json) ? null : JsonConvert.DeserializeObject<ProcessPaymentRequest>(json);
+        }
+
         #endregion
 
         #region Utilities
@@ -415,7 +462,7 @@ namespace MWT.Nop.Core.Services.Orders
                 CustomerCurrencyCode = details.CustomerCurrencyCode,
                 CurrencyRate = details.CustomerCurrencyRate,
                 AffiliateId = details.AffiliateId,
-                OrderStatus =OrderStatus.Pending,
+                OrderStatus = OrderStatus.Pending,
                 AllowStoringCreditCardNumber = processPaymentResult.AllowStoringCreditCardNumber,
                 CardType = processPaymentResult.AllowStoringCreditCardNumber ? _encryptionService.EncryptText(processPaymentRequest.CreditCardType) : string.Empty,
                 CardName = processPaymentResult.AllowStoringCreditCardNumber ? _encryptionService.EncryptText(processPaymentRequest.CreditCardName) : string.Empty,

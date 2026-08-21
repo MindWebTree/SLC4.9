@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using MWT.Nop.Core.Data.Discounts;
 using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Core.Services.Catalog;
+using MWT.Nop.Core.Services.Orders;
 using MWT.Nop.Plugin.Misc.ProductBundle.Domain;
 using MWT.Nop.Plugin.Misc.ProductBundle.Infrastructure.Cache;
 using MWT.Nop.Plugin.Misc.ProductBundle.Models;
@@ -38,7 +39,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Components
         private readonly IProductAttributeParser _productAttributeParser;
         private readonly IPriceFormatter _priceFormatter;
         private readonly ISettingService _settingService;
-        private readonly IShoppingCartExtendedCartService _shoppingCartService;
+        private readonly IShoppingCartExtendedService _shoppingCartService;
         private readonly IStaticCacheManager _staticCacheManager;
         private readonly IWebHelper _webHelper;
         private readonly IWorkContext _workContext;
@@ -59,7 +60,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Components
             IProductAttributeParser productAttributeParser,
             IPriceFormatter priceFormatter,
             ISettingService settingService,
-            IShoppingCartExtendedCartService shoppingCartService,
+            IShoppingCartExtendedService shoppingCartService,
             IStaticCacheManager staticCacheManager,
             IWebHelper webHelper,
             IWorkContext workContext,

@@ -1,0 +1,234 @@
+﻿@using Nop.Web.Areas.CustomOrder.Models.Product;
+@using Newtonsoft.Json;
+@model List<Nop.Web.Areas.CustomOrder.Models.Product.ProductOverviewModel>
+@inject Nop.Core.Infrastructure.INopFileProvider _nopFileProvider;
+
+@{
+    int @counter = 0;
+    string filePath = _nopFileProvider.MapPath("/wwwroot/images/shades/squareimage/");
+}
+
+@if (Model.Count > 0)
+{
+
+
+    @foreach (var item in Model)
+    {
+
+        <div class="row productitem @(counter>0?"border-top p-2":"")" data-productId="@item.Id">
+            <div class="col-md-2"><img src="@item.DefaultPictureModel" style="width:100px;"></div>
+            <div class="col-md-10">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col" colspan="@(4+(item.ProductAttributes.Count>1?item.ProductAttributes.Count-1:0))">
+                                @item.Name<br>
+                                @item.Sku
+                            </th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (item.ProductAttributes.Count > 0)
+                        {
+                            var mainAttribute = item.ProductAttributes.FirstOrDefault();
+                            var otherAttrs = item.ProductAttributes.Where(m => m.ParentAttributeId != mainAttribute.ParentAttributeId).ToList();
+
+                            @foreach (var attributeValue in mainAttribute.Values)
+                            {
+
+                                var filteredCombinations = new List<AttributeCombination>();
+                                foreach (var combination in item.Combinations)
+                                {
+                                    if (combination.Combinations.Where(a => a.ParentAtributeName == mainAttribute.ParentAtributeName && a.AttributeId == attributeValue.AttributeId).Any())
+                                    {
+                                        filteredCombinations.Add(combination);
+                                    }
+                                }
+
+                                <tr class="attributerow prdattr">
+                                    <th scope="row" class="border-0 text-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" data-productid="@item.Id" data-parentName="@mainAttribute.ParentAtributeName"
+                                                   value="@attributeValue.AttributeName" data-attributeId="@attributeValue.AttributeId" name="option">
+                                        </div>
+                                    </th>
+
+                                    <td class="border-0 mainAttribute" data-parentName="@mainAttribute.ParentAtributeName">@Html.Raw(System.Net.WebUtility.HtmlDecode(attributeValue.AttributeName??""))</td>
+                                    @foreach (var otherAttr in otherAttrs)
+                                    {
+
+                                        if (otherAttr.Values.Count > 0)
+                                        {
+                                            var _filterItems = filteredCombinations.ToList();
+                                            filteredCombinations.Clear();
+                                            for (var i = 0; i < _filterItems.Count; i++)
+                                            {
+                                                if (_filterItems[i].Combinations.Where(a => a.ParentAtributeName == otherAttr.ParentAtributeName
+                                                && a.AttributeId == otherAttr.Values.FirstOrDefault().AttributeId).Any())
+                                                {
+                                                    filteredCombinations.Add(_filterItems[i]);
+                                                }
+                                            }
+                                      
+                                        }
+
+
+                                        <td class="border-0 otherAttr" data-parentName="@otherAttr.ParentAtributeName">
+                                            <select data-parentName="@otherAttr.ParentAtributeName">
+                                                @foreach (var attrValue in otherAttr.Values)
+                                                {
+
+
+
+                                                    if ((otherAttr.ParentAtributeName.ToLower().IndexOf("stain") >= 0 ||
+                                                    otherAttr.ParentAtributeName.ToLower().IndexOf("shade") >= 0) &&
+                                                    _nopFileProvider.FileExists(filePath + attrValue.AttributeName + ".jpg")
+                                                    )
+                                                    {
+                                                        var path = "/images/shades/squareimage/" + attrValue.AttributeName + ".jpg";
+                                                        <option data-class="avtar" data-style="background-image:url('@path')"
+                                                                value="@attrValue.AttributeId">@attrValue.AttributeName</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@attrValue.AttributeId">  @attrValue.AttributeName</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </td>
+                                    }
+                                <td class="border-0 text-center">
+                                    <input  type="number" data-productid="@item.Id"
+                                           value="0" name="quantity" style="width:50px;">
+                                </td>
+                                    <td class="border-0 text-center price">@(filteredCombinations.Count == 1 ? filteredCombinations.First().Price : item.ProductPrice)</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr class="attributerow asshown">
+                                <th scope="row" class="border-0 text-center">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" data-productid="@item.Id" name="option" value="AsShown">
+                                    </div>
+                                </th>
+                                <td class="border-0">As Shown</td>
+                                <td class="border-0 text-center">
+                                    <input type="number" data-productid="@item.Id" value="0" style="width:50px;"
+                                           name="quantity">
+                                </td>
+                                <td class="border-0 text-center price">@item.ProductPrice</td>
+                            </tr>
+
+                        }
+
+                        <tr class="attributerow custom">
+                            <th scope="row" class="border-0 text-center">
+                                <div class="form-check">
+                                    <input class="form-check-input customchk" data-productid="@item.Id" type="checkbox" value="Custom" name="option">
+                                </div>
+                            </th>
+                            <td class="border-0">Custom</td>
+                            @if (item.ProductAttributes.Count > 1)
+                            {
+                                for (int i = 1; i < item.ProductAttributes.Count; i++)
+                                {
+                                    <td class="border-0"></td>
+                                }
+
+                            }
+                            <td class="border-0 text-center">-</td>
+                            <td class="border-0 text-center">-</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row pb-4  custom" data-custom-productId="@item.Id" style="display:none;">
+            <div class="col-md-12">
+                <table class="table_customorder">
+                    <tbody>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="pb-3"><h5>Custom Size : </h5></td>
+                            <td class="border-0 pb-3" colspan="2">
+                                <form>
+                                    <input type="number" placeholder="L" class="lengh_customsize float-left" name="length">
+                                    <input type="number" placeholder="D" class="lenght_customsize float-left" name="width">
+                                    <input type="number" placeholder="H" class="lenght_customsize float-left" name="height">
+                                </form>
+                            </td>
+                            <td class="border-0 text-center pb-3 adjamt_custom" colspan="2">
+                                <h3 class="float-left">Adj Amount: </h3>
+                                <form class="ml-4">
+                                    <input type="text" placeholder="" name="adjamt">
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1"><h5>Custom Shade : </h5></td>
+                            <td class="border-0" colspan="2">
+                                <form>
+                                    <input type="text" class="shade_customsize float-left" name="shade">
+                                </form>
+                            </td>
+                            <td class="border-0 text-center adjamt_custom" colspan="2"></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="1"><h5>Quantity : </h5></td>
+                            <td class="border-0" colspan="2">
+                                <form>
+                                    <input type="number" class="shade_customsize float-left" name="quantity" value="0" style="width:50px;">
+                                </form>
+                            </td>
+                            <td class="border-0 text-center adjamt_custom" colspan="2"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        counter = counter + 1;
+    }
+    <script>
+        $("select[data-parentName='Stain']")
+            .iconselectmenu()
+            .iconselectmenu("menuWidget")
+            .addClass("ui-menu-icons avatar");
+
+        $("select[data-parentName='Shade']")
+            .iconselectmenu()
+            .iconselectmenu("menuWidget")
+            .addClass("ui-menu-icons avatar");
+
+    </script>
+    <script>
+
+        var productData = '@(JsonConvert.SerializeObject(Model) )';
+        productData = productData.replace("&quot;","\"");
+        console.log(productData);   
+        </script>
+}
+else
+{
+    <style>
+        .search-product-addtocart {
+            display: none;
+        }
+    </style>
+    <div class="row">
+        <div class="col-12">
+            No Records Found
+        </div>
+    </div>
+}

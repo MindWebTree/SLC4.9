@@ -1,0 +1,154 @@
+@model CustomOrderCustomerSectionModel
+@inject IWebHelper webHelper
+
+@{
+
+    var storeLocation = webHelper.GetStoreLocation();
+}
+<form class="pb-4" method="post" id="CustomOrder_CustomerSection-form">
+    <h4>Customer Details</h4>
+    <input type="hidden" value="@Model.Id" name="Id" />
+
+    <div class="row">
+        <div class="form-group col-md-6">
+            <input asp-for="Email" class="form-control" placeholder="@Html.DisplayNameFor(m=>m.Email)" />
+            <span asp-validation-for="Email"></span>
+        </div>
+        <div class="form-group col-md-6">
+            <input asp-for="ShippingAddress.PhoneNumber" class="form-control" placeholder="@Html.DisplayNameFor(m=>m.ShippingAddress.PhoneNumber)" />
+            <span asp-validation-for="ShippingAddress.PhoneNumber"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-6">
+            <input asp-for="FirstName" class="form-control" placeholder="@Html.DisplayNameFor(m=>m.FirstName)" />
+            <span asp-validation-for="FirstName"></span>
+        </div>
+        <div class="form-group col-md-6">
+            <input asp-for="LastName" class="form-control" placeholder="@Html.DisplayNameFor(m=>m.LastName)" />
+            <span asp-validation-for="LastName"></span>
+        </div>
+    </div>
+    @if (Model.Id == 0 || Model.ShippingAddress == null || Model.ShippingAddress.Id == 0)
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btnsearchCustomerzoho" id="btnsearchCustomerzoho"  data-url="@(storeLocation)Customorder/order/GetCustomerDetailsFromZoho/" type="button" ><span class="load loading"></span>Search Customer With Zoho</button>
+            </div>
+        </div>
+    }
+    <h4>Shipping Details</h4>
+
+    <div class="row">
+        <div class="form-group col-md-6">
+            <input asp-for="ShippingAddress.Address1" class="form-control" placeholder="@Html.DisplayNameFor(m=>m.ShippingAddress.Address1)" />
+            <span asp-validation-for="ShippingAddress.Address1"></span>
+        </div>
+        <div class="form-group col-md-6">
+            <input asp-for="ShippingAddress.Address2" class="form-control" placeholder="@Html.DisplayNameFor(m=>m.ShippingAddress.Address2)" />
+            <span asp-validation-for="ShippingAddress.Address2"></span>
+        </div>
+        <div class="form-group col-md-6">
+            <input asp-for="ShippingAddress.ZipPostalCode" class="form-control" placeholder="@Html.DisplayNameFor(m=>m.ShippingAddress.ZipPostalCode)" />
+            <span asp-validation-for="ShippingAddress.ZipPostalCode"></span>
+        </div>
+        <div class="form-group col-md-6">
+            <input asp-for="ShippingAddress.City" class="form-control" placeholder="@Html.DisplayNameFor(m=>m.ShippingAddress.City)" />
+            <span asp-validation-for="ShippingAddress.City"></span>
+        </div>
+
+        <div class="form-group col-md-6">
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                        <select asp-for="ShippingAddress.StateProvinceId" asp-items="Model.ShippingAddress.AvailableStates" data-trigger="shipping-state-select" class="form-control"></select>
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
+                        <span id="shipping-states-loading-progress" style="display: none;" class="please-wait">@T("Common.Wait")</span>
+                        <span asp-validation-for="ShippingAddress.StateProvinceId"></span>
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                        <select asp-for="ShippingAddress.CountryId" asp-items="Model.ShippingAddress.AvailableCountries" class="form-control"
+                                data-trigger="shipping-country-select"
+                                data-url="@(Url.RouteUrl("GetStatesByCountryId"))"
+                                data-stateprovince="#@Html.IdFor(model => model.ShippingAddress.StateProvinceId)"
+                                data-loading="#shipping-states-loading-progress"></select>
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
+                        <span asp-validation-for="ShippingAddress.CountryId"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="billing-details">
+        <div class="row d1">
+            <div>
+                <h4 class="pb-2">Billing Details</h4>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="sameasshipping" onchange="orderTypeSection.copyShippingInfoToBilling()">
+                <label class="form-check-label" for="sameasshipping">
+                    Same as Shipping
+                </label>
+            </div>
+        </div>
+
+
+
+        <div class="row">
+            <div class="form-group col-md-6">
+                <input asp-for="BillingAddress.Address1" class="form-control" placeholder="@Html.DisplayNameFor(m=>m.BillingAddress.Address1)" />
+                <span asp-validation-for="BillingAddress.Address1"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <input asp-for="BillingAddress.Address2" class="form-control" placeholder="@Html.DisplayNameFor(m=>m.BillingAddress.Address2)" />
+                <span asp-validation-for="BillingAddress.Address2"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <input asp-for="BillingAddress.ZipPostalCode" class="form-control" placeholder="@Html.DisplayNameFor(m=>m.BillingAddress.ZipPostalCode)" />
+                <span asp-validation-for="BillingAddress.ZipPostalCode"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <input asp-for="BillingAddress.City" class="form-control" placeholder="@Html.DisplayNameFor(m=>m.BillingAddress.City)" />
+                <span asp-validation-for="BillingAddress.City"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <input asp-for="BillingAddress.PhoneNumber" class="form-control" placeholder="@Html.DisplayNameFor(m=>m.BillingAddress.PhoneNumber)" />
+                <span asp-validation-for="BillingAddress.PhoneNumber"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                            <select asp-for="BillingAddress.StateProvinceId" asp-items="Model.BillingAddress.AvailableStates" data-trigger="billing-state-select" class="form-control"></select>
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
+                            <span id="billing-states-loading-progress" style="display: none;" class="please-wait">@T("Common.Wait")</span>
+                            <span asp-validation-for="BillingAddress.StateProvinceId"></span>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                            <select asp-for="BillingAddress.CountryId" asp-items="Model.BillingAddress.AvailableCountries" class="form-control"
+                                    data-trigger="billing-country-select"
+                                    data-url="@(Url.RouteUrl("GetStatesByCountryId"))"
+                                    data-stateprovince="#@Html.IdFor(model => model.BillingAddress.StateProvinceId)"
+                                    data-loading="#billing-states-loading-progress"></select>
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
+                            <span asp-validation-for="BillingAddress.CountryId"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    orderTypeSection.billinginitializeCountrySelect();
+    orderTypeSection.shippinginitializeCountrySelect();
+
+</script>

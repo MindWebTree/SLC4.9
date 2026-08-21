@@ -1,0 +1,622 @@
+﻿﻿@using Nop.Core.Domain.Customization.PhoneOrder;
+@model Nop.Web.Areas.CustomOrder.Models.Orders.AdditionalServiceModel
+@inject Nop.Services.Catalog.IPriceFormatter _priceFormatter;
+@inject IStoreContext _storeContext
+@{
+    ViewData["Title"] = "Create";
+}
+<link href="https://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+
+<!--Additional Service Create new by Nikhil Mind Web tree-->
+@if (Model.Status != OrderStatus.Paid)
+{
+    <div class="row px-4 pt-5 form-main additional-service-page">
+        <div class="col-6">
+            @Html.ActionLink("Back To List", "Index")
+            @if (Model.CustomerId > 0)
+            {
+                 <span>
+                    <button class="btn btn-primary" onclick="copyOrderLink('@(_storeContext.GetCurrentStore().Url)checkoutCustomOrder?orderid=@Model.Id&customerid=@Model.CustomerId&utm_source=support_team&utm_medium=payment_link&utm_campaign=manual_order_payment')" style="margin-left: 10px;">@T("Common.Copy.Link")</button>
+                </span>
+            }
+            <form class="form-page" asp-controller="AdditionalService" asp-action="Create">
+                <div class="form-page">
+
+                    <div class="form-group d-flex">
+
+                        <input asp-for="Id" type="hidden" />
+
+                    </div>
+                    <div class="form-group d-flex">
+                        <label asp-for="OrderId" class="control-label"></label>
+                        <input asp-for="OrderId" class="form-control" />
+                        <span id="OrderFound" style="display:none"><i class="fas fa-check-circle"></i></span>
+                        <span id="NotFound" style="display:none"><a><i class="fas fa-question"></i></a></span>
+                        <span asp-validation-for="OrderId" class="text-danger"></span>
+                    </div>
+
+
+                    <div class="form-group d-flex">
+                        <label asp-for="Email" class="control-label"></label>
+                        <div class="Forminput">
+                            <input id="Email" asp-for="Email" class="form-control" readonly />
+                            <a id="EditEmailid"><img src="/images/pencil-icon.svg" /></a>
+                            <a type="button" id="SaveEmailid" style="display: none;"><img src="/images/save-icon.svg" /> </a>
+                            <a type="button" id="CancelEmailid" style="display: none;"><img src="/images/close-icon.svg" /></a>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group d-flex">
+                        <label asp-for="PairedOrderIds" class="control-label"></label>
+                        <div class="Forminput">
+                            <input id="PairedOrderIds" asp-for="PairedOrderIds" class="form-control" />
+                            <span asp-validation-for="PairedOrderIds" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group d-flex">
+                        <label asp-for="ServiceProducts" class="control-label"></label>
+                        @Html.DropDownListFor(x => x.Serviceproductid, new SelectList(Model.ServiceProducts, "Id", "Name"), new { @class = "form-control", id = "ServiceProducts" })
+
+                    </div>
+
+                    <div class="form-group d-flex">
+                        <label asp-for="ServicePrice" class="control-label"></label>
+                        <div class="Forminput">
+                            <input asp-for="ServicePrice" class="form-control" />
+                            <span asp-validation-for="ServicePrice" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group d-flex">
+                        <label asp-for="DiscountPrice" class="control-label"></label>
+                        <div class="Forminput">
+                            <input asp-for="DiscountPrice" class="form-control" />
+                            <span asp-validation-for="DiscountPrice" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <script>
+
+                        $(document).ready(function () {
+                            var servicePriceInput = $('input[name="ServicePrice"]');
+                            var discountPriceInput = $('input[name="DiscountPrice"]');
+
+                            discountPriceInput.on('input', function () {    
+                                var servicePrice = parseFloat(servicePriceInput.val());
+                                var discountPrice = parseFloat(discountPriceInput.val());
+
+                                if (discountPrice > servicePrice) {
+                                    discountPriceInput.addClass('is-invalid');
+                                    discountPriceInput.removeClass('is-valid');
+                                    discountPriceInput.next('.text-danger').text('Discount price must be less than or equal to the service price.');
+                                } else {
+                                    discountPriceInput.removeClass('is-invalid');
+                                    discountPriceInput.addClass('is-valid');
+                                    discountPriceInput.next('.text-danger').text('');
+                                }
+                            });
+                        });
+                    </script>
+
+                    <div class="form-group d-flex">
+                        <label asp-for="Comment" class="control-label"></label>
+                        <div class="Forminput">
+                            <nop-textarea asp-for="Comment" class="form-control" />
+                            <span asp-validation-for="Comment" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group d-flex">
+                        <label asp-for="Exp"></label>
+                        <div class="Forminput">
+                            <input asp-for="Exp" class="form-control" type="datetime" value="@(Model.Exp==null?"":Convert.ToDateTime( Model.Exp).ToString("yyyy-MM-dd"))"></input>
+                            <span asp-validation-for="Exp" class="text-danger" id="Exp-validation"></span>
+                        </div>
+                    </div>
+
+                    <script>
+                        $('#Exp').datepicker({
+                            format: 'mm/dd/yyyy',
+                            minDate: new Date().getDate()
+                        });
+                        var currentDate = new Date();
+
+                        var expInput = document.getElementById('Exp');
+                        expInput.form.addEventListener('submit', function (event) {
+                            var selectedDateTime = new Date(expInput.value);
+
+
+                            var tomorrowDate = new Date(currentDate);
+                            tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+
+                            if (selectedDateTime < tomorrowDate) {
+                                event.preventDefault();
+                                var validationError = document.getElementById('Exp-validation');
+                                validationError.textContent = 'Please select Date after Tomorrow';
+                            }
+                        });
+                    </script>
+                    <div class="form-group d-flex taxsection">
+                        <input asp-for="ApplyTax" class="form-control" /><label asp-for="Tax" class="control-label"></label>
+                        <div class="Forminput">
+                            <span0. class="tax">@Model.Tax</span0.>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="submit" name="SendInvoice" class="btn btn-primary" id="SendInvoiceBtn">@T("CustomOrder.AdditionalService.SendInvoice")</button>
+                        <button type="submit" name="placeOrder" class="btn btn-primary @((Model.ServicePrice??0)==0 || ((Model.ServicePrice??0)-(Model.DiscountPrice??0))>0?"d-none":string.Empty)" id="PlaceOrderBtn">@T("CustomOrder.AdditionalService.PlaceOrder")</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-6 validate-btn">
+
+
+            <button id="ValidateOrder" class="btn btn-primary" type="button" onclick="validateOrder()">Validate</button>
+            <div class="row order-address">
+                @if (Model.ShippingAddress != null && Model.ShippingAddress.Id != 0)
+                {
+                    await Html.RenderPartialAsync("_addressinfo", Model.ShippingAddress);
+
+                }
+                @if (Model.BillingAddress != null && Model.BillingAddress.Id != 0)
+                {
+                    await Html.RenderPartialAsync("_addressinfo", Model.BillingAddress);
+                }
+            </div>
+            <div class="row orderTotal">
+                <div class="pairedorderinfo">
+                    <div class="col-12">
+                        @if (Model.OrderTotal != null)
+                        {
+                            if (Model.PairedOrders.Count > 0)
+                            {
+
+                                <table border="1">
+                                    <tr><td>@T("Common.OrderId")</td><td>@T("shoppingcart.itemtotal")</td><td>@T("customorder.PairOrder.Status")</td><td>@T("order.ordertotal")</td><td>@T("order.PairOrder.IsPaid")</td><td>@T("order.Action")</td></tr>
+                                    @foreach (var order in Model.PairedOrders)
+                                    {
+
+
+                                        <tr>
+                                            @{ if ((bool)order.Value.IsPairOrder)
+                                                {
+                                                    <td>@order.Key</td>
+                                                    <td>@order.Value.SubTotal</td>
+                                                    <td>@(((bool)order.Value.IsFound) ? Html.Raw("<i class=\"fas fa-check\"></i>") : Html.Raw("<i class=\"fas fa-times\"></i>"))</td>
+                                                    <td>@order.Value.OrderTotal</td>
+                                                    <td>@(((bool)order.Value.IsPaid) ? Html.Raw("<i class=\"fas fa-check\"></i>") : Html.Raw("<i class=\"fas fa-times\"></i>"))</td>
+
+                                                    <td>
+                                                        @if (!((bool)order.Value.IsSelected))
+                                                        {
+                                                            <button type="button" data-orderid="@order.Key" style="width:auto;" class="btn btn-primary add">@T("Common.Add")</button>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button type="button" data-orderid="@order.Key" style="width:auto;" class="btn btn-primary remove">@T("Common.Remove")</button>
+                                                        }
+
+
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>@order.Key</td>
+                                                    <td>@order.Value.SubTotal</td>
+                                                    <td></td>
+                                                    <td>@order.Value.OrderTotal</td>
+
+                                                    <td></td>
+                                                    <td></td>
+                                                }
+                                            }
+                                        </tr>
+
+                                    }
+                                </table>
+
+
+                            }
+                        }
+                    </div>
+                </div>
+                <br />
+                <div class="col-12">
+                    @if (Model.OrderTotal != null)
+                    {
+
+
+                        <div><strong>@T("order.ordertotal")</strong> @Model.OrderTotal</div>
+
+                        <div>  <strong>@T("shoppingcart.totals.subtotal")</strong> @Model.OrderSubTotal</div>
+                    }
+                </div>
+            </div>
+            @if((Model.ServicePrice??0)>0){
+            <div class="servicetotal">
+
+                <div><strong>@T("order.AdditionalService.OrderTotal")</strong>@await _priceFormatter.FormatPriceAsync((Model.ServicePrice??0) - (Model.DiscountPrice??0))</div>
+            </div>
+            }
+        </div>
+    </div>
+
+
+    <div class="orderdetailssection col-12 custom-order-steps">
+
+        @await Component.InvokeAsync("CustomOrderStatusLog", new { orderId = Model.Id })
+    </div>
+    <script>
+
+
+        var initialEmail;
+
+        document.getElementById('EditEmailid').addEventListener('click', function (event) {
+            event.preventDefault();
+            initialEmail = document.getElementById('Email').value;
+        });
+
+        document.getElementById('SaveEmailid').addEventListener('click', function (event) {
+            event.preventDefault();
+        });
+
+        document.getElementById('CancelEmailid').addEventListener('click', function (event) {
+            event.preventDefault();
+            document.getElementById('Email').value = initialEmail;
+        });
+
+        $(document).ready(function () {
+
+            $('#EditEmailid').click(function () {
+                $('#Email').removeAttr('readonly');
+                $('#EditEmailid').hide();
+                $('#SaveEmailid, #CancelEmailid').show();
+            });
+
+
+            $('#SaveEmailid').click(function () {
+
+                $('#Email').attr('readonly', 'readonly');
+                $('#SaveEmailid, #CancelEmailid').hide();
+                $('#EditEmailid').show();
+            });
+
+
+            $('#CancelEmailid').click(function () {
+                $('#Email').attr('readonly', 'readonly');
+                $('#SaveEmailid, #CancelEmailid').hide();
+                $('#EditEmailid').show();
+            });
+        });
+
+        let typingTimer;
+        let doneTypingInterval = 1000;
+
+        $('#PairedOrderIds').on('keyup', function () {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(validateOrder, doneTypingInterval);
+        });
+
+        $('#PairedOrderIds').on('keydown', function () {
+            clearTimeout(typingTimer);
+        });
+
+        $('#ServicePrice,#DiscountPrice').on('input', function () {
+            let servicePrice = parseFloat($("#ServicePrice").val());
+            let discountPrice = parseFloat($("#DiscountPrice").val());
+            if (servicePrice - discountPrice <=0) {
+                $('button[name="placeOrder"]').removeClass("d-none");
+                $('button[name="SendInvoice"]').addClass("d-none");
+            } else {
+                $('button[name="placeOrder"]').addClass("d-none");
+                $('button[name="SendInvoice"]').removeClass("d-none");
+            }
+        });
+        function validateOrder() {
+            var orderId = $('#OrderId').val();
+            if (orderId !== '' && Number(orderId) > 0) {
+                $.ajax({
+                    url: '@Url.Action("Validate", "AdditionalService")',
+                    type: 'GET',
+                    data: { Id: orderId, pairedOrderIds: $('#PairedOrderIds').val() },
+                    success: function (response) {
+                        if (response.statuscode === 200) {
+                            $('#OrderFound').show();
+                            $('#NotFound').hide();
+                            var email = response.email;
+                            $('#ServicePrice').val(response.wgs);
+                            $('#PairedOrderIds').val(response.validOrderIds);
+                            $('#Email').val(email);
+                            $('#Email').prop('readonly', true);
+                            $(".order-address").html("");
+                            $(".orderTotal .col-12").html("");
+                            $(".order-address").append(response.shippingAddress);
+                            $(".order-address").append(response.billingAddress);
+                            $(".orderTotal .col-12").append(response.orderTotal);
+                            $(".orderTotal .col-12").append(response.orderSubtotal);
+
+                            let tableHtml = '';
+
+
+                            if (Object.keys(response.pairedOrders).length > 0) {
+                                tableHtml = '<table border="1"><tbody>';
+                                tableHtml += '<tr><td><strong>@T("Common.OrderId")</strong></td><td><strong>@T("shoppingcart.itemtotal")</strong></td><td><strong>@T("customorder.PairOrder.Status")</strong></td><td><strong>@T("order.ordertotal")</strong></td><td><strong>@T("order.PairOrder.IsPaid")</strong></td><td><strong>@T("order.Action")</strong></td></tr>';
+
+                                $.each(response.pairedOrders, function (orderId, details) {
+                                    if (details.IsPairOrder == true) {
+                                        tableHtml += `<tr>
+                            <td>${orderId}</td>
+                            <td>${details.SubTotal}</td>
+                            <td>${details.IsFound == true ? '<i class=\"fas fa-check\"></i>' : '<i class=\"fas fa-times\"></i>'}</td>
+                            <td>${details.OrderTotal}</td>
+                           <td>${details.IsPaid == true ? '<i class=\"fas fa-check\"></i>' : '<i class=\"fas fa-times\"></i>'}</td>
+ <td>${details.IsSelected == false ? '<button data-orderid="' + orderId + '" type="button" style="width:auto;" class="btn btn-primary add">@T("Common.Add")</button>' : '<button data-orderid="' + orderId +'"  type="button" style="width:auto;" class="btn btn-primary remove">@T("Common.Remove")</button>'}</td>
+                          </tr>`;
+                                    }
+                                    else {
+                                              tableHtml += `<tr>
+                            <td>${orderId}</td>
+                            <td>${details.SubTotal}</td>
+                            <td></td>
+                            <td>${details.OrderTotal}</td>
+                           <td></td>
+                            <td></td>
+                          </tr>`
+                                    }
+                                });
+
+                                tableHtml += '</tbody></table>';
+                            }
+                            $('.pairedorderinfo').html(tableHtml);
+                        } else {
+                            $('#NotFound').show();
+                            $('#OrderFound').hide();
+                        }
+                    },
+                    error: function () {
+                        $('#OrderFound').hide();
+                        $('#NotFound').hide();
+                    }
+                });
+            }
+        }
+
+        $("body").on("click", ".add, .remove", function () {
+            var pairOrderIds = $("#PairedOrderIds").val();
+            let ids = pairOrderIds ? pairOrderIds.split(',').map(id => id.trim()).filter(id => id) : [];
+            const orderIdStr = String($(this).data("orderid"));
+            const index = ids.indexOf(orderIdStr);
+            if ($(this).hasClass("add")) {
+            if (index === -1) {
+                ids.push(orderIdStr);
+                }
+
+                $('#PairedOrderIds').val(ids.join(',')).trigger("keyup");
+            }
+            else {
+
+                if (index !== -1) {
+                    ids.splice(index, 1);
+                }
+                $('#PairedOrderIds').val(ids.join(',')).trigger("keyup");
+            }
+        })
+
+
+
+        $("#ApplyTax").change(function(){
+            getTax();
+        })
+
+        function getTax() {
+            var formdata = new URLSearchParams();
+            formdata.append(`Id`, parseInt($("#orderId").val()));
+            formdata.append(`ApplyTax`, $('#ApplyTax').is(':checked'));
+            formdata.append(`ServicePrice`, $('#ServicePrice').val());
+            formdata.append(`OrderId`, $('#OrderId').val());
+            formdata.append(`DiscountPrice`, $('#DiscountPrice').val());
+            var tokenInput = $('input[name=__RequestVerificationToken]');
+            if (tokenInput.length) {
+                formdata += "&__RequestVerificationToken=" + tokenInput.val();
+            }
+            $.ajax({
+                url: '@Url.Action("GetTax", "AdditionalService")',
+                type: 'POST',
+                data: formdata
+            ,
+                success: function (response) {
+                    if (response.statuscode === 200) {
+                        $(".tax").html(response.Tax);
+                    }
+                },
+                error: function () {
+
+                }
+            });
+            }
+    </script>
+}
+else
+{
+
+    <div class="row px-4 pt-5 form-main additional-service-page">
+        <div class="col-6">
+            @Html.ActionLink("Back To List", "Index")
+            @if (Model.CustomerId > 0)
+            {
+                <span>
+                    <button class="btn btn-primary" onclick="copyOrderLink('@(_storeContext.GetCurrentStore().Url)checkoutCustomOrder?orderid=@Model.Id&customerid=@Model.CustomerId')" style="margin-left: 10px;">@T("Common.Copy.Link")</button>
+                </span>
+            }
+            <form class="form-page" asp-controller="AdditionalService" asp-action="Create">
+                <div class="form-page">
+
+                    <div class="form-group d-flex">
+
+                        <input asp-for="Id" type="hidden" />
+
+                    </div>
+                    <div class="form-group d-flex">
+                        <label asp-for="OrderId" class="control-label"></label>
+                        <input asp-for="OrderId" class="form-control" readonly />
+                        <span id="OrderFound" style="display:none"><i class="fas fa-check-circle"></i></span>
+                        <span id="NotFound" style="display:none"><i class="fas fa-question"></i></span>
+                        <span asp-validation-for="OrderId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group d-flex">
+                        <label asp-for="PairedOrderIds" class="control-label"></label>
+                        <input id="Email" asp-for="PairedOrderIds" class="form-control" readonly />
+
+                        <span asp-validation-for="PairedOrderIds" class="text-danger"></span>
+                    </div>
+                    <div class="form-group d-flex">
+                        <label asp-for="Email" class="control-label"></label>
+                        <input id="Email" asp-for="Email" class="form-control" readonly />
+
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group d-flex">
+                        <label asp-for="ServiceProducts" class="control-label"></label>
+                        @Html.DropDownListFor(x => x.Serviceproductid, new SelectList(Model.ServiceProducts, "Id", "Name"), "-- select an option --", new { @class = "form-control", id = "ServiceProducts", @disabled = "disabled" })
+
+                    </div>
+
+                    <div class="form-group d-flex">
+                        <label asp-for="ServicePrice" class="control-label"></label>
+                        <input asp-for="ServicePrice" class="form-control" readonly />
+                        <span asp-validation-for="ServicePrice" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group d-flex">
+                        <label asp-for="DiscountPrice" class="control-label"></label>
+                        <input asp-for="DiscountPrice" class="form-control" readonly />
+                        <span asp-validation-for="DiscountPrice" class="text-danger"></span>
+                    </div>
+
+
+                    <div class="form-group d-flex">
+                        <label asp-for="Comment" class="control-label"></label>
+                        <nop-textarea asp-for="Comment" class="form-control" readonly />
+                        <span asp-validation-for="Comment" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group d-flex">
+                        <label asp-for="Exp"></label>
+                        <input asp-for="Exp" class="form-control" type="datetime-local" id="expInput" readonly />
+                        <span asp-validation-for="Exp" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group d-flex taxsection">
+                        <input asp-for="ApplyTax" disabled class="form-control" /><label asp-for="Tax" class="control-label"></label>
+                        <div class="Forminput">
+                            <span>@Model.Tax</span>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+        <div class="col-6 validate-btn">
+            <div class="row">
+                @if (Model.ShippingAddress != null && Model.ShippingAddress.Id != 0)
+                {
+                    await Html.RenderPartialAsync("_addressinfo", Model.ShippingAddress);
+
+                }
+                @if (Model.BillingAddress != null && Model.BillingAddress.Id != 0)
+                {
+
+                    await Html.RenderPartialAsync("_addressinfo", Model.BillingAddress);
+
+                }
+            </div>
+            <div class="row orderTotal">
+     <div class="pairedorderinfo">
+                <div class="col-12">
+                    @if (Model.OrderTotal != null)
+                    {
+                        if (Model.PairedOrders.Count > 0)
+                        {
+                            <table border="1">
+                                <tr><td>@T("Common.OrderId")</td><td>@T("shoppingcart.itemtotal")</td><td>@T("order.ordertotal")</td></tr>
+                                @foreach (var order in Model.PairedOrders)
+                                {
+                                    <tr>
+                                        <td>@order.Key</td>
+                                        <td>@order.Value.SubTotal</td>
+                                        <td>@order.Value.OrderTotal</td>
+                                    </tr>
+
+                                }
+                            </table>
+                            <br />
+                        }
+                        <div><strong>@T("order.ordertotal")</strong> @Model.OrderTotal</div>
+
+                        <div>  <strong>@T("shoppingcart.totals.subtotal")</strong> @Model.OrderSubTotal</div>
+                    }
+                </div>  </div>
+            </div>
+            <div class="servicetotal">
+
+                <div><strong>@T("order.AdditionalService.OrderTotal")</strong>@await _priceFormatter.FormatPriceAsync((Model.ServicePrice??0) - (Model.DiscountPrice??0))</div>
+            </div>
+            @if (Model.PaymentDetails != null)
+            {
+                <div class="col-12">
+                    <ul class="order-details">
+                        <li class="payment_heading">Payment Confirm</li>
+                        <li>Order Number # @Model.PaymentDetails.LiveOrderNumber</li>
+                        @if (!string.IsNullOrEmpty(Model.PaymentDetails.TransactionId))
+                        {
+                            <li>Transaction# @Model.PaymentDetails.TransactionId</li>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.PaymentDetails.Card))
+                        {
+                            <li>Card# @Model.PaymentDetails.Card</li>
+                        }
+                        <li>Date  @Model.PaymentDetails.PaymentDate</li>
+                    </ul>
+                </div>
+
+            }
+        </div>
+    </div>
+    <div class="orderdetailssection col-12 custom-order-steps">
+
+        @await Component.InvokeAsync("CustomOrderStatusLog", new { orderId = Model.Id })
+    </div>
+}
+
+<script>
+    function copyOrderLink(url) {
+
+        navigator.clipboard.writeText(url)
+            .then(() => {
+                // ✅ Custom message instead of alert
+                showCopyMessage("Order link copied successfully!");
+            })
+            .catch(err => {
+                showCopyMessage("Failed to copy the link.");
+                console.error(err);
+            });
+    }
+
+    function showCopyMessage(message) {
+        const msgBox = document.createElement("div");
+        msgBox.innerText = message;
+        msgBox.style.position = "fixed";
+        msgBox.style.top = "20px";
+        msgBox.style.right = "20px";
+        msgBox.style.background = "#4caf50";
+        msgBox.style.color = "#fff";
+        msgBox.style.padding = "10px 15px";
+        msgBox.style.borderRadius = "5px";
+        msgBox.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
+        msgBox.style.zIndex = "1000";
+        document.body.appendChild(msgBox);
+
+    }
+</script>

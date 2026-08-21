@@ -1,0 +1,102 @@
+@model CustomOrderOrderTypeSectionModel
+
+@using Nop.Core.Domain.Customization.PhoneOrder
+@{
+    bool isPaid = Model.OrderStatus == OrderStatus.Paid.ToString() ? true : false;
+}
+<div class="errors-container"></div>
+<div class="form-group d-flex promise-main">
+
+    <input type="hidden"
+           asp-for="Id" />
+    <div class="promise-deliver">
+        <nop-label asp-for="@Model.PromiseDayDate" />:
+        <input type="text" name="PromiseDayDate" id="PromiseDayDate" @(isPaid ? "disabled" : "") value="@(Model.PromiseDayDate==null?"":Convert.ToDateTime( Model.PromiseDayDate).ToString("yyyy-MM-dd"))" />
+        @*       <nop-editor asp-for="PromiseDayDate" />*@
+    </div>
+
+    @if (Model.OrderType != OrderTypes.EbayOrder.ToString() && Model.OrderType != OrderTypes.HouzzOrder.ToString())
+    {
+
+        <div class="p-amount">
+            <nop-label asp-for="@Model.AlreadyFee" />:
+            <input type="text" name="AlreadyFee" @(isPaid ? "disabled" : "") value="@Model.AlreadyFee" />
+            %
+        </div>
+        if (Model.OrderType == OrderTypes.AlreadyPaid.ToString())
+        {
+            <div class="p-amount">
+                <nop-label asp-for="@Model.PurchaseOrderNumber" />:
+                <input type="text" name="PurchaseOrderNumber" @(isPaid ? "disabled" : "") value="@Model.PurchaseOrderNumber" />
+
+            </div>
+            <!--<div >
+                <nop-label asp-for="@Model.SubOrderTypeId" />:
+                <select name="SubOrderTypeId" @(isPaid?"disabled":"")>
+                    @foreach (var orderType in Model.subOrderTypes)
+                    {
+                        if (orderType.Selected)
+                        {
+                            <option value="@orderType.Value" selected>@orderType.Text</option>
+                        }
+                        else
+                        {
+                            <option value="@orderType.Value">@orderType.Text</option>
+                        }
+                    }
+
+                </select>-->
+            @*                <nop-select asp-for="SubOrderTypeId" asp-items="Model.subOrderTypes" />*@
+            <!--</div>-->
+        }
+    }
+    else if (Model.OrderType == OrderTypes.HouzzOrder.ToString())
+    {
+        <div class="p-amount">
+            <label class="col-form-label" for="PurchaseOrderNumber">@T("CustomOrder.Order.Houzz.OrderId")</label>:
+            <input type="text" name="PurchaseOrderNumber" @(isPaid ? "disabled" : "") value="@Model.PurchaseOrderNumber" />
+        </div>
+        <div class="p-amount">
+            <nop-label asp-for="@Model.HouzzFee" />:
+            <input type="text" name="HouzzFee" @(isPaid ? "disabled" : "") value="@Model.HouzzFee" />
+
+            <input type="radio" id="percentage" @(isPaid ? "disabled" : "") name="HouzzFeeType" value="percentage" @( string.IsNullOrEmpty(Model.HouzzFeeType) || Model.HouzzFeeType.Equals("percentage", StringComparison.InvariantCultureIgnoreCase) ? "checked" : "")>
+            <label for="percentage">%</label>
+
+            <input type="radio" id="fixed" @(isPaid ? "disabled" : "") name="HouzzFeeType" value="fixed" @(!string.IsNullOrEmpty(Model.HouzzFeeType) && Model.HouzzFeeType.Equals("fixed", StringComparison.InvariantCultureIgnoreCase) ? "checked" : "")>
+            <label for="fixed">$</label><br>
+        </div>
+
+
+
+    }
+
+
+
+
+
+
+
+    @if (!isPaid)
+    {
+        <div class="p-initial">
+            <button class="btn-neworder" type="button" onclick="orderTypeSection.saveOrderTypeInfo('false')">
+
+                @T(Model.OrderType == OrderTypes.CustomOrder.ToString() ? "Button.Initial.Payment" :
+               (Model.OrderType == OrderTypes.HouzzOrder.ToString() ? "Button.Houzz.Fee" : "Button.Already.Fee"))
+            </button>
+        </div>
+        <div class="p-reset"><button class="btn-neworder" type="button" onclick="orderTypeSection.saveOrderTypeInfo('true')">@T("Common.Reset")</button></div>
+    }
+    @if (Model.LiveOrderNumber != null)
+    {
+        <div class="p-order">   @T("CustomOrder.Label.OrderNumber", Model.LiveOrderNumber)</div>
+    }
+</div>
+
+<script>
+    $('#PromiseDayDate').datepicker({
+        format: 'mm/dd/yyyy',
+        startDate: new Date().getDate()
+    });
+</script>

@@ -1,0 +1,44 @@
+﻿@using Nop.Services.Plugins
+@using Nop.Services.Security
+@inject Nop.Services.Customers.ICustomerService _customerService
+@inject IPermissionService permissionService
+@inject IWorkContext _workContext
+@{
+    var currentCustomer =await _workContext.GetCurrentCustomerAsync();
+}
+
+<ul class="navigation list-unstyled text-white position-fixed px-2">
+
+    <li class="text-center pt-3">
+        <img src="/images/logo.svg"  width="100px" style="padding: 20px 5px; filter: invert(1); ">
+        <h6 class="pt-2">
+            @await _customerService.GetCustomerFullNameAsync(currentCustomer)
+            <hr />
+        </h6>
+    </li>
+    @{
+        var customer = await workContext.GetCurrentCustomerAsync();
+
+        //load sitemap
+        var siteMap = new XmlSiteMap();
+        await siteMap.LoadFromAsync("~/Areas/CustomOrder/sitemap.config");
+
+        //standard (default) items
+        var rootNode = siteMap.RootNode;
+
+
+        //display menu items
+        foreach (var item in rootNode.ChildNodes.Where(x => x.Visible))
+        {
+
+
+            @await Html.PartialAsync("_MenuItem", item)
+        }
+    }
+    <li class="text-center pt-5  pb-4 logout">
+        <a asp-controller="Customer" asp-action="Logout" asp-area="" class="nav-link">
+            <img src="/css/Customizations/Areas/CustomOrder/images/logout.png">
+            <h6>@T("CustomOrder.LogOut")</h6>
+        </a>
+    </li>
+</ul>

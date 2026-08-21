@@ -1,0 +1,16 @@
+﻿  @model Nop.Web.Areas.CustomOrder.Models.Customers.AddressModel
+<div class="co-6">
+
+    <h6>@T(Model.IsShippingAddress?"order.shippingaddress":"order.billingaddress")</h6>
+    <p>
+        @Model.FirstName @Model.LastName<br>
+        <a href="#">@Model.Email</a><br>
+        @Model.PhoneNumber
+    </p>
+
+    <p>
+        @Model.Address1,<br>
+        @Model.County,  @Model.StateProvinceName @Model.ZipPostalCode<br>
+        @Model.CountryName
+    </p>
+</div>

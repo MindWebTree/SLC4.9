@@ -36,7 +36,7 @@ namespace MWT.Nop.Core.Services.Orders
         private readonly ICurrencyService _currencyService;
         private readonly IShippingPluginManager _shippingPluginManager;
         private readonly ILogger _logger;
-        private readonly IShoppingCartExtendedCartService _shoppingCartService;
+        private readonly IShoppingCartExtendedService _shoppingCartService;
         private readonly ICustomerExtendedService _customerService;
         private readonly IStoreContext _storeContext;
         private readonly ICustomProductAttributeFormatter _productAttributeFormatter;
@@ -60,7 +60,7 @@ namespace MWT.Nop.Core.Services.Orders
             IRepository<ProductWarehouseInventory> productWarehouseInventoryRepository, IRepository<RecurringPayment> recurringPaymentRepository,
             IRepository<RecurringPaymentHistory> recurringPaymentHistoryRepository, IShipmentService shipmentService,
             IStaticCacheManager staticCacheManager, ICurrencyService currencyService, IShippingPluginManager shippingPluginManager, ILogger logger,
-            IShoppingCartExtendedCartService shoppingCartService, ICustomerExtendedService customerService,
+            IShoppingCartExtendedService shoppingCartService, ICustomerExtendedService customerService,
             IStoreContext storeContext, ICustomProductAttributeFormatter productAttributeFormatter, IRepository<Shipment> shipmentRepository,
             IShippingService shippingService, IAddressService addressService, ICountryService countryService, IStateProvinceService stateProvinceService,
             IPriceCalculationService priceCalculationService, ShoppingCartSettings shoppingCartSettings, ShippingSettings shippingSettings, IProductExtendedService productExtendedService, IWarehouseService warehouseService

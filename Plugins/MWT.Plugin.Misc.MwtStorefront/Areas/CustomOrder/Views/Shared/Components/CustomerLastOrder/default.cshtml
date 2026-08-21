@@ -1,0 +1,57 @@
+@model CustomerStatsModel
+@if (Model.LatestOrder != null && Model.LatestOrder.Items!=null)
+{
+    <div class="py-3 px-3">
+        <h4 class="last-order">
+            @T("customorder.Customer.History.LastOrder")<span>
+                @(Model.LatestOrder.CreatedOn == null ? "" : Convert.ToDateTime(Model.LatestOrder.CreatedOn).ToString("MMM dd,yyyy"))
+            </span>
+        </h4>
+        <h4 class="order-no">
+            
+            <a href="#" class="order_receipt" data-liveordernumber="@Model.LatestOrder.LiveOrderNumber"
+               data-orderId="0">   @T("customorder.Customer.History.OrderNumber",Model.LatestOrder.LiveOrderNumber)</a>
+            <button class="border-0 rounded-pill px-3">
+                @(Model.LatestOrder.isShipped && Model.LatestOrder.isDelivered ? T("customorder.Customer.History.Shipment.Delivered"):
+
+                    (Model.LatestOrder.isShipped ? T("customorder.Customer.History.Shipment.Shipped") : T("customorder.Customer.History.Shipment.PENDING")))
+            </button>
+        </h4>
+        <h5 class="ml-0">@T("customorder.Customer.History.OrderTotal",Model.LatestOrder.OrderTotal)</h5>
+    </div>
+
+     <div class="border-bottom pt-1 pb-3 px-3 latestorder-items">
+    @foreach (var item in Model.LatestOrder.Items)
+    {
+       <div class="item">
+                <img src="@item.Picture" style="width:100px;" class="float-left">
+            <h5 style="margin-left: 120px !important; line-height: 25px;">
+                @item.Name<br>3123456789<br>@Html.Raw(
+        (string.IsNullOrEmpty(item.CustomAttributesDescription)?item.AttributesDescription:item.CustomAttributesDescription)
+        )
+            </h5>
+            </div>
+     
+    }
+    </div>
+
+
+}
+<div class="py-3 px-3">
+    <h3 class="ml-0">@T("customorder.customer.history.totalorders")<span style="color:#797979; "> @Model.NoOforders</span></h3>
+    <h3 class="ml-0">
+        @if (Model.LatestOrder != null)
+        {
+            @T("customorder.customer.history.totalspend")<span style="color:#797979; ">@Model.LatestOrder.OrderTotal</span>
+
+           @* <a href="@Url.Action("List","Order", new { area="customorder",searchterm=Model.LatestOrder.CustomerId})" style="position: absolute; right: 20px;">
+            @T("customorder.Customer.History.ViewAllOrders")
+            </a>*@
+        }
+    </h3>
+</div>
+<div class="">
+    <a href="@Url.Action("CreateOrder","Order", new { area="customorder",searchterm=Model.LatestOrder.CustomerId})" class="w-100 p-3 border-0 text-white" style="background-color:#007041; border-radius: 0 0 10px 10px;@(Model.LatestOrder==null?"bottom: 0px;position: absolute;":"")">
+        @T("customorder.Customer.History.CreateNewOrder")
+    </a>
+</div>  

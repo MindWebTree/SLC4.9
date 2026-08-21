@@ -3,7 +3,7 @@
 @using Nop.Core.Domain.Orders
 @using System.Globalization;
 @inject Nop.Services.Configuration.ISettingService _settingService;
-@inject IShoppingCartExtendedCartService _shoppingCartService;
+@inject IShoppingCartExtendedService _shoppingCartService;
 @model MiniShoppingCartExtendedModel
 @{ var settingValue = await _settingServce.GetSettingByKeyAsync<string>("MarketingSettings.ShowBuymoreSavemoreBanner");
     bool showBuymoreSavemoreBanner = false;
