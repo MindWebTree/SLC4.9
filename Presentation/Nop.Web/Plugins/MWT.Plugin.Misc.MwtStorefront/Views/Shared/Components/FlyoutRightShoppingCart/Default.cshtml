@@ -1,0 +1,314 @@
+﻿@inject Nop.Services.Configuration.ISettingService _settingServce;
+@using MWT.Plugin.Misc.MwtStorefront.Models.ShoppingCart
+@using Nop.Core.Domain.Orders
+@using System.Globalization;
+@inject Nop.Services.Configuration.ISettingService _settingService;
+@inject IShoppingCartExtendedService _shoppingCartService;
+@model MiniShoppingCartExtendedModel
+@{ var settingValue = await _settingServce.GetSettingByKeyAsync<string>("MarketingSettings.ShowBuymoreSavemoreBanner");
+    bool showBuymoreSavemoreBanner = false;
+    bool.TryParse(settingValue, out showBuymoreSavemoreBanner);
+    bool disableConversion = await _settingService.GetSettingByKeyAsync<bool>("Disable.Addtocart.Desktop.Conversion");
+    bool disableMobileConversion = await _settingService.GetSettingByKeyAsync<bool>("Disable.Addtocart.Mobile.Conversion");
+    string queryStringKey = await _settingService.GetSettingByKeyAsync<string>("Disable.Addtocart.Conversion,QueryString");
+    string buymoreSaveMoreDiscount = await _shoppingCartService.GetBuyMoreSaveMoreDiscountConfiguration(); }
+<div class="modal-header">
+    <div class="model-title-logo">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="10" cy="10" r="9.4" stroke="#188A47" stroke-width="1.2" />
+            <path d="M8.55523 13.7755C8.43946 13.898 8.27545 14 8.13073 14C7.98601 14 7.822 13.8929 7.7014 13.7704L5 10.9133L5.85866 10.0051L8.13555 12.4133L14.1558 6L15 6.92347L8.55523 13.7755Z" fill="#188A47" />
+        </svg>
+        <h3 class="modal-title" id="cartpopuptitle">
+            @T("cart.popup" + Model.Heading + ".title", 1)
+        </h3>
+    </div>
+    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+</div>
+<script>
+    function isMobile() {
+        const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+        return regex.test(navigator.userAgent);
+    }
+
+    function isQueryStringExist(queryStringKey) {
+
+        return window.location.search.match(queryStringKey);
+    }
+
+    if ('@Model.Heading.ToLower()' == '.item.add') {
+        //
+        var allowConversion = true;
+        var device = "";
+        var referrer = ""
+        var userAgent = "";
+        var opr = "";
+        var queryStringKey = '@queryStringKey';
+        if ('@disableConversion' == 'True' || '@disableMobileConversion' == 'True') {
+            try {
+
+                device = isMobile() ? "Mobile" : "Desktop";
+                referrer = document.referrer == null ? "" : document.referrer;
+                if (referrer == "") {
+                    referrer = localStorage.getItem("Last-Visit-Url");
+                    referrer = referrer == null ? "" : referrer;
+                }
+                userAgent = (navigator.userAgent == null ? "" : navigator.userAgent).indexOf("Chrome") > -1 ? "Chrome" : "Other";
+                opr = (navigator.appVersion == null ? "" : navigator.appVersion).indexOf("Windows") > -1 ? "Windows" : "Other";
+
+
+
+                if (device == "Desktop" && '@disableConversion' == 'True' && (queryStringKey == "" ||
+                    isQueryStringExist(queryStringKey))) {
+                    if (opr == "Windows" && userAgent == "Chrome" && referrer.indexOf(window.location.host) < 0) {
+                        allowConversion = false;
+                    }
+                }
+                else if (device == "Mobile" && '@disableMobileConversion' == 'True' && (queryStringKey == "" ||
+                    isQueryStringExist(queryStringKey))) {
+                    if (referrer.indexOf(window.location.host) < 0) {
+                        allowConversion = false;
+                    }
+                }
+
+
+            }
+            catch (err) {
+                console.log(err);
+
+            }
+        }
+
+
+        if (typeof gtag_addtocart_withoutvalue_report_conversion === "function" && typeof gtag_addtocart_report_conversion === "function" && allowConversion) {
+
+            gtag_addtocart_withoutvalue_report_conversion();
+            if (@Model.Items.Count > 0) {
+             setTimeout(function () {
+                gtag_addtocart_report_conversion('@(Decimal.Parse(Model.Items.FirstOrDefault()?.UnitPrice ?? "0".Replace("\"", ""), NumberStyles.Currency))' * (conversionValue/100), ' ');
+				}, 200);
+            }
+        }
+
+    }
+</script>
+@{ 
+    var firstItem = Model.Items.FirstOrDefault();
+    bool enableNewAtcLayout = firstItem?.EnableNewATCLayout ?? false;
+}
+<div class="modal-body  @(enableNewAtcLayout?"version2":"")">
+    @if (Model.Items.Count > 0)
+    {
+
+        if (!string.IsNullOrEmpty(buymoreSaveMoreDiscount))
+        {
+            if (Model.Items.Count > 1)
+            {
+                <div class="bymore-savemore-activated">
+                    <div class="bymore-savemore-activated-logo">
+                        <p>
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g clip-path="url(#clip0_8210_806)">
+                                    <path d="M17.841 9.6513L10.341 2.1513C10.041 1.8513 9.62435 1.66797 9.16602 1.66797H3.33268C2.41602 1.66797 1.66602 2.41797 1.66602 3.33464V9.16797C1.66602 9.6263 1.84935 10.043 2.15768 10.3513L9.65768 17.8513C9.95768 18.1513 10.3743 18.3346 10.8327 18.3346C11.291 18.3346 11.7077 18.1513 12.0077 17.843L17.841 12.0096C18.1493 11.7096 18.3327 11.293 18.3327 10.8346C18.3327 10.3763 18.141 9.9513 17.841 9.6513ZM4.58268 5.83464C3.89102 5.83464 3.33268 5.2763 3.33268 4.58464C3.33268 3.89297 3.89102 3.33464 4.58268 3.33464C5.27435 3.33464 5.83268 3.89297 5.83268 4.58464C5.83268 5.2763 5.27435 5.83464 4.58268 5.83464Z" fill="#007E47" />
+                                </g>
+                                <defs>
+                                    <clipPath id="clip0_8210_806">
+                                        <rect width="20" height="20" fill="white" />
+                                    </clipPath>
+                                </defs>
+                            </svg>
+                        </p>
+                        <p>
+                            @T("cart.POPUP.BuyMore.SaveMore.Succees.Message", buymoreSaveMoreDiscount)
+                        </p>
+                    </div>
+                </div> }
+            else
+            {
+                <div class="bymore-savemore-de-activated">
+                    <p>
+                        @T("cart.popup.BuyMore.SaveMore.Succees.Hint", buymoreSaveMoreDiscount)
+                    </p>
+                </div> }
+        }
+        <div class="cart-items @(enableNewAtcLayout?"version2":"")">
+            @for (var i = 0; i < Model.Items.Count; i++)
+            {
+                var item = Model.Items[i];
+                if (item.EnableNewATCLayout && item.PictureModels.Count > 0)
+                {
+                    @await Html.PartialAsync("_FlyoutCartItemV2", item) }
+                else
+                {
+                    @await Html.PartialAsync("_FlyoutCartItem", item)}
+
+            }
+        </div>
+
+        <div class="flyoutcart-bottom">
+            <div class="product-add-to-cartsubtotal">
+                <div class="cartsubtotal-text">
+                    <strong>@T("Cart.Popup.Totals.SubTotal")</strong>
+                    <span>@T("Cart.Popup.NoOfItems", Model.TotalProducts)</span>
+                </div>
+                <div class="d-flex price">
+                    <p>@T("Cart.Popup.SubTotal.Message")</p>
+                    <h4>@Model.SubTotal</h4>
+                </div>
+            </div>
+            <div class="cartsubtotal-button-setting">
+                <div class="product-add-to-buttons">
+                    @{ var checkoutUrl = "";
+                        if (Model.AnonymousCheckoutAllowed && Model.CurrentCustomerIsGuest)
+                        {
+                            checkoutUrl = Url.RouteUrl("ShoppingCart");
+                        }
+                        else
+                        {
+                            checkoutUrl = Url.RouteUrl("Checkout");
+                        }
+                        <div class="continue mb-3">
+                            <button type="button" class="btn btn-secondary" onclick="setLocation('@checkoutUrl')">
+                                @T("Cart.Popup.Btn.CheckoutNow")
+                            </button>
+                        </div> }
+                    <div class="continue">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">@T("shoppingcart.continueshopping")</button>
+                    </div>
+                </div>
+                @if (!enableNewAtcLayout)
+                {
+                    @await Component.InvokeAsync("CartSimilarProducts", new { productId = Model.Items[0].ProductId, parentGroupId = Model.Items[0].ParentGroupedProductId, productThumbPictureSize = 150 })}
+            </div>
+        </div> }
+    else
+    {
+        <div class="empty"><svg width="56" viewBox="0 0 65 74" xmlns="http://www.w3.org/2000/svg"><g fill-rule="nonzero" fill="none"><path d="M64.407 9.856L53.605 0H11.371L.569 9.856A1.548 1.548 0 00.1 11.603c.235.619.843 1.031 1.524 1.031h61.727a1.62 1.62 0 001.522-1.031 1.545 1.545 0 00-.467-1.747z" fill="#C4C4C4"></path><path d="M63.351 9.927H1.624C.728 9.927 0 10.644 0 11.529v59.267C0 72.566 1.454 74 3.249 74h58.478c1.795 0 3.249-1.434 3.249-3.204V11.53c0-.885-.728-1.602-1.625-1.602z" fill="#E4E4E4"></path><path d="M32.488 45.122c-7.963 0-14.44-6.447-14.44-14.37v-4.79a1.6 1.6 0 011.605-1.596 1.6 1.6 0 011.604 1.596v4.79c0 6.163 5.04 11.177 11.23 11.177 6.192 0 11.231-5.014 11.231-11.177v-4.79a1.6 1.6 0 011.604-1.596 1.6 1.6 0 011.605 1.596v4.79c0 7.923-6.477 14.37-14.44 14.37z" fill="#6D6D6D"></path></g></svg><p>@T("shoppingcart.cartisempty")</p></div>}
+</div>
+
+
+
+<script type="text/javascript">
+    function validateAndUpdateQuantity(inputElement) {
+        const quantity = parseInt(inputElement.value);
+        const url = inputElement.getAttribute("data-url");
+        if (isNaN(quantity) || quantity <= 0) {
+            return false;
+        }
+        AjaxCart.updateCartQuantity(url, quantity);
+        return false;
+    }
+    function deleteItem(cartId, obj, event, url) {
+        event.preventDefault();
+        $(obj).find(".deleteItem").hide();
+        $(obj).find(".minicart-processing").show();
+        AjaxCart.deleteCartItem(url, '#product-details-form');
+        return false;
+    }
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        addSlickSlider();
+        $("#cartpopupmodel").on("hidden.bs.modal", function () {
+            $(".add-to-cart-button").removeClass("active");
+        });
+        $('body').on('show.bs.modal', '#cartpopupmodel', function () {
+            if ($(".complete-images").hasClass("slick-slider")) {
+                addSlickSlider(true);
+            }
+            else {
+                addSlickSlider(false);
+            }
+            setTimeout(function () {
+                $('.selection-preview-wrapper').each(function () {
+                    initSelectionPreview($(this));
+                });
+            }, 800);
+        });
+    });
+    function addSlickSlider(isSlickAdded) {
+        console.log(isSlickAdded);
+        console.log($(".complete-images")[0]);
+        if ($(".complete-images")[0]) {
+            if (!isSlickAdded) {
+
+                $('.complete-images').slick({
+                    dots: false,
+                    arrows: true,
+                    infinite: true,
+                    speed: 300,
+                    slidesToShow: 3,
+                    slidesToScroll: 1,
+                    variableWidth: false,
+                    centerMode: false,
+                    centerPadding: '0',
+                    prevArrow: '<button class="slide-arrow prev-arrow"><img src="/images/uploaded/f-arrow.svg" alt="Previous" /></button>',
+                    nextArrow: '<button class="slide-arrow next-arrow"><img src="/images/uploaded/f-arrow.svg" alt="next" /></button>',
+                    responsive: [
+                        {
+                            breakpoint: 991,
+                            settings: {
+                                centerMode: false,
+                                centerPadding: '40px',
+                                slidesToShow: 3
+                            }
+                        },
+                        {
+                            breakpoint: 767,
+                            settings: {
+                                centerMode: false,
+                                centerPadding: '40px',
+                                dots: false,
+                                slidesToShow: 2
+                            }
+                        },
+                        {
+                            breakpoint: 480,
+                            settings: {
+                                centerMode: false,
+                                centerPadding: '40px',
+                                dots: false,
+                                slidesToShow: 2
+                            }
+                        }
+                    ]
+                });
+                lazyloadimages();
+                setTimeout(function () { $('.complete-images').resize(); }, 200);
+            }
+            else {
+                setTimeout(function () { $('.complete-images').resize(); lazyloadimages(); }, 200);
+            }
+        }
+        else {
+            lazyloadimages();
+        }
+    }
+    function initSelectionPreview($wrapper) {
+        var $track = $wrapper.find('.selection-preview-image');
+        var $prev = $wrapper.find('.sp-prev');
+        var $next = $wrapper.find('.sp-next');
+        var scrollAmount = 270; //
+        function updateChevrons() {
+            var scrollLeft = $track.scrollLeft();
+            var maxScroll = $track[0].scrollWidth - $track[0].clientWidth;
+
+            $prev.toggleClass('sp-hidden', scrollLeft <= 0);
+
+            $next.toggleClass('sp-hidden', scrollLeft >= maxScroll - 1);
+			
+        }
+
+        $prev.on('click', function () {
+            $track.scrollLeft($track.scrollLeft() - scrollAmount);
+        });
+
+        $next.on('click', function () {
+            $track.scrollLeft($track.scrollLeft() + scrollAmount);
+        });
+
+        $track.on('scroll', updateChevrons);
+
+        // Initial state
+        updateChevrons();
+    }
+</script>

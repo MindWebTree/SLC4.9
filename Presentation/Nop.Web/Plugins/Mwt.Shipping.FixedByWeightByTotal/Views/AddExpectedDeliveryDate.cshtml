@@ -1,0 +1,27 @@
+﻿@{
+    Layout = "_AdminPopupLayout";
+}
+@model MWT.Plugin.Shipping.FixedByWeightByTotal.Models.MWTExpectedDeliveryDateModel
+@{
+    NopHtml.AddCssFileParts("~/Plugins/MWT.Shipping.FixedByWeightByTotal/Content/css/style.css");
+}
+<form asp-controller="MWTFixedByWeightByTotal" asp-action="AddExpectedDeliveryDatePopup"
+      asp-route-btnId="@Context.Request.Query["btnId"]"
+      asp-route-formId="@Context.Request.Query["formId"]">
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            @T("Admin.Common.AddNew")
+        </h1>
+        <div class="float-right">
+            <button type="submit" name="save" class="btn btn-primary">@T("Admin.Common.Save")</button>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="form-horizontal">
+                @await Html.PartialAsync("~/Plugins/MWT.Shipping.FixedByWeightByTotal/Views/_CreateOrUpdateExpectedDeliveryDate.cshtml", Model)
+            </div>
+        </div>
+    </section>
+</form>

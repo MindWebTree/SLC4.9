@@ -102,14 +102,14 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Controllers
             if (!ModelState.IsValid)
             {
                 await PopulateTagDropdownAsync(model);
-                return View(model);
+                return View("CreateEditTagSlug", model);
             }
             model.Slug = await _urlRecordService.ValidateSeNameAsync(model.Id, "Tag", model.Slug, model.Label, false);
             if ((await _tagSlugService.GetAllAsync()).Where(x => x.Slug == model.Slug).Any())
             {
                 ModelState.AddModelError(string.Empty, "Admin.TagPages.TagSlug.Error.Slug.AlreadyInUse");
                 await PopulateTagDropdownAsync(model);
-                return View(model);
+                return View("CreateEditTagSlug", model);
             }
             await _tagSlugService.InsertAsync(new TagSlugMapping
             {
@@ -162,7 +162,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Controllers
             if (!ModelState.IsValid)
             {
                 await PopulateTagDropdownAsync(model);
-                return View(model);
+                return View("CreateEditTagSlug", model);
             }
             model.Slug = await _urlRecordService.ValidateSeNameAsync(model.Id, "Tag", model.Slug, model.Label, false);
             var all = await _tagSlugService.GetAllAsync();
@@ -170,7 +170,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Admin.TagPages.TagSlug.Error.Slug.AlreadyInUse");
                 await PopulateTagDropdownAsync(model);
-                return View(model);
+                return View("CreateEditTagSlug", model);
             }
 
 
@@ -252,7 +252,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Controllers
         {
             var model = new SegmentSlugMappingModel();
             await PopulateSegmentDropdownsAsync(model);
-            return View("CreateEditTagSlug", model);
+            return View("CreateEditSegmentSlug", model);
         }
 
         [HttpPost]
@@ -261,7 +261,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Controllers
             if (!ModelState.IsValid)
             {
                 await PopulateSegmentDropdownsAsync(model);
-                return View(model);
+                return View("CreateEditSegmentSlug",model);
             }
             model.Slug = await _urlRecordService.ValidateSeNameAsync(model.Id, "Segment", model.Slug, model.Label, false);
             var segments = await _segmentSlugService.GetAllAsync();
@@ -269,7 +269,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Admin.TagPages.SegmentSlug.Error.Slug.AlreadyInUse");
                 await PopulateSegmentDropdownsAsync(model);
-                return View( model);
+                return View("CreateEditSegmentSlug", model);
             }
 
             await _segmentSlugService.InsertAsync(new SegmentSlugMapping
@@ -323,7 +323,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Controllers
             };
 
             await PopulateSegmentDropdownsAsync(model);
-            return View("CreateEditTagSlug", model);
+            return View("CreateEditSegmentSlug", model);
         }
 
         [HttpPost]
@@ -332,7 +332,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Controllers
             if (!ModelState.IsValid)
             {
                 await PopulateSegmentDropdownsAsync(model);
-                return View(model);
+                return View("CreateEditSegmentSlug",model);
             }
 
             var segments = await _segmentSlugService.GetAllAsync();
@@ -345,7 +345,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Admin.TagPages.SegmentSlug.Error.Slug.AlreadyInUse");
                 await PopulateSegmentDropdownsAsync(model);
-                return View(model);
+                return View("CreateEditSegmentSlug", model);
             }
 
 

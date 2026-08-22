@@ -32,7 +32,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
     public class AuthorizeNetManager : IAuthorizeNetManager
     {
         private readonly IOrderExtendedService _orderService;
-        private readonly IOrderProcessingService _orderProcessingService;
+        private readonly IOrderProcessingExtendedService _orderProcessingService;
         private readonly IOrderTotalCalculationService _orderTotalCalculationService;
         private readonly ICurrencyService _currencyService;
         private readonly CurrencySettings _currencySettings;
@@ -57,7 +57,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
         private readonly IGenericAttributeService _genericAttributeService;
         public AuthorizeNetManager(
             IOrderExtendedService orderService,
-            IOrderProcessingService orderProcessingService,
+            IOrderProcessingExtendedService orderProcessingService,
             IOrderTotalCalculationService orderTotalCalculationService,
             ICurrencyService currencyService,
             CurrencySettings currencySettings,
@@ -544,9 +544,10 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
 
             return await GetApiResponseAsync(controller, errors);
         }
-        public async Task<string> GetHostedFormToken(ProcessPaymentRequest paymentRequest, int invoiceId, dynamic additionalData)
+        public async Task<(string, ProcessPaymentRequest)> GetHostedFormToken(int invoiceId, dynamic additionalData)
         {
             var customer = new Customer();
+            ProcessPaymentRequest paymentRequest = new ProcessPaymentRequest();
             string payload = string.Empty;
             try
             {
@@ -586,6 +587,15 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
                     var (_orderTotal, _, _, _, _, _) = await _orderTotalCalculationService.GetShoppingCartTotalAsync(cart);
                     orderTotal = _orderTotal ?? 0;
                 }
+
+                paymentRequest = await this._orderProcessingService.GetProcessPaymentRequestAsync(customer);
+                if (paymentRequest == null)
+                {
+                    paymentRequest = new ProcessPaymentRequest();
+                }
+                await this._orderProcessingService.SetProcessPaymentRequestAsync(paymentRequest, customer);
+                paymentRequest = await this._orderProcessingService.GetProcessPaymentRequestAsync(customer);
+
 
                 var billToAddress = formatBillingAddress(
                     await GetTransactionRequestAddressForTokenAsync((customer?.BillingAddressId ?? 0) != 0 ? (int)customer.BillingAddressId : customer.ShippingAddressId ?? 0, customer));
@@ -685,7 +695,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
                     throw new NopException($"Authorize.NET error: {msg}");
                 }
 
-                return apiResponse.token.ToString();
+                return (apiResponse.token.ToString(), paymentRequest);
             }
             catch (Exception exp)
             {
@@ -1019,7 +1029,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
         {
             if (addr == null) return null;
             var ordered = new System.Collections.Generic.Dictionary<string, object>();
-        
+
             ordered.Add("firstName", addr.firstName);
             ordered.Add("lastName", addr.lastName);
             if (!string.IsNullOrEmpty(addr.company)) ordered.Add("company", addr.company);
@@ -1035,7 +1045,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
         {
             if (addr == null) return null;
             var ordered = new System.Collections.Generic.Dictionary<string, object>();
-          
+
             ordered.Add("firstName", addr.firstName);
             ordered.Add("lastName", addr.lastName);
             if (!string.IsNullOrEmpty(addr.company)) ordered.Add("company", addr.company);
@@ -1046,7 +1056,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
             ordered.Add("country", addr.country);
             ordered.Add("phoneNumber", addr.phoneNumber);
             ordered.Add("email", addr.email);
-         
+
             return ordered;
         };
 

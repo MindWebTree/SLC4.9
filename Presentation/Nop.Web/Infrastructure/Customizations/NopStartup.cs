@@ -7,6 +7,7 @@ using MWT.Nop.Core.Service.FAQModule;
 using MWT.Nop.Core.Service.Zoho;
 using MWT.Nop.Core.Services;
 using MWT.Nop.Core.Services.AbandonedCarts;
+using MWT.Nop.Core.Services.BundleProduct;
 using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.CategoryCollection;
 using MWT.Nop.Core.Services.Configuration;
@@ -61,7 +62,7 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<IFeedService, FeedService>();
             services.AddScoped<ICustomSpecificationAttributeService, CustomSpecificationAttributeService>();
             services.AddScoped<IPictureExtendedService, PictureExtendedService>();
-            services.AddScoped<IShoppingCartExtendedService, ShoppingCartExtendedCartService>();
+            services.AddScoped<IShoppingCartExtendedService, ShoppingCartExtendedService>();
             services.AddScoped<ICustomProductAttributeFormatter, CustomProductAttributeFormatter>();
             services.AddScoped<IGroupedProductConfigurationService, GroupedProductConfigurationService>();
             services.AddScoped<IKwTermService, KwTermService>();
@@ -92,10 +93,12 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<ICustomMessageTokenProvider, CustomMessageTokenProvider>(); 
             services.AddScoped<IOrderExtendedService, OrderExtendedService>(); 
             services.AddScoped<IPaymentProfileService, PaymentProfileService>(); 
+            services.AddScoped<IOrderProcessingExtendedService, OrderProcessingExtendedService>(); 
 
 
             services.AddScoped<IIpAddressService, IpAddressService>();
             services.AddScoped<IIPLiteService, IPLiteService>();
+            services.AddScoped<IBundleLoggerService, BundleLoggerService>();
 
             #region Tag
             services.AddScoped<ITagSlugService, TagSlugService>();

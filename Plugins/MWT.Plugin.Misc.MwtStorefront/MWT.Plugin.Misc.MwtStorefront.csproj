@@ -13,12 +13,15 @@
 		<Compile Remove="Migrations\**" />
 		<Compile Remove="Models\Seo\**" />
 		<Compile Remove="PackageFiles\**" />
+		<Compile Remove="Views\Shared\ProductBundle\**" />
 		<EmbeddedResource Remove="Migrations\**" />
 		<EmbeddedResource Remove="Models\Seo\**" />
 		<EmbeddedResource Remove="PackageFiles\**" />
+		<EmbeddedResource Remove="Views\Shared\ProductBundle\**" />
 		<None Remove="Migrations\**" />
 		<None Remove="Models\Seo\**" />
 		<None Remove="PackageFiles\**" />
+		<None Remove="Views\Shared\ProductBundle\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -40,6 +43,7 @@
 		<Content Include="Areas\Admin\Views\**\*.cshtml">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		<Content Remove="Views\Shared\ProductBundle\**" />
 		<!-- This handles CSS, Images, etc. -->
 		<Content Update="Content\**\*">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -95,6 +99,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Folder Include="Areas\Admin\Models\ProductBundle\" />
+		<Folder Include="Areas\Admin\Views\ProductBundle\" />
 		<Folder Include="Factories\Api\" />
 	</ItemGroup>
 

@@ -99,13 +99,7 @@ namespace MWT.Nop.Core.Services.TagPage
                     catParent.DisplayOrder, catChild.DisplayOrder, catParent.Name, catChild.Name
                 select new
                 {
-                    sa = new SpecificationAttribute()
-                    {
-                        Name = catParent.Name,
-                        DisplayOrder = catChild.DisplayOrder,
-                        Id = catParent.Id,
-                        SpecificationAttributeGroupId = 0
-                    },
+                
                     sao = new SpecificationAttributeOption()
                     {
                         Name = catChild.Name,
@@ -118,17 +112,7 @@ namespace MWT.Nop.Core.Services.TagPage
             var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(
                 NopTagCatalogDefaults.FilterableCategoriesByTagSegmentCacheKey, tagId, categoryId.ToString());
 
-            return await _staticCacheManager.GetAsync(cacheKey, async () =>
-            {
-                // 1. Fetch the raw data from the database WITHOUT .Distinct()
-                var rawResults = await result.ToListAsync();
-
-                // 2. Select the 'sao' objects and filter out duplicates in application memory
-                return rawResults
-                    .Select(query => query.sao)
-                    .DistinctBy(sao => sao.Id)
-                    .ToList();
-            });
+            return await _staticCacheManager.GetAsync(cacheKey, async () => (await result.Distinct().ToListAsync()).Select(query => query.sao).ToList());
         }
 
         #endregion

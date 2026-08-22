@@ -1,0 +1,48 @@
+﻿
+
+
+
+@model MWT.Plugin.Shipping.FixedByWeightByTotal.Models.MWTShippingZoneModel
+@using Nop.Web.Framework.Extensions
+
+<div asp-validation-summary="All"></div>
+<input asp-for="Id" type="hidden" />
+
+@if (ViewBag.RefreshPage == true)
+{
+    <script>
+        try {window.opener.document.forms['@(Context.Request.Query["formId"])'].@(Context.Request.Query["btnId"]).click();}
+        catch (e){}
+        window.close();
+    </script>
+}
+
+
+
+<div class="cards-group">
+    <div class="card card-default card-popup">
+        <div class="card-body">
+
+            <div class="form-group row">
+                <div class="col-sm-3">
+                    <nop-label asp-for="Name" />
+                </div>
+                <div class="col-sm-9">
+                    <nop-editor asp-for="Name" />
+                    <span asp-validation-for="Name"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-3">
+                    <nop-label asp-for="ZipCodes" />
+                </div>
+                <div class="col-sm-9">
+                    <nop-textarea asp-for="ZipCodes" />
+                    <span asp-validation-for="ZipCodes"></span>
+                </div>
+            </div>
+      
+        </div>
+    </div>
+</div>
+

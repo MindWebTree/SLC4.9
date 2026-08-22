@@ -61,7 +61,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Components
                 string token = string.Empty;
 
                 int invoiceId = 0;
-                var paymentRequest = new ProcessPaymentRequest(); 
+                var paymentRequest = new ProcessPaymentRequest();
 
                 if (additionalData == null)
                 {
@@ -71,11 +71,11 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Components
                     //    invoiceId = 0;
                     await _paymentLogger.InformationAsync(
                                 $"Hosted payment token generation started. " +
-                                $"OrderGuid={paymentRequest.OrderGuid}" +
                                 (invoiceId > 0 ? $", CustomOrder, InvoiceId={invoiceId}" : string.Empty));
                     try
                     {
-                        token = await _authorizeNetManager.GetHostedFormToken(paymentRequest, invoiceId, additionalData);
+                        dynamic result = await _authorizeNetManager.GetHostedFormToken(invoiceId, additionalData);
+                        (token, paymentRequest) = ((string, ProcessPaymentRequest))result;
                         await _paymentLogger.InformationAsync(
                 $"Hosted payment token generated successfully. " +
                 $"OrderGuid={paymentRequest.OrderGuid}, " +

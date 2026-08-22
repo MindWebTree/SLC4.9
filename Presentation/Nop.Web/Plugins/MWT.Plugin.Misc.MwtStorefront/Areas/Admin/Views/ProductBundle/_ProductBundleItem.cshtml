@@ -1,0 +1,88 @@
+﻿@model CustomProductOverviewModel
+@using System.Text.Encodings.Web
+@{
+    // We pass the TargetId (bundle name) via ViewData to keep IDs unique
+    var targetId = ViewData["TargetId"]?.ToString();
+    var uniqueId = $"{targetId}-{Model.Id}";
+}
+
+@* 1. ADDED ID: bundle-item-@uniqueId so the script can find its scope *@
+<div class="bundle-product-card mb-3" id="bundle-item-@uniqueId">
+    <div class="row g-0 align-items-center p-3 main-product-row">
+        @* Product Image & Zoom *@
+        <div class="col-4 col-md-3 position-relative text-center pe-3">
+            <img src="@Model.DefaultPictureModel.ImageUrl" alt="@Model.Name" class="img-fluid rounded" />
+            <button type="button" class="zoom-icon-btn"
+                    onclick="openQuickView(event, '@Model.Name', '@Model.DefaultPictureModel.ImageUrl', '@Model.ProductPrice.Price', '@Model.ProductPrice.OldPrice', '@Html.Raw(JavaScriptEncoder.Default.Encode(Model.ShortDescription ?? ""))')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zoom-in w-3.5 h-3.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" x2="16.65" y1="21" y2="16.65"></line><line x1="11" x2="11" y1="8" y2="14"></line><line x1="8" x2="14" y1="11" y2="11"></line></svg>
+            </button>
+        </div>
+
+        @* Product Details *@
+        <div class="col-8 col-md-9 ps-3">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h5 class="product-title mb-1">@Model.Name</h5>
+                    <p class="text-muted small mb-2">Stain: No.102 Natural</p>
+                    <div class="price-row d-flex align-items-center gap-2">
+                        <span class="price-current">@Model.ProductPrice.Price</span>
+                        @if (!string.IsNullOrEmpty(Model.ProductPrice.OldPrice))
+                        {
+                            <span class="price-old">@Model.ProductPrice.OldPrice</span>
+                            <span class="badge-save">Save 10%</span>
+                        }
+                    </div>
+                </div>
+                <div class="qty-static-box">
+                    Qty: @(Model.CustomProperties.ContainsKey("Quantity") ? Model.CustomProperties["Quantity"] : "1")
+                </div>
+            </div>
+            <div class="text-end mt-2">
+                @* 2. UPDATED CLASS: Changed to bundle-show-options to match script *@
+                <a href="javascript:void(0)" class="bundle-show-options" data-product-id="@uniqueId">
+                    Show Options <i class="fa fa-chevron-down ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @* --- Nested Tier: Attribute Partial --- *@
+    <div id="opts-drawer-@uniqueId" class="options-drawer d-none">
+        <div class="p-3 border-top bg-white">
+            @* 3. UPDATED CLASS: bundle-option-label *@
+            <h6 class="bundle-option-label mb-3">SELECT STAIN FOR THIS ITEM</h6>
+
+            @* Calling your attribute partial *@
+            @await Html.PartialAsync("_ProductAttributes.cshtml", Model)
+
+            <p class="small text-muted mb-4">Selected: <span class="fw-bold text-dark">No.102 Natural</span></p>
+            <div class="text-end">
+                @* 4. UPDATED CLASS: bundle-collapse-link to match script *@
+                <a href="javascript:void(0)" class="bundle-collapse-link text-uppercase fw-bold" data-product-id="@uniqueId">
+                    COLLAPSE <i class="fa fa-chevron-up ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script asp-location="Footer">
+    $(document).ready(function() {
+        // Scoped Selector ensures we only affect THIS specific product card
+        var $scope = $('#bundle-item-@uniqueId');
+
+        $scope.find('.bundle-show-options').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $scope.find('.options-drawer').removeClass('d-none');
+            $(this).addClass('d-none');
+        });
+
+        $scope.find('.bundle-collapse-link').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $scope.find('.options-drawer').addClass('d-none');
+            $scope.find('.bundle-show-options').removeClass('d-none');
+        });
+    });
+</script>
