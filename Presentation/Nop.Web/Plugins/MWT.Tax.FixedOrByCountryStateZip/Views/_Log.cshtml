@@ -1,0 +1,109 @@
+﻿@using Nop.Core.Domain.Common
+@using MWT.Tax.FixedOrByCountryStateZip.Models
+@using Nop.Web.Framework.Models.DataTables
+@model ConfigurationModel
+@inject AdminAreaSettings adminAreaSettings
+
+@{
+    Layout = "";
+}
+
+<div class="card-body">
+    <div class="card card-default">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <nop-label asp-for="@Model.OrderId" />
+                        </div>
+                        <div class="col-md-8">
+                            <nop-editor asp-for="@Model.OrderId" />
+                        </div>
+                    </div>
+                
+                    <div class="form-group row">
+                        <div class="col-md-8 offset-md-4">
+                            <button type="button" id="search-log" class="btn btn-primary btn-search">
+                                <i class="fas fa-search"></i>
+                                @T("Admin.Common.Search")
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+<div class="card card-default">
+    <div class="card-body">
+        @await Html.PartialAsync("Table", new DataTablesModel
+   {
+       Name = "log-grid",
+       SearchButtonId = "search-log",
+       UrlRead = new DataUrl("GetLogs", "MWTFixedOrByCountryStateZip", null),
+       Length = Model.PageSize,
+       LengthMenu = Model.AvailablePageSizes,
+       Filters = new List<FilterParameter>
+                {
+                    new FilterParameter(nameof(Model.OrderId))
+                },
+
+       ColumnCollection = new List<ColumnProperty>
+        {
+        new ColumnProperty(nameof(LogModel.OrderId))
+        {
+        Title = T("Plugins.MWT.Tax.FixedOrByCountryStateZip.Fields.OrderId").Text,
+        Width = "300"
+        },
+        new ColumnProperty(nameof(LogModel.CustomerId))
+        {
+        Title = T("Plugins.MWT.Tax.FixedOrByCountryStateZip.Fields.CustomerId").Text,
+        Width = "200"
+        },
+        new ColumnProperty(nameof(LogModel.Url))
+        {
+        Title = T("Plugins.MWT.Tax.FixedOrByCountryStateZip.Fields.Url").Text,
+        Width = "200"
+        },
+        new ColumnProperty(nameof(LogModel.StatusCode))
+        {
+        Title = T("Plugins.MWT.Tax.FixedOrByCountryStateZip.Fields.StatusCode").Text,
+        Width = "200"
+        }, new ColumnProperty(nameof(LogModel.RequestMessage))
+        {
+        Title = T("Plugins.MWT.Tax.FixedOrByCountryStateZip.Fields.Request").Text,
+        Width = "200"
+        },
+        new ColumnProperty(nameof(LogModel.ResponseMessage))
+        {
+        Title = T("Plugins.MWT.Tax.FixedOrByCountryStateZip.Fields.Response").Text,
+        Width = "200",
+
+        },
+        new ColumnProperty(nameof(LogModel.TaxRateInfo))
+        {
+        Title = T("Plugins.MWT.Tax.FixedOrByCountryStateZip.Fields.TaxRateInfo").Text,
+        Width = "200",
+
+        },
+        new ColumnProperty(nameof(LogModel.CreatedDateUtc))
+        {
+        Title = T("Plugins.MWT.Tax.FixedOrByCountryStateZip.Fields.CreatedDateUtc").Text,
+        Width = "200",
+
+        }
+
+
+
+        }
+   })
+    </div>
+</div>
+
+
+
+
+
+<nop-alert asp-alert-id="getStatesByCountryIdAlert" asp-alert-message="@T("Admin.Common.Alert.States.Failed")" />
+<nop-alert asp-alert-id="addRateByCountryStateZipAlert" asp-alert-message="@T("Admin.Common.Alert.Add.Error")" />

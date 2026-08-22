@@ -16,7 +16,7 @@ namespace MWT.Nop.Core.Infrastructure
         public static string CategoryDetailsProductListNinthPosition => "categorydetails_ninth_product_list";
         public static string CategoryDetailsTopVideo => "categorydetails_top_video";
         public static string ProductExpectedDeliveryDates => "product_expected_delivery_date";
-        public static string ProductConfigurationBundle => "product_configuration_bundle";
+        public static string ProductAdminConfigurationBundle => "product_admin_configuration_bundle";
     }
 
 }

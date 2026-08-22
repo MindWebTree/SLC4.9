@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Iframe Communicator</title>
+    <script type="text/javascript">
+        //<![CDATA[
+
+        // DEBUG: Log to parent console
+   
+
+        function callParentFunction(str) {
+      
+
+            // Try parent
+            try {
+                if (window.parent
+                    && window.parent.AuthorizeNetPopup
+                    && window.parent.AuthorizeNetPopup.onReceiveCommunication) {
+                    window.parent.console.log("CALLING window.parent.AuthorizeNetPopup");
+                    window.parent.AuthorizeNetPopup.onReceiveCommunication(str);
+                    return;
+                }
+            } catch (e) {
+                try { window.parent.console.log("ERROR on parent: " + e.message); } catch (e2) { }
+            }
+
+            // Try parent.parent
+            try {
+                if (window.parent.parent
+                    && window.parent.parent.AuthorizeNetPopup
+                    && window.parent.parent.AuthorizeNetPopup.onReceiveCommunication) {
+                    window.parent.parent.console.log("CALLING window.parent.parent.AuthorizeNetPopup");
+                    window.parent.parent.AuthorizeNetPopup.onReceiveCommunication(str);
+                    return;
+                }
+            } catch (e) {
+                try { window.parent.parent.console.log("ERROR on parent.parent: " + e.message); } catch (e2) { }
+            }
+
+            try { window.parent.console.log("NO HANDLER FOUND"); } catch (e) { }
+        }
+
+        function receiveMessage(event) {
+            try { window.parent.console.log("COMMUNICATOR got message: " + JSON.stringify(event.data)); } catch (e) { }
+            if (event && event.data) {
+                callParentFunction(event.data);
+            }
+        }
+
+        if (window.addEventListener) {
+            window.addEventListener("message", receiveMessage, false);
+        } else if (window.attachEvent) {
+            window.attachEvent("onmessage", receiveMessage);
+        }
+
+        if (window.location.hash && window.location.hash.length > 1) {
+            callParentFunction(window.location.hash.substring(1));
+        }
+        //]]>
+    </script>
+</head>
+<body>
+    Communicator
+</body>
+</html>

@@ -63,10 +63,9 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Controllers
             _authorizeNetWebHookService = authorizeNetWebHookService;
         }
 
+        [CheckPermission(StandardPermission.Configuration.MANAGE_PAYMENT_METHODS)]
         public async Task<IActionResult> Configure()
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManagePaymentMethods))
-                return AccessDeniedView();
+        { 
 
             var storeScope = await _storeContext.GetActiveStoreScopeConfigurationAsync();
             var settings = await _settingService.LoadSettingAsync<AuthorizeNetHostedPaymentSettings>(storeScope);
@@ -121,10 +120,9 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Configuration.MANAGE_PAYMENT_METHODS)]
         public async Task<IActionResult> Configure(ConfigurationModel model)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManagePaymentMethods))
-                return AccessDeniedView();
+        { 
 
             if (!ModelState.IsValid) return await Configure();
 

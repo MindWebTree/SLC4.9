@@ -1,0 +1,18 @@
+Bundle COntroller goes to Area Admin 
+
+ProductAdminAttributeBundleViewComponent to Admin 
+ProductBundleWidgetViewComponent to Frontend 
+
+BundlePriceEventConsumer In infrastrcuture Frontend 
+
+
+Domain in Mwt.Nop.Core 
+
+Cache in CustomNopCatalog
+
+Mapper to Mapping exsitng in infarastucture 
+
+Service === register in Nop.Web 
+
+Task ==> Dont Think yet 
+Model == > will duplicate in  both which are shared in both 

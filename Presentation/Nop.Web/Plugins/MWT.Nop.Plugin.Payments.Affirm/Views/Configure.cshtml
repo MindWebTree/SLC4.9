@@ -1,0 +1,342 @@
+﻿@model MWT.Nop.Plugin.Payments.Affirm.Models.ConfigurationModel
+@{ Layout = "_ConfigurePlugin"; }
+@using MWT.Nop.Plugin.Payments.Affirm.Domain
+@await Component.InvokeAsync("StoreScopeConfiguration")
+
+<form asp-controller="AffirmSetting" asp-action="Configure" method="post">
+    <script>
+        $(document).ready(function () {
+            $("#showDebugInfo").click(toggleshowDebugInfo);
+            $("#@Html.IdFor(model => model.CreateOrderModeId)").change(toggleCreateOrderMode);
+            $("#@Html.IdFor(model => model.EnableOnShoppingCart)").change(toggleEnableOnShoppingCart);
+            $("#@Html.IdFor(model => model.EnableOnProductDetailsPage)").change(toggleEnableOnProductDetailsPage);
+            $("#@Html.IdFor(model => model.EnableOnProductBox)").change(toggleEnableOnProductBox);
+
+            toggleshowDebugInfo();
+            toggleCreateOrderMode();
+            toggleEnableOnShoppingCart();
+            toggleEnableOnProductDetailsPage();
+            toggleEnableOnProductBox();
+        });
+
+        function toggleshowDebugInfo() {
+            if ($('#showDebugInfo').is(':checked')) {
+                $('#pnlclearlogfile, #pnlgetlogfile').showElement();
+            }
+            else {
+                $('#pnlclearlogfile, #pnlgetlogfile').hideElement();
+            }
+        }
+        function toggleEnableOnShoppingCart() {
+            if ($("#@Html.IdFor(model => model.EnableOnShoppingCart)").is(':checked')) {
+                $('#pncWidgetZoneShoppingCart').showElement();
+            }
+            else {
+                $('#pncWidgetZoneShoppingCart').hideElement();
+            }
+        }
+        function toggleEnableOnProductDetailsPage() {
+            if ($("#@Html.IdFor(model => model.EnableOnProductDetailsPage)").is(':checked')) {
+                $('#pncWidgetProductDetailsPage').showElement();
+            }
+            else {
+                $('#pncWidgetProductDetailsPage').hideElement();
+            }
+        }
+        function toggleEnableOnProductBox() {
+            if ($("#@Html.IdFor(model => model.EnableOnProductBox)").is(':checked')) {
+                $('#pncWidgetProductBox').showElement();
+            }
+            else {
+                $('#pncWidgetProductBox').hideElement();
+            }
+        }
+        function toggleCreateOrderMode() {
+            var selectedCreateOrderModeId = $("#@Html.IdFor(model => model.CreateOrderModeId)").val();
+
+            $('#pnlSkipPaymentInfo').hideElement();
+
+            switch (selectedCreateOrderModeId) {
+               case '@(((int)CreateOrderMode.AfterPayment).ToString())':
+                   break;
+               case '@(((int)CreateOrderMode.BeforePayment).ToString())':
+                    $('#pnlSkipPaymentInfo').showElement();
+                   break;
+                }
+            }
+    </script>
+    <div class="cards-group">
+        <div class="card card-default">
+            <div class="card-body">
+
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="PublicApiKey_OverrideForStore" asp-input="PublicApiKey" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="PublicApiKey" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="PublicApiKey" />
+                        <span asp-validation-for="PublicApiKey"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="PrivateApiKey_OverrideForStore" asp-input="PrivateApiKey" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="PrivateApiKey" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="PrivateApiKey" />
+                        <span asp-validation-for="PrivateApiKey"></span>
+                    </div>
+                </div>
+                @*<div class="form-group row">
+                        <div class="col-md-3">
+                            <nop-override-store-checkbox asp-for="CountryAPIModeId_OverrideForStore" asp-input="CountryAPIModeId" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                            <nop-label asp-for="CountryAPIModeId" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-select asp-for="CountryAPIModeId" asp-items="Model.CountryAPIModeValues" />
+                            <span asp-validation-for="CountryAPIModeId"></span>
+                        </div>
+                    </div>*@
+                <div class="form-group row">
+                        <div class="col-md-3">
+                            <nop-override-store-checkbox asp-for="TransactModeId_OverrideForStore" asp-input="TransactModeId" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                            <nop-label asp-for="TransactModeId" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-select asp-for="TransactModeId" asp-items="Model.TransactModeValues" />
+                            <span asp-validation-for="TransactModeId"></span>
+                        </div>
+                    </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="UseSandbox_OverrideForStore" asp-input="UseSandbox" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="UseSandbox" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="UseSandbox" />
+                        <span asp-validation-for="UseSandbox"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="FacingMerchantName_OverrideForStore" asp-input="FacingMerchantName" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="FacingMerchantName" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="FacingMerchantName" />
+                        <span asp-validation-for="FacingMerchantName"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card card-default">
+            <div class="card-body">
+                @*<div class="form-group row">
+                        <div class="col-md-3">
+                            <nop-override-store-checkbox asp-for="CreateOrderModeId_OverrideForStore" asp-input="CreateOrderModeId" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                            <nop-label asp-for="CreateOrderModeId" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-select asp-for="CreateOrderModeId" asp-items="Model.CreateOrderModeValues" />
+                            <span asp-validation-for="CreateOrderModeId"></span>
+                        </div>
+                    </div>*@
+                @*<div class="form-group row" id="pnlSkipPaymentInfo">
+                        <div class="col-md-3">
+                            <nop-override-store-checkbox asp-for="SkipPaymentInfo_OverrideForStore" asp-input="SkipPaymentInfo" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                            <nop-label asp-for="SkipPaymentInfo" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="SkipPaymentInfo" />
+                            <span asp-validation-for="SkipPaymentInfo"></span>
+                        </div>
+                    </div>*@
+            </div>
+        </div>
+        <div class="card card-default">
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <br />
+                    </div>
+                    <div class="col-md-9">
+                        <p>
+                            <b>@T("Admin.FoxNetSoft.Plugin.Payments.AffirmHostedCheckout.PromotionalMessaging")</b>
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="PromotionalMessageTypeId_OverrideForStore" asp-input="PromotionalMessageTypeId" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="PromotionalMessageTypeId" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-select asp-for="PromotionalMessageTypeId" asp-items="Model.PromotionalMessageTypeValues" />
+                        <span asp-validation-for="PromotionalMessageTypeId"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="PromotionalMessageColorId_OverrideForStore" asp-input="PromotionalMessageColorId" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="PromotionalMessageColorId" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-select asp-for="PromotionalMessageColorId" asp-items="Model.PromotionalMessageColorValues" />
+                        <span asp-validation-for="PromotionalMessageColorId"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="MinimumSubTotalAmount_OverrideForStore" asp-input="MinimumSubTotalAmount" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="MinimumSubTotalAmount" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="MinimumSubTotalAmount" />
+                        <span asp-validation-for="MinimumSubTotalAmount"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="EnableOnShoppingCart_OverrideForStore" asp-input="EnableOnShoppingCart" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="EnableOnShoppingCart" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="EnableOnShoppingCart" />
+                        <span asp-validation-for="EnableOnShoppingCart"></span>
+                    </div>
+                </div>
+                <nop-nested-setting asp-for="EnableOnShoppingCart">
+                    <div class="form-group row" id="pncWidgetZoneShoppingCart">
+                        <div class="col-md-3">
+                            <nop-override-store-checkbox asp-for="WidgetZoneShoppingCart_OverrideForStore" asp-input="WidgetZoneShoppingCart" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                            <nop-label asp-for="WidgetZoneShoppingCart" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-select asp-for="WidgetZoneShoppingCart" asp-items="Model.AvailableWidgetZoneShoppingCarts" />
+                            <span asp-validation-for="WidgetZoneShoppingCart"></span>
+                        </div>
+                    </div>
+                </nop-nested-setting>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="EnableOnProductDetailsPage_OverrideForStore" asp-input="EnableOnProductDetailsPage" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="EnableOnProductDetailsPage" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="EnableOnProductDetailsPage" />
+                        <span asp-validation-for="EnableOnProductDetailsPage"></span>
+                    </div>
+                </div>
+                <nop-nested-setting asp-for="EnableOnProductDetailsPage">
+                    <div class="form-group row" id="pncWidgetProductDetailsPage">
+                        <div class="col-md-3">
+                            <nop-override-store-checkbox asp-for="WidgetProductDetailsPage_OverrideForStore" asp-input="WidgetProductDetailsPage" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                            <nop-label asp-for="WidgetProductDetailsPage" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-select asp-for="WidgetProductDetailsPage" asp-items="Model.AvailableWidgetProductDetailsPages" />
+                            <span asp-validation-for="WidgetProductDetailsPage"></span>
+                        </div>
+                    </div>
+                </nop-nested-setting>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="EnableOnProductBox_OverrideForStore" asp-input="EnableOnProductBox" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="EnableOnProductBox" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="EnableOnProductBox" />
+                        <span asp-validation-for="EnableOnProductBox"></span>
+                    </div>
+                </div>
+                <nop-nested-setting asp-for="EnableOnProductBox">
+                    <div class="form-group row" id="pncWidgetProductBox">
+                        <div class="col-md-3">
+                            <nop-override-store-checkbox asp-for="WidgetProductBox_OverrideForStore" asp-input="WidgetProductBox" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                            <nop-label asp-for="WidgetProductBox" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-select asp-for="WidgetProductBox" asp-items="Model.AvailableWidgetProductBoxs" />
+                            <span asp-validation-for="WidgetProductBox"></span>
+                        </div>
+                    </div>
+                </nop-nested-setting>
+            </div>
+        </div>
+        <div class="card card-default">
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="AdditionalFeePercentage_OverrideForStore" asp-input="AdditionalFeePercentage" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="AdditionalFeePercentage" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="AdditionalFeePercentage" />
+                        <span asp-validation-for="AdditionalFeePercentage"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-override-store-checkbox asp-for="AdditionalFee_OverrideForStore" asp-input="AdditionalFee" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                        <nop-label asp-for="AdditionalFee" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="AdditionalFee" />
+                        <span asp-validation-for="AdditionalFee"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card card-default">
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="showDebugInfo" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="showDebugInfo" />
+                        <span asp-validation-for="showDebugInfo"></span>
+                        <div id="pnlclearlogfile">
+                            <a href="@Url.Action("ClearLogFile")" class="k-button">@T("Admin.FoxNetSoft.Plugin.Payments.AffirmHostedCheckout.ClearLogFile")</a>
+                        </div>
+                        <div id="pnlgetlogfile">
+                            <a href="@Url.Action("GetLogFile")" class="k-button">@T("Admin.FoxNetSoft.Plugin.Payments.AffirmHostedCheckout.GetLogFile")</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="StoreUrl" />
+                    </div>
+                    <div class="col-md-9">
+                        <input class="form-control text-box single-line" id="StoreUrl" name="StoreUrl" value="@Model.StoreUrl" type="text" readonly="readonly">
+                        <span asp-validation-for="StoreUrl"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SerialNumber" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SerialNumber" />
+                        <span asp-validation-for="SerialNumber"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-9 offset-md-3">
+                        <input type="submit" name="save" class="btn bg-primary" value="@T("Admin.Common.Save")" />
+                    </div>
+                </div>
+                <p>
+                    Installation and configuring plug-in at Youtube <a href="http://www.youtube.com/foxnetsoft" target="blank">www.youtube.com/foxnetsoft</a>
+                    <br />
+                    Installation and configuring plug-in at our site <a href="https://www.foxnetsoft.com/documentation-affirmhostedcheckout" target="blank">https://www.foxnetsoft.com/documentation-affirmhostedcheckout</a>
+                    <br />
+                    <a href="https://www.foxnetsoft.com" target="blank">www.foxnetsoft.com</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</form>

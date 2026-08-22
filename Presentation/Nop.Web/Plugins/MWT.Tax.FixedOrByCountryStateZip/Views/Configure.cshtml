@@ -1,0 +1,141 @@
+﻿@model MWT.Tax.FixedOrByCountryStateZip.Models.ConfigurationModel
+@using Nop.Web.Framework.Models.AdminAreaTour
+
+@{
+    Layout = "_ConfigurePlugin";
+
+    //tour step
+    ViewBag.TourStep = TourStep.TaxManual;
+}
+
+@await Html.PartialAsync("_AdminTour")
+<form asp-controller="MWTFixedOrByCountryStateZip" asp-action="Configure" method="post">
+    <div class="cards-group">
+        <div class="card card-default">
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="TaxProvider" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-select asp-for="TaxProvider" asp-items="Model.TaxProviderTypes" />
+                        <span asp-validation-for="TaxProvider"></span>
+                    </div>
+                </div>
+                <div class="taxzarsection hidden" style="display:@(Model.TaxProvider==2?"block":"none")">
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <nop-label asp-for="ApiLink" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="ApiLink" />
+                            <span asp-validation-for="ApiLink"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <nop-label asp-for="Token" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="Token" />
+                            <span asp-validation-for="Token"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="taxzipsection" style="display:@(Model.TaxProvider==1 || Model.TaxProvider==0?"block":"none")">
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <nop-label asp-for="ZipTaxApiLink" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="ZipTaxApiLink" />
+                            <span asp-validation-for="ZipTaxApiLink"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <nop-label asp-for="ZipTaxKey" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="ZipTaxKey" />
+                            <span asp-validation-for="ZipTaxKey"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="IncludeWgs" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="IncludeWgs" />
+                        <span asp-validation-for="IncludeWgs"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="IncludedCountries" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="IncludedCountries" />
+                        <span asp-validation-for="IncludedCountries"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-9 offset-md-3">
+                        <button type="submit" name="save" class="btn btn-primary">@T("Admin.Common.Save")</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+
+<script>
+        function checkAdvancedSettingsMode(advanced) {
+            if (advanced) {
+                $("body").addClass("advanced-settings-mode");
+                $("body").removeClass("basic-settings-mode");
+            } else {
+                $("body").removeClass("advanced-settings-mode");
+                $("body").addClass("basic-settings-mode");
+            }
+        }
+        checkAdvancedSettingsMode($("#advanced-settings-mode").is(':checked'));
+        $(document).ready(function () {
+            $("#TaxProvider").change(function () {
+                if ($(this).val() == 1) {
+                    $(".taxzipsection").show();
+                    $(".taxzarsection").hide();
+                }
+                else {
+                    $(".taxzipsection").hide    ();
+                    $(".taxzarsection").show();
+                }
+            });
+            $("#advanced-settings-mode").click(function () {
+                checkAdvancedSettingsMode($(this).is(':checked'));
+                $.ajax({
+                    cache: false,
+                url: "@Url.Action("SaveMode", "MWTFixedOrByCountryStateZip")",
+                    type: "POST",
+                    data: {
+                        value: $(this).is(':checked')
+                    },
+                    dataType: "json",
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        $("#saveModeAlert").click();
+                    }
+                });
+                ensureDataTablesRendered();
+            });
+        });
+</script>
+<nop-alert asp-alert-id="saveModeAlert" asp-alert-message="@T("Admin.Common.Alert.Save.Error")" />
+
+
+@await Html.PartialAsync("~/Plugins/MWT.Tax.FixedOrByCountryStateZip/Views/_CountryStateZip.cshtml", Model)
+@await Html.PartialAsync("~/Plugins/MWT.Tax.FixedOrByCountryStateZip/Views/_Log.cshtml", Model)

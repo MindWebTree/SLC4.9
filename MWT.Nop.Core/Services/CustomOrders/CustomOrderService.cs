@@ -9,7 +9,7 @@ using Nop.Core.Infrastructure;
 using Nop.Data;
 using Nop.Services.Catalog;
 
-namespace Nop.Services.Customizations.CustomOrders
+namespace MWT.Nop.Core.Services.Customizations.CustomOrders
 {
     public partial class CustomOrderService : ICustomOrderService
     {

@@ -5,7 +5,6 @@ using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Orders;
 using Nop.Services.Customers;
 using System.Net;
 using Nop.Services.Common;
-using Nop.Services.Orders;
 using Nop.Services.Messages;
 using Nop.Services.Localization;
 using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Customers;
@@ -18,14 +17,13 @@ using Nop.Services.Payments;
 using System.Globalization;
 using Newtonsoft.Json;
 using Nop.Core.Domain.Common;
-using Nop.Services.Customizations.CustomOrders;
 using MWT.Nop.Core.Service.Zoho;
 using MWT.Nop.Core.Services.Manage;
 using MWT.Nop.Core.Services.Message;
-using MWT.Plugin.Misc.MwtStorefront.Models.Common;
 using MWT.Nop.Core.Services.Orders;
 using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Core.Domain.CustomOrders;
+using MWT.Nop.Core.Services.Customizations.CustomOrders;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 {

@@ -192,5 +192,14 @@ namespace MWT.Nop.Core.Service.Catalog
         public static CacheKey ProductVariantByVariantIdCacheKey => new CacheKey("Nop.product.variant.by.variantid.{0}");
 
         #endregion
+        #region BundleProduct
+        public static CacheKey BundlePictureModelKey => new CacheKey("Nop.pres.bundle.picture-{0}-{1}-{2}-{3}-{4}-{5}");
+        public static string BundlePicturePrefixCacheKey => "Nop.pres.bundle.picture";
+        public static string BundlePicturePrefixCacheKeyById => "Nop.pres.bundle.picture-{0}-";
+
+        public static CacheKey BundleWidgetModelKey => new CacheKey("Nop.pres.bundle.widget-{0}-{1}-{2}-{3}");
+        public static string BundleWidgetPrefixCacheKey => "Nop.pres.bundle.widget";
+        public static string BundleWidgetPrefixCacheKeyById => "Nop.pres.bundle.widget-{0}-";
+        #endregion
     }
 }

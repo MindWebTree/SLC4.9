@@ -82,7 +82,9 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Presentation\Nop.Web.Framework\Nop.Web.Framework.csproj" />
 		<ProjectReference Include="..\..\Presentation\Nop.Web\Nop.Web.csproj" />
-		<ProjectReference Include="..\MWT.Plugin.Misc.MwtStorefront\MWT.Plugin.Misc.MwtStorefront.csproj" />
+		<ProjectReference Include="..\MWT.Plugin.Misc.MwtStorefront\MWT.Plugin.Misc.MwtStorefront.csproj">
+		  <Private>True</Private>
+		</ProjectReference>
 		<ClearPluginAssemblies Include="$(MSBuildProjectDirectory)\..\..\Build\ClearPluginAssemblies.proj" />
 	</ItemGroup>
 

@@ -1,0 +1,50 @@
+﻿@model ConfigurationModel
+@{
+    // This tells nopCommerce to use the standard Admin layout (sidebar, header, etc.)
+    Layout = "_AdminLayout";
+    ViewBag.PageTitle = "Configure Product Bundle";
+}
+
+
+
+
+<form asp-controller="ProductBundle" asp-action="Configure" method="post">
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            @T("Plugins.Misc.ProductBundle.Configuration")
+            <small>
+                <i class="fas fa-arrow-circle-left"></i>
+                <a asp-action="List" asp-controller="Plugin">@T("Admin.Configuration.Plugins.BackToList")</a>
+            </small>
+        </h1>
+        <div class="float-right">
+            <button type="submit" name="save" class="btn btn-primary">
+                <i class="far fa-save"></i>
+                @T("Admin.Common.Save")
+            </button>
+        </div>
+    </div>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-default">
+                <div class="card-header">
+                    <i class="fas fa-percentage"></i>
+                    General Settings
+                </div>
+                <div class="card-body">
+                    <div class="form-group row">
+                        <div class="col-md-3">
+
+                            <nop-label asp-for="DiscountPercentage" />
+                        </div>
+                        <div class="col-md-9">
+
+                            <nop-editor asp-for="DiscountPercentage" />
+                            <span asp-validation-for="DiscountPercentage"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>

@@ -1,23 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AuthorizeNet.Api.Contracts.V1;
 using Microsoft.AspNetCore.Http;
+using MWT.Nop.Core.Services.Message;
+using MWT.Nop.Core.Services.Orders;
+using MWT.Nop.Core.Services.Payments;
 using Nop.Core;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Payments;
 using Nop.Core.Infrastructure;
+using Nop.Plugin.Payments.AuthorizeNetHosted.Components;
 using Nop.Plugin.Payments.AuthorizeNetHosted.Domain;
 using Nop.Plugin.Payments.AuthorizeNetHosted.Logging;
 using Nop.Plugin.Payments.AuthorizeNetHosted.Services;
 using Nop.Plugin.Payments.AuthorizeNetHosted.Validators;
 using Nop.Services.Configuration;
 using Nop.Services.Customers;
-using Nop.Services.Customizations.Custom;
 using Nop.Services.Localization;
 using Nop.Services.Logging;
-using Nop.Services.Messages;
 using Nop.Services.Orders;
 using Nop.Services.Payments;
 using Nop.Services.Plugins;
@@ -37,13 +35,14 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Models
         private readonly IAuthorizeNetManager _authorizeNetManager;
         private readonly ILogger _logger;
         private readonly IPaymentService _paymentService;
-        private readonly IOrderService _orderService;
+        private readonly IOrderExtendedService _orderService;
         private readonly PaymentLogger _paymentLogger;
         private readonly ICustomerService _customerService;
         private readonly IPaymentProfileService _paymentProfileService;
-        private readonly IWorkflowMessageService _workflowMessageService;
+        private readonly ICustomWorkflowMessageService _workflowMessageService;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IWorkContext _workContext;
+        private readonly IOrderTotalCalculationService _orderTotalCalculationService;
 
         #endregion
 
@@ -58,13 +57,14 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Models
             IAuthorizeNetManager authorizeNetManager,
             ILogger logger,
             IPaymentService paymentService,
-            IOrderService orderService,
+            IOrderExtendedService orderService,
             PaymentLogger paymentLogger,
             ICustomerService customerService,
             IPaymentProfileService paymentProfileService,
-            IWorkflowMessageService workflowMessageService,
+            ICustomWorkflowMessageService workflowMessageService,
             IShoppingCartService shoppingCartService,
-            IWorkContext workContext)
+            IWorkContext workContext,
+            IOrderTotalCalculationService orderTotalCalculationService)
         {
             _authorizeNetHostedPaymentSettings = authorizeNetHostedPaymentSettings;
             _settingService = settingService;
@@ -81,6 +81,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Models
             _workflowMessageService = workflowMessageService;
             _shoppingCartService = shoppingCartService;
             _workContext = workContext;
+            _orderTotalCalculationService = orderTotalCalculationService;
         }
 
         #endregion
@@ -93,7 +94,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Models
         /// </summary>
         public async Task<ProcessPaymentResult> ProcessPaymentAsync(ProcessPaymentRequest processPaymentRequest)
         {
-            if (processPaymentRequest.CustomValues.Where(k => k.Key == "InternalOrderId").Any())
+            if (processPaymentRequest.CustomValues.TryGetValue("InternalOrderId", out _))
             {
                 return await ProcessPaymentAcceptForm(processPaymentRequest);
             }
@@ -118,8 +119,8 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Models
         {
 
 
-            return await _paymentService.CalculateAdditionalFeeAsync(cart,
-                _authorizeNetHostedPaymentSettings.AdditionalFee, _authorizeNetHostedPaymentSettings.AdditionalFeePercentage);
+            return await _orderTotalCalculationService.CalculatePaymentAdditionalFeeAsync(cart,
+             _authorizeNetHostedPaymentSettings.AdditionalFee ,_authorizeNetHostedPaymentSettings.AdditionalFeePercentage);
         }
 
         #endregion
@@ -468,7 +469,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Models
             };
             await _settingService.SaveSettingAsync(settings);
 
-            await _localizationService.AddLocaleResourceAsync(new Dictionary<string, string>
+            await _localizationService.AddOrUpdateLocaleResourceAsync(new Dictionary<string, string>
             {
                 ["Plugins.Payments.AuthorizeNetHostedPayment.Fields.LoginId"] = "API Login ID",
                 ["Plugins.Payments.AuthorizeNetHostedPayment.Fields.LoginId.Hint"] = "Your Authorize.NET API Login ID.",
@@ -566,9 +567,10 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Models
             var customer = await _customerService.GetCustomerByIdAsync(processPaymentRequest.CustomerId);
             bool isCustomOrder = false;
             int customOrderNumber = 0;
-            if (processPaymentRequest.CustomValues.Where(k => k.Key == "InternalOrderId").Any())
+
+            if (processPaymentRequest.CustomValues.TryGetValue("InternalOrderId", out var customValue))
             {
-                int.TryParse(processPaymentRequest.CustomValues.Where(k => k.Key == "InternalOrderId").FirstOrDefault().Value.ToString(), out customOrderNumber);
+                int.TryParse(customValue.Value, out customOrderNumber);
                 isCustomOrder = true;
             }
             #region Validate Transaction Details
@@ -794,7 +796,7 @@ $"CustomerId={processPaymentRequest.CustomerId}, OrderGuid={processPaymentReques
 
                         int addressId = processPaymentRequest.BillingAddressId.HasValue ? processPaymentRequest.BillingAddressId.Value :
                 (processPaymentRequest.ShippingAddressId.HasValue ? processPaymentRequest.ShippingAddressId.Value : 0);
-                        await _paymentProfileService.SavePaymentProfile(new Core.Domain.Customization.Orders.PaymentProfile()
+                        await _paymentProfileService.SavePaymentProfile(new MWT.Nop.Core.Domain.Orders.PaymentProfile()
                         {
                             AddressId = addressId,
                             AuthorizeNetProfileId = customerPaymentProfileId,
@@ -858,9 +860,9 @@ $"CustomerId={processPaymentRequest.CustomerId}, OrderGuid={processPaymentReques
                 var dataDescriptor = dataDescriptorObj?.ToString();
                 bool isCustomOrder = false;
                 int customOrderNumber = 0;
-                if (processPaymentRequest.CustomValues.Where(k => k.Key == "InternalOrderId").Any())
+                if (processPaymentRequest.CustomValues.TryGetValue("InternalOrderId", out var customValue))
                 {
-                    int.TryParse(processPaymentRequest.CustomValues.Where(k => k.Key == "InternalOrderId").FirstOrDefault().Value.ToString(), out customOrderNumber);
+                    int.TryParse(customValue.Value, out customOrderNumber);
                     isCustomOrder = true;
                 }
 
@@ -1026,7 +1028,7 @@ $"CustomerId={processPaymentRequest.CustomerId}, OrderGuid={processPaymentReques
 
                             int addressId = processPaymentRequest.BillingAddressId.HasValue ? processPaymentRequest.BillingAddressId.Value :
                     (processPaymentRequest.ShippingAddressId.HasValue ? processPaymentRequest.ShippingAddressId.Value : 0);
-                            await _paymentProfileService.SavePaymentProfile(new Core.Domain.Customization.Orders.PaymentProfile()
+                            await _paymentProfileService.SavePaymentProfile(new MWT.Nop.Core.Domain.Orders.PaymentProfile()
                             {
                                 AddressId = addressId,
                                 AuthorizeNetProfileId = customerPaymentProfileId,
@@ -1089,6 +1091,11 @@ $"ProcessPayment Completed " +
 $"CustomerId={processPaymentRequest.CustomerId}, OrderGuid={processPaymentRequest.OrderGuid}");
                 throw exp;
             }
+        }
+
+        public Type GetPublicViewComponent()
+        {
+            return typeof(AuthorizeNetHostedPaymentViewComponent);
         }
 
 

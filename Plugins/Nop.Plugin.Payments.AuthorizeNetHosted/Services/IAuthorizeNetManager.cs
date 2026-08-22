@@ -1,14 +1,7 @@
 ﻿using AuthorizeNet.Api.Contracts.V1;
 using AuthorizeNet.Api.Controllers;
-using Microsoft.AspNetCore;
-using Nop.Plugin.Payments.AuthorizeNetHosted.Helpers;
 using Nop.Plugin.Payments.AuthorizeNetHosted.Models;
 using Nop.Services.Payments;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
 {
@@ -26,7 +19,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
              string dataValue, string dataDescriptor,
              ProcessPaymentRequest processPaymentRequest, IList<string> errors);
 
-        Task<string> GetHostedFormToken(ProcessPaymentRequest paymentRequest, int invoiceId, dynamic additionalData);
+        Task<(string, ProcessPaymentRequest)> GetHostedFormToken(int invoiceId, dynamic additionalData);
 
         Task<(string customerProfileId, string paymentProfileId)> CreateProfileFromTransaction(
     string transId, Nop.Core.Domain.Customers.Customer customer, string existingProfileId);

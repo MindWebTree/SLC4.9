@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Nop.Core.Domain.Customers;
+using MWT.Nop.Core.Services.Customizations.CustomOrders;
+using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Orders;
 using Nop.Services.Common;
 using Nop.Services.Customers;
 using Nop.Services.Localization;
-using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Orders;
 using Nop.Web.Framework.Components;
-using Nop.Services.Customizations.CustomOrders;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Components
 {

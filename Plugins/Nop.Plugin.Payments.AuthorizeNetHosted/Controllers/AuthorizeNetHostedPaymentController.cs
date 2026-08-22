@@ -58,8 +58,8 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Controllers
                 using (var reader = new StreamReader(Request.Body, Encoding.UTF8))
                     json = await reader.ReadToEndAsync();
 
-           
-               // string rawBody = "{\"notificationId\":\"202b3e06-71f9-4680-8a17-b06da32dbda8\",\"eventType\":\"net.authorize.payment.authcapture.created\",\"eventDate\":\"2026-05-28T10:33:52.7311466Z\",\"webhookId\":\"0fa58a42-b90e-4bbb-b794-b7bf701e323a\",\"payload\":{\"responseCode\":1,\"authCode\":\"XEABCC\",\"avsResponse\":\"Y\",\"authAmount\":3380.88,\"fraudList\":[{\"fraudFilter\":\"Amount Filter\",\"fraudAction\":\"report\"}],\"entityName\":\"transaction\",\"id\":\"120083615082\"}}";
+
+                // string rawBody = "{\"notificationId\":\"202b3e06-71f9-4680-8a17-b06da32dbda8\",\"eventType\":\"net.authorize.payment.authcapture.created\",\"eventDate\":\"2026-05-28T10:33:52.7311466Z\",\"webhookId\":\"0fa58a42-b90e-4bbb-b794-b7bf701e323a\",\"payload\":{\"responseCode\":1,\"authCode\":\"XEABCC\",\"avsResponse\":\"Y\",\"authAmount\":3380.88,\"fraudList\":[{\"fraudFilter\":\"Amount Filter\",\"fraudAction\":\"report\"}],\"entityName\":\"transaction\",\"id\":\"120083615082\"}}";
                 await _paymentLogger.InformationAsync(
                     $"Webhook body read. WebhookId={webhookId}, " +
                     $"BodyLength={json?.Length}, Body={json}");
@@ -75,9 +75,9 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Controllers
                 if (!string.IsNullOrEmpty(_settings.SignatureKey) &&
                     !string.IsNullOrEmpty(X_Anet_Signature))
                 {
-                   
 
-                  
+
+
 
                     if (!IsValidSignature(json, X_Anet_Signature))
                     {
@@ -166,7 +166,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Communicator()
         {
-           
+
 
             const string html = @"<!DOCTYPE html>
 <html>
@@ -205,17 +205,13 @@ if (window.addEventListener) {
         public async Task<IActionResult> GetToken(int invoiceId)
         {
             string token = string.Empty;
-
-
             var paymentRequest = new ProcessPaymentRequest();
-            _paymentService.GenerateOrderGuid(paymentRequest);
             await _paymentLogger.InformationAsync(
-   $"GetToken: hosted payment token refresh started. " +
-   $"OrderGuid={paymentRequest.OrderGuid}" +
-   (invoiceId > 0 ? $", CustomOrder, InvoiceId={invoiceId}" : string.Empty));
+          $"GetToken: hosted payment token refresh started. " +
+          (invoiceId > 0 ? $", CustomOrder, InvoiceId={invoiceId}" : string.Empty));
             try
             {
-                token = await _authorizeNetManager.GetHostedFormToken(paymentRequest, invoiceId, null);
+                (token, paymentRequest) = await _authorizeNetManager.GetHostedFormToken(invoiceId, null);
                 await _paymentLogger.InformationAsync(
  $"GetToken: new hosted payment token generated successfully for iframe reload. " +
  $"OrderGuid={paymentRequest.OrderGuid}, " +
@@ -226,7 +222,7 @@ if (window.addEventListener) {
              : AuthorizeNetHostedPaymentDefaults.ProductionFormUrl;
 
 
-                return Json(new { success = true, formUrl = formUrl, token = token, orderId= paymentRequest.OrderGuid });
+                return Json(new { success = true, formUrl = formUrl, token = token, orderId = paymentRequest.OrderGuid });
             }
             catch (Exception ex)
             {

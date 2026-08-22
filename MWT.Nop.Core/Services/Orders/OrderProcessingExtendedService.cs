@@ -1,5 +1,6 @@
 ﻿using MWT.Nop.Core.Domain.CustomOrders;
 using MWT.Nop.Core.Services.Catalog;
+using MWT.Nop.Core.Services.Customizations.CustomOrders;
 using MWT.Nop.Core.Services.Message;
 using Newtonsoft.Json;
 using Nop.Core;
@@ -16,12 +17,10 @@ using Nop.Services.Affiliates;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Customers;
-using Nop.Services.Customizations.CustomOrders;
 using Nop.Services.Directory;
 using Nop.Services.Discounts;
 using Nop.Services.Localization;
 using Nop.Services.Logging;
-using Nop.Services.Messages;
 using Nop.Services.Orders;
 using Nop.Services.Payments;
 using Nop.Services.Security;
@@ -29,12 +28,7 @@ using Nop.Services.Shipping;
 using Nop.Services.Stores;
 using Nop.Services.Tax;
 using Nop.Services.Vendors;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using OrderStatus = Nop.Core.Domain.Orders.OrderStatus;
 
 namespace MWT.Nop.Core.Services.Orders

@@ -1,11 +1,6 @@
-﻿    using Nop.Plugin.Payments.AuthorizeNetHosted.Models;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+﻿using Nop.Plugin.Payments.AuthorizeNetHosted.Models;
 
-    namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
+namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
     {
         public partial interface IAuthorizeNetWebHookService
         {

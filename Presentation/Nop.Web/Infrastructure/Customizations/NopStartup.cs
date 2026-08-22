@@ -7,11 +7,13 @@ using MWT.Nop.Core.Service.FAQModule;
 using MWT.Nop.Core.Service.Zoho;
 using MWT.Nop.Core.Services;
 using MWT.Nop.Core.Services.AbandonedCarts;
+using MWT.Nop.Core.Services.BundleProduct;
 using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.CategoryCollection;
 using MWT.Nop.Core.Services.Configuration;
 using MWT.Nop.Core.Services.Custom;
 using MWT.Nop.Core.Services.Customers;
+using MWT.Nop.Core.Services.Customizations.CustomOrders;
 using MWT.Nop.Core.Services.Discounts;
 using MWT.Nop.Core.Services.ElasticSearch;
 using MWT.Nop.Core.Services.FeedBack;
@@ -24,14 +26,15 @@ using MWT.Nop.Core.Services.Mandrill;
 using MWT.Nop.Core.Services.Media;
 using MWT.Nop.Core.Services.Message;
 using MWT.Nop.Core.Services.Orders;
+using MWT.Nop.Core.Services.Payments;
 using MWT.Nop.Core.Services.QA;
 using MWT.Nop.Core.Services.QuickFilters;
 using MWT.Nop.Core.Services.Search;
 using MWT.Nop.Core.Services.Search.RewardClaim;
 using MWT.Nop.Core.Services.Seo;
 using MWT.Nop.Core.Services.Shared;
+using MWT.Nop.Core.Services.TagPage;
 using Nop.Core.Infrastructure;
-using Nop.Services.Customizations.CustomOrders;
 using Nop.Services.Customizations.IpAddress;
 using Nop.Services.Orders;
 
@@ -59,7 +62,7 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<IFeedService, FeedService>();
             services.AddScoped<ICustomSpecificationAttributeService, CustomSpecificationAttributeService>();
             services.AddScoped<IPictureExtendedService, PictureExtendedService>();
-            services.AddScoped<IShoppingCartExtendedService, ShoppingCartExtendedCartService>();
+            services.AddScoped<IShoppingCartExtendedService, ShoppingCartExtendedService>();
             services.AddScoped<ICustomProductAttributeFormatter, CustomProductAttributeFormatter>();
             services.AddScoped<IGroupedProductConfigurationService, GroupedProductConfigurationService>();
             services.AddScoped<IKwTermService, KwTermService>();
@@ -89,11 +92,21 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<ICustomOrderService, CustomOrderService>(); 
             services.AddScoped<ICustomMessageTokenProvider, CustomMessageTokenProvider>(); 
             services.AddScoped<IOrderExtendedService, OrderExtendedService>(); 
+            services.AddScoped<IPaymentProfileService, PaymentProfileService>(); 
+            services.AddScoped<IOrderProcessingExtendedService, OrderProcessingExtendedService>(); 
 
 
             services.AddScoped<IIpAddressService, IpAddressService>();
             services.AddScoped<IIPLiteService, IPLiteService>();
+            services.AddScoped<IBundleLoggerService, BundleLoggerService>();
 
+            #region Tag
+            services.AddScoped<ITagSlugService, TagSlugService>();
+            services.AddScoped<ISegmentSlugService, SegmentSlugService>();
+            services.AddScoped<ITagSpecificationAttributeService, TagSpecificationAttributeService>();
+            services.AddScoped<ITagProductService, TagProductService>();
+
+            #endregion
             #region  Campagin Management
             services.AddScoped<ICampaignManagementService, CampaignManagementService>();
             #endregion

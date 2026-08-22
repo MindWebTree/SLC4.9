@@ -1,4 +1,6 @@
-﻿using MWT.Plugin.Misc.MwtStorefront.Components;
+﻿using MWT.Nop.Core.Infrastructure;
+using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Components;
+using MWT.Plugin.Misc.MwtStorefront.Components;
 using Nop.Services.Cms;
 using Nop.Services.Plugins;
 using System;
@@ -25,12 +27,16 @@ namespace MWT.Plugin.Misc.MwtStorefront
 
         public Task<IList<string>> GetWidgetZonesAsync()
         {
-            return null;
+            return Task.FromResult<IList<string>>(
+               new List<string>
+               {
+                    CustomPublicWidgetZones.ProductAdminConfigurationBundle
+               });
         }
 
-        public Type? GetWidgetViewComponent(string widgetZone)
+        public Type GetWidgetViewComponent(string widgetZone)
         {
-            return null;
+            return typeof(ProductAdminAttributeBundleViewComponent);
         }
         public bool HideInWidgetList => false;
     }

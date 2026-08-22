@@ -1,15 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Nop.Core.Domain.Customers;
-using Nop.Services.Common;
 using Nop.Services.Customers;
 using Nop.Services.Localization;
 using Nop.Services.Messages;
 using Nop.Services.Payments;
 using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Orders;
 using Nop.Web.Framework.Components;
-using Nop.Services.Customizations.CustomOrders;
 using MWT.Nop.Core.Domain.CustomOrders;
+using MWT.Nop.Core.Services.Customizations.CustomOrders;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Components
 {

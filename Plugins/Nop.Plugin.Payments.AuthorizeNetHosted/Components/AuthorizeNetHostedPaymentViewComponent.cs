@@ -1,12 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
+using Nop.Core;
 using Nop.Core.Domain.Orders;
 using Nop.Plugin.Payments.AuthorizeNetHosted.Logging;
 using Nop.Plugin.Payments.AuthorizeNetHosted.Models;
 using Nop.Services.Payments;
 using Nop.Web.Framework.Components;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Nop.Plugin.Payments.AuthorizeNetHosted.Components
 {
@@ -15,18 +13,18 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Components
     {
         private readonly AuthorizeNetHostedPaymentSettings _settings;
         private readonly Services.IAuthorizeNetManager _authorizeNetManager;
-        private readonly Nop.Services.Payments.IPaymentPluginManager _paymentPluginManager;
-        private readonly Nop.Core.IWorkContext _workContext;
-        private readonly Nop.Core.IStoreContext _storeContext;
+        private readonly IPaymentPluginManager _paymentPluginManager;
+        private readonly IWorkContext _workContext;
+        private readonly IStoreContext _storeContext;
         private readonly OrderSettings _orderSettings;
         private readonly IPaymentService _paymentService;
         private readonly PaymentLogger _paymentLogger;
         public AuthorizeNetHostedPaymentViewComponent(
             AuthorizeNetHostedPaymentSettings settings,
             Services.IAuthorizeNetManager authorizeNetManager,
-            Nop.Services.Payments.IPaymentPluginManager paymentPluginManager,
-            Nop.Core.IWorkContext workContext,
-            Nop.Core.IStoreContext storeContext,
+            IPaymentPluginManager paymentPluginManager,
+            IWorkContext workContext,
+            IStoreContext storeContext,
             OrderSettings orderSettings,
             IPaymentService paymentService,
             PaymentLogger paymentLogger)
@@ -59,11 +57,11 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Components
             }
             else
             {
+
                 string token = string.Empty;
 
                 int invoiceId = 0;
                 var paymentRequest = new ProcessPaymentRequest();
-                _paymentService.GenerateOrderGuid(paymentRequest);
 
                 if (additionalData == null)
                 {
@@ -73,11 +71,11 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Components
                     //    invoiceId = 0;
                     await _paymentLogger.InformationAsync(
                                 $"Hosted payment token generation started. " +
-                                $"OrderGuid={paymentRequest.OrderGuid}" +
                                 (invoiceId > 0 ? $", CustomOrder, InvoiceId={invoiceId}" : string.Empty));
                     try
                     {
-                        token = await _authorizeNetManager.GetHostedFormToken(paymentRequest, invoiceId, additionalData);
+                        dynamic result = await _authorizeNetManager.GetHostedFormToken(invoiceId, additionalData);
+                        (token, paymentRequest) = ((string, ProcessPaymentRequest))result;
                         await _paymentLogger.InformationAsync(
                 $"Hosted payment token generated successfully. " +
                 $"OrderGuid={paymentRequest.OrderGuid}, " +
@@ -108,7 +106,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Components
                     FormActionUrl = formUrl,
                     Token = token,
                     OrderId = paymentRequest.OrderGuid,
-                    CustomProperties = new Dictionary<string, object> { { "invoiceId", invoiceId } }
+                    CustomProperties = new Dictionary<string, string> { { "invoiceId", invoiceId.ToString() } }
                 };
                 await _paymentLogger.InformationAsync(
             $"Hosted payment page initialized successfully. " +

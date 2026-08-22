@@ -1,0 +1,141 @@
+@model TagSlugMappingModel
+@{
+    Layout = "_AdminLayout";
+    var isEdit   = Model.Id > 0;
+    ViewBag.Title = isEdit ? "Edit Tag Slug" : "Add Tag Slug";
+}
+
+<div class="content-header clearfix" bis_skin_checked="1">
+    <h1 class="pull-left">@ViewBag.Title</h1>
+   
+</div>
+<di v class="form-horizontal" bis_skin_checked="1">
+    <div class="validation-summary-valid" data-valmsg-summary="true" bis_skin_checked="1">
+        <ul>
+            <li style="display:none"></li>
+        </ul>
+    </div>
+    <input type="hidden" data-val="true" data-val-required="The Id field is required." id="Id" name="Id" value="18">
+
+    <div class="cards-group" bis_skin_checked="1">
+        <div class="card card-default card-popup" bis_skin_checked="1">
+            <div class="card-body" bis_skin_checked="1">
+                <form asp-action="@(isEdit ? "EditTagSlug" : "CreateTagSlug")" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                          
+                            <div class="panel-body">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="Slug" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="Slug" />
+                                        <span asp-validation-for="Slug" class="text-danger"></span>
+                                        <small class="text-muted">Lowercase, no spaces. E.g: <code>new</code>, <code>bestseller</code>, <code>sale</code></small>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="Label" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="Label" />
+                                        <small class="text-muted">Display name shown in headings and breadcrumbs.</small>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="@Model.MetaTitle" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="@Model.MetaTitle" />
+                                        <span asp-validation-for="@Model.MetaTitle"></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="@Model.MetaKeywords" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="@Model.MetaKeywords" />
+                                        <span asp-validation-for="@Model.MetaKeywords"></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="@Model.AdditionalDescription" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="@Model.AdditionalDescription" asp-template="RichEditor" />
+                                        <span asp-validation-for="@Model.AdditionalDescription"></span>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="@Model.Description" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="@Model.Description" asp-template="RichEditor" />
+                                        <span asp-validation-for="@Model.Description"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="TagId" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-select asp-for="TagId" asp-items="Model.AvailableTags" />
+                                        <span asp-validation-for="TagId" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="ExploreMoreLinks" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="@Model.ExploreMoreLinks" asp-template="RichEditor" />
+                                        <span asp-validation-for="ExploreMoreLinks" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="@Model.EnableInfiniteScroll" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="@Model.EnableInfiniteScroll" />
+                                        <span asp-validation-for="@Model.EnableInfiniteScroll"></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="IsActive" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="IsActive" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                                <a href="@Url.Action("TagSlugs")" class="btn btn-default">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -2,6 +2,7 @@
 using MWT.Nop.Core.Domain.CustomOrders;
 using MWT.Nop.Core.Domain.Messages;
 using MWT.Nop.Core.Services.Customers;
+using MWT.Nop.Core.Services.Customizations.CustomOrders;
 using MWT.Nop.Core.Services.MailChimp;
 using MWT.Nop.Core.Services.Mandrill;
 using MWT.Nop.Core.Services.Orders;
@@ -21,9 +22,6 @@ using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Configuration;
 using Nop.Services.Customers;
-using Nop.Services.Customizations.CustomOrders;
-using Nop.Services.Customizations.IpAddress;
-using Nop.Services.Events;
 using Nop.Services.Localization;
 using Nop.Services.Logging;
 using Nop.Services.Messages;

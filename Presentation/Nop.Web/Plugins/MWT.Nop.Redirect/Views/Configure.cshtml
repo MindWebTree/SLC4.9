@@ -1,0 +1,314 @@
+﻿@using Nop.Plugin.Misc.Redirect.Models.Redirections
+@using Nop.Web.Framework.Models.DataTables
+@model ConfigurationModel
+@{
+    Layout = "_ConfigurePlugin";
+}
+
+<script>
+    function renderColumnOrderStatus(data, type, row, meta) {
+        var t;
+        switch (data) {
+            case 0:
+                t = 'Match';
+                break;
+            case 1:
+                t = 'RegularExpresion';
+                break;
+            case 2:
+                t = 'Contains';
+                break;
+        }
+        return '<td data-columnname="RedirectUrl" class="sorting_1">' + t + '</td>';
+    }
+
+    function HideShow() {
+        var x = document.getElementById("newRedireccionContent");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+    }
+</script>
+
+
+@*import products form*@
+<div id="importexcel-window" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="importexcel-window-title">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="importexcel-window-title">
+                    @T("Admin.Common.ExportFromCsv")
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form asp-controller="Redirect" asp-action="Import" method="post" enctype="multipart/form-data">
+                <div class="form-horizontal">
+                    <div class="modal-body">
+                        <div class="form-group row">
+                            <div class="col-md-2">
+                                <div class="label-wrapper">
+                                    <label class="col-form-label">
+                                        @T("Admin.Common.CsvFile")
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-10">
+                                <input type="file" id="importexcelfile" name="importexcelfile" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">
+                            @T("Admin.Common.ImportFromCsv")
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="cards-group">
+    <div class="content-header clearfix">
+        <div class="float-right">
+            <a asp-action="export" class="btn btn-primary">
+                <i class="fas fa-download"></i>
+                @T("Admin.Common.Export")
+            </a>
+
+            <button type="button" name="importexcel" class="btn bg-olive" data-toggle="modal" data-target="#importexcel-window">
+                <i class="fas fa-upload"></i>
+                @T("Admin.Common.Import")
+            </button>
+
+
+            <a onclick="HideShow()" class="btn btn-primary">
+                <i class="fas fa-plus-square"></i>
+                @T("Admin.Common.AddNew")
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div id="newRedireccionContent" class="card card-default" style="display: none">
+            <div class="card-header">
+                @T("Admin.Common.AddNewRecord")
+            </div>
+
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="@Model.AddRedirection.Pattern" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="@Model.AddRedirection.Pattern" />
+                        <span asp-validation-for="@Model.AddRedirection.Pattern"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+
+                    <div class="col-md-3">
+                        <nop-label asp-for="@Model.AddRedirection.Type" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-select asp-for="@Model.AddRedirection.Type" asp-items="@Model.AvailableTypes" />
+                        <span asp-validation-for="@Model.AddRedirection.Type"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+
+                    <div class="col-md-3">
+                        <nop-label asp-for="@Model.AddRedirection.UseQueryString" />
+                    </div>
+                    <div class="col-md-9">
+                        @Html.CheckBoxFor(model => model.AddRedirection.UseQueryString)
+                        <span asp-validation-for="@Model.AddRedirection.UseQueryString"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="@Model.AddRedirection.RedirectUrl" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="@Model.AddRedirection.RedirectUrl" />
+                        <span asp-validation-for="@Model.AddRedirection.RedirectUrl"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+
+                    <div class="col-md-3">
+                        <nop-label asp-for="@Model.AddRedirection.IsPermanent" />
+                    </div>
+                    <div class="col-md-9">
+                        @Html.CheckBoxFor(model => model.AddRedirection.IsPermanent)
+                        <span asp-validation-for="@Model.AddRedirection.IsPermanent"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-md-9 offset-md-3">
+                        <button type="button" id="addRedirection" class="btn btn-primary">@T("Admin.Common.AddNew")</button>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                $(document).ready(function () {
+                    $('#addRedirection').click(function () {
+                        $('#addRedirection').attr('disabled', true);
+                        var postData = {
+                            Pattern: $('#@Html.IdFor(model => model.AddRedirection.Pattern)').val(),
+                            Type: $('#@Html.IdFor(model => model.AddRedirection.Type)').val(),
+                            UseQueryString: $('#@Html.IdFor(model => model.AddRedirection.UseQueryString)').is(':checked'),
+                            IsPermanent: $('#@Html.IdFor(model => model.AddRedirection.IsPermanent)').is(':checked'),
+                            RedirectUrl: $('#@Html.IdFor(model => model.AddRedirection.RedirectUrl)').val()
+                        };
+
+                        console.log(postData);
+                        addAntiForgeryToken(postData);
+
+                        $.ajax({
+                            cache: false,
+                            type: 'POST',
+                            url: '@Html.Raw(Url.Action("RedirectAdd", "Redirect", null))',
+                            data: postData,
+                            success: function (data, textStatus, jqXHR) {
+                                if (data.Result) {
+                                    $('#@Html.IdFor(model => model.AddRedirection.Pattern)').val('');
+                                    $('#@Html.IdFor(model => model.AddRedirection.Type)').val('0');
+                                    $('#@Html.IdFor(model => model.AddRedirection.UseQueryString)').val('false');
+                                    $('#@Html.IdFor(model => model.AddRedirection.IsPermanent)').val('false');
+                                    $('#@Html.IdFor(model => model.AddRedirection.RedirectUrl)').val('');
+                                    updateTable('#Redirections-grid');
+                                } else {
+                                    display_nop_error(data);
+                                }
+                            },
+                            complete: function (jqXHR, textStatus) {
+                                $('#addRedirection').attr('disabled', false);
+                            }
+                        });
+                    });
+                });
+            </script>
+        </div>
+    </div>
+    @*Buscador*@
+    <form asp-controller="Redirect" asp-action="GetRedirections">
+        <div class="card card-default card-search form-horizontal">
+            <div class="card-body">
+                <div class="search-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <div class="col-md-4">
+                                    <nop-label asp-for="@Model.Pattern" />
+                                </div>
+                                <div class="col-md-8">
+                                    <nop-editor asp-for="@Model.Pattern" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <div class="col-md-4">
+                                    <nop-label asp-for="@Model.RedirectUrl" />
+                                </div>
+                                <div class="col-md-8">
+                                    <nop-editor asp-for="@Model.RedirectUrl" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="text-center col-12">
+                            <button type="button" id="search-redirections" class="btn btn-primary btn-search">
+                                <i class="fas fa-search"></i>
+                                @T("Admin.Common.Search")
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@await Html.PartialAsync("Table", new DataTablesModel
+{
+    Name = "Redirections-grid",
+    UrlRead = new DataUrl("GetRedirections", "Redirect"),
+    UrlUpdate = new DataUrl("RedirectUpdate", "Redirect"),
+    UrlDelete = new DataUrl("RedirectRemove", "Redirect"),
+    Processing = true,
+    PrimaryKeyColumn = nameof(RedirectionModel.Id),
+    Paging = true,
+    Ordering = true,
+    SearchButtonId = "search-redirections",
+    Info = false,
+    Length = Model.SearchModel.PageSize,
+    LengthMenu = Model.SearchModel.AvailablePageSizes,
+    Filters = new List<FilterParameter>
+    {
+        new FilterParameter(nameof(RedirectionModel.Pattern)),
+        new FilterParameter(nameof(RedirectionModel.RedirectUrl))
+    },
+    ColumnCollection = new List<ColumnProperty>
+    {
+        new ColumnProperty(nameof(RedirectionModel.Id))
+        {
+            Title = "Id",
+            Visible = false
+        },
+        new ColumnProperty(nameof(RedirectionModel.Pattern))
+        {
+            Title = "Url",
+            Width = "300",
+            Editable = true,
+            EditType = EditType.String,
+            Searchable = true
+        },
+        new ColumnProperty(nameof(RedirectionModel.Type))
+        {
+            Title = "Redirect type",
+            Render = new RenderCustom("renderColumnOrderStatus")
+        },
+        new ColumnProperty(nameof(RedirectionModel.UseQueryString))
+        {
+            Title = "Use query string",
+            Render = new RenderBoolean(),
+            EditType = EditType.Checkbox,
+            Editable = true
+        },
+        new ColumnProperty(nameof(RedirectionModel.RedirectUrl))
+        {
+            Title = "Redirect Url",
+            Width = "300",
+            EditType = EditType.String,
+            Searchable = true,
+            Editable = true
+        },
+        new ColumnProperty(nameof(RedirectionModel.IsPermanent))
+        {
+            Title = "IsPermanent",
+            Render = new RenderBoolean(),
+            EditType = EditType.Checkbox,
+            Editable = true
+        },
+        new ColumnProperty(nameof(RedirectionModel.Id))
+        {
+            Title = T("Admin.Common.Edit").Text,
+            Width = "100",
+            ClassName =  NopColumnClassDefaults.Button,
+            Render = new RenderButtonsInlineEdit()
+        },
+        new ColumnProperty(nameof(RedirectionModel.Id))
+        {
+            Title = T("Admin.Common.Delete").Text,
+            Width = "100",
+            Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+            ClassName = NopColumnClassDefaults.Button
+        }
+    }
+})	
