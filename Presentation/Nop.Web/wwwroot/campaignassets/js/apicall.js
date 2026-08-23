@@ -18,8 +18,9 @@ $(document).ready(function () {
     var isEmailExclusiveOfferEnabled = false;
     var isSideBarDisplayed = false;
     /* Code get IP Country City START */
-     
-    OnLoad(); 
+    OnLoad();
+
+    /* Code get IP Country City END */
 
 
     $("body").on("keyup paste", "#campaignforphone", function (e) {
@@ -52,8 +53,8 @@ $(document).ready(function () {
     });
 
     $('body').append("" + html);
-    function OnLoad() { 
-        var isExitPopUp = false; 
+    function OnLoad() {
+        var isExitPopUp = false;
         $.ajax({
             type: "POST",
             url: Hiturl,
@@ -176,13 +177,13 @@ $(document).ready(function () {
                         $(".campaign-popup-body-html .modal-content").addClass('response-modal');
                         setTimeout(function () {
                             $("#close-campaign-popup").click();
-                        }, 8000);
+                        }, 15000);
                     }
                     else
                         $(".campaign-popup-body-html").html(html_css + data.message);
                     setTimeout(function () {
                         $("#close-campaign-popup").click();
-                    }, 8000);
+                    }, 15000);
                 }
                 else {
                     $("#lbcampaignEmailError").html(data.message);
@@ -191,7 +192,7 @@ $(document).ready(function () {
             failure: function (response) {
                 setTimeout(function () {
                     $("#close-campaign-popup").click();
-                }, 8000);
+                }, 15000);
             }
         });
     }
@@ -211,6 +212,19 @@ $(document).ready(function () {
         iconhtml = "";
         e.stopPropagation();
         CampaignImpression(CampaignId, ip, usercountry, city, duration_Days, true);
+        if (window.innerWidth <= 768) {
+
+            $('.sticky-add-to-cart').css('bottom', 0);
+            var chat = document.querySelector(".siq_bL");
+            if (chat) {
+                chat.classList.remove("chatbottom");
+            }
+            var backToTop = document.querySelector("#btn-back-to-top");
+            if (backToTop) {
+                backToTop.classList.remove("backToTopbottom");
+            }
+
+        }
     });
     $(document).on("click", "#close-campaign-popup", function (e) {
         e.stopPropagation();

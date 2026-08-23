@@ -1,0 +1,38 @@
+@model Nop.Web.Areas.CustomOrder.Models.Orders.CustomOrderModel
+@inject Nop.Core.IWebHelper webHelper
+@using Nop.Core.Domain.Customization.PhoneOrder
+@using Nop.Web.Framework.Infrastructure;
+@inject Nop.Services.Localization.ILocalizationService _localizationService;
+@{
+    var storeLocation = webHelper.GetStoreLocation();
+    bool isPaid = Model.OrderStatus == OrderStatus.Paid.ToString() ? true : false;
+}
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    var cashPaymentMethodName = "cash";
+    var creditPaymentMethodName = "authorize";
+    var paymentMethodNotExist = " {0} Payment method not exist";
+    customOrderModule.init('@OrderTypes.CustomOrder.ToString()');
+</script>
+@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OpcContentBefore })
+@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryContentBefore })
+<div class="customorderinfo">
+  <h2>@T(Model.ParentOrderId > 0 ? "customorder.WGS.Payment.Heading" : "customorder.Payment.Heading")</h2>
+
+    @*    Address section*@
+
+    @if (Model.CustomerId != null && Model.CustomerId != 0)
+    {
+        <div class="row  custom-order-payment-address">
+            @await Component.InvokeAsync("CustomOrderAddressSection", new { orderId = Model.Id })
+        </div>
+
+    }
+
+
+    @if (Model.DisplayCartSummary)
+    {
+        @await Component.InvokeAsync("CustomOrderOrderSummary", new { orderId = Model.Id })
+    }
+
+</div>

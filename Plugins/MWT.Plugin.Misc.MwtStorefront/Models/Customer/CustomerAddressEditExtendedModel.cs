@@ -1,6 +1,7 @@
 ﻿using MWT.Plugin.Misc.MwtStorefront.Models.Common;
 using Nop.Web.Areas.Admin.Models.Customers;
 using Nop.Web.Framework.Models;
+using Nop.Web.Models.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +15,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Models.Customer
     {
         public CustomerAddressEditExtendedModel()
         {
-            Address = new AddressExtendedModel();
+            Address = new AddressModel();
         }
 
-        public AddressExtendedModel Address { get; set; }
+        public AddressModel Address { get; set; }
     }
 }

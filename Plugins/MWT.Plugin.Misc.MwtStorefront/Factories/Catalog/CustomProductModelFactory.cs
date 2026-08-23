@@ -2648,7 +2648,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
                 return breadcrumbModel;
 
             int categoryId = -1;
-            var _commonModelFactory = EngineContext.Current.Resolve<ICommonModelFactory>();
+          
             Category category = new Category();
             (string entityType, int entityId) = await _commonService.GetRefererDetails();
 

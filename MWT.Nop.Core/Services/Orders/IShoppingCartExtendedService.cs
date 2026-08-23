@@ -5,13 +5,8 @@ using Nop.Core.Domain.Discounts;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Stores;
 using Nop.Services.Orders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MWT.Nop.Core.Services.Catalog
+namespace MWT.Nop.Core.Services.Orders
 {
     public partial interface IShoppingCartExtendedService : IShoppingCartService
     {
@@ -61,5 +56,6 @@ bool includeDiscounts);
         Task<(CustomDiscountType discountType, decimal buyMoreDiscount, int notEligibleCartItemId)> 
             GetBuyMoreSaveMoreDiscountDetailsAsync(IList<ShoppingCartItem> cart, decimal subTotal);
 
+        Task<bool> IsWgsShippingMethodRequired(IList<ShoppingCartItem> cart);
     }
 }

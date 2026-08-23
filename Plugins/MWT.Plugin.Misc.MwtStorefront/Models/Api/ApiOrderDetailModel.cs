@@ -1,5 +1,7 @@
 ﻿using MWT.Plugin.Misc.MwtStorefront.Models.Common;
+using Nop.Services.Orders;
 using Nop.Web.Framework.Models;
+using Nop.Web.Models.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,11 +29,11 @@ namespace MWT.Plugin.Misc.MwtStorefront.Models.Api
             OrderNotes = new List<ApiOrderNote>();
             Shipments = new List<ApiShipmentBriefModel>();
 
-            BillingAddress = new AddressExtendedModel();
-            ShippingAddress = new AddressExtendedModel();
-            PickupAddress = new AddressExtendedModel();
+            BillingAddress = new AddressModel();
+            ShippingAddress = new   AddressModel();
+            PickupAddress = new AddressModel();
 
-            CustomValues = new Dictionary<string, object>();
+            CustomValues = new CustomValues();
             TaxInfo = new List<TaxInfoModel>();
         }
 
@@ -49,18 +51,18 @@ namespace MWT.Plugin.Misc.MwtStorefront.Models.Api
         public string OrderStatus { get; set; }
         public bool IsShippable { get; set; }
         public bool PickupInStore { get; set; }
-        public AddressExtendedModel PickupAddress { get; set; }
+        public AddressModel PickupAddress { get; set; }
         public string ShippingStatus { get; set; }
-        public AddressExtendedModel ShippingAddress { get; set; }
+        public AddressModel ShippingAddress { get; set; }
         public string ShippingMethod { get; set; }
         public IList<ApiShipmentBriefModel> Shipments { get; set; }
 
-        public AddressExtendedModel BillingAddress { get; set; }
+        public AddressModel BillingAddress { get; set; }
         public string VatNumber { get; set; }
         public string PaymentMethod { get; set; }
         public string PaymentMethodStatus { get; set; }
         public bool CanRePostProcessPayment { get; set; }
-        public Dictionary<string, object> CustomValues { get; set; }
+        public CustomValues CustomValues { get; set; }
 
         public decimal OrderSubtotal { get; set; }
         public decimal OrderSubTotalDiscount { get; set; }

@@ -970,7 +970,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                 addressSettings: _addressSettings,
                 loadCountries: async () => await _countryService.GetAllCountriesAsync((await _workContext.GetWorkingLanguageAsync()).Id));
             var customAddressModel = new CustomCustomerAddressEditModel();
-            customAddressModel.Address = model.Address.AddressExtendedModelToCustomAddressModel(true);
+            customAddressModel.Address = model.Address.AddressModelToCustomAddressModel(true);
             return View("addressadd", customAddressModel);
         }
 
@@ -989,7 +989,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                 ModelState.AddModelError("", error);
             }
             var model = new CustomerAddressEditExtendedModel();
-            model.Address = customAddressModel.Address.CustomAddressModelToAddressExtendedModel();
+            model.Address = customAddressModel.Address.CustomAddressModelToAddressModel();
             model.Address.FirstName = CustomCommonHelper.GetCustomerFirstName(customAddressModel?.Address?.FullName ?? string.Empty);
             model.Address.LastName = CustomCommonHelper.GetCustomerLastName(customAddressModel?.Address?.FullName ?? string.Empty);
             if (ModelState.IsValid)
@@ -1019,7 +1019,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                 loadCountries: async () => await _countryService.GetAllCountriesAsync((await _workContext.GetWorkingLanguageAsync()).Id),
                 overrideAttributesXml: customAttributes);
 
-            customAddressModel.Address = model.Address.AddressExtendedModelToCustomAddressModel(true);
+            customAddressModel.Address = model.Address.AddressModelToCustomAddressModel(true);
 
             return View("addressadd", customAddressModel);
         }
@@ -1044,7 +1044,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                 addressSettings: _addressSettings,
                 loadCountries: async () => await _countryService.GetAllCountriesAsync((await _workContext.GetWorkingLanguageAsync()).Id));
             var customAddressModel = new CustomCustomerAddressEditModel();
-            customAddressModel.Address = model.Address.AddressExtendedModelToCustomAddressModel(true);
+            customAddressModel.Address = model.Address.AddressModelToCustomAddressModel(true);
             customAddressModel.Address.FullName = CustomCommonHelper.GetCustomerFullName(customAddressModel.Address.FirstName, customAddressModel.Address.LastName);
             return View("AddressEdit", customAddressModel);
         }
@@ -1071,7 +1071,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                 ModelState.AddModelError("", error);
             }
             var model = new CustomerAddressEditExtendedModel();
-            model.Address = customAddressModel.Address.CustomAddressModelToAddressExtendedModel();
+            model.Address = customAddressModel.Address.CustomAddressModelToAddressModel();
             model.Address.FirstName = CustomCommonHelper.GetCustomerFirstName(customAddressModel?.Address?.FullName ?? string.Empty);
             model.Address.LastName = CustomCommonHelper.GetCustomerLastName(customAddressModel?.Address?.FullName ?? string.Empty);
             if (ModelState.IsValid)
@@ -1091,7 +1091,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                 loadCountries: async () => await _countryService.GetAllCountriesAsync((await _workContext.GetWorkingLanguageAsync()).Id),
                 overrideAttributesXml: customAttributes);
 
-            customAddressModel.Address = model.Address.AddressExtendedModelToCustomAddressModel(true);
+            customAddressModel.Address = model.Address.AddressModelToCustomAddressModel(true);
             customAddressModel.Address.FullName = CustomCommonHelper.GetCustomerFullName(customAddressModel.Address.FirstName, customAddressModel.Address.LastName);
             return View("AddressEdit", customAddressModel);
         }

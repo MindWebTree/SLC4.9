@@ -38,7 +38,7 @@ namespace MWT.Nop.Core.Services.Orders
     {
         private readonly ICustomSpecificationAttributeService _customSpecificationAttributeService;
         private readonly ICustomProductAttributeFormatter _customProductAttributeFormatter;
-        private readonly IProductExtendedService _customProductService;
+        private readonly IProductExtendedService _productExtendedService;
         private readonly ISettingService _settingService;
         private readonly ICategoryService _categoryService;
         private readonly ISpecificationAttributeService _specificationAttributeService;
@@ -59,7 +59,7 @@ namespace MWT.Nop.Core.Services.Orders
         {
             _customSpecificationAttributeService = customSpecificationAttributeService;
             _customProductAttributeFormatter = customProductAttributeFormatter;
-            _customProductService = customProductService;
+            _productExtendedService = customProductService;
             _settingService = settingService;
             _categoryService = categoryService;
             _specificationAttributeService = specificationAttributeService;
@@ -592,10 +592,10 @@ bool includeDiscounts)
                 foreach (var item in cart)
                 {
                     string attributeDescription = await _customProductAttributeFormatter.CustomFormatAttributesAsync(await _productService.GetProductByIdAsync(item.ProductId), item.AttributesXml);
-                    int variantId = await _customProductService.GetVariantId(item.ProductId, attributeDescription);
+                    int variantId = await _productExtendedService.GetVariantId(item.ProductId, attributeDescription);
                     if (variantId > 0)
                     {
-                        var variantCombination = await _customProductService.GetProductVariants(item.ProductId);
+                        var variantCombination = await _productExtendedService.GetProductVariants(item.ProductId);
                         if (variantCombination.Where(v => v.VariantId == variantId).FirstOrDefault()?.EnableSurcharge ?? false)
                         {
                             wgsSurchargeApplicable = true;
@@ -701,6 +701,26 @@ bool includeDiscounts)
             }
 
             return (discountType, buyMoreDiscount, notEligibleForSaveMoreDiscountCartId);
+        }
+        public async Task<bool> IsWgsShippingMethodRequired(IList<ShoppingCartItem> cart)
+        {
+
+            bool wgsRequired = false;
+            foreach (var item in cart)
+            {
+                string attributeDescription = await _customProductAttributeFormatter.CustomFormatAttributesAsync(await _productService.GetProductByIdAsync(item.ProductId), item.AttributesXml);
+                int variantId = await _productExtendedService.GetVariantId(item.ProductId, attributeDescription);
+                if (variantId > 0)
+                {
+                    var variantCombination = await _productExtendedService.GetProductVariants(item.ProductId);
+                    if ((variantCombination.Where(v => v.VariantId == variantId).FirstOrDefault()?.WgsRequired ?? false))
+                    {
+                        wgsRequired = true;
+                        break;
+                    }
+                }
+            }
+            return wgsRequired;
         }
     }
 }
