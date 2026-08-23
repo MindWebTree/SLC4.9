@@ -1,4 +1,4 @@
-﻿using MWT.Plugin.Misc.MwtStorefront.Models.AbandonedCart;
+﻿using MWT.Plugin.Misc.MwtStorefront.Models.AbandonedCarts;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Factories
 {

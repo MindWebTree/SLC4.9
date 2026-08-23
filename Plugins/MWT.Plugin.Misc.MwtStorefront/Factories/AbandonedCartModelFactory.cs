@@ -1,6 +1,6 @@
 ﻿using MWT.Nop.Core.Services.AbandonedCarts;
 using MWT.Nop.Core.Services.Customers;
-using MWT.Plugin.Misc.MwtStorefront.Models.AbandonedCart;
+using MWT.Plugin.Misc.MwtStorefront.Models.AbandonedCarts;
 using Nop.Core;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Orders;
