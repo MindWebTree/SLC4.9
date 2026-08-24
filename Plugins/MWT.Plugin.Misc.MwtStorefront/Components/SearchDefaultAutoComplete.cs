@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc.ViewComponents;
 using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Core.Services.Search;
 using MWT.Plugin.Misc.MwtStorefront.Catalog;
+using MWT.Plugin.Misc.MwtStorefront.Factories;
+using MWT.Plugin.Misc.MwtStorefront.Models.Catalog;
 using MWT.Plugin.Misc.MwtStorefront.SearchBox;
 using Newtonsoft.Json;
 using Nop.Core;
@@ -22,7 +24,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
     public class SearchDefaultAutoCompleteViewComponent : NopViewComponent
     {
         private readonly CatalogSettings _catalogSettings;
-        private readonly IAclService _aclService; 
+        private readonly IAclService _aclService;
+        private readonly ICustomProductModelFactory _productModelFactory;
         private readonly IProductService _productService;
         private readonly IRecentlyViewedProductsService _recentlyViewedProductsService;
         private readonly IStoreMappingService _storeMappingService;
@@ -33,7 +36,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
         private readonly ILocalizationService _localizationService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         public SearchDefaultAutoCompleteViewComponent(CatalogSettings catalogSettings,
-            IAclService aclService, 
+            IAclService aclService,
+            ICustomProductModelFactory productModelFactory,
             IProductService productService,
             IRecentlyViewedProductsService recentlyViewedProductsService,
             IStoreMappingService storeMappingService,
@@ -45,7 +49,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
             IHttpContextAccessor httpContextAccessor)
         {
             _catalogSettings = catalogSettings;
-            _aclService = aclService; 
+            _aclService = aclService;
+            _productModelFactory = productModelFactory;
             _productService = productService;
             _recentlyViewedProductsService = recentlyViewedProductsService;
             _storeMappingService = storeMappingService;
@@ -68,40 +73,40 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
             httpContext.Request.Cookies.TryGetValue(cookieName, out var productIdsCookie);
             SearchDefaultAutoCompleteModel model = new SearchDefaultAutoCompleteModel();
             var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(CustomNopCatalogDefaults.SearchDefaultAutoCompleteCacheKey,
-             customer.Id, productIdsCookie??"");
+             customer.Id, productIdsCookie ?? "");
 
-           // model = await this._staticCacheManager.GetAsync(cacheKey, async () =>
-           //{
-           //    SearchDefaultAutoCompleteModel _model = new SearchDefaultAutoCompleteModel();
-           //    #region Recently Viewed Products
-           //    var recentlyViewedProducts = new List<ProductOverviewModel>();
-           //    int recentlyViewedProductsNumber = await _settingService.GetSettingByKeyAsync<int>("catalogsettings.AutoCompleteSearch.NoOfRecentlyViewedProductsNumber");
-           //    if (_catalogSettings.RecentlyViewedProductsEnabled)
-           //    {
-           //        var products = await (await _recentlyViewedProductsService.GetRecentlyViewedProductsAsync(recentlyViewedProductsNumber))
-           //               //ACL and store mapping
-           //               .WhereAwait(async p => await _aclService.AuthorizeAsync(p) && await _storeMappingService.AuthorizeAsync(p))
-           //               //availability dates
-           //               .Where(p => _productService.ProductIsAvailable(p)).ToListAsync();
+            model = await this._staticCacheManager.GetAsync(cacheKey, async () =>
+            {
+                SearchDefaultAutoCompleteModel _model = new SearchDefaultAutoCompleteModel();
+                #region Recently Viewed Products
+                var recentlyViewedProducts = new List<CustomProductOverviewModel>();
+                int recentlyViewedProductsNumber = await _settingService.GetSettingByKeyAsync<int>("catalogsettings.AutoCompleteSearch.NoOfRecentlyViewedProductsNumber");
+                if (_catalogSettings.RecentlyViewedProductsEnabled)
+                {
+                    var products = await (await _recentlyViewedProductsService.GetRecentlyViewedProductsAsync(recentlyViewedProductsNumber))
+                           //ACL and store mapping
+                           .WhereAwait(async p => await _aclService.AuthorizeAsync(p) && await _storeMappingService.AuthorizeAsync(p))
+                           //availability dates
+                           .Where(p => _productService.ProductIsAvailable(p)).ToListAsync();
 
-           //        if (products.Any())
-           //        {
-           //            //prepare model
+                    if (products.Any())
+                    {
+                        //prepare model
 
-           //            recentlyViewedProducts.AddRange(await _productModelFactory.PrepareCustomProductOverviewModelsAsync(products,
-           //                true,
-           //                true,
-           //                productThumbPictureSize));
-           //        }
-           //    }
-           //    _model.RecentlyViewedProducts = recentlyViewedProducts;
-           //    #endregion
+                        recentlyViewedProducts.AddRange(await _productModelFactory.PrepareCustomProductOverviewModelsAsync(products,
+                            true,
+                            true,
+                            productThumbPictureSize));
+                    }
+                }
+                _model.RecentlyViewedProducts = recentlyViewedProducts;
+                #endregion
 
-           //    var searchlog = await _searchLogService.GetLatestSearchTermOFCustomer(customer.Id);
-           //    _model.RecentSearchTerms = searchlog.Select(s => s.Keyword).ToList();
-           //    return _model;
+                var searchlog = await _searchLogService.GetLatestSearchTermOFCustomer(customer.Id);
+                _model.RecentSearchTerms = searchlog.Select(s => s.Keyword).ToList();
+                return _model;
 
-           //});
+            });
 
             List<ItemAutoCompleteSearchModel> items = new List<ItemAutoCompleteSearchModel>();
             if (model.RecentlyViewedProducts.Count > 0)
@@ -113,7 +118,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
                     {
                         Name = product.Name.Replace("\"", "double-quot"),
                         Url = Url.RouteUrl("Product", new { id = product.Id, SeName = product.SeName }),
-                        ImageUrl = product.PictureModels.FirstOrDefault()?.ImageUrl
+                        ImageUrl = product.DefaultPictureModel.ImageUrl
                     });
                 }
 
@@ -149,7 +154,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
                 }
                 items.Add(new ItemAutoCompleteSearchModel()
                 {
-                    Name =(await _localizationService.GetResourceAsync("Search.AutoComplete.ClearRecentSearch")).Replace("\"", "double-quot"),
+                    Name = (await _localizationService.GetResourceAsync("Search.AutoComplete.ClearRecentSearch")).Replace("\"", "double-quot"),
                     Url = "",
                     IsRecentSearch = true
 

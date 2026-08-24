@@ -1,0 +1,122 @@
+﻿@model Nop.Web.Models.Catalog.ProductOverviewModel
+@inject Nop.Core.IWorkContext _workcontext
+<script>
+    var priceRangeFormat = '@T("Price.Range.Product.Format")';
+
+</script>
+
+<div class=" product-details-page version1 featuredproduct">
+
+    @if (!_workcontext.IsMobileDevice())
+    {
+<form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-form">
+    <div data-productid="@Model.Id">
+        <div class="row mx-0">
+            <div class="col-sm-6 product-image">
+                <div class="product-gallery">
+                    @await Html.PartialAsync("_ProductDetailsPictures", Model)
+                </div>
+            </div>
+            <div class="col-sm-6 product-details">
+
+                <h1 itemprop="name">
+                    @(string.IsNullOrEmpty(Model.VariantTitle)? Model.Name: Model.VariantTitle)
+                    <span class="">
+                        @T("Products.Sku") # @Model.Sku
+                    </span>
+                </h1>
+
+                @*color and size*@
+
+                @{ var dataDictAttributes = new ViewDataDictionary(ViewData);
+                                    dataDictAttributes.TemplateInfo.HtmlFieldPrefix = $"attributes_{Model.Id}";
+
+                                    var dataDictPrice = new ViewDataDictionary(ViewData);
+                                    dataDictPrice.TemplateInfo.HtmlFieldPrefix = $"price_{Model.Id}"; }
+
+
+                @*// end*@
+
+                @*price section*@
+
+                @await Html.PartialAsync("_ProductPrice", Model.ProductPrice, dataDictPrice)
+
+
+                @*Coupon section*@
+                @Html.Raw(T("product.coupon.text"))
+            </div>
+            <div class="col-sm-6 product-details feature-right">
+                @{ ViewData["showSelectedAttributeInFront"] = false; }
+                @await Html.PartialAsync("_ProductAttributes", Model, dataDictAttributes)
+                @{ ViewData["showSelectedAttributeInFront"] = null; }
+                @{ var dataDictAddToCart = new ViewDataDictionary(ViewData);
+                                    dataDictAddToCart.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
+                                    dataDictAddToCart.Add("sename", Model.SeName);
+                                    dataDictAddToCart.Add("variantId", Model.DefaultVariantId);
+                    @await Html.PartialAsync("_AddToCart", Model.AddToCart, dataDictAddToCart) }
+
+            </div>
+
+
+
+        </div>
+    </div>
+</form> }
+            else
+            {
+<form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-form">
+    <div data-productid="@Model.Id">
+        <div class="row mx-0">
+            <div class="col-sm-6 product-image">
+                <div class="product-gallery mobile-gallery">
+                    @await Html.PartialAsync("_ProductDetailsPictures", Model)
+                </div>
+            </div>
+            <div class="col-sm-6 product-details mobile-details">
+
+                <h1 itemprop="name">
+                    @(string.IsNullOrEmpty(Model.VariantTitle)? Model.Name: Model.VariantTitle)
+                </h1>
+
+                @{ var dataDictAttributes = new ViewDataDictionary(ViewData);
+                                    dataDictAttributes.TemplateInfo.HtmlFieldPrefix = $"attributes_{Model.Id}";
+
+                                    var dataDictPrice = new ViewDataDictionary(ViewData);
+                                    dataDictPrice.TemplateInfo.HtmlFieldPrefix = $"price_{Model.Id}"; }
+                @await Html.PartialAsync("_ProductPrice", Model.ProductPrice, dataDictPrice)
+
+                @{ ViewData["showSelectedAttributeInFront"] = false; }
+                @await Html.PartialAsync("_ProductAttributes", Model, dataDictAttributes)
+                @{ ViewData["showSelectedAttributeInFront"] = null; }
+                @{ if (Model.ProductAttributes.Count > 0)
+                                    {
+                                        var noOfSizeAttr = Model.ProductAttributes.Where(a => a.Name == T("Product.Attr.Size").Text).FirstOrDefault()?.Values.Count() ?? 0;
+                                        var noOfShadeAttr = Model.ProductAttributes.Where(a => a.Name == T("Product.Attr.shades").Text).FirstOrDefault()?.Values.Count() ?? 0;
+                                        if (noOfSizeAttr > 1 || noOfShadeAttr > 0)
+                                        {
+                    <p class="shade-size">
+                        <a href="@Url.RouteUrl("Product", new {id=Model.Id, SeName = Model.SeName })">
+                            @if (noOfSizeAttr > 1 && noOfShadeAttr > 0)
+                            {@T("common.label.noof.shade.size", noOfSizeAttr, noOfShadeAttr) }
+                        else if (noOfSizeAttr > 1)
+                        { @T("common.label.noof.size", noOfSizeAttr) }
+                    else
+                    { @T("common.label.noof.shade", noOfShadeAttr)}
+                        </a>
+                    </p> }
+                                    } }
+
+                @*// end*@
+                @{ var dataDictAddToCart = new ViewDataDictionary(ViewData);
+                                    dataDictAddToCart.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
+                                    dataDictAddToCart.Add("sename", Model.SeName);
+                    @await Html.PartialAsync("_AddToCart", Model.AddToCart, dataDictAddToCart) }
+
+            </div>
+
+
+
+        </div>
+    </div>
+</form>}
+</div>
