@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MWT.Nop.Core.Services.Customers;
+using MWT.Nop.Core.Services.Customizations.CustomOrders;
+using MWT.Nop.Core.Services.Orders;
 using MWT.Nop.Plugin.Payments.Affirm.Data.Domain;
 using MWT.Nop.Plugin.Payments.Affirm.Domain;
 using MWT.Nop.Plugin.Payments.Affirm.Infrastructure;
@@ -52,15 +54,14 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IStoreContext _storeContext;
         private readonly IProductService _productService;
-        private readonly IOrderProcessingService _orderProcessingService;
+        private readonly IOrderProcessingExtendedService _orderProcessingService;
         private readonly IPaymentPluginManager _paymentPluginManager;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly ServiceManager _serviceManager;
         private readonly ILocalizationService _localizationService;
-      //  private readonly ICustomOrderService _customOrderService;
-       private readonly IOrderService _orderService;
+        private readonly ICustomOrderService _customOrderService;
         private readonly ICustomerService _customerService;
-       // private readonly ICustomOrderModelFactory _customOrderModelFactory;
+
         AffirmCheckoutSettings _affirmSettings;
 
         #endregion
@@ -70,14 +71,12 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
         public AffirmController(IRepository<AffirmLog> affirmLogRepository, IWebHelper webHelper, IWorkContext workContext,
                                IHttpContextAccessor httpContextAccessor, IAffirmService affirmService, IRepository<PaymentMethodSession> affirmSessionRepository,
                                IShoppingCartService shoppingCartService, IStoreContext storeContext, IProductService productService,
-                               IOrderProcessingService orderProcessingService, IPaymentPluginManager paymentPluginManager,
+                               IOrderProcessingExtendedService orderProcessingService, IPaymentPluginManager paymentPluginManager,
                                IGenericAttributeService genericAttributeService,
                                ServiceManager serviceManager, ILocalizationService localizationService,
-                            //   ICustomOrderService customOrderService,
+                               ICustomOrderService customOrderService,
                                ICustomerService customerService,
-                           //    ICustomOrderModelFactory customOrderModelFactory,
-                               AffirmCheckoutSettings affirmSettings,
-                               OrderService orderService
+                               AffirmCheckoutSettings affirmSettings
                                )
         {
             _affirmLogRepository = affirmLogRepository;
@@ -94,11 +93,9 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
             _genericAttributeService = genericAttributeService;
             _serviceManager = serviceManager;
             _localizationService = localizationService;
-         //   _customOrderService = customOrderService;
+            _customOrderService = customOrderService;
             _customerService = customerService;
-         //   _customOrderModelFactory = customOrderModelFactory;
             _affirmSettings = affirmSettings;
-            _orderService = orderService;
         }
 
         #endregion
@@ -210,7 +207,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                     return RedirectToRoute("CheckoutOnePage", new { AffirmMessage = "Affirm.Error.Invalid" });
                 }
 
-               var tempOrder = await _affirmSessionRepository.GetByIdAsync(tempOrderId);
+                var tempOrder = await _affirmSessionRepository.GetByIdAsync(tempOrderId);
 
                 ShippingOption shippingOption = await _genericAttributeService.GetAttributeAsync<ShippingOption>(await _workContext.GetCurrentCustomerAsync(), NopCustomerDefaults.SelectedShippingOptionAttribute, (await _storeContext.GetCurrentStoreAsync()).Id);
 
@@ -359,13 +356,13 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                         LogLevel = LogLevel.Error,
                         ReferrerUrl = _webHelper.GetUrlReferrer(),
                         PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
-                        //ShortMessage = $"Affirm Order Failed,Invalid  OrderId {tempOrder.Id}"
+                        ShortMessage = $"Affirm Order Failed,Invalid  OrderId {tempOrder.Id}"
 
                     });
-               //     tempOrder.Status = RequestStatus.Error;
-               //     tempOrder.Message = $"Invalid  OrderId";
-               //     tempOrder.UpdatedOnUtc = DateTime.UtcNow;
-               //     await _affirmSessionRepository.UpdateAsync(tempOrder);
+                    tempOrder.Status = RequestStatus.Error;
+                    tempOrder.Message = $"Invalid  OrderId";
+                    tempOrder.UpdatedOnUtc = DateTime.UtcNow;
+                    await _affirmSessionRepository.UpdateAsync(tempOrder);
                     TempData["Affirm.Error"] = await _localizationService.GetResourceAsync("Affirm.Error.Invalid.Session");
                     return RedirectToRoute("CheckoutOnePage", new { AffirmMessage = "Affirm.Error.Invalid.Session" });
                 }
@@ -389,10 +386,10 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                         ShortMessage = _affirmSettings.TransactMode == TransactMode.AuthorizeAndCapture ? $"Affirm Order Failed,Failed to Capture" : $"Affirm Order Failed,Failed to Authorize"
 
                     });
-                   // tempOrder.Status = RequestStatus.Error;
-                  //  tempOrder.Message = _affirmSettings.TransactMode == TransactMode.AuthorizeAndCapture ? $"Failed to Capture Transaction {response}" : $"Failed to Authorize Transaction {response}";
-                  //  tempOrder.UpdatedOnUtc = DateTime.UtcNow;
-                  //  await _affirmSessionRepository.UpdateAsync(tempOrder);
+                    tempOrder.Status = RequestStatus.Error;
+                    tempOrder.Message = _affirmSettings.TransactMode == TransactMode.AuthorizeAndCapture ? $"Failed to Capture Transaction {response}" : $"Failed to Authorize Transaction {response}";
+                    tempOrder.UpdatedOnUtc = DateTime.UtcNow;
+                    await _affirmSessionRepository.UpdateAsync(tempOrder);
                     TempData["Affirm.Error"] = await _localizationService.GetResourceAsync("Affirm.Error.Failed.Capture");
                     return RedirectToRoute("CheckoutOnePage", new { AffirmMessage = "Affirm.Error.Failed.Capture" });
                 }
@@ -406,24 +403,22 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                 processPaymentRequest.StoreId = (await _storeContext.GetCurrentStoreAsync()).Id;
                 processPaymentRequest.CustomerId = (await _workContext.GetCurrentCustomerAsync()).Id;
                 processPaymentRequest.PaymentMethodSystemName = "Payments.Affirm";
-                await HttpContext.Session.SetAsync<ProcessPaymentRequest>("OrderPaymentInfo", processPaymentRequest);
-                //processPaymentRequest.CustomValues.Add("TransactionId", _affirmSettings.TransactMode == TransactMode.AuthorizeAndCapture ? captureTransactionId : authorizationTransactionId);
-                //processPaymentRequest.CustomValues.Add("AuthTransactionId", authorizationTransactionId);
-                //processPaymentRequest.CustomValues.Add("AuthTransactionResult", authResponse);
-                //processPaymentRequest.CustomValues.Add("CaptureTransactionId", captureTransactionId);
-                //processPaymentRequest.CustomValues.Add("CaptureTransactionResult", captureResponse);
-                processPaymentRequest.CustomValues["TransactionId"] = _affirmSettings.TransactMode == TransactMode.AuthorizeAndCapture ? captureTransactionId : authorizationTransactionId;
-                processPaymentRequest.CustomValues["AuthTransactionId"] = authorizationTransactionId;
-                processPaymentRequest.CustomValues["AuthTransactionResult"] = authResponse;
-                processPaymentRequest.CustomValues["CaptureTransactionId"] = captureTransactionId;
-                processPaymentRequest.CustomValues["CaptureTransactionResult"] = captureResponse;
+
+                processPaymentRequest.CustomValues.Add(new CustomValue("TransactionId", _affirmSettings.TransactMode == TransactMode.AuthorizeAndCapture ? captureTransactionId : authorizationTransactionId));
+                processPaymentRequest.CustomValues.Add(new CustomValue("AuthTransactionId", authorizationTransactionId));
+                processPaymentRequest.CustomValues.Add(new CustomValue("AuthTransactionResult", authResponse));
+                processPaymentRequest.CustomValues.Add(new CustomValue("CaptureTransactionId", captureTransactionId));
+                processPaymentRequest.CustomValues.Add(new CustomValue("CaptureTransactionResult", captureResponse));
+
+                await this._orderProcessingService.SetProcessPaymentRequestAsync(processPaymentRequest, await _workContext.GetCurrentCustomerAsync());
+
                 var placeOrderResult = await _orderProcessingService.PlaceOrderAsync(processPaymentRequest);
                 if (!placeOrderResult.Errors.Any())
                 {
-                 //   tempOrder.LiveOrderNumber = placeOrderResult.PlacedOrder.Id;
+                    tempOrder.LiveOrderNumber = placeOrderResult.PlacedOrder.Id;
 
-               //     tempOrder.Status = RequestStatus.Completed;
-               //     await _affirmSessionRepository.UpdateAsync(tempOrder);
+                    tempOrder.Status = RequestStatus.Completed;
+                    await _affirmSessionRepository.UpdateAsync(tempOrder);
                     return RedirectToRoute("CheckoutCompleted", new { orderId = placeOrderResult.PlacedOrder.Id });
                 }
                 else
@@ -468,310 +463,321 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
 
 
 
-        //public async Task<IActionResult> CustomOrderConfirmCallbackHandler(int orderId, int customerId)
-        //{
-        //    var customOrder = await _customOrderService.GetById(orderId);
-        //    var customer = await _customerService.GetCustomerByIdAsync(customerId);
-        //    if (customOrder == null || customer == null || customOrder.CustomerId != customer.Id || await _customOrderService.IsOrderPaid(customOrder))
-        //    {
-        //        return RedirectToRoute("Homepage");
-        //    }
+        public async Task<IActionResult> CustomOrderConfirmCallbackHandler(int orderId, int customerId)
+        {
+            var customOrder = await _customOrderService.GetById(orderId);
+            var customer = await _customerService.GetCustomerByIdAsync(customerId);
+            if (customOrder == null || customer == null || customOrder.CustomerId != customer.Id || await _customOrderService.IsOrderPaid(customOrder))
+            {
+                return RedirectToRoute("Homepage");
+            }
 
-        //    string referencePage = $"/checkoutCustomOrder?orderid={orderId}&customerid={customOrder.CustomerId}";
+            string referencePage = $"/checkoutCustomOrder?orderid={orderId}&customerid={customOrder.CustomerId}";
 
-        //    try
-        //    {
-        //        if (await _paymentPluginManager.LoadPluginBySystemNameAsync("Payments.Affirm") is not AffirmPaymentMethod processor || !_paymentPluginManager.IsPluginActive(processor))
-        //            throw new NopException("Affirm module cannot be loaded");
-        //        string token = _webHelper.QueryString<string>("checkout_token");
-        //        if (string.IsNullOrEmpty(token))
-        //        {
-        //            await _affirmLogRepository.InsertAsync(new AffirmLog()
-        //            {
-        //                CreatedOnUtc = DateTime.UtcNow,
-        //                CustomerId = customer.Id,
-        //                FullMessage = "Failed to read Checkout Token",
-        //                IpAddress = _webHelper.GetCurrentIpAddress(),
-        //                LogLevel = LogLevel.Error,
-        //                ReferrerUrl = _webHelper.GetUrlReferrer(),
-        //                PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
-        //                ShortMessage = "Affirm Order, Token Missed"
+            try
+            {
+                if (await _paymentPluginManager.LoadPluginBySystemNameAsync("Payments.Affirm") is not AffirmPaymentMethod processor || !_paymentPluginManager.IsPluginActive(processor))
+                    throw new NopException("Affirm module cannot be loaded");
+                string token = _webHelper.QueryString<string>("checkout_token");
+                if (string.IsNullOrEmpty(token))
+                {
+                    await _affirmLogRepository.InsertAsync(new AffirmLog()
+                    {
+                        CreatedOnUtc = DateTime.UtcNow,
+                        CustomerId = customer.Id,
+                        FullMessage = "Failed to read Checkout Token",
+                        IpAddress = _webHelper.GetCurrentIpAddress(),
+                        LogLevel = LogLevel.Error,
+                        ReferrerUrl = _webHelper.GetUrlReferrer(),
+                        PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
+                        ShortMessage = "Affirm Order, Token Missed"
 
-        //            });
-        //            return Redirect(referencePage);
-        //        }
-        //        await _affirmLogRepository.InsertAsync(new AffirmLog()
-        //        {
-        //            CreatedOnUtc = DateTime.UtcNow,
-        //            CustomerId = customer.Id,
-        //            FullMessage = $"Checkout Token {token}",
-        //            IpAddress = _webHelper.GetCurrentIpAddress(),
-        //            LogLevel = LogLevel.Information,
-        //            ReferrerUrl = _webHelper.GetUrlReferrer(),
-        //            PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
-        //            ShortMessage = "Affirm Confirmation Handler Intialized."
+                    });
+                    return Redirect(referencePage);
+                }
+                await _affirmLogRepository.InsertAsync(new AffirmLog()
+                {
+                    CreatedOnUtc = DateTime.UtcNow,
+                    CustomerId = customer.Id,
+                    FullMessage = $"Checkout Token {token}",
+                    IpAddress = _webHelper.GetCurrentIpAddress(),
+                    LogLevel = LogLevel.Information,
+                    ReferrerUrl = _webHelper.GetUrlReferrer(),
+                    PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
+                    ShortMessage = "Affirm Confirmation Handler Intialized."
 
-        //        });
-        //        var responseModel = await _affirmService.CheckoutDetails(token);
-        //        if ((responseModel?.checkout_status ?? string.Empty) != AffirmOrderStatus.confirmed.ToString())
-        //        {
-        //            await _affirmLogRepository.InsertAsync(new AffirmLog()
-        //            {
-        //                CreatedOnUtc = DateTime.UtcNow,
-        //                CustomerId = customer.Id,
-        //                FullMessage = $"Affirm Order Not Confirmed {responseModel?.meta?.tempOrderId ?? string.Empty} status {responseModel?.checkout_status ?? string.Empty}",
-        //                IpAddress = _webHelper.GetCurrentIpAddress(),
-        //                LogLevel = LogLevel.Error,
-        //                ReferrerUrl = _webHelper.GetUrlReferrer(),
-        //                PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
-        //                ShortMessage = $"Affirm Order, Not Confirmed {responseModel?.meta?.tempOrderId ?? string.Empty}"
+                });
+                var responseModel = await _affirmService.CheckoutDetails(token);
+                if ((responseModel?.checkout_status ?? string.Empty) != AffirmOrderStatus.confirmed.ToString())
+                {
+                    await _affirmLogRepository.InsertAsync(new AffirmLog()
+                    {
+                        CreatedOnUtc = DateTime.UtcNow,
+                        CustomerId = customer.Id,
+                        FullMessage = $"Affirm Order Not Confirmed {responseModel?.meta?.tempOrderId ?? string.Empty} status {responseModel?.checkout_status ?? string.Empty}",
+                        IpAddress = _webHelper.GetCurrentIpAddress(),
+                        LogLevel = LogLevel.Error,
+                        ReferrerUrl = _webHelper.GetUrlReferrer(),
+                        PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
+                        ShortMessage = $"Affirm Order, Not Confirmed {responseModel?.meta?.tempOrderId ?? string.Empty}"
 
-        //            });
-        //            TempData["Affirm.Error"] = await _localizationService.GetResourceAsync("Affirm.Error.orderNotConfimed");
+                    });
+                    TempData["Affirm.Error"] = await _localizationService.GetResourceAsync("Affirm.Error.orderNotConfimed");
 
-        //            return Redirect(referencePage);
-        //        }
+                    return Redirect(referencePage);
+                }
 
-        //        await _affirmLogRepository.InsertAsync(new AffirmLog()
-        //        {
-        //            CreatedOnUtc = DateTime.UtcNow,
-        //            CustomerId = customer.Id,
-        //            FullMessage = $"Affirm Order Status {responseModel?.meta?.tempOrderId ?? string.Empty}  {responseModel?.checkout_status ?? string.Empty}, Started Validation",
-        //            IpAddress = _webHelper.GetCurrentIpAddress(),
-        //            LogLevel = LogLevel.Information,
-        //            ReferrerUrl = _webHelper.GetUrlReferrer(),
-        //            PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
-        //            ShortMessage = $"Affirm Order Status {responseModel?.meta?.tempOrderId ?? string.Empty}"
+                await _affirmLogRepository.InsertAsync(new AffirmLog()
+                {
+                    CreatedOnUtc = DateTime.UtcNow,
+                    CustomerId = customer.Id,
+                    FullMessage = $"Affirm Order Status {responseModel?.meta?.tempOrderId ?? string.Empty}  {responseModel?.checkout_status ?? string.Empty}, Started Validation",
+                    IpAddress = _webHelper.GetCurrentIpAddress(),
+                    LogLevel = LogLevel.Information,
+                    ReferrerUrl = _webHelper.GetUrlReferrer(),
+                    PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
+                    ShortMessage = $"Affirm Order Status {responseModel?.meta?.tempOrderId ?? string.Empty}"
 
-        //        });
-
-
-        //        int.TryParse(responseModel?.meta?.tempOrderId ?? string.Empty, out int tempOrderId);
-        //        if (tempOrderId == 0)
-        //        {
-        //            await _affirmLogRepository.InsertAsync(new AffirmLog()
-        //            {
-        //                CreatedOnUtc = DateTime.UtcNow,
-        //                CustomerId = customer.Id,
-        //                FullMessage = $"Affirm Order Failed to read Temp Order Id",
-        //                IpAddress = _webHelper.GetCurrentIpAddress(),
-        //                LogLevel = LogLevel.Error,
-        //                ReferrerUrl = _webHelper.GetUrlReferrer(),
-        //                PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
-        //                ShortMessage = $"Affirm Order, Failed to read Temp Order Id"
-
-        //            });
-        //            TempData["Affirm.Error"] = await _localizationService.GetResourceAsync("Affirm.Error.Invalid");
-        //            return Redirect(referencePage);
-        //        }
-
-        //        var tempOrder = await _affirmSessionRepository.GetByIdAsync(tempOrderId);
+                });
 
 
+                int.TryParse(responseModel?.meta?.tempOrderId ?? string.Empty, out int tempOrderId);
+                if (tempOrderId == 0)
+                {
+                    await _affirmLogRepository.InsertAsync(new AffirmLog()
+                    {
+                        CreatedOnUtc = DateTime.UtcNow,
+                        CustomerId = customer.Id,
+                        FullMessage = $"Affirm Order Failed to read Temp Order Id",
+                        IpAddress = _webHelper.GetCurrentIpAddress(),
+                        LogLevel = LogLevel.Error,
+                        ReferrerUrl = _webHelper.GetUrlReferrer(),
+                        PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
+                        ShortMessage = $"Affirm Order, Failed to read Temp Order Id"
 
-        //        if (tempOrder == null || tempOrder.Id == 0 || tempOrder.CustomerId != customerId)
-        //        {
-        //            await _affirmLogRepository.InsertAsync(new AffirmLog()
-        //            {
-        //                CreatedOnUtc = DateTime.UtcNow,
-        //                CustomerId = customer.Id,
-        //                FullMessage = $"Affirm Order Failed ,Temp Order Id invalid {tempOrder?.Id ?? 0} CustomerId {tempOrder?.CustomerId ?? 0} ",
-        //                IpAddress = _webHelper.GetCurrentIpAddress(),
-        //                LogLevel = LogLevel.Error,
-        //                ReferrerUrl = _webHelper.GetUrlReferrer(),
-        //                PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
-        //                ShortMessage = $"Affirm Order Failed ,Temp Order invalid"
+                    });
+                    TempData["Affirm.Error"] = await _localizationService.GetResourceAsync("Affirm.Error.Invalid");
+                    return Redirect(referencePage);
+                }
 
-        //            });
-        //            if (tempOrder != null)
-        //            {
-        //                tempOrder.Status = RequestStatus.Error;
-        //                tempOrder.Message = $"Affirm Order Failed ,Temp Order Id invalid {tempOrder?.Id ?? 0} CustomerId {tempOrder?.CustomerId ?? 0} ";
-        //                tempOrder.UpdatedOnUtc = DateTime.UtcNow;
-        //                await _affirmSessionRepository.UpdateAsync(tempOrder);
-        //            }
-        //            TempData["Affirm.Error"] = await _localizationService.GetResourceAsync("Affirm.Error.Invalid");
-        //            return Redirect(referencePage);
-        //        }
-
-
-        //        tempOrder.Checkout_Token = token;
-        //        tempOrder.UpdatedOnUtc = DateTime.UtcNow;
-        //        await _affirmSessionRepository.UpdateAsync(tempOrder);
+                var tempOrder = await _affirmSessionRepository.GetByIdAsync(tempOrderId);
 
 
 
+                if (tempOrder == null || tempOrder.Id == 0 || tempOrder.CustomerId != customerId)
+                {
+                    await _affirmLogRepository.InsertAsync(new AffirmLog()
+                    {
+                        CreatedOnUtc = DateTime.UtcNow,
+                        CustomerId = customer.Id,
+                        FullMessage = $"Affirm Order Failed ,Temp Order Id invalid {tempOrder?.Id ?? 0} CustomerId {tempOrder?.CustomerId ?? 0} ",
+                        IpAddress = _webHelper.GetCurrentIpAddress(),
+                        LogLevel = LogLevel.Error,
+                        ReferrerUrl = _webHelper.GetUrlReferrer(),
+                        PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
+                        ShortMessage = $"Affirm Order Failed ,Temp Order invalid"
 
-        //        #region Validate Order Total
-
-
-        //        var payableAmount = await this._customOrderService.GetPayableAmount(customOrder);
-        //        decimal.TryParse(Convert.ToString(payableAmount), NumberStyles.Currency,
-        //          CultureInfo.CurrentCulture.NumberFormat, out decimal orderTotal);
-
-        //        if (responseModel.total != AffirmHelper.ConvertDecimalToCents(orderTotal))
-        //        {
-        //            await _affirmLogRepository.InsertAsync(new AffirmLog()
-        //            {
-        //                CreatedOnUtc = DateTime.UtcNow,
-        //                CustomerId = customer.Id,
-        //                FullMessage = $"Affirm Order Failed Order Total not Matched {responseModel.total} -- Current Order Total {AffirmHelper.ConvertDecimalToCents(orderTotal)}",
-        //                IpAddress = _webHelper.GetCurrentIpAddress(),
-        //                LogLevel = LogLevel.Error,
-        //                ReferrerUrl = _webHelper.GetUrlReferrer(),
-        //                PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
-        //                ShortMessage = $"Affirm Order Failed ,Order Total not Matched"
-
-        //            });
-        //            tempOrder.Status = RequestStatus.Error;
-        //            tempOrder.Message = $"Affirm Order Failed Order Total not Matched {responseModel.total} -- Current Order Total {AffirmHelper.ConvertDecimalToCents(orderTotal)}";
-        //            tempOrder.UpdatedOnUtc = DateTime.UtcNow;
-        //            await _affirmSessionRepository.UpdateAsync(tempOrder);
-        //            TempData["Affirm.Error"] = await _localizationService.GetResourceAsync("Affirm.Error.Invalid.Cart");
-        //            return Redirect(referencePage);
-        //        }
+                    });
+                    if (tempOrder != null)
+                    {
+                        tempOrder.Status = RequestStatus.Error;
+                        tempOrder.Message = $"Affirm Order Failed ,Temp Order Id invalid {tempOrder?.Id ?? 0} CustomerId {tempOrder?.CustomerId ?? 0} ";
+                        tempOrder.UpdatedOnUtc = DateTime.UtcNow;
+                        await _affirmSessionRepository.UpdateAsync(tempOrder);
+                    }
+                    TempData["Affirm.Error"] = await _localizationService.GetResourceAsync("Affirm.Error.Invalid");
+                    return Redirect(referencePage);
+                }
 
 
-        //        #endregion
-
-
-
-        //        if (!Guid.TryParse(responseModel?.meta?.orderGuid, out Guid orderGuid))
-        //        {
-        //            await _affirmLogRepository.InsertAsync(new AffirmLog()
-        //            {
-        //                CreatedOnUtc = DateTime.UtcNow,
-        //                CustomerId = customer.Id,
-        //                FullMessage = $"Invalid  OrderId",
-        //                IpAddress = _webHelper.GetCurrentIpAddress(),
-        //                LogLevel = LogLevel.Error,
-        //                ReferrerUrl = _webHelper.GetUrlReferrer(),
-        //                PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
-        //                ShortMessage = $"Affirm Order Failed,Invalid  OrderId {tempOrder.Id}"
-
-        //            });
-        //            tempOrder.Status = RequestStatus.Error;
-        //            tempOrder.Message = $"Invalid  OrderId";
-        //            tempOrder.UpdatedOnUtc = DateTime.UtcNow;
-        //            await _affirmSessionRepository.UpdateAsync(tempOrder);
-        //            TempData["Affirm.Error"] = await _localizationService.GetResourceAsync("Affirm.Error.Invalid.Session");
-        //            return Redirect(referencePage);
-        //        }
+                tempOrder.Checkout_Token = token;
+                tempOrder.UpdatedOnUtc = DateTime.UtcNow;
+                await _affirmSessionRepository.UpdateAsync(tempOrder);
 
 
 
 
-        //        #region Captue Transaction
-
-        //        (string authorizationTransactionId, string captureTransactionId, string authResponse, string captureResponse, HttpStatusCode statusCode) = await _affirmService.CaptureTransaction(token, orderGuid, responseModel.total);
-
-        //        string response = string.IsNullOrEmpty(captureResponse) ? authResponse : captureResponse;
-        //        if (statusCode != HttpStatusCode.OK)
-        //        {
-
-        //            await _affirmLogRepository.InsertAsync(new AffirmLog()
-        //            {
-        //                CreatedOnUtc = DateTime.UtcNow,
-        //                CustomerId = customer.Id,
-        //                FullMessage = $"{response}",
-        //                IpAddress = _webHelper.GetCurrentIpAddress(),
-        //                LogLevel = LogLevel.Error,
-        //                ReferrerUrl = _webHelper.GetUrlReferrer(),
-        //                PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
-        //                ShortMessage = _affirmSettings.TransactMode == TransactMode.AuthorizeAndCapture ? $"Affirm Order Failed,Failed to Capture" : $"Affirm Order Failed,Failed to Authorize"
-
-        //            });
-        //            tempOrder.Status = RequestStatus.Error;
-        //            tempOrder.Message = _affirmSettings.TransactMode == TransactMode.AuthorizeAndCapture ? $"Failed to Capture Transaction {response}" : $"Failed to Authorize Transaction {response}";
-        //            tempOrder.UpdatedOnUtc = DateTime.UtcNow;
-        //            await _affirmSessionRepository.UpdateAsync(tempOrder);
-        //            TempData["Affirm.Error"] = await _localizationService.GetResourceAsync("Affirm.Error.Failed.Capture");
-        //            return Redirect(referencePage);
-        //        }
-
-        //        #endregion
+                #region Validate Order Total
 
 
+                var payableAmount = await this._customOrderService.GetPayableAmount(customOrder);
+                decimal.TryParse(Convert.ToString(payableAmount), NumberStyles.Currency,
+                  CultureInfo.CurrentCulture.NumberFormat, out decimal orderTotal);
+
+                if (responseModel.total != AffirmHelper.ConvertDecimalToCents(orderTotal))
+                {
+                    await _affirmLogRepository.InsertAsync(new AffirmLog()
+                    {
+                        CreatedOnUtc = DateTime.UtcNow,
+                        CustomerId = customer.Id,
+                        FullMessage = $"Affirm Order Failed Order Total not Matched {responseModel.total} -- Current Order Total {AffirmHelper.ConvertDecimalToCents(orderTotal)}",
+                        IpAddress = _webHelper.GetCurrentIpAddress(),
+                        LogLevel = LogLevel.Error,
+                        ReferrerUrl = _webHelper.GetUrlReferrer(),
+                        PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
+                        ShortMessage = $"Affirm Order Failed ,Order Total not Matched"
+
+                    });
+                    tempOrder.Status = RequestStatus.Error;
+                    tempOrder.Message = $"Affirm Order Failed Order Total not Matched {responseModel.total} -- Current Order Total {AffirmHelper.ConvertDecimalToCents(orderTotal)}";
+                    tempOrder.UpdatedOnUtc = DateTime.UtcNow;
+                    await _affirmSessionRepository.UpdateAsync(tempOrder);
+                    TempData["Affirm.Error"] = await _localizationService.GetResourceAsync("Affirm.Error.Invalid.Cart");
+                    return Redirect(referencePage);
+                }
 
 
-        //        var processPaymentRequest = new ProcessPaymentRequest();
+                #endregion
 
-        //        processPaymentRequest.OrderGuid = orderGuid;
-        //        processPaymentRequest.StoreId = (await _storeContext.GetCurrentStoreAsync()).Id;
-        //        processPaymentRequest.CustomerId = (int)customOrder.CustomerId;
-        //        processPaymentRequest.PaymentMethodSystemName = "Payments.Affirm";
-        //       await HttpContext.Session.SetAsync<ProcessPaymentRequest>("OrderPaymentInfo", processPaymentRequest);
-        //        processPaymentRequest.CustomValues.Add("TransactionId", _affirmSettings.TransactMode == TransactMode.AuthorizeAndCapture ? captureTransactionId : authorizationTransactionId);
-        //        processPaymentRequest.CustomValues.Add("AuthTransactionId", authorizationTransactionId);
-        //        processPaymentRequest.CustomValues.Add("AuthTransactionResult", authResponse);
-        //        processPaymentRequest.CustomValues.Add("CaptureTransactionId", captureTransactionId);
-        //        processPaymentRequest.CustomValues.Add("CaptureTransactionResult", captureResponse);
-        //        int refOrderno = 0;
-        //        bool saveOrderDetails = true;
-        //        if (customOrder.LiveOrderNumber != null && customOrder.LiveOrderNumber != 0 && customOrder.AlreadyFee != null && customOrder.AlreadyFee > 0)
-        //        {
-        //            saveOrderDetails = false;
-        //            refOrderno = Convert.ToInt32(customOrder.LiveOrderNumber);
-        //        }
 
-        //        (var placeOrderResult, var paymentResponse) = await _orderProcessingService.CustomPlaceOrderAsync(processPaymentRequest, customOrder, await this._customOrderModelFactory.PrepareOderSummaryModel(customOrder.Id), saveOrderDetails, refOrderno, false);
-        //        if (!placeOrderResult.Errors.Any())
-        //        {
-        //            tempOrder.LiveOrderNumber = placeOrderResult.PlacedOrder.Id;
 
-        //            tempOrder.Status = RequestStatus.Completed;
-        //            await _affirmSessionRepository.UpdateAsync(tempOrder);
-        //            return Redirect(
+                if (!Guid.TryParse(responseModel?.meta?.orderGuid, out Guid orderGuid))
+                {
+                    await _affirmLogRepository.InsertAsync(new AffirmLog()
+                    {
+                        CreatedOnUtc = DateTime.UtcNow,
+                        CustomerId = customer.Id,
+                        FullMessage = $"Invalid  OrderId",
+                        IpAddress = _webHelper.GetCurrentIpAddress(),
+                        LogLevel = LogLevel.Error,
+                        ReferrerUrl = _webHelper.GetUrlReferrer(),
+                        PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
+                        ShortMessage = $"Affirm Order Failed,Invalid  OrderId {tempOrder.Id}"
 
-        //                _affirmSettings.TransactMode == TransactMode.AuthorizeAndCapture ?
-        //                $"/checkoutCustomOrder/ProcessAffirmOrder?orderid={orderId}&liveOrderNumber={placeOrderResult.PlacedOrder.Id}&transactionId={captureTransactionId}" :
-        //                $"/checkoutCustomOrder/ProcessAffirmOrder?orderid={orderId}&liveOrderNumber={placeOrderResult.PlacedOrder.Id}&transactionId={authorizationTransactionId}"
-        //                );
-        //        }
-        //        else
-        //        {
-        //            await _affirmLogRepository.InsertAsync(new AffirmLog()
-        //            {
-        //                CreatedOnUtc = DateTime.UtcNow,
-        //                CustomerId = customer.Id,
-        //                FullMessage = string.Join(',', placeOrderResult.Errors.ToArray()),
-        //                IpAddress = _webHelper.GetCurrentIpAddress(),
-        //                LogLevel = LogLevel.Error,
-        //                ReferrerUrl = _webHelper.GetUrlReferrer(),
-        //                PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
-        //                ShortMessage = $"Failed to place Order {tempOrder.Id}"
+                    });
+                    tempOrder.Status = RequestStatus.Error;
+                    tempOrder.Message = $"Invalid  OrderId";
+                    tempOrder.UpdatedOnUtc = DateTime.UtcNow;
+                    await _affirmSessionRepository.UpdateAsync(tempOrder);
+                    TempData["Affirm.Error"] = await _localizationService.GetResourceAsync("Affirm.Error.Invalid.Session");
+                    return Redirect(referencePage);
+                }
 
-        //            });
-        //            TempData["Affirm.Error"] = await _localizationService.GetResourceAsync("Affirm.Error.Failed.Place.Order");
-        //            return Redirect(referencePage);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _affirmLogRepository.InsertAsync(new AffirmLog()
-        //        {
-        //            CreatedOnUtc = DateTime.UtcNow,
-        //            CustomerId = customer.Id,
-        //            FullMessage = ex.Message,
-        //            IpAddress = _webHelper.GetCurrentIpAddress(),
-        //            LogLevel = LogLevel.Error,
-        //            ReferrerUrl = _webHelper.GetUrlReferrer(),
-        //            PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
-        //            ShortMessage = $"Failed to place Order"
 
-        //        });
-        //        return Redirect(referencePage);
-        //    }
-        //}
-        //public async Task<IActionResult> CustomOrderCancelCallbackHandler(int orderId)
-        //{
-        //    var customOrder = await _customOrderService.GetById(orderId);
-        //    if (customOrder == null)
-        //    {
-        //        return RedirectToRoute("Homepage");
-        //    }
-        //    return Redirect($"/checkoutCustomOrder?orderid={orderId}&customerid={customOrder.CustomerId}");
-        //}
+
+
+                #region Captue Transaction
+
+                (string authorizationTransactionId, string captureTransactionId, string authResponse, string captureResponse, HttpStatusCode statusCode) = await _affirmService.CaptureTransaction(token, orderGuid, responseModel.total);
+
+                string response = string.IsNullOrEmpty(captureResponse) ? authResponse : captureResponse;
+                if (statusCode != HttpStatusCode.OK)
+                {
+
+                    await _affirmLogRepository.InsertAsync(new AffirmLog()
+                    {
+                        CreatedOnUtc = DateTime.UtcNow,
+                        CustomerId = customer.Id,
+                        FullMessage = $"{response}",
+                        IpAddress = _webHelper.GetCurrentIpAddress(),
+                        LogLevel = LogLevel.Error,
+                        ReferrerUrl = _webHelper.GetUrlReferrer(),
+                        PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
+                        ShortMessage = _affirmSettings.TransactMode == TransactMode.AuthorizeAndCapture ? $"Affirm Order Failed,Failed to Capture" : $"Affirm Order Failed,Failed to Authorize"
+
+                    });
+                    tempOrder.Status = RequestStatus.Error;
+                    tempOrder.Message = _affirmSettings.TransactMode == TransactMode.AuthorizeAndCapture ? $"Failed to Capture Transaction {response}" : $"Failed to Authorize Transaction {response}";
+                    tempOrder.UpdatedOnUtc = DateTime.UtcNow;
+                    await _affirmSessionRepository.UpdateAsync(tempOrder);
+                    TempData["Affirm.Error"] = await _localizationService.GetResourceAsync("Affirm.Error.Failed.Capture");
+                    return Redirect(referencePage);
+                }
+
+                #endregion
+
+
+
+
+                var processPaymentRequest = new ProcessPaymentRequest();
+
+                processPaymentRequest.OrderGuid = orderGuid;
+                processPaymentRequest.StoreId = (await _storeContext.GetCurrentStoreAsync()).Id;
+                processPaymentRequest.CustomerId = (int)customOrder.CustomerId;
+                processPaymentRequest.PaymentMethodSystemName = "Payments.Affirm";
+                
+                processPaymentRequest.CustomValues.Add(new CustomValue("TransactionId", _affirmSettings.TransactMode == TransactMode.AuthorizeAndCapture ? captureTransactionId : authorizationTransactionId));
+                processPaymentRequest.CustomValues.Add(new CustomValue("AuthTransactionId", authorizationTransactionId));
+                processPaymentRequest.CustomValues.Add(new CustomValue("AuthTransactionResult", authResponse));
+                processPaymentRequest.CustomValues.Add(new CustomValue("CaptureTransactionId", captureTransactionId));
+                processPaymentRequest.CustomValues.Add(new CustomValue("CaptureTransactionResult", captureResponse));
+                await this._orderProcessingService.SetProcessPaymentRequestAsync(processPaymentRequest,customer);
+                int refOrderno = 0;
+                bool saveOrderDetails = true;
+                if (customOrder.LiveOrderNumber != null && customOrder.LiveOrderNumber != 0 && customOrder.AlreadyFee != null && customOrder.AlreadyFee > 0)
+                {
+                    saveOrderDetails = false;
+                    refOrderno = Convert.ToInt32(customOrder.LiveOrderNumber);
+                }
+
+                object orderSummary = await this._customOrderService.PrepareBriefOderSummaryModel(customOrder.Id);
+
+                (var placeOrderResult, var paymentResponse) = await _orderProcessingService.CustomPlaceOrderAsync(
+                    processPaymentRequest,
+                    customOrder,
+                    orderSummary,
+                    saveOrderDetails,
+                    refOrderno,
+                    false);
+
+
+                if (!placeOrderResult.Errors.Any())
+                {
+                    tempOrder.LiveOrderNumber = placeOrderResult.PlacedOrder.Id;
+
+                    tempOrder.Status = RequestStatus.Completed;
+                    await _affirmSessionRepository.UpdateAsync(tempOrder);
+                    return Redirect(
+
+                        _affirmSettings.TransactMode == TransactMode.AuthorizeAndCapture ?
+                        $"/checkoutCustomOrder/ProcessAffirmOrder?orderid={orderId}&liveOrderNumber={placeOrderResult.PlacedOrder.Id}&transactionId={captureTransactionId}" :
+                        $"/checkoutCustomOrder/ProcessAffirmOrder?orderid={orderId}&liveOrderNumber={placeOrderResult.PlacedOrder.Id}&transactionId={authorizationTransactionId}"
+                        );
+                }
+                else
+                {
+                    await _affirmLogRepository.InsertAsync(new AffirmLog()
+                    {
+                        CreatedOnUtc = DateTime.UtcNow,
+                        CustomerId = customer.Id,
+                        FullMessage = string.Join(',', placeOrderResult.Errors.ToArray()),
+                        IpAddress = _webHelper.GetCurrentIpAddress(),
+                        LogLevel = LogLevel.Error,
+                        ReferrerUrl = _webHelper.GetUrlReferrer(),
+                        PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
+                        ShortMessage = $"Failed to place Order {tempOrder.Id}"
+
+                    });
+                    TempData["Affirm.Error"] = await _localizationService.GetResourceAsync("Affirm.Error.Failed.Place.Order");
+                    return Redirect(referencePage);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _affirmLogRepository.InsertAsync(new AffirmLog()
+                {
+                    CreatedOnUtc = DateTime.UtcNow,
+                    CustomerId = customer.Id,
+                    FullMessage = ex.Message,
+                    IpAddress = _webHelper.GetCurrentIpAddress(),
+                    LogLevel = LogLevel.Error,
+                    ReferrerUrl = _webHelper.GetUrlReferrer(),
+                    PageUrl = _webHelper.GetRawUrl(_httpContextAccessor.HttpContext.Request),
+                    ShortMessage = $"Failed to place Order"
+
+                });
+                return Redirect(referencePage);
+            }
+        }
+        public async Task<IActionResult> CustomOrderCancelCallbackHandler(int orderId)
+        {
+            var customOrder = await _customOrderService.GetById(orderId);
+            if (customOrder == null)
+            {
+                return RedirectToRoute("Homepage");
+            }
+            return Redirect($"/checkoutCustomOrder?orderid={orderId}&customerid={customOrder.CustomerId}");
+        }
 
         #endregion
     }
