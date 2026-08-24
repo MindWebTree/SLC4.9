@@ -1,0 +1,182 @@
+@model Nop.Web.Models.Customizations.CustomOrder.CustomOrderConversionModel
+@inject Nop.Services.Catalog.IProductService _productService
+@inject Nop.Services.Customizations.Phone_Order.ICustomOrderService     _customorderService
+@{
+    var customOrder = await _customorderService.GetByOrderNumber(Model.order.Id);
+    if (customOrder.ParentOrderID == 0)
+    {
+
+        var products = new List<dynamic>();
+        var line_items = new List<dynamic>();
+        var index = 0;
+        int productId = 0;
+        int variantId = 0;
+
+        foreach (var item in Model.Items)
+        {
+            productId = 0;
+            variantId = 0;
+            var _prd = await _productService.GetProductBySkuAsync(item.Sku ?? String.Empty);
+            if (_prd != null)
+            {
+                productId = _prd.Id;
+                if (!string.IsNullOrEmpty(item.AttributesDescription))
+                {
+                    variantId = await _productService.GetVariantIdFromAttributeDescription(productId, item.AttributesDescription);
+                }
+                if (variantId == 0)
+                {
+                    variantId = (await _productService.GetPublishedProductVariants(productId)).FirstOrDefault()?.VariantId ?? 0;
+                }
+            }
+
+            var product = new
+            {
+                product_id = productId,
+                item_id = productId + "-" + variantId + "--",
+                index = index,
+                item_name = item.Name,
+                price = decimal.TryParse(item.Total.Replace("$", "").Replace(",", ""), out decimal Price) ? Price : 0,
+                quantity = item.Quantity,
+                item_variant = variantId
+            };
+            line_items.Add(new { product_id = productId + "-" + variantId + "--" });
+            products.Add(product);
+            index++;
+        }
+
+        var orderDetails = new
+        {
+
+            transaction_id = Model.order.Id,
+            affiliation = "Sierra Living Concepts",
+            brand = "sierralivingconcepts",
+            item_category = " ",
+            type = "Sales",
+            value = Model.order.OrderTotal,
+            shipping = Model.order.OrderShippingExclTax,
+            tax = Model.order.OrderTax,
+            payment_type = Model.order.PaymentMethodSystemName,
+            currency = Model.order.CustomerCurrencyCode,
+            items = products,
+            send_to = "G-KZS8HKJ18D"
+        };
+
+    <script>
+        alert("a");
+        document.addEventListener("DOMContentLoaded", function () {
+            var phoneNumber = '@(Model.ShippingAddress?.PhoneNumber ?? "")';
+            phoneNumber = phoneNumber.replace(/ /g, "").replace(/-/g, "");
+            var country = '@(Model.ShippingAddress?.CountryName ?? "")';
+            var countryCode = country == "" ? "" : "+1";
+            phoneNumber = countryCode + phoneNumber;
+
+            //   if (gtag) {
+
+
+
+        @*gtag('set', 'user_data', {
+            "email": '@Model.order.CustomerEmail',
+            "phone_number": phoneNumber,
+            "address": {
+            "first_name": '@Model.ShippingAddress?.FirstName',
+            "last_name": '@Model.ShippingAddress?.LastName',
+            "street": '@Model.ShippingAddress?.Address1',
+            "city": '@Model.ShippingAddress?.City',
+            "region": '@Model.ShippingAddress?.County',
+            "postal_code": '@Model.ShippingAddress?.ZipPostalCode',
+            "country": '@(Model.ShippingAddress?.CountryTwoLetterSeoCode??"")'
+            }
+
+            });*@
+
+
+
+                                         // for puchase gtag Nikhil
+                                        if (typeof gtag_purchase_report_conversion === "function") {
+                //    gtag_purchase_report_conversion(@Html.Raw(Json.Serialize(orderDetails.value)), @Html.Raw(Json.Serialize(orderDetails.transaction_id)));
+            }
+        @*if (gtag) {
+
+            gtag('event', 'purchase', @Html.Raw(Json.Serialize(orderDetails)));
+            }*@
+
+                                        // bing purchase script
+                                          if (window.uetq) {
+
+                window.uetq.push('event', 'purchase', {
+                    "revenue_value": @orderDetails.value,
+                    "currency": "USD"
+                });
+
+                window.uetq.push('set', {
+                    'pid': {
+                        'em': '@Model.order.CustomerEmail', // Replace with the variable that holds the user's email address.
+                        'ph': phoneNumber, // Replace with the variable that holds the user's phone number.
+                    }
+                });
+            }
+            // end
+
+            // facebook
+            var productIds = "@string.Join(",", @products.Select(p => p.product_id))";
+        @*dataLayer.push({
+            'event': 'Fb-purchase',
+            content_ids: productIds,
+            value: @orderDetails.value,
+            });*@
+
+                // end
+
+
+                window.dataLayer.push({
+                    'event': 'purchase',
+                    'ecommerce': {
+                        'transaction_id': '@Model.order.Id',
+                        'affiliation': 'Sierra Living Concepts',
+                        'value': @orderDetails.value,
+                        'tax': @Model.order.OrderTax,
+                        'shipping': @Model.order.OrderShippingExclTax,
+                        'currency': '@Model.order.CustomerCurrencyCode',
+                        'payment_type': '@Model.order.PaymentMethodSystemName',
+                        'items': @Html.Raw(Json.Serialize(products)),
+                        'line_items': @(Html.Raw(Json.Serialize(line_items))),
+                        'order_quantity': @(Model.Items.Sum(i => i.Quantity)),
+                        'content_ids': productIds,
+                    }, 'user_data': {
+                        'email': '@Model.order.CustomerEmail',
+                        "phone_number": phoneNumber,
+                        'address': {
+                            "first_name": '@Model.ShippingAddress?.FirstName',
+                            "last_name": '@Model.ShippingAddress?.LastName',
+                            "street": '@Model.ShippingAddress?.Address1',
+                            "city": '@Model.ShippingAddress?.City',
+                            "region": '@Model.ShippingAddress?.County',
+                            "postal_code": '@Model.ShippingAddress?.ZipPostalCode',
+                            "state": '@(Model.ShippingAddress?.StateAbbreviation ?? "")',
+                            "externalid": '@Model.order.CustomerId',
+                            "country": '@(Model.ShippingAddress?.CountryTwoLetterSeoCode ?? "")'
+                        }
+                    }
+                });
+
+            // pinterest
+            // if (window.pintrk) {
+
+            //     pintrk('track', 'checkout', {
+
+            //         value: '@Model.order.OrderTotal',
+            //         order_quantity: '@(Model.Items.Sum(i => i.Quantity))',
+            //         currency: 'USD',
+            //         order_id: '@(Model.order.Id)',
+            //         line_items:@(Html.Raw(Json.Serialize(line_items)))
+
+            //     });
+            // }
+
+            // end
+            //  }
+        });
+    </script>
+        }
+    }

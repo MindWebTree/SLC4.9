@@ -1,0 +1,171 @@
+@model ShoppingCartModel
+@using Nop.Core
+@using Nop.Core.Domain.Orders
+@using Nop.Core.Domain.Tax
+@inject IWebHelper webHelper
+@inject IWorkContext workContext
+@inject OrderSettings orderSettings
+@inject Nop.Services.Customers.ICustomerService _customerService;
+@inject Nop.Services.Catalog.IPriceFormatter _priceFormatter;
+@inject Nop.Core.IStoreContext _storeContext;
+@{
+    bool isAuthenticated = false;
+    var customer = await workContext.GetCurrentCustomerAsync();
+    isAuthenticated = await _customerService.IsRegisteredAsync(customer);
+    var store = await _storeContext.GetCurrentStoreAsync();
+
+}
+<div class="order-summary-wrapper" id="toggle-summary-view">
+    @if (Model.Items.Count > 0)
+    {
+        <div class="block-title">
+            <h2>
+                @T("checkout.ordersummary", Model.Items.Count)
+
+                <div class="title-items total-price">
+                    @Model.OrderTotal
+                </div>
+                <div class="title-items summary down-arrow">
+
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5.18307 7.05807C5.42714 6.81398 5.82287 6.81398 6.06694 7.05807L10 10.9911L13.933 7.05807C14.1771 6.81398 14.5729 6.81398 14.817 7.05807C15.061 7.30214 15.061 7.69787 14.817 7.94194L10.4419 12.3169C10.1979 12.561 9.80214 12.561 9.55807 12.3169L5.18307 7.94194C4.93898 7.69787 4.93898 7.30214 5.18307 7.05807Z" fill="#212121" />
+                    </svg>
+                </div>
+            </h2>
+        </div>
+    }
+    <div class="block-content">
+        <h2>@T("checkout.ordersummary", Model.Items.Count)</h2>
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryContentBefore })
+        @await Html.PartialAsync("_OrderReviewData", Model.OrderReviewData)
+        @if (Model.Items.Count > 0)
+        {
+            <table class="data-table-summary hidden" id="checkout-review-table">
+
+                <tbody class="summary-items">
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td class="product-img" data-productid="@item.ProductId">
+                                <img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" />
+                            </td>
+                            <td class="product-details" @((workContext.IsMobileDevice() ? "colspan=\"2\"" : ""))>
+                                <h3 class="product-name">
+                                    @item.ProductName
+                                </h3>
+                                @if (!string.IsNullOrEmpty(item.AttributeInfo))
+                                {
+                                    string[] attrs = item.AttributeInfo.Split(new string[] { "<br />" }, StringSplitOptions.None);
+                                    foreach (var attr in attrs)
+                                    {
+
+                                        string[] parts = attr.Split(':');
+                                        <strong>@Html.Raw(System.Net.WebUtility.HtmlDecode(parts[0])):</strong>
+                                        @if (attr.Length > 1)
+                                        {
+                                            @Html.Raw(System.Net.WebUtility.HtmlDecode(string.Join(":", parts.Skip(1))))
+                                        }
+
+                                        <br />
+                                    }
+                                }
+
+                                <p class="qty"><strong>@T("ShoppingCart.Order.summary.Quantity")</strong> @item.Quantity | <strong>@T("ShoppingCart.Sku")</strong> @item.Sku</p>
+                            </td>
+                            @if (!workContext.IsMobileDevice())
+                            {
+                                <td class="a-right">
+                                    @item.SubTotal
+
+                                    @if (!string.IsNullOrEmpty(item.MemberShipDiscount))
+                                    {
+
+                                        <div class="discount">
+                                            @T("shoppingcart.Item.MembershipDiscount", item.MemberShipDiscount)
+                                        </div>
+                                    }@if (!string.IsNullOrEmpty(item.OfferDiscount))
+                                    {
+                                        <div class="discount">
+                                            @Html.Raw(!string.IsNullOrEmpty(item.OfferDiscount) ? item.OfferDiscount : await _priceFormatter.FormatPriceAsync(0))
+
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(item.BuyMoreSaveMoreDiscount))
+                                    {
+                                        <div class="discount">
+                                            @Html.Raw(!string.IsNullOrEmpty(item.BuyMoreSaveMoreDiscount) ? item.BuyMoreSaveMoreDiscount : await _priceFormatter.FormatPriceAsync(0))
+
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(item.Discount))
+                                    {
+                                        <div class="discount">
+                                            @item.Discount
+                                        </div>
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
+                    <tr><td colspan="3">&nbsp;</td></tr>
+                </tbody>
+
+
+
+
+
+
+                @await Component.InvokeAsync("CheckoutOrderTotals")
+
+            </table>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+    window.dataLayer = window.dataLayer || [];
+    @{
+
+        var currencyCode = (await workContext.GetWorkingCurrencyAsync()).CurrencyCode;
+        var eventId = Guid.NewGuid().ToString();
+        var cartValue = Model.Items.Sum(x => x.Quantity * x.UnitPriceValue);
+    }
+    window.dataLayer.push({
+        'event': 'begin_checkout',
+          'ecommerce': {
+            'currency': '@currencyCode',
+            'value': @cartValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture),
+            'items': [
+                @foreach (var item in Model.Items)
+                {
+                    <text>{
+                        'item_id': '@item.ProductId',
+                        'item_name': '@Html.Raw(JavaScriptEncoder.Default.Encode(item.ProductName))',
+                        'price': @item.UnitPriceValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture),
+                        'quantity': @item.Quantity,
+                        'item_variant': @(item.Variant?.VariantId??0),
+                        'item_category': 'Shopping Cart'
+                    },</text>
+                }
+            ]
+        }
+    });
+            });
+            </script>
+            @*we add enctype = "multipart/form-data" because "File upload" attribute control type requires it*@
+
+        }
+        else
+        {
+            <div class="no-data">
+                @T("ShoppingCart.CartIsEmpty")
+            </div>
+        }
+
+    </div>
+</div>
+@*@if (Model.isConfirmationPage == null || !Convert.ToBoolean(Model.isConfirmationPage))
+    {
+        <button name="save" type="button" class="customerinfobtn button-1 button-2 btn btn-primary checkoutmobilebtn w-100">@T("Common.Continue")</button>
+    }
+    else
+    {
+        <button name="save" type="button" class="customerinfobtn button-1 button-2 btn btn-primary checkoutmobilebtn checkoutmobilebtnplaceyourorder w-100">@T("checkout.placeyourorder")</button>
+    }*@

@@ -1,0 +1,185 @@
+@model Nop.Web.Areas.CustomOrder.Models.Orders.CustomOrderShoppingCartItemModel
+@using Nop.Core.Domain.Customization.PhoneOrder;
+@inject Nop.Services.Customizations.Phone_Order.ICustomOrderService _customOrderService
+@inject Nop.Services.Orders.IOrderService _orderService
+@inject Nop.Core.Infrastructure.INopFileProvider   _nopFileProvider;
+@inject Nop.Services.Common.IAddressService _addressService;
+@inject Nop.Services.Configuration.ISettingService _settingService
+@using Nop.Core
+
+@{
+    var shadeAttr = await _settingService.GetSettingByKeyAsync<string>
+     ("catalog.product.attribute.shade.name");
+    string filePath = _nopFileProvider.MapPath("/wwwroot/images/shades/squareimage/");
+}
+
+@if (Model.Items.Count > 0)
+{
+
+    <table>
+        <thead>
+            <tr style="border-bottom: 1px solid #000">
+                <th scope="col" class="text-center border-0"></th>
+                <th scope="col" class="text-center border-0">Product</th>
+                <th scope="col" class="text-center border-0">Price/Unit</th>
+                <th scope="col" class="text-center border-0">Qty</th>
+                <th scope="col" class="text-center border-0">SubTotal</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr class="border-left border-0" id="tr-@(item.Id)">
+                    <td scope="row" width="10%" valign="top">
+                        <img src="@item.Picture" width="100px" />
+                    </td>
+                    <td width="50%" valign="top">
+                        <div class="shopping-product-details">
+                            <span class="p-name">@item.Name</span><br>
+                            <spam class="sku"> @item.Sku</spam><br>
+                            @if (!string.IsNullOrEmpty(item.AttributesDescription))
+                            {
+
+
+                                <span class="attr">
+                                    @{
+                                        var attrs = item.AttributesDescription.Split(new string[] { "<br />" }, StringSplitOptions.RemoveEmptyEntries);
+                                        foreach (var attr in attrs)
+                                        {
+                                            var parts = attr.Split(':');
+                                            string imagePath = "";
+                                            if (parts.Length > 1)
+                                            {
+                                                var imgPath = "";
+                                                var attrValue = parts.Length > 2 ? string.Join(':', parts.Skip(1)) : parts[1];
+                                                if ((parts[0].ToLower().IndexOf("stain") >= 0 ||
+                                                parts[0].ToLower().IndexOf("shade") >= 0) &&
+                                                _nopFileProvider.FileExists(filePath + attrValue.Trim() + ".jpg")
+                                                )
+                                                {
+                                                    imagePath = "/images/shades/squareimage/" + attrValue.Trim() + ".jpg";
+                                                }
+
+
+
+                                                <p>
+                                                    @if (imagePath != "")
+                                                    {
+                                                        <text>
+                                                            @parts[0]:  <img class="shadeimage" src="@imagePath" />  @(string.Equals( parts[0],shadeAttr,StringComparison.CurrentCultureIgnoreCase)?CommonHelper.StripUnwantedPrefixFromShade(attrValue):  attrValue)
+                                                        </text>
+                                                    }
+                                                    else
+                                                    {
+                                                        <text>
+                                                            @parts[0]: @(string.Equals( parts[0],shadeAttr,StringComparison.CurrentCultureIgnoreCase)?CommonHelper.StripUnwantedPrefixFromShade(attrValue):  attrValue)
+                                                        </text>
+                                                    }
+
+                                                </p>
+                                            }
+                                        }
+                                    }
+
+                                </span>
+                            }
+                            else if (!string.IsNullOrEmpty(item.CustomAttributesDescription))
+                            {
+
+                                <span class="attr">
+                                    @{
+                                        var attrs = item.CustomAttributesDescription.Split(new string[] { "<br />" }, StringSplitOptions.RemoveEmptyEntries);
+                                        foreach (var attr in attrs)
+                                        {
+                                            var parts = attr.Split(':');
+                                            string imagePath = "";
+                                            if (parts.Length > 1)
+                                            {
+                                                var imgPath = "";
+                                                var attrValue = parts.Length > 2 ? string.Join(':', parts.Skip(1)) : parts[1];
+                                                if ((parts[0].ToLower().IndexOf("stain") >= 0 ||
+                                                parts[0].ToLower().IndexOf("shade") >= 0) &&
+                                                _nopFileProvider.FileExists(filePath + attrValue.Trim() + ".jpg")
+                                                )
+                                                {
+                                                    imagePath = "/images/shades/squareimage/" + attrValue.Trim() + ".jpg";
+                                                }
+
+
+
+                                                <p>
+                                                    @if (imagePath != "")
+                                                    {
+                                                        <text>
+                                                            @parts[0]:<img class="shadeimage" src="@imagePath" /> @attrValue
+                                                        </text>
+                                                    }
+                                                    else
+                                                    {
+                                                        <text>
+                                                            @parts[0]: @attrValue
+                                                        </text>
+                                                    }
+
+                                                </p>
+                                            }
+                                        }
+                                    }
+
+                                </span>
+                            }
+
+                            @if (!string.IsNullOrEmpty(item.Notes))
+                            {
+                                <p class="p-notes">Notes:</p>
+                                <p class="p-des">
+                                    @Html.Raw(item.Notes)
+                                </p>
+                            }
+                        </div>
+                    </td>
+                    <td width="15%" valign="top">@item.Price</td>
+                    <td width="15%" valign="top">
+                        @item.Quantity
+                    </td>
+
+
+                    <td width="15%" valign="top">
+                        @item.ItemTotal
+                        <br />
+                        @if (!string.IsNullOrEmpty(item.TotalAdjustment) && item.TotalAdjustment != "$0.00")
+                        {
+                            <span class="@(item.ChargeType==ChargeType.Subtract.ToString()?"text-success":"text-danger")">
+
+                                @(item.ChargeType==ChargeType.Subtract.ToString()?"-":"+")@item.TotalAdjustment
+                            </span>
+                        }
+
+                    </td>
+
+                </tr>
+
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4">
+                    Merchandise Total:
+                </td>
+                <td>@Model.Total</td>
+            </tr>
+        </tfoot>
+
+
+
+    </table>
+
+}
+@if (!Model.isEditable)
+{
+    @await Component.InvokeAsync("CustomOrderConversionBlock", new { id = Model.Id, Items = Model.Items })
+
+
+
+}
