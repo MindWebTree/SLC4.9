@@ -1,0 +1,389 @@
+@model Nop.Web.Models.Customizations.AbandonedCart.AbandonedCartModel
+@inject Nop.Core.IWorkContext _workcontext
+@inject Nop.Services.Catalog.IPriceFormatter _priceFormatter
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor
+
+@{ if (Model.ErrorType == Nop.Web.Models.Customizations.AbandonedCart.AbandonedCartErrorType.Processed)
+    {
+        @Html.Raw("Your cart is empty. Explore our products, check special offers, save favorites. Need help? Contact us. Thank you for choosing! ")
+
+    }
+    var routeValues = new Dictionary<string, object>();
+    foreach (var query in _httpContextAccessor.HttpContext.Request.Query)
+    {
+        if (!routeValues.ContainsKey(query.Key))
+        {
+            routeValues.Add(query.Key, query.Value);
+        }
+    }
+    var url = Url.RouteUrl("RebuildCart", routeValues);
+}
+@if (Model.ErrorType != Nop.Web.Models.Customizations.AbandonedCart.AbandonedCartErrorType.Processed)
+{
+    <form action="@url" method="post" id="product-form">
+        @Html.ValidationSummary()
+        <div class="row mt-3">
+            <div class="col-12 col-sm-12 col-lg-10 mx-auto">
+                @if (!_workcontext.IsMobileDevice())
+                {
+                    <div class="table-wrapper panel panel-default">
+
+                        <table class="cart table-wrapper table table-responsive">
+                            <colgroup>
+                                <col />
+
+                                <col width="1" />
+                                <col width="1" />
+                                <col width="1" />
+
+                            </colgroup>
+                            <thead>
+                                <tr class="cart-header-row">
+
+                                    <th>
+                                        <input name="mastercheckbox" type="checkbox" class="checkboxGroups">
+                                    </th>
+                                    <th class="product">
+                                        @T("ShoppingCart.Product(s)")
+                                    </th>
+
+                                    <th class="unit-price">
+                                        @T("ShoppingCart.UnitPrice")
+                                    </th>
+                                    <th class="quantity">
+                                        @T("ShoppingCart.Quantity")
+                                    </th>
+                                    <th class="end subtotal">
+                                        @T("ShoppingCart.ItemTotal")
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Cart.Items)
+                                {
+                                    <tr class="cart-item-row">
+                                        <td>
+                                            <input name="selectedIds[]" class="checkbox" value="@item.Id" type="checkbox">
+                                        </td>
+                                        <td class="product">
+                                            <div>
+                                                <a href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" /></a>
+
+                                                <a href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})" class="product-name">@item.ProductName</a>
+
+                                                @if (!string.IsNullOrEmpty(item.AttributeInfo))
+                                                {
+                                                    <div class="attributes">
+
+                                                        @{
+                                                            string[] attrs = item.AttributeInfo.Split(new string[] { "<br />" }, StringSplitOptions.None);
+                                                            foreach (var attr in attrs)
+                                                            {
+                                                                string[] _attrParts = attr.Split(':');
+                                                                <b>@_attrParts[0]</b>
+                                                                @Html.Raw(System.Net.WebUtility.HtmlDecode(string.Join(':', _attrParts.Skip(1))))
+
+
+                                                                <br>
+                                                            }
+                                                        }
+                                                    </div>
+                                                }
+
+
+
+
+                                                @if (!string.IsNullOrEmpty(item.Sku))
+                                                {
+                                                    <div class="attributes">
+                                                        <strong>  @T("shoppingcart.sku")</strong>  @Html.Raw(item.Sku)
+                                                    </div>
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.RecurringInfo))
+                                                {
+                                                    <div class="recurring-info">
+                                                        @Html.Raw(item.RecurringInfo)
+                                                    </div>
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.RentalInfo))
+                                                {
+                                                    <div class="rental-info">
+                                                        @Html.Raw(item.RentalInfo)
+                                                    </div>
+                                                }
+
+
+
+                                                <div id="prd-instruction-@item.Id">
+                                                    <div class="card-body p-0">
+                                                        @(string.IsNullOrEmpty(item.SpecialInstructions) ? "" : item.SpecialInstructions)
+
+                                                    </div>
+                                                </div>
+
+
+
+
+                                                @if (item.Warnings.Count > 0)
+                                                {
+                                                    <div class="message-error">
+                                                        <ul>
+                                                            @foreach (var warning in item.Warnings)
+                                                            {
+                                                                <li>@Html.Raw(warning)</li>
+                                                            }
+                                                        </ul>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </td>
+
+                                        <td class="unit-price nobr">
+                                            <label class="td-title">@T("ShoppingCart.UnitPrice"):</label>
+                                            <span class="product-unit-price">@item.UnitPrice</span>
+                                        </td>
+                                        <td class="quantity nobr">
+                                            <label class="td-title" for="itemquantity@(item.Id)">@T("ShoppingCart.Quantity"):</label>
+
+                                            <span class="product-quantity">@item.Quantity</span>
+
+
+                                        </td>
+                                        <td class="subtotal nobr end">
+                                            <label class="td-title">@T("ShoppingCart.ItemTotal"):</label>
+                                            <span class="product-subtotal">@item.SubTotal</span>
+
+                                            @if (!string.IsNullOrEmpty(item.MemberShipDiscount))
+                                            {
+
+                                                <div class="discount">
+                                                    @item.MemberShipDiscount
+                                                    <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.MemberShipDiscount.help")">
+                                                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M7.5 0C3.35816 0 0 3.35936 0 7.5C0 11.6431 3.35816 15 7.5 15C11.6418 15 15 11.6431 15 7.5C15 3.35936 11.6418 0 7.5 0ZM7.5 3.32661C8.20149 3.32661 8.77016 3.89528 8.77016 4.59677C8.77016 5.29827 8.20149 5.86694 7.5 5.86694C6.79851 5.86694 6.22984 5.29827 6.22984 4.59677C6.22984 3.89528 6.79851 3.32661 7.5 3.32661ZM9.19355 11.0081C9.19355 11.2085 9.03106 11.371 8.83064 11.371H6.16935C5.96894 11.371 5.80645 11.2085 5.80645 11.0081V10.2823C5.80645 10.0818 5.96894 9.91935 6.16935 9.91935H6.53226V7.98387H6.16935C5.96894 7.98387 5.80645 7.82138 5.80645 7.62097V6.89516C5.80645 6.69475 5.96894 6.53226 6.16935 6.53226H8.10484C8.30525 6.53226 8.46774 6.69475 8.46774 6.89516V9.91935H8.83064C9.03106 9.91935 9.19355 10.0818 9.19355 10.2823V11.0081Z" fill="black" fill-opacity="0.2"></path>
+                                                        </svg>
+                                                    </span>
+                                                </div>
+                                            }
+
+                                            @if (!string.IsNullOrEmpty(item.OfferDiscount))
+                                            {
+                                                <div class="discount">
+                                                    @Html.Raw(!string.IsNullOrEmpty(item.OfferDiscount) ? item.OfferDiscount : await _priceFormatter.FormatPriceAsync(0))
+
+
+                                                    <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.OfferDiscount.help")">
+                                                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M7.5 0C3.35816 0 0 3.35936 0 7.5C0 11.6431 3.35816 15 7.5 15C11.6418 15 15 11.6431 15 7.5C15 3.35936 11.6418 0 7.5 0ZM7.5 3.32661C8.20149 3.32661 8.77016 3.89528 8.77016 4.59677C8.77016 5.29827 8.20149 5.86694 7.5 5.86694C6.79851 5.86694 6.22984 5.29827 6.22984 4.59677C6.22984 3.89528 6.79851 3.32661 7.5 3.32661ZM9.19355 11.0081C9.19355 11.2085 9.03106 11.371 8.83064 11.371H6.16935C5.96894 11.371 5.80645 11.2085 5.80645 11.0081V10.2823C5.80645 10.0818 5.96894 9.91935 6.16935 9.91935H6.53226V7.98387H6.16935C5.96894 7.98387 5.80645 7.82138 5.80645 7.62097V6.89516C5.80645 6.69475 5.96894 6.53226 6.16935 6.53226H8.10484C8.30525 6.53226 8.46774 6.69475 8.46774 6.89516V9.91935H8.83064C9.03106 9.91935 9.19355 10.0818 9.19355 10.2823V11.0081Z" fill="black" fill-opacity="0.2"></path>
+                                                        </svg>
+                                                    </span>
+
+                                                </div>
+                                            }
+                                            @if (!string.IsNullOrEmpty(item.BuyMoreSaveMoreDiscount))
+                                            {
+                                                <div class="discount">
+                                                    @Html.Raw(!string.IsNullOrEmpty(item.BuyMoreSaveMoreDiscount) ? item.BuyMoreSaveMoreDiscount : await _priceFormatter.FormatPriceAsync(0))
+                                                    <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.BuyMoreSaveMoreDiscount.help")">
+                                                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M7.5 0C3.35816 0 0 3.35936 0 7.5C0 11.6431 3.35816 15 7.5 15C11.6418 15 15 11.6431 15 7.5C15 3.35936 11.6418 0 7.5 0ZM7.5 3.32661C8.20149 3.32661 8.77016 3.89528 8.77016 4.59677C8.77016 5.29827 8.20149 5.86694 7.5 5.86694C6.79851 5.86694 6.22984 5.29827 6.22984 4.59677C6.22984 3.89528 6.79851 3.32661 7.5 3.32661ZM9.19355 11.0081C9.19355 11.2085 9.03106 11.371 8.83064 11.371H6.16935C5.96894 11.371 5.80645 11.2085 5.80645 11.0081V10.2823C5.80645 10.0818 5.96894 9.91935 6.16935 9.91935H6.53226V7.98387H6.16935C5.96894 7.98387 5.80645 7.82138 5.80645 7.62097V6.89516C5.80645 6.69475 5.96894 6.53226 6.16935 6.53226H8.10484C8.30525 6.53226 8.46774 6.69475 8.46774 6.89516V9.91935H8.83064C9.03106 9.91935 9.19355 10.0818 9.19355 10.2823V11.0081Z" fill="black" fill-opacity="0.2"></path>
+                                                        </svg>
+                                                    </span>
+                                                </div>
+                                            }
+
+                                            @if (!string.IsNullOrEmpty(item.Discount))
+                                            {
+
+                                                <div class="discount">
+                                                    @item.Discount
+                                                    <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.Coupon.Discount.help")">
+                                                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M7.5 0C3.35816 0 0 3.35936 0 7.5C0 11.6431 3.35816 15 7.5 15C11.6418 15 15 11.6431 15 7.5C15 3.35936 11.6418 0 7.5 0ZM7.5 3.32661C8.20149 3.32661 8.77016 3.89528 8.77016 4.59677C8.77016 5.29827 8.20149 5.86694 7.5 5.86694C6.79851 5.86694 6.22984 5.29827 6.22984 4.59677C6.22984 3.89528 6.79851 3.32661 7.5 3.32661ZM9.19355 11.0081C9.19355 11.2085 9.03106 11.371 8.83064 11.371H6.16935C5.96894 11.371 5.80645 11.2085 5.80645 11.0081V10.2823C5.80645 10.0818 5.96894 9.91935 6.16935 9.91935H6.53226V7.98387H6.16935C5.96894 7.98387 5.80645 7.82138 5.80645 7.62097V6.89516C5.80645 6.69475 5.96894 6.53226 6.16935 6.53226H8.10484C8.30525 6.53226 8.46774 6.69475 8.46774 6.89516V9.91935H8.83064C9.03106 9.91935 9.19355 10.0818 9.19355 10.2823V11.0081Z" fill="black" fill-opacity="0.2"></path>
+                                                        </svg>
+                                                    </span>
+                                                </div>
+                                                if (item.MaximumDiscountedQty.HasValue)
+                                                {
+                                                    <div class="discount-additional-info">
+                                                        @T("ShoppingCart.MaximumDiscountedQty", item.MaximumDiscountedQty.Value)
+                                                    </div>
+                                                }
+                                            }
+
+                                        </td>
+
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+
+
+                }
+                else
+                {
+                    @foreach (var item in Model.Cart.Items)
+                    {
+                        <div class="shopiing-product-details">
+                            <div class="col-md-12">
+                                <div class="image-section">
+                                    <div class="d-block float-start">
+                                        <input name="selectedIds[]" class="checkbox" value="@item.Id" type="checkbox">
+                                    </div>
+                                    <div class="d-block float-start">
+                                        <a href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" /></a>
+                                    </div>
+                                </div>
+                                <div class="desc-section">
+                                    <p class="name">
+                                        <a href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})" class="product-name">@item.ProductName</a>
+                                    </p>
+
+                                    @if (!string.IsNullOrEmpty(item.Sku))
+                                    {
+
+                                        <p class="sku">@T("shoppingcart.sku") @Html.Raw(item.Sku)</p>
+                                    }
+                                    @if (!string.IsNullOrEmpty(item.AttributeInfo))
+                                    {
+                                        {
+                                            string[] attrs = item.AttributeInfo.Split(new string[] { "<br />" }, StringSplitOptions.None);
+                                            foreach (var attr in attrs)
+                                            {
+                                                string[] _attrParts = attr.Split(':');
+                                                <p>@_attrParts[0]  @Html.Raw(System.Net.WebUtility.HtmlDecode(string.Join(':', _attrParts.Skip(1))))</p>
+
+
+                                            }
+
+                                        }
+                                    }
+                                    @if (item.Warnings.Count > 0)
+                                    {
+                                        <div class="message-error">
+                                            <ul>
+                                                @foreach (var warning in item.Warnings)
+                                                {
+                                                    <li>@Html.Raw(warning)</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    }
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 price-table">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td>@T("ShoppingCart.UnitPrice")</td>
+                                            <td>@T("ShoppingCart.Quantity")</td>
+                                            <td>@T("ShoppingCart.Discount")</td>
+                                            <td>@T("ShoppingCart.ItemTotal")</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="price"> @item.UnitPrice</span>
+                                            </td>
+                                            <td>
+                                                <span class="product-quantity">@item.Quantity</span>
+
+                                            </td>
+                                            <td>
+                                                <span class="discont">
+                                                    @if (!string.IsNullOrEmpty(item.Discount))
+                                                    {
+                                                        @item.Discount
+                                                        <br />
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(item.MemberShipDiscount))
+                                                    {
+
+                                                        <div class="checkout-discount">
+                                                            <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.MemberShipDiscount.help")">
+                                                                @item.MemberShipDiscount
+                                                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <path d="M7.5 0C3.35816 0 0 3.35936 0 7.5C0 11.6431 3.35816 15 7.5 15C11.6418 15 15 11.6431 15 7.5C15 3.35936 11.6418 0 7.5 0ZM7.5 3.32661C8.20149 3.32661 8.77016 3.89528 8.77016 4.59677C8.77016 5.29827 8.20149 5.86694 7.5 5.86694C6.79851 5.86694 6.22984 5.29827 6.22984 4.59677C6.22984 3.89528 6.79851 3.32661 7.5 3.32661ZM9.19355 11.0081C9.19355 11.2085 9.03106 11.371 8.83064 11.371H6.16935C5.96894 11.371 5.80645 11.2085 5.80645 11.0081V10.2823C5.80645 10.0818 5.96894 9.91935 6.16935 9.91935H6.53226V7.98387H6.16935C5.96894 7.98387 5.80645 7.82138 5.80645 7.62097V6.89516C5.80645 6.69475 5.96894 6.53226 6.16935 6.53226H8.10484C8.30525 6.53226 8.46774 6.69475 8.46774 6.89516V9.91935H8.83064C9.03106 9.91935 9.19355 10.0818 9.19355 10.2823V11.0081Z" fill="black" fill-opacity="0.2"></path>
+                                                                </svg>
+                                                            </span><br />
+                                                        </div>
+                                                    }
+
+                                                    @if (!string.IsNullOrEmpty(item.OfferDiscount))
+                                                    {
+                                                        <div class="checkout-discount">
+                                                            <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.OfferDiscount.help")">
+                                                                @Html.Raw(!string.IsNullOrEmpty(item.OfferDiscount) ? item.OfferDiscount : await _priceFormatter.FormatPriceAsync(0))
+                                                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <path d="M7.5 0C3.35816 0 0 3.35936 0 7.5C0 11.6431 3.35816 15 7.5 15C11.6418 15 15 11.6431 15 7.5C15 3.35936 11.6418 0 7.5 0ZM7.5 3.32661C8.20149 3.32661 8.77016 3.89528 8.77016 4.59677C8.77016 5.29827 8.20149 5.86694 7.5 5.86694C6.79851 5.86694 6.22984 5.29827 6.22984 4.59677C6.22984 3.89528 6.79851 3.32661 7.5 3.32661ZM9.19355 11.0081C9.19355 11.2085 9.03106 11.371 8.83064 11.371H6.16935C5.96894 11.371 5.80645 11.2085 5.80645 11.0081V10.2823C5.80645 10.0818 5.96894 9.91935 6.16935 9.91935H6.53226V7.98387H6.16935C5.96894 7.98387 5.80645 7.82138 5.80645 7.62097V6.89516C5.80645 6.69475 5.96894 6.53226 6.16935 6.53226H8.10484C8.30525 6.53226 8.46774 6.69475 8.46774 6.89516V9.91935H8.83064C9.03106 9.91935 9.19355 10.0818 9.19355 10.2823V11.0081Z" fill="black" fill-opacity="0.2"></path>
+                                                                </svg>
+                                                            </span>
+                                                        </div>
+                                                    }
+
+                                                    @if (!string.IsNullOrEmpty(item.BuyMoreSaveMoreDiscount))
+                                                    {
+
+                                                        <div class="checkout-discount">
+                                                            <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.BuyMoreSaveMoreDiscount.help")">
+                                                                @Html.Raw(!string.IsNullOrEmpty(item.BuyMoreSaveMoreDiscount) ? item.BuyMoreSaveMoreDiscount : await _priceFormatter.FormatPriceAsync(0))
+                                                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <path d="M7.5 0C3.35816 0 0 3.35936 0 7.5C0 11.6431 3.35816 15 7.5 15C11.6418 15 15 11.6431 15 7.5C15 3.35936 11.6418 0 7.5 0ZM7.5 3.32661C8.20149 3.32661 8.77016 3.89528 8.77016 4.59677C8.77016 5.29827 8.20149 5.86694 7.5 5.86694C6.79851 5.86694 6.22984 5.29827 6.22984 4.59677C6.22984 3.89528 6.79851 3.32661 7.5 3.32661ZM9.19355 11.0081C9.19355 11.2085 9.03106 11.371 8.83064 11.371H6.16935C5.96894 11.371 5.80645 11.2085 5.80645 11.0081V10.2823C5.80645 10.0818 5.96894 9.91935 6.16935 9.91935H6.53226V7.98387H6.16935C5.96894 7.98387 5.80645 7.82138 5.80645 7.62097V6.89516C5.80645 6.69475 5.96894 6.53226 6.16935 6.53226H8.10484C8.30525 6.53226 8.46774 6.69475 8.46774 6.89516V9.91935H8.83064C9.03106 9.91935 9.19355 10.0818 9.19355 10.2823V11.0081Z" fill="black" fill-opacity="0.2"></path>
+                                                                </svg>
+                                                            </span>
+
+                                                        </div>
+                                                    }
+
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="sub-total"> @item.SubTotalIncludeDiscount</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-12 cart-save-later d-block">
+
+                                @item.SpecialInstructions
+
+
+                            </div>
+                        </div>
+                    }
+
+                }
+
+            </div>
+
+            <div class="cart-footer">
+                <div class="row">
+
+                    <div class="checkout-buttons">
+
+                        <button type="submit" name="checkout-signin" value="checkout-signin" class="Signin checkout button-2 btn btn-primary checkout-button">
+                            @T("AbdandonedCart.Btn.Proceed")
+                        </button>
+
+                        <a type="submit" href="@Url.RouteUrl("ShoppingCart")" class=" checkoutasguest checkout button-2 btn btn-primary checkout-button">
+                            @T("common.cancel")
+                        </a>
+
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+    </form>
+}
+<script asp-location="Footer">
+    $(".checkboxGroups").change(function () {
+        $(".checkbox").prop('checked', $(this).prop('checked'));
+    })
+</script>

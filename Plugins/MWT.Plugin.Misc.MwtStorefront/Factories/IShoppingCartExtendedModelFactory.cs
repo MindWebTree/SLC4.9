@@ -19,7 +19,6 @@ public partial interface IShoppingCartExtendedModelFactory:IShoppingCartModelFac
     Task<MiniShoppingCartExtendedModel> PrepareCustomFlyoutShoppingCartModelAsync(ShoppingCartType cartType);
     Task<MiniShoppingCartExtendedModel> PrepareWishlistModelAsync(int? list = null);
     Task<WishlistExtendedModel> PrepareCustomWishlistModelAsync(WishlistExtendedModel model, IList<ShoppingCartItem> cart, bool isEditable = true, int? list = null);
-    Task<bool> IsWgsShippingMethodRequired(IList<ShoppingCartItem> cart);
 }
 
 

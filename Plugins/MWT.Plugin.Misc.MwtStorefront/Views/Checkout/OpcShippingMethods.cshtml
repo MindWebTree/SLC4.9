@@ -1,0 +1,140 @@
+﻿@model CheckoutShippingMethodModel
+
+
+
+<div class="checkout-shipping-address" data-addressId="">
+    @if (ViewData["ShippingAddress"] != null)
+    {
+        @await Html.PartialAsync("OpcShippingAddress", ViewData["ShippingAddress"])
+    }
+</div>
+<div class="step-title"><h2>@T("opc.heading.deliveryoptions")</h2></div>
+<div class="errors-container"></div>
+<div class="checkout-data">
+    @if (Model.DisplayPickupInStore && Model.PickupPointsModel.AllowPickupInStore)
+    {
+        @await Html.PartialAsync("_PickupPoints", Model.PickupPointsModel)
+        <script>
+            $(document).ready(function () {
+                $(document).unbind('checkout_toggle_pickup_in_store');
+                $(document).on('checkout_toggle_pickup_in_store', function (e) {
+                    if (e.checked)
+                        $('#shipping-methods-form').hide();
+                    else
+                        $('#shipping-methods-form').show();
+                });
+            });
+        </script>
+    }
+    @if (Model.PickupPointsModel == null || !Model.PickupPointsModel.PickupInStoreOnly)
+    {
+        <div class="subheading">
+            @T("opc.subheading.deliveryoptions")
+        </div>
+        <div class="shipping-option clear">
+            @if (Model.Warnings.Count == 0)
+            {
+                <div>
+                    @for (var i = 0; i < Model.ShippingMethods.Count; i++)
+                    {
+                        var shippingMethod = Model.ShippingMethods[i];
+
+                        <div class="section-option @(shippingMethod.Selected?"active":string.Empty)">
+
+                            <label for="shippingoption_@(i)">
+                                @if (Model.WgsRequired)
+                                {
+
+                                    @if (shippingMethod.Name.Contains("white glove service", StringComparison.InvariantCultureIgnoreCase))
+                                    {
+                                        <div class="shipping-option-name">
+                                            <span>
+                                                <strong>@T("Checkout.SelectShippingMethod.MethodAndFee", shippingMethod.Name, "")</strong>
+                                            </span>
+                                            <span class="delivery-tag">@T("Shipping.Tag.Recommended")</span>
+                                            <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" aria-label="Offer Discount" data-bs-original-title="@T("Shipping.Tag.Recommended.Help")">
+                                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M7.5 0C3.35816 0 0 3.35936 0 7.5C0 11.6431 3.35816 15 7.5 15C11.6418 15 15 11.6431 15 7.5C15 3.35936 11.6418 0 7.5 0ZM7.5 3.32661C8.20149 3.32661 8.77016 3.89528 8.77016 4.59677C8.77016 5.29827 8.20149 5.86694 7.5 5.86694C6.79851 5.86694 6.22984 5.29827 6.22984 4.59677C6.22984 3.89528 6.79851 3.32661 7.5 3.32661ZM9.19355 11.0081C9.19355 11.2085 9.03106 11.371 8.83064 11.371H6.16935C5.96894 11.371 5.80645 11.2085 5.80645 11.0081V10.2823C5.80645 10.0818 5.96894 9.91935 6.16935 9.91935H6.53226V7.98387H6.16935C5.96894 7.98387 5.80645 7.82138 5.80645 7.62097V6.89516C5.80645 6.69475 5.96894 6.53226 6.16935 6.53226H8.10484C8.30525 6.53226 8.46774 6.69475 8.46774 6.89516V9.91935H8.83064C9.03106 9.91935 9.19355 10.0818 9.19355 10.2823V11.0081Z" fill="black" fill-opacity="0.2"></path>
+                                                </svg>
+                                            </span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            <strong>@T("Checkout.SelectShippingMethod.MethodAndFee", shippingMethod.Name, "")</strong>
+                                        </span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span>
+                                        <strong>@T("Checkout.SelectShippingMethod.MethodAndFee", shippingMethod.Name, "")</strong>
+                                    </span>
+
+                                }
+
+
+                                @if (!string.IsNullOrEmpty(shippingMethod.Description))
+                                {
+                                    <span class="section-option-description">
+                                        @Html.Raw(string.IsNullOrEmpty(shippingMethod.CustomShippingMethodDescription) ? shippingMethod.Description : shippingMethod.CustomShippingMethodDescription)
+                                    </span>
+                                }
+
+                                @if (!string.IsNullOrEmpty(shippingMethod.AdditionalFee))
+                                {
+                                    <p class="section-option-additionalcharges">
+                                        @T("Checkout.SelectShippingMethod.AdditionalCharges", shippingMethod.AdditionalFee)
+                                    </p>
+                                }
+                            </label>
+
+                            <!-- Price & Radio button section -->
+                            <div class="shipping-section-price-info">
+                                <!-- Price on the left -->
+                                <span style="color: green; font-size: 14px; font-weight: bold; margin-right: auto;">
+                                    <span style="color: green; font-size: 14px; font-weight: bold; margin-right: auto;">
+                                        @if (shippingMethod.Fee != "$0.00")
+                                        {
+                                            @shippingMethod.FeeExcludedAdditionalCharges
+                                        }
+                                        else
+                                        {
+                                            <span>@T("Common.Free")</span>
+                                        }
+                                    </span>
+
+                                </span>
+
+
+                                <!-- Radio button on the right -->
+                                <input id="shippingoption_@(i)" type="radio" name="shippingoption"
+                                       value="@(shippingMethod.Name)___@(shippingMethod.ShippingRateComputationMethodSystemName)"
+                                @(shippingMethod.Selected ? "checked" : "") />
+                            </div>
+
+                        </div>
+
+
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="row step-section ">
+                    <ul>
+                        @foreach (var warning in Model.Warnings)
+                        {
+                            <li>@warning</li>
+                        }
+                    </ul>
+                </div>
+            }
+
+
+        </div>
+
+    }
+</div>
+

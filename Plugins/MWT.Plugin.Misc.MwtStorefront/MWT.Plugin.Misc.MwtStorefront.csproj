@@ -104,7 +104,7 @@
 	<ItemGroup>
 		<Folder Include="Areas\Admin\Models\ProductBundle\" />
 		<Folder Include="Areas\Admin\Views\ProductBundle\" />
-		<Folder Include="Factories\Api\" />
+		<Folder Include="Models\CustomOrder\" />
 	</ItemGroup>
 
 	<ItemGroup>

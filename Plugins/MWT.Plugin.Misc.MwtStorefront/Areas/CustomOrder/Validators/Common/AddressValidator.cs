@@ -10,7 +10,7 @@ using MWT.Plugin.Misc.MwtStorefront.Models.Common;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Areas.Validators.Common
 {
-    public partial class AddressValidator : BaseNopValidator<AddressExtendedModel>
+    public partial class AddressValidator : BaseNopValidator<AddressModel>
     {
         public AddressValidator(ILocalizationService localizationService,
             IStateProvinceService stateProvinceService,

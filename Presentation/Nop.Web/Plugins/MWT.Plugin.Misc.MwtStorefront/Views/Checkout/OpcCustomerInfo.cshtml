@@ -1,0 +1,386 @@
+﻿@using Nop.Core
+@using Nop.Web.Models.Customizations.Common;
+@model CheckoutAddressModel
+@inject Nop.Core.IWebHelper webHelper
+@inject Nop.Services.Customers.ICustomerService _customerService;
+@inject Nop.Core.IWorkContext _workContext;
+
+@{
+    bool isRegisterd = await _customerService.IsRegisteredAsync(await _workContext.GetCurrentCustomerAsync());
+    var errors = ViewData.ModelState.Where(n => n.Value.Errors.Count > 0).ToList();
+}
+
+<div class="checkout-shipping-address" data-addressId="@Model.Id">
+    @if (Model.Id > 0)
+    {
+        @await Html.PartialAsync("OpcShippingAddress", Model)
+    }
+</div>
+<div class="checkout-shipping-address-form @(ViewData.ModelState.IsValid && Model.Id>0?"d-none":string.Empty)">
+    @if (string.IsNullOrEmpty(Model.Email))
+    {
+        <div class="checkout-contact-section">
+            <div class="step-title"><h2>@T("opc.heading.deliverycontact")</h2></div>
+            <div class="form-group">
+                <input asp-for="Email" placeholder="@Html.DisplayNameFor(m => m.Email)" class="form-control" />
+                <div class="checkout-label">
+                    <label asp-for="Email"></label>
+                    <nop-required />
+                </div>
+                <span asp-validation-for="Email"></span>
+            </div>
+        </div>
+    }
+
+
+    @*// Shipping Address*@
+    <div class="step-title"><h2 class="shippingAddressSection" data-attr-label="@T("opc.heading.edit.shippingaddress")">@T(Model.Id > 0 ? "opc.heading.edit.shippingaddress" : "opc.heading.deliveryaddress")</h2></div>
+    <div class="errors-container" style="@(errors.Count>0?"display:block":"display:none")">
+        @Html.ValidationSummary(false)
+    </div>
+    <div class="errors-container"></div>
+    @if (Model.GenderEnabled)
+    {
+        // Hidden fields
+
+        <input type="radio" asp-for="Gender" value="M" class="custom-control-input hidden" checked="@(Model.Gender == "M")" id="gender-male" />
+    }
+    @if (Model.DateOfBirthEnabled)
+    {
+        <input type="hidden" name="DateOfBirthDay" value="@(Model.DateOfBirthDay==null?1:Model.DateOfBirthDay)" />
+        <input type="hidden" name="DateOfBirthMonth" value="@(Model.DateOfBirthMonth==null?1:Model.DateOfBirthMonth)" />
+        <input type="hidden" name="DateOfBirthMonth" value="@(Model.DateOfBirthYear==null?1999:Model.DateOfBirthYear)" />
+    }
+    @if (Model.UsernamesEnabled)
+    {
+        if (Model.AllowUsersToChangeUsernames)
+        {
+            <input asp-for="Username" type="hidden" />
+            <script type="text/javascript">
+
+                document.addEventListener("DOMContentLoaded", function () {
+                    $("#Email").keypress(function (e) {
+                        $("#Username").val($("#Email").val());
+                    });
+            </script>
+        }
+    }
+
+    @if (Model.CompanyEnabled || Model.DisplayVatNumber)
+    {
+
+        @if (Model.CompanyEnabled)
+        {
+            @if (Model.CompanyRequired)
+            {
+                <input type="hidden" name="Company" value="@(string.IsNullOrEmpty(Model.Company)?"-":Model.Company)" />
+            }
+            else
+            {
+                <input type="hidden" name="Company" value="@Model.Company" />
+            }
+        }
+        @if (Model.DisplayVatNumber)
+        {
+            <input type="hidden" name="VatNumber" value="@Model.VatNumber" />
+        }
+    }
+
+
+
+
+
+    @if (Model.FaxEnabled)
+    {
+        @if (Model.FaxRequired)
+        {
+            <input type="hidden" name="Fax" value="@(string.IsNullOrEmpty( Model.Fax) ? "----" : Model.Fax)" />
+        }
+        else
+        {
+            <input type="hidden" name="Fax" value="@Model.Fax" />
+        }
+    }
+
+
+
+
+
+    <input class="address-id" name="shipping_address_id" value="@Model.Id" type="hidden" />
+    <input class="address-id" asp-for="Id" type="hidden" />
+    <input class="address-id" asp-for="FirstName" type="hidden" />
+    <input class="address-id" asp-for="LastName" type="hidden" />
+
+    @if (Model.CompanyEnabled)
+    {
+        @if (Model.CompanyRequired)
+        {
+            <input type="hidden" name="Company" value="@(string.IsNullOrEmpty( Model.Company)?"----":Model.Company)" />
+        }
+        else
+        {
+            <input class="address-id" asp-for="Company" type="hidden" />
+        }
+    }
+
+    @if (Model.FaxEnabled)
+    {
+        @if (Model.FaxRequired)
+        {
+            <input type="hidden" name="FaxNumber" value="@(string.IsNullOrEmpty( Model.FaxNumber)?"----":Model.FaxNumber)" />
+        }
+        else
+        {
+            <input class="address-id" asp-for="FaxNumber" type="hidden" />
+        }
+    }
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <input asp-for="FullName" class="form-control" placeholder="@Html.DisplayNameFor(m=>m.FullName)" />
+            <div class="checkout-label">
+                <label asp-for="FullName"></label>
+                <nop-required />
+            </div>
+            <span asp-validation-for="FullName"></span>
+        </div>
+    </div>
+    <div class="form-row shipping-field-email @(!string.IsNullOrEmpty(Model.Email)?string.Empty:"d-none")">
+        <div class="form-group col-md-12">
+
+            <input asp-for="Email" class="form-control" placeholder="@Html.DisplayNameFor(m=>m.Email)" />
+            <div class="checkout-label">
+                <label asp-for="Email"></label>
+                <nop-required />
+            </div>
+            <span asp-validation-for="Email"></span>
+        </div>
+    </div>
+    @if (Model.StreetAddressEnabled || Model.StreetAddress2Enabled)
+    {
+        @if (Model.StreetAddressEnabled)
+        {
+            <div class="form-row ">
+                <div class="form-group col-md-12">
+                    <input asp-for="Address1" class="form-control" placeholder="@Html.DisplayNameFor(m=>m.Address1)" />
+                    <div class="checkout-label">
+                        <label asp-for="Address1"></label>
+                        <nop-required />
+
+                    </div>
+                    <span asp-validation-for="Address1"></span>
+                </div>
+            </div>
+        }
+
+        @if (Model.StreetAddress2Enabled)
+        {
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <input asp-for="Address2" class="form-control" placeholder="@Html.DisplayNameFor(m=>m.Address2)" />
+                    <div class="checkout-label">
+                        <label asp-for="Address2"></label>
+                    </div>
+                    <span asp-validation-for="Address2"></span>
+                </div>
+            </div>
+        }
+
+    }
+    @if (Model.CountryEnabled && Model.StateProvinceEnabled)
+    {
+        var states = Model.AvailableStates;
+        var countries = Model.AvailableCountries;
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+
+                <select asp-for="CountryId" asp-items="countries" class="form-control  @((Model.CountryId??0)!=0?"show-label":"")"
+                        data-trigger="country-select"
+                        data-url="@(Url.RouteUrl("GetStatesByCountryId"))"
+                        data-stateprovince="#@Html.IdFor(model => model.StateProvinceId)"
+                        data-loading="#states-loading-progress"></select>
+                <div class="checkout-label">
+                    <label asp-for="CountryId"></label>
+                    <nop-required />
+                </div>
+                <span asp-validation-for="CountryId"></span>
+            </div>
+            <div class="form-group col-md-6">
+
+                <select asp-for="StateProvinceId" asp-items="states" data-trigger="state-select" class="form-control @((Model.StateProvinceId??0)!=0?"show-label":"")"></select>
+                <div class="checkout-label">
+                    <label asp-for="StateProvinceId"></label>
+                    <nop-required />
+                </div>
+                <span asp-validation-for="StateProvinceId"></span>
+            </div>
+        </div>
+
+    }
+    else if (Model.CountryEnabled)
+    {
+        <div class="form-row">
+            <div class="form-group col-md-5">
+
+                <select asp-for="CountryId" asp-items="Model.AvailableCountries" class="form-control  @((Model.CountryId??0)!=0?"show-label":"")"
+                        data-trigger="country-select"
+                        data-url="@(Url.RouteUrl("GetStatesByCountryId"))"
+                        data-stateprovince="#@Html.IdFor(model => model.StateProvinceId)"
+                        data-loading="#states-loading-progress"></select>
+                <div class="checkout-label">
+                    <label asp-for="CountryId"></label>
+                    <nop-required />
+                </div>
+                <span asp-validation-for="CountryId"></span>
+            </div>
+        </div>
+    }
+
+
+    @if (Model.ZipPostalCodeEnabled)
+    {
+        <div class="form-row">
+            <div class="form-group  col-md-6">
+
+                <input asp-for="ZipPostalCode" class="form-control" placeholder="@Html.DisplayNameFor(m => m.ZipPostalCode)" />
+                <div class="checkout-label">
+                    <label asp-for="ZipPostalCode"></label>
+                    <nop-required />
+                </div>
+
+                <span asp-validation-for="ZipPostalCode"></span>
+            </div>
+
+            @if (Model.CityEnabled)
+            {
+                <div class="form-group col-md-6">
+
+                    <input asp-for="City" class="form-control" placeholder="@Html.DisplayNameFor(m => m.City)" />
+                    <div class="checkout-label">
+                        <label asp-for="City"></label>
+                        <nop-required />
+                    </div>
+                    <span asp-validation-for="City"></span>
+                </div>
+            }
+        </div>
+    }
+    else @if (Model.CityEnabled)
+{
+<div class="form-row">
+    <div class="form-group col-md-6">
+
+        <input asp-for="City" class="form-control" placeholder="@Html.DisplayNameFor(m => m.City)" />
+        <div class="checkout-label">
+            <label asp-for="City"></label>
+            <nop-required />
+        </div>
+        <span asp-validation-for="City"></span>
+    </div>
+</div>
+}
+    @if (Model.CountyEnabled)
+    {
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+
+                <input asp-for="County" class="form-control" placeholder="@Html.DisplayNameFor(m=>m.County)" />
+                <div class="checkout-label">
+                    <label asp-for="County"></label>
+                    <nop-required />
+                </div>
+                <span asp-validation-for="County"></span>
+            </div>
+        </div>
+    }
+
+
+
+
+
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <input asp-for="PhoneNumber" class="form-control" placeholder="@Html.DisplayNameFor(m=>m.PhoneNumber)" />
+            <div class="checkout-label">
+                <label asp-for="PhoneNumber"></label>
+                <nop-required />
+            </div>
+            <span asp-validation-for="PhoneNumber"></span>
+        </div>
+    </div>
+
+
+
+
+
+    @if (Model.GdprConsents.Count > 0)
+    {
+
+        @foreach (var consent in Model.GdprConsents)
+        {
+            <div class="form-row gdpr-consent">
+                <div class="form-group col-md-12">
+                    @if (consent.IsRequired)
+                    {
+                        <script asp-location="Footer">
+                                $(document).ready(function () {
+                                    $('#save-info-button').on('click', function () {
+                                        if ($('#consent@(consent.Id)').is(':checked')) {
+                                            //do some stuff
+                                            return true;
+                                        } else {
+                                            //just show validation errors, don't post
+                                            alert('@Html.Raw(JavaScriptEncoder.Default.Encode(consent.RequiredMessage))');
+                                            return false;
+                                        }
+                                    });
+                                });
+                        </script>
+                    }
+
+                    <input id="consent@(consent.Id)" type="checkbox" class="custom-control-input col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-form-label " name="consent@(consent.Id)" checked="@consent.Accepted" />
+                    <label for="consent@(consent.Id)" class="custom-control-label consent-label gdprconsent">@Html.Raw(string.Format(consent.Message, " " + Model.PhoneNumber ?? ""))</label>
+                </div>
+            </div>
+        }
+    }
+
+
+
+    <div class="shipping-address-button @(Model.Id>0?string.Empty:"d-none")">
+        <div class="row">
+            <div class="col-md-6">
+                <button type="button" class="cancel">@T("Common.Cancel")</button>
+            </div>
+            <div class="col-md-6">
+                <button type="button" class="save" onclick="customerInfo.save(false)">@T("Common.Save")</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div id="hiddenautocomplete"></div>
+<script type="text/javascript">
+        $(document).ready(function () {
+            $.validator.unobtrusive.parse("#co-customerinfo-form");
+            Shipping.initializeCountrySelect();
+            Checkout.autoCompleteAddress("customerinfo");
+        });
+        $(".checkout-shipping-address-form .cancel").click(function () {
+            $(".checkout-shipping-address-form").addClass("d-none");
+            $("#checkout-step-customerinfo .checkoutdesktopbtn").removeClass("d-none");
+        })
+
+        if ('@ViewData.ModelState.IsValid' == 'True') {
+            $("#checkout-step-customerinfo .checkoutdesktopbtn").removeClass("d-none");
+        }
+
+</script>
+
+
+
+
+
+
+

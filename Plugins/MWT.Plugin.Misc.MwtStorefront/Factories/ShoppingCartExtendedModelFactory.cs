@@ -1,4 +1,4 @@
-﻿    using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MWT.Nop.Core.Data.Discounts;
 using MWT.Nop.Core.Domain.Orders;
@@ -13,17 +13,13 @@ using Nop.Core.Caching;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Directory;
 using Nop.Core.Domain.Discounts;
 using Nop.Core.Domain.Media;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Security;
 using Nop.Core.Domain.Shipping;
-using Nop.Core.Domain.Stores;
 using Nop.Core.Domain.Tax;
 using Nop.Core.Domain.Vendors;
-using Nop.Core.Http.Extensions;
-using Nop.Core.Infrastructure;
 using Nop.Services.Attributes;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
@@ -44,14 +40,9 @@ using Nop.Services.Tax;
 using Nop.Services.Vendors;
 using Nop.Web.Factories;
 using Nop.Web.Infrastructure.Cache;
-using Nop.Web.Models.Common;
 using Nop.Web.Models.Media;
 using Nop.Web.Models.ShoppingCart;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 using DiscountType = MWT.Nop.Core.Domain.Orders.DiscountType;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Factories;
@@ -1475,26 +1466,6 @@ public partial class ShoppingCartExtendedModelFactory : ShoppingCartModelFactory
 
         return model;
     }
-    public async Task<bool> IsWgsShippingMethodRequired(IList<ShoppingCartItem> cart)
-    {
-
-        bool wgsRequired = false;
-        foreach (var item in cart)
-        {
-            string attributeDescription = await _customProductAttributeFormatter.CustomFormatAttributesAsync(await _productService.GetProductByIdAsync(item.ProductId), item.AttributesXml);
-            int variantId = await _productExtendedService.GetVariantId(item.ProductId, attributeDescription);
-            if (variantId > 0)
-            {
-                var variantCombination = await _productExtendedService.GetProductVariants(item.ProductId);
-                if ((variantCombination.Where(v => v.VariantId == variantId).FirstOrDefault()?.WgsRequired ?? false))
-                {
-                    wgsRequired = true;
-                    break;
-                }
-            }
-        }
-        return wgsRequired;
-    }
 
     #region WishList
 
@@ -1570,7 +1541,7 @@ public partial class ShoppingCartExtendedModelFactory : ShoppingCartModelFactory
         string paramVariantId = variantId.ToString();
         if (!string.IsNullOrEmpty(sci.AttributesXml))
         {
-          
+
             paramVariantId += string.Join('-', (await _productAttributeParser
              .ParseProductAttributeValuesAsync(sci.AttributesXml)).Select(av => av.Id));
 

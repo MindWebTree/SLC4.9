@@ -1,0 +1,5 @@
+﻿@{
+    Layout = null;
+}
+
+    @await Component.InvokeAsync("CheckoutOrderSummary", new { isEditable = false, isConfirmationPage= ViewData["isConfirmationPage"]==null?false:Convert.ToBoolean(ViewData["isConfirmationPage"]) })
