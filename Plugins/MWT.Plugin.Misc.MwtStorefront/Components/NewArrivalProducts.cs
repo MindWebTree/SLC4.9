@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MWT.Nop.Core.Service.Catalog;
+using MWT.Plugin.Misc.MwtStorefront.Factories;
+using MWT.Plugin.Misc.MwtStorefront.Infrastructure.Cache;
 using Nop.Core.Caching;
 using Nop.Services.Catalog;
 using Nop.Services.Configuration;
@@ -16,15 +19,15 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
     public class NewArrivalProductsViewComponent : NopViewComponent
     {
         private readonly IAclService _aclService;
-        private readonly IProductModelFactory _productModelFactory;
-        private readonly IProductService _productService;
+        private readonly ICustomProductModelFactory _productModelFactory;
+        private readonly IProductExtendedService _productService;
         private readonly IStoreMappingService _storeMappingService;
         private readonly IStaticCacheManager _staticCacheManager;
         private readonly ISettingService _settingService;
 
         public NewArrivalProductsViewComponent(IAclService aclService,
-            IProductModelFactory productModelFactory,
-            IProductService productService,
+            ICustomProductModelFactory productModelFactory,
+            IProductExtendedService productService,
             IStoreMappingService storeMappingService,
             IStaticCacheManager staticCacheManager,
             ISettingService settingService)
@@ -50,7 +53,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
 
             }
             //load and cache report
-            var newArrivals = await (await _staticCacheManager.GetAsync(NopModelCacheDefaults.NewArrivalCacheKey,
+            var newArrivals = await (await _staticCacheManager.GetAsync(CustomNopModelCacheDefaults.NewArrivalCacheKey,
                 async () => await (await _productService.GetNewArrivalProductsAsync(0,
                     pageSize: numberOfNewArrival)).ToListAsync())).WhereAwait(async p => await _aclService.AuthorizeAsync(p)
                     && await _storeMappingService.AuthorizeAsync(p))
