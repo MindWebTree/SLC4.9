@@ -98,7 +98,7 @@ namespace Nop.Web.Infrastructure.Customizations
 
             services.AddScoped<IIpAddressService, IpAddressService>();
             services.AddScoped<IIPLiteService, IPLiteService>();
-            services.AddScoped<IBundleLoggerService, BundleLoggerService>();
+            services.AddScoped<IBundleLoggerService, BundleLoggerService>(); 
 
             #region Tag
             services.AddScoped<ITagSlugService, TagSlugService>();

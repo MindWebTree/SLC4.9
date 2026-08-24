@@ -48,7 +48,7 @@
 
     var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl && !localizationSettings.IgnoreRtlPropertyForAdminArea;
 
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     NopHtml.AppendCssFileParts("~/css/Customizations/Areas/CustomOrder/style.css?msg=version3");
     NopHtml.AppendCssFileParts("~/css/Customizations/Areas/CustomOrder/bootstrap.min.css");
 
@@ -68,10 +68,10 @@
     NopHtml.AppendScriptParts(ResourceLocation.Head, $"~/lib_npm/datatables.net-buttons/js/dataTables.buttons.min.js");
     NopHtml.AppendScriptParts(ResourceLocation.Head, $"~/lib_npm/moment/min/moment-with-locales.min.js");
     NopHtml.AppendScriptParts(ResourceLocation.Head, $"~/lib_npm/datatables.net-bs4/js/dataTables.bootstrap4.min.js");
-
+ 
     NopHtml.AppendScriptParts(ResourceLocation.Head, "~/js/admin.table.js");
     NopHtml.AppendScriptParts(ResourceLocation.Head, $"~/lib_npm/datatables.net/js/dataTables.min.js");
-    //  NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/lib/kendo/{kendoVersion}/js/cultures/kendo.culture.{currentKendoCulture}.min.js");
+  //  NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/lib/kendo/{kendoVersion}/js/cultures/kendo.culture.{currentKendoCulture}.min.js");
 
     // var fileInfo = fileProvider.GetFileInfo($"{WebHostEnvironment.WebRootPath}/lib/kendo/{kendoVersion}/js/messages/kendo.messages.{currentKendoCulture}.min.js");
     // @if (fileInfo.Exists)
@@ -103,18 +103,18 @@
     NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/cldrjs/cldr/event.js");
     NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/cldrjs/cldr.js");
 
-    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/admin-lte/plugins/select2/js/select2.full.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/admin-lte/plugins/select2/js/select2.full.min.js");  
     NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/jquery-validation/jquery.validate.min.js");
     NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/bootstrap/js/bootstrap.bundle.min.js");
     NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js");
     NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/overlayscrollbars/browser/overlayscrollbars.browser.es6.min.js");
     NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/admin-lte/js/adminlte.min.js");
-
+ 
     NopHtml.AppendScriptParts(ResourceLocation.Head, $"~/js/public.countryselect.js");
     NopHtml.AppendScriptParts(ResourceLocation.Head, "https://code.jquery.com/ui/1.13.2/jquery-ui.js");
     NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/jquery-ui-dist/jquery-ui.min.js");
     NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/jquery/jquery.min.js");
-
+       
     //page title
     string customOrderPageTitle = !string.IsNullOrWhiteSpace(ViewBag.PageTitle) ? ViewBag.PageTitle + " / " : "";
     customOrderPageTitle += T("CustomOrder.PageTitle").Text;
@@ -131,13 +131,13 @@
     //info: we specify "Admin" area for actions and widgets here for cases when we use this layout in a plugin that is running in a different area than "admin"
 }
 <!DOCTYPE html>
-<html lang="@languageService.GetTwoLetterIsoLanguageName(await workContext.GetWorkingLanguageAsync())" @(supportRtl? Html.Raw(" dir=\"rtl\"") : null)>
+<html lang="@languageService.GetTwoLetterIsoLanguageName(await workContext.GetWorkingLanguageAsync())" @(supportRtl ? Html.Raw(" dir=\"rtl\"") : null)>
 <head>
     <title>@customOrderPageTitle</title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     @*Google Font*@
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic"/>
     <script>
         var rootAppPath = '@(Url.Content("~/"))';
     </script>
@@ -187,7 +187,7 @@
         </div>
     </div>
     <div id="ajaxBusy" style="display:none;">
-        <div>&nbsp;</div>
+        <div    >&nbsp;</div>
     </div>
 
     <section>

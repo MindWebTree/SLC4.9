@@ -18,17 +18,17 @@
 }
 @if (!string.IsNullOrEmpty(Model.Url))
 {
-    <li class="text-center pt-4">
+<li class="text-center pt-4">
 
         <a href="@Model.Url" @(isActive? Html.Raw("class=\"nav-link active\"") : Html.Raw("class=\"nav-link\"")) @(Model.OpenUrlInNewTab? Html.Raw(" target=\"_blank\"") : null)>
-            @if (!string.IsNullOrEmpty(Model.IconClass))
-            {
-                <text>
-                    <img src="@Model.IconClass" />
-                </text>
-            }
+        @if (!string.IsNullOrEmpty(Model.IconClass))
+        {
+            <text>
+                <img src="@Model.IconClass"/>
+            </text>
+        }
 
-            <h6> @Html.Raw(Model.Title)</h6>
-        </a>
-    </li>
+        <h6> @Html.Raw(Model.Title)</h6>
+    </a>
+</li>
 }

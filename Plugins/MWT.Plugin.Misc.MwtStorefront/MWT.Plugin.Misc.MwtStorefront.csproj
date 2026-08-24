@@ -112,7 +112,7 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Views\Customer\Login.cshtml">
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Views\TagCategory\CategoryTemplate-FilterOnSide-3x3.cshtml">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
