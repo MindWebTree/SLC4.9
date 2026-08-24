@@ -63,6 +63,8 @@ namespace MWT.Nop.Core.Services.Customizations.CustomOrders
 
         Task<bool> IsOrderPaid(CustomOrder order);
 
+        Task<dynamic> PrepareBriefOderSummaryModel(int orderId, bool isCustomerPaying = false);
+
         // end
 
         #region Notes

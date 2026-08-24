@@ -31,13 +31,13 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Infrastructure
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<ServiceManager>();
-          //  services.AddScoped<CustomOrderServiceManager>();
+            services.AddScoped<CustomOrderServiceManager>();
             services.AddScoped<IAffirmService, AffirmService>();
         }
 
         public void Configure(IApplicationBuilder application)
         {
- 
+
         }
 
         /// <summary>

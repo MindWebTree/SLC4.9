@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MWT.Nop.Core.Services.Orders;
 using MWT.Nop.Plugin.Payments.Affirm.Models;
 using MWT.Nop.Plugin.Payments.Affirm.Services;
 using Nop.Core;
@@ -27,8 +28,10 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Components
         private readonly OrderSettings _orderSettings;
         private readonly IWorkContext _workContext;
         private readonly ServiceManager _serviceManager;
+        private readonly CustomOrderServiceManager _customServiceManager;
         private readonly IAddressService _addresService;
         private readonly AffirmCheckoutSettings _affirmCheckoutSettings;
+        private readonly IOrderProcessingExtendedService _orderProcessingExtendedService;
         #endregion
 
         #region Ctor
@@ -40,7 +43,9 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Components
             ServiceManager serviceManager,
             IWorkContext workContext,
             IAddressService addresService,
-            AffirmCheckoutSettings affirmCheckoutSettings)
+            AffirmCheckoutSettings affirmCheckoutSettings,
+            IOrderProcessingExtendedService orderProcessingExtendedService,
+            CustomOrderServiceManager customServiceManager)
         {
             _localizationService = localizationService;
             _notificationService = notificationService;
@@ -49,7 +54,8 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Components
             _serviceManager = serviceManager;
             _workContext = workContext;
             _addresService = addresService;
-            _affirmCheckoutSettings= affirmCheckoutSettings;
+            _affirmCheckoutSettings = affirmCheckoutSettings;
+            _customServiceManager = customServiceManager;
         }
 
         #endregion
@@ -68,14 +74,21 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Components
         public async Task<IViewComponentResult> InvokeAsync(string widgetZone, object additionalData)
         {
 
-          
+
             var model = new PaymentInfoModel();
             //prepare order GUID
             var paymentRequest = new ProcessPaymentRequest();
-          //  _paymentService.GenerateOrderGuid(paymentRequest);
+            await _orderProcessingExtendedService.SetProcessPaymentRequestAsync(paymentRequest);
             //try to create an order
-            model = await _serviceManager.CheckoutInit(paymentRequest.OrderGuid);
+            if (additionalData == null)
+            {
+                model = await _serviceManager.CheckoutInit(paymentRequest.OrderGuid);
+            }
+            else
+            {
+                model = await _customServiceManager.CheckoutInit(paymentRequest.OrderGuid, additionalData);
 
+            }
 
             return View("~/Plugins/MWT.Nop.Plugin.Payments.Affirm/Views/PaymentInfo.cshtml", model);
         }

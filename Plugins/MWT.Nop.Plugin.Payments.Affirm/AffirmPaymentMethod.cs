@@ -511,10 +511,10 @@ namespace MWT.Nop.Plugin.Payments.Affirm
         {
             return await _localizationService.GetResourceAsync("Plugins.Payments.Affirm.PaymentMethodDescription");
         }
-        //public string GetPublicViewComponentName()
-        //{
-        //    return AffirmCheckoutDefaults.PAYMENT_INFO_VIEW_COMPONENT_NAME;
-        //}
+       public string GetPublicViewComponentName()
+       {
+           return AffirmCheckoutDefaults.PAYMENT_INFO_VIEW_COMPONENT_NAME;
+      }
         public Type GetPublicViewComponent()
         {
             return typeof(AffirmPaymentInfoViewComponent);

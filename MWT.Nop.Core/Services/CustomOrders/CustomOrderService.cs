@@ -5,9 +5,13 @@ using Nop.Core.Caching;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Orders;
+using Nop.Core.Domain.Payments;
 using Nop.Core.Infrastructure;
 using Nop.Data;
 using Nop.Services.Catalog;
+using Nop.Services.Customers;
+using Nop.Services.Payments;
+using System.Dynamic;
 
 namespace MWT.Nop.Core.Services.Customizations.CustomOrders
 {
@@ -31,6 +35,8 @@ namespace MWT.Nop.Core.Services.Customizations.CustomOrders
         private readonly IProductExtendedService _productService;
         private readonly IProductAttributeFormatter _productAttributeFormatter;
         private readonly IWorkContext _workContext;
+        private readonly ICustomerService _customerService;
+        private readonly IPriceFormatter _priceFormatter;
         #endregion
 
         #region Ctor
@@ -48,7 +54,8 @@ namespace MWT.Nop.Core.Services.Customizations.CustomOrders
                                IRepository<CustomOrderNotesLog> customorderNotesLog,
                                IProductExtendedService productService,
                                IProductAttributeFormatter productAttributeFormatter,
-                               IWorkContext workContext)
+                               IWorkContext workContext, ICustomerService customerService, IPriceFormatter priceFormatter
+                               )
         {
             this._customOrderRepository = customOrderRepository;
             this._customOrderShoppingCartItemRepository = customOrderShoppingCartItemRepository;
@@ -64,6 +71,8 @@ namespace MWT.Nop.Core.Services.Customizations.CustomOrders
             this._productService = productService;
             this._productAttributeFormatter = productAttributeFormatter;
             this._workContext = workContext;
+            this._customerService = customerService;
+            this._priceFormatter = priceFormatter;
         }
 
         #endregion
@@ -210,7 +219,7 @@ namespace MWT.Nop.Core.Services.Customizations.CustomOrders
 
         public async Task<CustomOrderShoppingCartItem> GetOrderItemById(int orderItemId)
         {
-            return await _customOrderShoppingCartItemRepository.GetByIdAsync(orderItemId,cache=>default, true, true);
+            return await _customOrderShoppingCartItemRepository.GetByIdAsync(orderItemId, cache => default, true, true);
         }
 
         public async Task DeleteOrderItemAsync(int Id, int OrderId)
@@ -315,7 +324,7 @@ namespace MWT.Nop.Core.Services.Customizations.CustomOrders
             string orderType = (orderTypes.Where(o => o.Id == order.OrderTypeId)).FirstOrDefault()?.Name;
             decimal houzzFee = 0;
             if (items.Count == 0 &&
-                    orderStatus !=MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString())
+                    orderStatus != MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString())
                 return 0;
             if (orderType == OrderTypes.HouzzOrder.ToString() && order.HouzzFee != null && order.HouzzFee > 0)
             {
@@ -431,6 +440,159 @@ namespace MWT.Nop.Core.Services.Customizations.CustomOrders
 
         #endregion
 
+
+        public async Task<dynamic> PrepareBriefOderSummaryModel(int orderId, bool isCustomerPaying = false)
+        {
+            dynamic model = new ExpandoObject();
+            var order = await this.GetById(orderId);
+            if (order != null)
+            {
+                model.ApplyTax = order.ApplyTax;
+                var items = await this.GetOrderItems(orderId);
+                var orderStatuses = await this.GetOrderStatuses();
+                model.Id = orderId;
+                model.OrderStatus = orderStatuses.Where(o => o.Id == order.StatusId).FirstOrDefault()?.Name;
+                model.FullPaid = order.FullPaid;
+                if (items.Count == 0 &&
+                    model.OrderStatus != Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString())
+                    return null;
+
+                decimal orderTotal = order.OrderTotal == null ? 0 : (Convert.ToDecimal(order.OrderTotal));
+                decimal subtotal = order.SubTotal == null ? 0 : (Convert.ToDecimal(order.SubTotal));
+                decimal houzzFee = 0;
+                decimal initialPayment = 0;
+                decimal pendingPayment = 0;
+                decimal payableAmount = orderTotal;
+                var orderTypes = await this.GetOrderTypes();
+                model.OrderType = (orderTypes.Where(o => o.Id == order.OrderTypeId)).FirstOrDefault()?.Name;
+                model.ShippingMethod = order.ShippingMethod;
+                model.WgsAdjustmentNotes = order.WgsAdjustmentNotes;
+
+                var customer = new Customer();
+                if (order.CustomerId != null)
+                    customer = await this._customerService.GetCustomerByIdAsync(Convert.ToInt32(order.CustomerId));
+                model.Customer = customer;
+
+                if (model.OrderType == OrderTypes.HouzzOrder.ToString() && order.HouzzFee != null && order.HouzzFee > 0)
+                {
+                    houzzFee = order.HouzzFeeType == DiscountType.Percentage.ToString() ? (orderTotal * Convert.ToDecimal(order.HouzzFee)) / 100 : Convert.ToDecimal(order.HouzzFee);
+                    orderTotal = orderTotal - houzzFee;
+                    payableAmount = orderTotal;
+                }
+                if ((model.OrderType == OrderTypes.AlreadyPaid.ToString() || model.OrderType == OrderTypes.CustomOrder.ToString())
+                    && order.AlreadyFee != null && order.AlreadyFee > 0)
+                {
+                    initialPayment = (orderTotal * Convert.ToDecimal(order.AlreadyFee)) / 100;
+                    pendingPayment = orderTotal - initialPayment;
+                    if (order.LiveOrderNumber == null || order.LiveOrderNumber == 0)
+                        payableAmount = initialPayment;
+                    else if (!order.FullPaid)
+                        payableAmount = pendingPayment;
+                    else
+                        payableAmount = 0;
+
+                }
+
+                model.SubTotal = await _priceFormatter.FormatPriceAsync(subtotal);
+                model.OrderTotal = await _priceFormatter.FormatPriceAsync(orderTotal);
+                model.PayableAmount = await _priceFormatter.FormatPriceAsync(payableAmount);
+                if (initialPayment > 0)
+                    model.InitialPayment = await _priceFormatter.FormatPriceAsync(initialPayment);
+                if (pendingPayment > 0)
+                    model.PendingPayment = await _priceFormatter.FormatPriceAsync(pendingPayment);
+                if (houzzFee > 0)
+                    model.HouzzFee = await _priceFormatter.FormatPriceAsync(houzzFee);
+
+                model.ComplementryWgsFree = order.ComplementryWgsFree;
+                if (order.Wgs != null && order.Wgs > 0)
+                {
+                    model.Wgs = await _priceFormatter.FormatPriceAsync(Convert.ToDecimal(order.Wgs));
+                }
+                else if (order.ComplementryWgsFree)
+                {
+                    model.Wgs = await _priceFormatter.FormatPriceAsync(0);
+                }
+
+
+                if (order.Shipping != null && order.Shipping > 0)
+                    model.Shipping = await _priceFormatter.FormatPriceAsync(Convert.ToDecimal(order.Shipping));
+
+                // Discount 
+                var orderSummaryAdj = await this.GetOrderSummaryAdjustment(order.Id);
+                if (orderSummaryAdj != null)
+                {
+                    #region SubTotalAdj
+
+                    string subTotalDiscountType = orderSummaryAdj.SubTotalDiscountType == null ? "" :
+                       (orderSummaryAdj.SubTotalDiscountType == DiscountType.Percentage.ToString() ? DiscountType.Percentage.ToString() : DiscountType.Fixed.ToString());
+                    string totalAdjustment = "";
+                    decimal discountAmount = orderSummaryAdj.SubtotalDiscount == null ? 0 : Convert.ToDecimal(orderSummaryAdj.SubtotalDiscount);
+                    if (discountAmount != 0)
+                    {
+                        totalAdjustment = await _priceFormatter.FormatPriceAsync(
+                            subTotalDiscountType == DiscountType.Percentage.ToString() ?
+                            (subtotal * discountAmount) / 100
+                            : discountAmount);
+                    }
+
+                    dynamic subTotalDiscountDetails = new ExpandoObject();
+                    subTotalDiscountDetails.DiscountType = subTotalDiscountType;
+                    subTotalDiscountDetails.DiscountAmount = discountAmount;
+                    subTotalDiscountDetails.TotalAdjustment = totalAdjustment;
+                    subTotalDiscountDetails.ChargeType = orderSummaryAdj.SubtotalChargeType == null ? "" : (orderSummaryAdj.SubtotalChargeType == ChargeType.Subtract.ToString() ?
+                        ChargeType.Subtract.ToString() : ChargeType.Add.ToString());
+                    subTotalDiscountDetails.Notes = orderSummaryAdj.SubTotalAdjustmentNotes;
+
+                    model.SubTotalDiscountDetails = subTotalDiscountDetails;
+
+
+                    #endregion
+
+                    #region ShippingAdj
+
+                    string shippingDiscountType = orderSummaryAdj.ShippingDiscountType == null ? "" :
+                       (orderSummaryAdj.ShippingDiscountType == DiscountType.Percentage.ToString() ? DiscountType.Percentage.ToString() : DiscountType.Fixed.ToString());
+
+                    discountAmount = orderSummaryAdj.ShippingDiscount == null ? 0 : Convert.ToDecimal(orderSummaryAdj.ShippingDiscount);
+                    totalAdjustment = "";
+                    if (discountAmount != 0)
+                    {
+                        totalAdjustment = await _priceFormatter.FormatPriceAsync(shippingDiscountType == DiscountType.Percentage.ToString() ?
+                            ((order.Shipping == null ? 0 : Convert.ToDecimal(order.Shipping)) * discountAmount) / 100
+                            : discountAmount);
+                    }
+                    dynamic shippingDiscountDetails = new ExpandoObject();
+
+                    shippingDiscountDetails.DiscountType = shippingDiscountType;
+                    shippingDiscountDetails.DiscountAmount = discountAmount;
+                    shippingDiscountDetails.TotalAdjustment = totalAdjustment;
+                    shippingDiscountDetails.ChargeType = orderSummaryAdj.ShippingChargeType == null ? "" : (orderSummaryAdj.ShippingChargeType == ChargeType.Subtract.ToString() ?
+                        ChargeType.Subtract.ToString() : ChargeType.Add.ToString());
+                    shippingDiscountDetails.Notes = orderSummaryAdj.ShippingAdjustmentNotes;
+
+                    model.ShippingDiscountDetails = shippingDiscountDetails;
+
+
+                    #endregion
+                }
+
+                model.Tax = order.OrderTax == null ? "" : await _priceFormatter.FormatPriceAsync(Convert.ToDecimal(order.OrderTax));
+                model.CustomDuty = order.CustomDuty <= 0 ? "" : await _priceFormatter.FormatPriceAsync(order.CustomDuty);
+                model.CustomDutyPercentage = order.CustomDutyPercentage;
+                model.TaxRate = order.TaxRate > 0 ? order.TaxRate : 0;
+
+                model.InvoiceNotes = order.InvoiceNote;
+                model.SpecialInstructionsfromBuyer = order.SpecialInstructionsfromBuyer;
+                model.PrivateNotes = order.PrivateOrderNotes;
+                model.ParentOrderID = order.ParentOrderID;
+
+                // end
+            }
+
+
+            return model;
+
+        }
         #endregion Methods
 
 
