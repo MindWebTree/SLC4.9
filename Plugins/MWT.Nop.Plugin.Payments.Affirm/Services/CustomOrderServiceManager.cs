@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using MWT.Nop.Core.Domain.CustomOrders;
+using MWT.Nop.Core.Domain.PaymentMethod;
+using MWT.Nop.Core.Services.Customers;
 using MWT.Nop.Core.Services.Customizations.CustomOrders;
+using MWT.Nop.Core.Services.Orders;
 using MWT.Nop.Plugin.Payments.Affirm.Domain;
 using MWT.Nop.Plugin.Payments.Affirm.Infrastructure;
 using MWT.Nop.Plugin.Payments.Affirm.Models;
@@ -11,6 +14,7 @@ using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Directory;
 using Nop.Core.Domain.Orders;
 using Nop.Data;
+using Nop.Services.Attributes;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Configuration;
@@ -32,7 +36,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Services
         private readonly CurrencySettings _currencySettings;
         private readonly IActionContextAccessor _actionContextAccessor;
         private readonly IAddressService _addresService;
-        private readonly ICheckoutAttributeParser _checkoutAttributeParser;
+        protected readonly IAttributeParser<CheckoutAttribute, CheckoutAttributeValue> _checkoutAttributeParser;
         private readonly ICountryService _countryService;
         private readonly ICurrencyService _currencyService;
         private readonly IGenericAttributeService _genericAttributeService;
@@ -41,7 +45,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Services
         private readonly IOrderService _orderService;
         private readonly IOrderTotalCalculationService _orderTotalCalculationService;
         private readonly IProductService _productService;
-        private readonly IShoppingCartService _shoppingCartService;
+        private readonly IShoppingCartExtendedService _shoppingCartService;
         private readonly IStateProvinceService _stateProvinceService;
         private readonly IStoreContext _storeContext;
         private readonly IStoreService _storeService;
@@ -50,7 +54,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Services
         private readonly IWebHelper _webHelper;
         private readonly IWorkContext _workContext;
         private readonly ISettingService _settingService;
-        private readonly ICustomerService _customerService;
+        private readonly ICustomerExtendedService _customerService;
         private readonly IRepository<PaymentMethodSession> _affirmSessionRepository;
         private readonly IRepository<AffirmLog> _affirmLogRepository;
         private readonly ICustomOrderService _customOrderService;
@@ -62,7 +66,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Services
         public CustomOrderServiceManager(CurrencySettings currencySettings,
             IActionContextAccessor actionContextAccessor,
             IAddressService addresService,
-            ICheckoutAttributeParser checkoutAttributeParser,
+             IAttributeParser<CheckoutAttribute, CheckoutAttributeValue> checkoutAttributeParser,
             ICountryService countryService,
             ICurrencyService currencyService,
             IGenericAttributeService genericAttributeService,
@@ -71,7 +75,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Services
             IOrderService orderService,
             IOrderTotalCalculationService orderTotalCalculationService,
             IProductService productService,
-            IShoppingCartService shoppingCartService,
+            IShoppingCartExtendedService shoppingCartService,
             IStateProvinceService stateProvinceService,
             IStoreContext storeContext,
             IStoreService storeService,
@@ -80,7 +84,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Services
             IWebHelper webHelper,
             IWorkContext workContext,
             ISettingService settingService,
-            ICustomerService customerService,
+            ICustomerExtendedService customerService,
             IRepository<PaymentMethodSession> affirmSessionRepository,
             IRepository<AffirmLog> affirmLogRepository,
             ICustomOrderService customOrderService
@@ -136,7 +140,6 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Services
             var affirmCheckoutSettings = await _settingService.LoadSettingAsync<AffirmCheckoutSettings>(storeScope);
             if (!await IsConfigured(affirmCheckoutSettings))
                 throw new NopException("Plugin not configured");
-
 
 
             int _customOrderId = 0;
@@ -249,9 +252,9 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Services
             var billCountry = await _countryService.GetCountryByAddressAsync(billingAddress);
 
 
-            string shippingFirstName = shippingAddress?.FirstName ?? (await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.FirstNameAttribute));
-            string shippingLastName = shippingAddress?.LastName ?? (await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.LastNameAttribute));
-
+            string shippingFirstName = shippingAddress?.FirstName ?? customer.FirstName ?? string.Empty;
+            string shippingLastName = shippingAddress?.LastName ?? customer.LastName ?? string.Empty;
+            shippingLastName = string.IsNullOrEmpty(shippingLastName) ? shippingFirstName : shippingLastName;
             string shippingAddress1 = shippingAddress.Address1 ?? string.Empty;
             string shippingAddress2 = shippingAddress.Address2 ?? string.Empty;
             string shippingCity = shippingAddress?.City ?? string.Empty;
@@ -261,9 +264,9 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Services
             string shippingEmail = shippingAddress?.Email ?? await _customerService.GetCustomerEmail(customer) ?? string.Empty;
             string shippingPhonenumber = shippingAddress?.PhoneNumber ?? await _customerService.GetCustomerPhone(customer) ?? string.Empty;
 
-
-            string billingFirstName = shippingAddress?.FirstName ?? (await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.FirstNameAttribute));
-            string billingLastName = shippingAddress?.LastName ?? (await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.LastNameAttribute));
+            string billingFirstName = billingAddress.FirstName ?? shippingAddress.FirstName ?? customer.FirstName ?? string.Empty;
+            string billingLastName = billingAddress.LastName ?? shippingAddress.LastName ?? customer.LastName ?? string.Empty;
+            billingLastName = string.IsNullOrEmpty(billingLastName) ? billingFirstName : billingLastName;
             string billingAddress1 = billingAddress.Address1 ?? shippingAddress.Address1 ?? string.Empty;
             string billingAddress2 = billingAddress.Address2 ?? shippingAddress.Address2 ?? string.Empty;
             string billingCity = billingAddress?.City ?? shippingAddress?.City ?? string.Empty;
@@ -487,59 +490,5 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Services
         }
         #endregion
 
-        public async Task<(List<AffirmItem> affirmItems, decimal? shoppingCartTotal, decimal discountTotal, decimal customDuty, decimal shippingTotal, decimal taxTotal, decimal orderTotal)> GetCartSummarry(List<ShoppingCartItem> shoppingCart)
-        {
-
-            var itemTotal = decimal.Zero;
-            var taxTotal = decimal.Zero;
-            var customDuty = decimal.Zero;
-            var shippingTotal = decimal.Zero;
-            decimal? shoppingCartTotal = decimal.Zero;
-            decimal orderTotal = decimal.Zero;
-            decimal discountTotal = decimal.Zero;
-            var items = await shoppingCart.SelectAwait(async item =>
-            {
-                var product = await _productService.GetProductByIdAsync(item.ProductId);
-
-                var (_unitPrice, _oldprice, _msrp, _, _) = await _shoppingCartService.GetCustomUnitPriceAsync(product,
-               await _workContext.GetCurrentCustomerAsync(),
-               item.ShoppingCartType,
-                1, item.AttributesXml, 0,
-               item.RentalStartDateUtc, item.RentalEndDateUtc, false);
-
-                (_unitPrice, _) = await _taxService.GetProductPriceAsync(product, _unitPrice);
-                if (_oldprice > 0)
-                    (_oldprice, _) = await _taxService.GetProductPriceAsync(product, _oldprice);
-                decimal itemPrice = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(_unitPrice, await _workContext.GetWorkingCurrencyAsync());
-                if (_oldprice > 0)
-                    _oldprice = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(_oldprice, await _workContext.GetWorkingCurrencyAsync());
-
-                if (_oldprice > itemPrice)
-                    itemPrice = _oldprice;
-
-                itemTotal += itemPrice;
-                return new AffirmItem
-                {
-                    DisplayName = CommonHelper.EnsureMaximumLength(product.Name, 127),
-                    Sku = CommonHelper.EnsureMaximumLength(product.Sku, 127),
-                    qty = item.Quantity,
-                    unit_price = AffirmHelper.ConvertDecimalToCents(itemPrice)
-                };
-            }).ToListAsync();
-
-            if (shoppingCart.Count > 0)
-            {
-                taxTotal = Math.Round((await _orderTotalCalculationService.GetTaxTotalAsync(shoppingCart, false)).taxTotal, 2);
-                customDuty = Math.Round((await _orderTotalCalculationService.GetCustomDuty(shoppingCart)).Item2, 2);
-                shippingTotal = Math.Round(await _orderTotalCalculationService.GetShoppingCartShippingTotalAsync(shoppingCart) ?? decimal.Zero, 2);
-                (shoppingCartTotal, _, _, _, _, _) = await _orderTotalCalculationService
-                  .GetShoppingCartTotalAsync(shoppingCart, usePaymentMethodAdditionalFee: false);
-                orderTotal = Math.Round(shoppingCartTotal ?? decimal.Zero, 2);
-                itemTotal = Math.Round(itemTotal, 2);
-                discountTotal = Math.Round(itemTotal + taxTotal + shippingTotal + customDuty - orderTotal, 2);
-            }
-            return (items, shoppingCartTotal, discountTotal, customDuty, shippingTotal, taxTotal, orderTotal);
-
-        }
     }
 }

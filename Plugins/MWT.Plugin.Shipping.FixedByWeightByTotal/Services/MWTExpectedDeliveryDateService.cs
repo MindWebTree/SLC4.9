@@ -1,6 +1,7 @@
 ﻿using Azure.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using MWT.Nop.Core.Services.Message;
 using MWT.Plugin.Shipping.FixedByWeightByTotal.Domain;
 using Nop.Core;
 using Nop.Core.Caching;
@@ -40,7 +41,7 @@ namespace MWT.Plugin.Shipping.FixedByWeightByTotal.Services
         private readonly ISettingService _settingService;
         private readonly IMWTEstimationDeliveryDateNotificationService _mwtEstimationDeliveryDateNotificationService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IWorkflowMessageService _workflowMessageService;
+        private readonly ICustomWorkflowMessageService _workflowMessageService;
         private readonly IWorkContext _workContext;
         private readonly IStoreContext _storeContext;
 
@@ -53,7 +54,7 @@ namespace MWT.Plugin.Shipping.FixedByWeightByTotal.Services
           IRepository<MWTShippingZone> mwtShippingZoneeRepository, ILocalizationService localizationService,
           ISettingService settingService,
           IMWTEstimationDeliveryDateNotificationService mwtEstimationDeliveryDateNotificationService,
-          IHttpContextAccessor httpContextAccessor, IWorkflowMessageService workflowMessageService,
+          IHttpContextAccessor httpContextAccessor, ICustomWorkflowMessageService workflowMessageService,
            IWorkContext workContext, IStoreContext storeContext)
         {
             this._mwtExpectedDeliveryDateRepository = mwtExpectedDeliveryDateRepository;
@@ -224,12 +225,12 @@ namespace MWT.Plugin.Shipping.FixedByWeightByTotal.Services
 
                     // Send Notifications
 
-                    //var customer = await _workContext.GetCurrentCustomerAsync();
-                    //await this._workflowMessageService.SendSupportNotificationZipCodeNotFound(
-                    //    (await _workContext.GetWorkingLanguageAsync()).Id,
-                    //    await _storeContext.GetCurrentStoreAsync(), postalCode, Ip == null ? "" : Ip.ToString(),
-                    //    customer == null ? "" : customer.Username,
-                    //    customer == null ? "" : customer.Email);
+                    var customer = await _workContext.GetCurrentCustomerAsync();
+                    await this._workflowMessageService.SendSupportNotificationZipCodeNotFound(
+                        (await _workContext.GetWorkingLanguageAsync()).Id,
+                        await _storeContext.GetCurrentStoreAsync(), postalCode, Ip == null ? "" : Ip.ToString(),
+                        customer == null ? "" : customer.Username,
+                        customer == null ? "" : customer.Email);
 
                 }
                 return String.Format(await _localizationService.GetResourceAsync("MWT.Plugins.Shipping.FixedByWeightByTotal.MWTExpectedDeliveryDate.NotFound"), postalCode);

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Domain.Customers;
@@ -17,12 +13,11 @@ using Nop.Services.Orders;
 using Nop.Services.Payments;
 using Nop.Services.Plugins;
 using Nop.Services.Tax;
-using MWT.Tax.FixedOrByCountryStateZip;
-// using Nop.Core.Domain.Customization.PhoneOrder;
 using Nop.Core.Domain.Orders;
 using Nop.Services.Customers;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Shipping;
+using MWT.Nop.Core.Services.Orders;
 using MWT.Nop.Core.Services.Customers;
 
 namespace MWT.Tax.FixedOrByCountryStateZip
@@ -41,7 +36,7 @@ namespace MWT.Tax.FixedOrByCountryStateZip
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILocalizationService _localizationService;
-        private readonly IOrderTotalCalculationService _orderTotalCalculationService;
+        private readonly IOrderTotalCalculationExtendedService _orderTotalCalculationService;
         private readonly IPaymentService _paymentService;
         private readonly ISettingService _settingService;
         private readonly IStaticCacheManager _staticCacheManager;
@@ -49,7 +44,7 @@ namespace MWT.Tax.FixedOrByCountryStateZip
         private readonly ITaxService _taxService;
         private readonly IWebHelper _webHelper;
         private readonly TaxSettings _taxSettings;
-        private readonly ICustomerService _customerService;
+        private readonly ICustomerExtendedService _customerService;
         private readonly IWorkContext _workContext;
         private readonly IAddressService _addressService;
         private readonly IStoreContext _storeContext;
@@ -63,7 +58,7 @@ namespace MWT.Tax.FixedOrByCountryStateZip
             IGenericAttributeService genericAttributeService,
             IHttpContextAccessor httpContextAccessor,
             ILocalizationService localizationService,
-            IOrderTotalCalculationService orderTotalCalculationService,
+            IOrderTotalCalculationExtendedService orderTotalCalculationService,
             IPaymentService paymentService,
             ISettingService settingService,
             IStaticCacheManager staticCacheManager,
@@ -72,7 +67,7 @@ namespace MWT.Tax.FixedOrByCountryStateZip
             IWebHelper webHelper,
             TaxSettings taxSettings,
             ITaxZarService taxZarService,
-            ICustomerService customerService,
+            ICustomerExtendedService customerService,
             IWorkContext workContext,
             IAddressService addressService,
             IStoreContext storeContext,
@@ -196,39 +191,38 @@ namespace MWT.Tax.FixedOrByCountryStateZip
             string taxZarResponse = "";
             string taxRateInfo = "";
             decimal subtotalBase = 0;
-            //if (!taxTotalRequest.IsCustomorder)
-            //{
-            //    //order sub total (items + checkout attributes)
-            //    #region Custom updates Need to shift with Upgrade
-            //    var (_, _, _, subTotalWithDiscountBase, _, _) = await _orderTotalCalculationService.GetCustomShoppingCartSubTotalAsync(taxTotalRequest.ShoppingCart, false);
-            //    #endregion
-            //    //subtotal with discount
-            //    subtotalBase = subTotalWithDiscountBase;
+            if (!taxTotalRequest.IsCustomorder)
+            {
+                //order sub total (items + checkout attributes)
+                #region Custom updates Need to shift with Upgrade
+                var (_, _, _, subTotalWithDiscountBase, _, _) = await _orderTotalCalculationService.GetCustomShoppingCartSubTotalAsync(taxTotalRequest.ShoppingCart, false);
+                #endregion
+                //subtotal with discount
+                subtotalBase = subTotalWithDiscountBase;
 
-            //    #region Custom updates Need to shift with Upgrade
+                #region Custom updates Need to shift with Upgrade
 
-            //    decimal membershipfee = 0;
-            //    decimal membershipfeeDiscount = 0;
-            //    (decimal buyMoreDiscount, decimal membershipDiscount, decimal offerDiscount, decimal offerDiscountDefault, decimal productItemsDiscount, _) = await _orderTotalCalculationService.GetCustomBuyMoreSaveMoreDiscountAndMemberShipDiscountAsync(taxTotalRequest.ShoppingCart);
-            //    if (await _customerService.IsMemberShipAddedInCart(await _workContext.GetCurrentCustomerAsync()))
-            //        (membershipfee, membershipfeeDiscount) = await _orderTotalCalculationService.GetMemberShipFee();
+                decimal membershipfee = 0;
+                decimal membershipfeeDiscount = 0;
+                (decimal buyMoreDiscount, decimal membershipDiscount, decimal offerDiscount, decimal offerDiscountDefault, decimal productItemsDiscount, _) = await _orderTotalCalculationService.GetCustomBuyMoreSaveMoreDiscountAndMemberShipDiscountAsync(taxTotalRequest.ShoppingCart);
+                if (await _customerService.IsMemberShipAddedInCart(await _workContext.GetCurrentCustomerAsync()))
+                    (membershipfee, membershipfeeDiscount) = await _orderTotalCalculationService.GetMemberShipFee();
 
-            //    subtotalBase = (subtotalBase + membershipfee + (offerDiscountDefault - offerDiscount)) - buyMoreDiscount - membershipDiscount - membershipfeeDiscount - productItemsDiscount;
-            //    subtotalBase = subtotalBase + (await this._orderTotalCalculationService.GetCustomDuty(taxTotalRequest.ShoppingCart)).Item2;
+                subtotalBase = (subtotalBase + membershipfee + (offerDiscountDefault - offerDiscount)) - buyMoreDiscount - membershipDiscount - membershipfeeDiscount - productItemsDiscount;
+                subtotalBase = subtotalBase + (await this._orderTotalCalculationService.GetCustomDuty(taxTotalRequest.ShoppingCart)).Item2;
 
-            //    #region Custom Duty
-            //    total = subtotalBase;
+                #region Custom Duty
+                total = subtotalBase;
 
-            //    #endregion
-            //    #endregion
-            //}
-            //else
-            //{
-            //   taxTotalRequest.Total = taxTotalRequest.Total + (await this._orderTotalCalculationService.GetCustomDuty(new List<ShoppingCartItem>(), true, taxTotalRequest.Customer, taxTotalRequest.Total)).Item2;
-            taxTotalRequest.Total = taxTotalRequest.Total + 0;
+                #endregion
+                #endregion
+            }
+            else
+            {
+                taxTotalRequest.Total = taxTotalRequest.Total + (await this._orderTotalCalculationService.GetCustomDuty(new List<ShoppingCartItem>(), true, taxTotalRequest.Customer, taxTotalRequest.Total)).Item2;
                 total = subtotalBase = taxTotalRequest.Total;
 
-            //}
+            }
 
 
             #region Get Tax from tax Zar Api
@@ -354,7 +348,7 @@ namespace MWT.Tax.FixedOrByCountryStateZip
                             Amount = foundRecord.QSTPercentage <= 0 ? 0 : (subtotalBase * foundRecord.QSTPercentage) / 100
                         });
                     }
-                   
+
                 }
                 else
                 {

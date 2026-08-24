@@ -1,9 +1,10 @@
 ﻿using MWT.Nop.Core.Infrastructure;
-using MWT.Nop.Core.Services.Customers;
+using MWT.Nop.Core.Services.Orders;
 using MWT.Plugin.Shipping.FixedByWeightByTotal.Components;
 using MWT.Plugin.Shipping.FixedByWeightByTotal.Domain;
 using MWT.Plugin.Shipping.FixedByWeightByTotal.Services;
 using Nop.Core;
+using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Shipping;
 using Nop.Services.Cms;
 using Nop.Services.Common;
@@ -31,14 +32,14 @@ namespace MWT.Plugin.Shipping.FixedByWeightByTotal
 
         private readonly FixedByWeightByTotalSettings _fixedByWeightByTotalSettings;
         private readonly ILocalizationService _localizationService;
-        private readonly IShoppingCartService _shoppingCartService;
+        private readonly IShoppingCartExtendedService _shoppingCartService;
         private readonly ISettingService _settingService;
         private readonly IMWTShippingByWeightByTotalService _shippingByWeightByTotalService;
         private readonly IShippingService _shippingService;
         private readonly IShippingMethodsService _shippingMethodsService;
         private readonly IStoreContext _storeContext;
         private readonly IWebHelper _webHelper;
-        private readonly IOrderTotalCalculationService _orderTotalCalculationService;
+        private readonly IOrderTotalCalculationExtendedService _orderTotalCalculationService;
         private readonly ICustomerService _customerService;
         private readonly IWorkContext _workContext;
         #endregion
@@ -47,16 +48,16 @@ namespace MWT.Plugin.Shipping.FixedByWeightByTotal
 
         public FixedByWeightByTotalComputationMethod(FixedByWeightByTotalSettings fixedByWeightByTotalSettings,
             ILocalizationService localizationService,
-            IShoppingCartService shoppingCartService,
+            IShoppingCartExtendedService shoppingCartService,
             ISettingService settingService,
             IMWTShippingByWeightByTotalService shippingByWeightByTotalService,
             IShippingService shippingService,
+            IShippingMethodsService shippingMethodsService,
             IStoreContext storeContext,
             IWebHelper webHelper,
-            IOrderTotalCalculationService orderTotalCalculationService,
+            IOrderTotalCalculationExtendedService orderTotalCalculationService,
             ICustomerService customerService,
-             IWorkContext workContext,
-             IShippingMethodsService shippingMethodsService)
+             IWorkContext workContext)
         {
             _fixedByWeightByTotalSettings = fixedByWeightByTotalSettings;
             _localizationService = localizationService;
@@ -70,7 +71,6 @@ namespace MWT.Plugin.Shipping.FixedByWeightByTotal
             _customerService = customerService;
             _workContext = workContext;
             _shippingMethodsService = shippingMethodsService;
-
         }
 
         #endregion
@@ -110,7 +110,7 @@ namespace MWT.Plugin.Shipping.FixedByWeightByTotal
         /// <param name="subTotal">Subtotal</param>
         /// <param name="weight">Weight</param>
         /// <returns>Rate</returns>
-        private (decimal, decimal) GetRate(MWTShippingByWeightByTotalRecord shippingByWeightByTotalRecord, decimal subTotal, decimal weight,bool applyWgsSurcharge)
+        private (decimal, decimal) GetRate(MWTShippingByWeightByTotalRecord shippingByWeightByTotalRecord, decimal subTotal, decimal weight, bool applyWgsSurcharge)
         {
             //additional fixed cost
             decimal defaultWgsAmount = shippingByWeightByTotalRecord.Amount;
@@ -178,23 +178,23 @@ namespace MWT.Plugin.Shipping.FixedByWeightByTotal
 
                 //get subtotal of shipped items
 
-                //// Customization for custom order
+                // Customization for custom order
                 var subTotal = decimal.Zero;
-                //if (getShippingOptionRequest.UseCustomSubtotal)
-                //    subTotal = getShippingOptionRequest.CustomSubtotal;
+                if (getShippingOptionRequest.UseCustomSubtotal)
+                    subTotal = getShippingOptionRequest.CustomSubtotal;
 
-                //else
-                //{
-                #region Custom updates Need to shift with Upgrade
+                else
+                {
+                    #region Custom updates Need to shift with Upgrade
 
-                getShippingOptionRequest.IsSurchargeApplicable = false; // await _shoppingCartService.IsSurchargeApplicable(await _shoppingCartService.GetShoppingCartAsync(customer, Nop.Core.Domain.Orders.ShoppingCartType.ShoppingCart));
+                    getShippingOptionRequest.IsSurchargeApplicable = await _shoppingCartService.IsSurchargeApplicable(await _shoppingCartService.GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart));
 
 
-                subTotal = 0;// await _orderTotalCalculationService.GetCustomShoppingCartSubTotalAsync(getShippingOptionRequest.Items.Select(I => I.ShoppingCartItem).ToList());
+                    subTotal = await _orderTotalCalculationService.GetCustomShoppingCartSubTotalAsync(getShippingOptionRequest.Items.Select(I => I.ShoppingCartItem).ToList());
 
                     #endregion
-                   
-                 
+
+
 
                     //#region Custom updates Need to shift with Upgrade
 
@@ -208,7 +208,7 @@ namespace MWT.Plugin.Shipping.FixedByWeightByTotal
 
                     //#endregion
 
-              //  }
+                }
 
 
                 //get weight of shipped items (excluding items with free shipping)
@@ -229,7 +229,7 @@ namespace MWT.Plugin.Shipping.FixedByWeightByTotal
                     }
                     else
                     {
-                        (rate,wgsAmount)= GetRate(shippingByWeightByTotalRecord, subTotal, weight, getShippingOptionRequest.IsSurchargeApplicable);
+                        (rate, wgsAmount) = GetRate(shippingByWeightByTotalRecord, subTotal, weight, getShippingOptionRequest.IsSurchargeApplicable);
                         transitDays = shippingByWeightByTotalRecord.TransitDays;
                     }
 
@@ -382,23 +382,14 @@ namespace MWT.Plugin.Shipping.FixedByWeightByTotal
             await _settingService.DeleteSettingAsync<FixedByWeightByTotalSettings>();
 
             //fixed rates
-            try
-            {
-
             var fixedRates = await (await _shippingMethodsService.GetAllShippingMethodsAsync())
                 .SelectAwait(async shippingMethod => await _settingService.GetSettingAsync(
                     string.Format(FixedByWeightByTotalDefaults.FixedRateSettingsKey, shippingMethod.Id)))
                 .Where(setting => setting != null).ToListAsync();
             await _settingService.DeleteSettingsAsync(fixedRates);
-            await _localizationService.DeleteLocaleResourcesAsync("MWT.Plugins.Shipping.FixedByWeightByTotal");
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
 
             //locales
+            await _localizationService.DeleteLocaleResourcesAsync("MWT.Plugins.Shipping.FixedByWeightByTotal");
 
             await base.UninstallAsync();
         }
@@ -408,11 +399,13 @@ namespace MWT.Plugin.Shipping.FixedByWeightByTotal
             return Task.FromResult<IList<string>>(new List<string> { CustomPublicWidgetZones.ProductExpectedDeliveryDates });
         }
 
-        
-
         public Task<IShipmentTracker> GetShipmentTrackerAsync()
         {
             return Task.FromResult<IShipmentTracker>(null);
+        }
+        public string GetWidgetViewComponentName(string widgetZone)
+        {
+            return "WidgetsProductExpectedDeliverydate";
         }
 
         public Type GetWidgetViewComponent(string widgetZone)
@@ -422,7 +415,17 @@ namespace MWT.Plugin.Shipping.FixedByWeightByTotal
 
         #endregion
 
-        #region Properties 
+        #region Properties
+
+        /// <summary>
+        /// Gets a shipment tracker
+        /// </summary>
+        /// <remarks>
+        /// uncomment a line below to return a general shipment tracker (finds an appropriate tracker by tracking number)
+        /// return new GeneralShipmentTracker(EngineContext.Current.Resolve<ITypeFinder>());
+        /// </remarks>
+        public IShipmentTracker ShipmentTracker => null;
+
         public bool HideInWidgetList => false;
 
         #endregion
