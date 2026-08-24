@@ -264,6 +264,10 @@ using Nop.Services.Installation;
                 },
                 constraints: new { tagSlug = new TagSlugConstraint() }
             );
+
+            endpointRouteBuilder.MapControllerRoute(name: "tags.xml",
+         pattern: $"tags.xml",
+         defaults: new { controller = "SiteMap", action = "GenerateTagSitemapXml" });
             #endregion
             #region  SiteMap Version2
 

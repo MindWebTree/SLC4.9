@@ -104,14 +104,14 @@ else if (!string.IsNullOrEmpty(Model.NoResultMessage))
 }
 <div class="infinite-scroll-loader">Loading  ...</div>
 <script>
-         var headings = document.getElementsByClassName("page-heading");
+     var headings = document.getElementsByClassName("page-heading");
+if (headings.length > 0) {
+    headings[0].innerHTML = "@Model.CategoryName";
+    }
+    headings = document.getElementsByClassName("filter-heading");
     if (headings.length > 0) {
-        headings[0].innerHTML = "@Model.CategoryName";
-        }
-        headings = document.getElementsByClassName("filter-heading");
-        if (headings.length > 0) {
-        headings[0].innerHTML = "@Model.CategoryName";
-        }
-        if (document.getElementById("noofprdDisplay") != null)
-            document.getElementById("noofprdDisplay").innerHTML = "@(Html.Raw(string.Format(T("Label.Showing").Text, (Model.PageIndex + 1) * Model.PageSize > Model.TotalItems ? Model.TotalItems : (Model.PageIndex + 1) * Model.PageSize, Model.TotalItems)))";
+    headings[0].innerHTML = "@Model.CategoryName";
+    }
+    if (document.getElementById("noofprdDisplay") != null)
+        document.getElementById("noofprdDisplay").innerHTML = "@(Html.Raw(string.Format(T("Label.Showing").Text, (Model.PageIndex + 1) * Model.PageSize > Model.TotalItems ? Model.TotalItems : (Model.PageIndex + 1) * Model.PageSize, Model.TotalItems)))";
 </script>

@@ -25,7 +25,7 @@
     var returnUrl = webHelper.GetRawUrl(Context.Request);
 
     //Kendo UI
-    var kendoVersion = "2020.1.406";
+    // var kendoVersion = "2020.1.406";
 
     var currentKendoCulture = (await EngineContext.Current.Resolve<IWorkContext>().GetWorkingLanguageAsync()).LanguageCulture;
 
@@ -49,80 +49,84 @@
     var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl && !localizationSettings.IgnoreRtlPropertyForAdminArea;
 
  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    Html.AppendCssFileParts("~/css/Customizations/Areas/CustomOrder/style.css?msg=version3");
-    Html.AppendCssFileParts("~/css/Customizations/Areas/CustomOrder/bootstrap.min.css");
+    NopHtml.AppendCssFileParts("~/css/Customizations/Areas/CustomOrder/style.css?msg=version3");
+    NopHtml.AppendCssFileParts("~/css/Customizations/Areas/CustomOrder/bootstrap.min.css");
 
 
-    Html.AppendCssFileParts($"~/lib_npm/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css");
-    Html.AppendCssFileParts($"~/lib_npm/datatables.net-bs4/css/dataTables.bootstrap4.min.css");
-    Html.AppendCssFileParts($"~/lib/kendo/{kendoVersion}/styles/web/kendo.rtl.min.css");
-    Html.AppendCssFileParts($"~/lib/kendo/{kendoVersion}/styles/web/kendo.default.min.css");
-    Html.AppendCssFileParts($"~/lib/kendo/{kendoVersion}/styles/web/kendo.common.min.css");
-    Html.AppendCssFileParts("~/lib_npm/@fortawesome/fontawesome-free/css/all.min.css");
-    Html.AppendCssFileParts("~/lib_npm/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css");
-    Html.AppendCssFileParts("~/lib_npm/jquery-ui-dist/jquery-ui.min.css");
+    NopHtml.AppendCssFileParts($"~/lib_npm/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css");
+    NopHtml.AppendCssFileParts($"~/lib_npm/datatables.net-bs4/css/dataTables.bootstrap4.min.css");
+    // NopHtml.AppendCssFileParts($"~/lib/kendo/{kendoVersion}/styles/web/kendo.rtl.min.css");
+    // NopHtml.AppendCssFileParts($"~/lib/kendo/{kendoVersion}/styles/web/kendo.default.min.css");
+    // NopHtml.AppendCssFileParts($"~/lib/kendo/{kendoVersion}/styles/web/kendo.common.min.css");
+    NopHtml.AppendCssFileParts("~/lib_npm/@fortawesome/fontawesome-free/css/all.min.css");
+    NopHtml.AppendCssFileParts("~/lib_npm/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css");
+    NopHtml.AppendCssFileParts("~/lib_npm/jquery-ui-dist/jquery-ui.min.css");
+    <link rel="stylesheet" href="~/lib_npm/admin-lte/plugins/select2/css/select2.min.css">
 
     //scripts
-    Html.AppendScriptParts($"~/lib_npm/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js");
-    Html.AppendScriptParts($"~/lib_npm/datatables.net-buttons/js/dataTables.buttons.min.js");
-    Html.AppendScriptParts($"~/lib_npm/moment/min/moment-with-locales.min.js");
-    Html.AppendScriptParts($"~/lib_npm/datatables.net-bs4/js/dataTables.bootstrap4.min.js");
-    Html.AppendScriptParts($"~/lib_npm/datatables.net/js/jquery.dataTables.min.js");
-    Html.AppendScriptParts($"~/lib/kendo/{kendoVersion}/js/cultures/kendo.culture.{currentKendoCulture}.min.js");
-    var fileInfo = fileProvider.GetFileInfo($"{WebHostEnvironment.WebRootPath}/lib/kendo/{kendoVersion}/js/messages/kendo.messages.{currentKendoCulture}.min.js");
-    @if (fileInfo.Exists)
-    {
-        Html.AppendScriptParts($"~/lib/kendo/{kendoVersion}/js/messages/kendo.messages.{currentKendoCulture}.min.js");
-    }
-    else
-    {
-        Html.AppendScriptParts($"~/lib/kendo/{kendoVersion}/js/messages/kendo.messages.{NopCommonDefaults.DefaultLanguageCulture}.min.js");
-    }
-    Html.AppendScriptParts($"~/lib/kendo/{kendoVersion}/js/kendo.ui.core.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, $"~/lib_npm/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, $"~/lib_npm/datatables.net-buttons/js/dataTables.buttons.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, $"~/lib_npm/moment/min/moment-with-locales.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, $"~/lib_npm/datatables.net-bs4/js/dataTables.bootstrap4.min.js");
+ 
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/js/admin.table.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, $"~/lib_npm/datatables.net/js/dataTables.min.js");
+  //  NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/lib/kendo/{kendoVersion}/js/cultures/kendo.culture.{currentKendoCulture}.min.js");
 
-    Html.AppendScriptParts("~/lib_npm/typeahead.js/typeahead.bundle.min.js");
-    Html.AppendScriptParts("~/lib_npm/jquery-migrate/jquery-migrate.min.js");
+    // var fileInfo = fileProvider.GetFileInfo($"{WebHostEnvironment.WebRootPath}/lib/kendo/{kendoVersion}/js/messages/kendo.messages.{currentKendoCulture}.min.js");
+    // @if (fileInfo.Exists)
+    // {
+    //     NopHtml.AppendScriptParts(ResourceLocation.None, $"~/lib/kendo/{kendoVersion}/js/messages/kendo.messages.{currentKendoCulture}.min.js");
+    // }
+    // else
+    // {
+    //     NopHtml.AppendScriptParts(ResourceLocation.None, "~/lib/kendo/{kendoVersion}/js/messages/kendo.messages.{NopCommonDefaults.DefaultLanguageCulture}.min.js");
+    // }
+    // NopHtml.AppendScriptParts(ResourceLocation.None, $"~/lib/kendo/{kendoVersion}/js/kendo.ui.core.min.js");
+
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/typeahead.js/typeahead.bundle.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/jquery-migrate/jquery-migrate.min.js");
 
     // this file can be downloaded from :
     // https://github.com/johnnyreilly/jquery-validation-globalize
-    Html.AppendScriptParts("~/lib/jquery-validation-globalize/jquery.validate.globalize.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js");
 
-    Html.AppendScriptParts("~/js/Customizations/customorder.common.js?msg=version3");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/js/Customizations/customorder.common.js?msg=version3");
     // globalize scripts
-    Html.AppendScriptParts("~/lib_npm/globalize/globalize/currency.js");
-    Html.AppendScriptParts("~/lib_npm/globalize/globalize/date.js");
-    Html.AppendScriptParts("~/lib_npm/globalize/globalize/number.js");
-    Html.AppendScriptParts("~/lib_npm/globalize/globalize.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/globalize/globalize/currency.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/globalize/globalize/date.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/globalize/globalize/number.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/globalize/globalize.js");
 
     // cldr scripts (needed for globalize)
-    Html.AppendScriptParts("~/lib_npm/cldrjs/cldr/supplemental.js");
-    Html.AppendScriptParts("~/lib_npm/cldrjs/cldr/event.js");
-    Html.AppendScriptParts("~/lib_npm/cldrjs/cldr.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/cldrjs/cldr/supplemental.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/cldrjs/cldr/event.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/cldrjs/cldr.js");
 
-    Html.AppendScriptParts("~/lib_npm/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js");
-    Html.AppendScriptParts("~/lib_npm/jquery-validation/jquery.validate.min.js");
-    Html.AppendScriptParts("~/lib_npm/bootstrap/js/bootstrap.bundle.min.js");
-    Html.AppendScriptParts("~/lib_npm/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js");
-    Html.AppendScriptParts("~/lib_npm/overlayscrollbars/js/jquery.overlayScrollbars.min.js");
-    Html.AppendScriptParts("~/lib_npm/admin-lte/js/adminlte.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/admin-lte/plugins/select2/js/select2.full.min.js");  
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/jquery-validation/jquery.validate.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/bootstrap/js/bootstrap.bundle.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/overlayscrollbars/browser/overlayscrollbars.browser.es6.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/admin-lte/js/adminlte.min.js");
  
-    Html.AppendScriptParts( $"~/js/public.countryselect.js");
-     Html.AppendScriptParts("https://code.jquery.com/ui/1.13.2/jquery-ui.js");
-    Html.AppendScriptParts("~/lib_npm/jquery-ui-dist/jquery-ui.min.js");
-    Html.AppendScriptParts("~/lib_npm/jquery/jquery.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, $"~/js/public.countryselect.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "https://code.jquery.com/ui/1.13.2/jquery-ui.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/jquery-ui-dist/jquery-ui.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/jquery/jquery.min.js");
        
     //page title
     string customOrderPageTitle = !string.IsNullOrWhiteSpace(ViewBag.PageTitle) ? ViewBag.PageTitle + " / " : "";
     customOrderPageTitle += T("CustomOrder.PageTitle").Text;
 
     //has "Manage Maintenance" permission?
-    var canManageMaintenance = await permissionService.AuthorizeAsync(StandardPermissionProvider.ManageMaintenance);
+    var canManageMaintenance = await permissionService.AuthorizeAsync(StandardPermission.System.MANAGE_MAINTENANCE);
 
     //avatar
     var currentCustomer = await workContext.GetCurrentCustomerAsync();
 
     //event
-    await eventPublisher.PublishAsync(new PageRenderingEvent(this.Html));
+    await eventPublisher.PublishAsync(new PageRenderingEvent(this.NopHtml));
 
     //info: we specify "Admin" area for actions and widgets here for cases when we use this layout in a plugin that is running in a different area than "admin"
 }
@@ -133,16 +137,16 @@
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     @*Google Font*@
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic"/>
     <script>
         var rootAppPath = '@(Url.Content("~/"))';
     </script>
-    @Html.NopHeadCustom()
-    @Html.NopCssFiles(ResourceLocation.Head, false)
-    @Html.NopScripts(ResourceLocation.Head, false)
+    @NopHtml.GenerateHeadCustom()
+    @NopHtml.GenerateCssFiles()
+    @NopHtml.GenerateScripts(ResourceLocation.Head)
     @*Insert favicon and app icons head code*@
     @await Component.InvokeAsync("Favicon")
-    @Html.NopInlineScripts(ResourceLocation.Head)
+    @NopHtml.GenerateInlineScripts(ResourceLocation.Head)
 </head>
 <body class="customorder_container">
     <script type="text/javascript">
@@ -168,7 +172,7 @@
         });
     </script>
     <script>
-        kendo.culture("@(currentKendoCulture)");
+        // kendo.culture("@(currentKendoCulture)");
     </script>
     <div class="throbber">
         <div class="curtain">
@@ -220,7 +224,7 @@
         </div>
     </section>
 
-    @Html.NopInlineScripts(ResourceLocation.Footer)
+    @NopHtml.GenerateInlineScripts(ResourceLocation.Footer)
 
 </body>
 </html>

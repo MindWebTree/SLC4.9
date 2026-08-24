@@ -348,14 +348,14 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                   
 
 
-                    var paymentInfo = await _paymentMethod.GetPaymentInfoAsync(form);
+                    var paymentInfo = await _paymentMethod.GetPaymentInfoAsync(form);   
                     paymentInfo.StoreId = (await _storeContext.GetCurrentStoreAsync()).Id;
                     paymentInfo.CustomerId = customer.Id;
                     paymentInfo.PaymentMethodSystemName = paymentMethod;
+                   
+                    await this._orderProcessingService.SetProcessPaymentRequestAsync(paymentInfo, customer);
 
-                    await this._orderProcessingService.SetProcessPaymentRequestAsync(await _paymentMethod.GetPaymentInfoAsync(form), customer);
-
-                    paymentInfo = await this._orderProcessingService.GetProcessPaymentRequestAsync(customer);
+                   
 
                     //session save
 
@@ -600,6 +600,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                     // end
 
                     message = await _localizationService.GetResourceAsync("CustomOrder.Message.OrderPlacedSuccessfully");
+                    await this._orderProcessingService.SetProcessPaymentRequestAsync(null, customer);
                 }
                 else
                 {

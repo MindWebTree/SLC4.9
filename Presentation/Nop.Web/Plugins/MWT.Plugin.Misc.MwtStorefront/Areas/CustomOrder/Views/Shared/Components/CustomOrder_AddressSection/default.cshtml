@@ -1,0 +1,53 @@
+@model CustomOrderCustomerSectionModel
+
+<div class="row address-colm">
+    @if (Model.ShippingAddress != null && Model.ShippingAddress.Id != 0)
+    {
+        <div class="col-md-5">
+
+            <h6>SHIPPING ADDRESS</h6>
+            <p>
+                @Model.ShippingAddress.FirstName @Model.ShippingAddress.LastName<br>
+                <a href="#">@Model.ShippingAddress.Email</a><br>
+                @Model.ShippingAddress.PhoneNumber
+            </p>
+
+            <p>
+                @Model.ShippingAddress.Address1,<br>
+                @Model.ShippingAddress.County,  @Model.ShippingAddress.StateProvinceName @Model.ShippingAddress.ZipPostalCode<br>
+                @Model.ShippingAddress.CountryName
+            </p>
+        </div>
+    }
+    @if (Model.BillingAddress != null && Model.BillingAddress.Id != 0)
+    {
+        <div class="col-md-5">
+
+            <h6>BILLING ADDRESS</h6>
+            <p>
+                @Model.BillingAddress.FirstName @Model.BillingAddress.LastName<br>
+                <a href="#">@Model.BillingAddress.Email</a><br>
+                @Model.BillingAddress.PhoneNumber
+            </p>
+            <nsbp></nsbp>
+            <p>
+                @Model.BillingAddress.Address1,<br>
+                @Model.BillingAddress.County,  @Model.BillingAddress.StateProvinceName @Model.BillingAddress.ZipPostalCode<br>
+                @Model.BillingAddress.CountryName
+            </p>
+        </div>
+    }
+    @if (Model.ShippingAddress?.Id != null && Model.ShippingAddress.Id != 0 && Model.isEditable)
+    {
+        <div class="col-md-2">
+            <a class="dropdown-item btn edit-address" onclick="orderTypeSection.getCustomer(@Model.Id);">Edit Address</a>
+        </div>
+    }
+    else if (  Model.isEditable)
+    {
+        <div class="col-md-2">
+            <a class="dropdown-item btn edit-address"  onclick="orderTypeSection.getCustomer(@Model.Id);">Add Address</a>
+        </div>
+
+    }
+</div>

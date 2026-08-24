@@ -203,6 +203,18 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
             return Content(siteMap, "text/xml");
         }
 
+        [CheckAccessClosedStore(ignore: true)]
+        
+        [CheckAccessPublicStore(ignore: true)]
+   
+        public virtual async Task<IActionResult> GenerateTagSitemapXml(int? id)
+        {
+            var siteMap = _sitemapXmlSettings.SitemapXmlEnabled
+                ? await _sitemapModelFactory.PrepareTagSitemapXmlAsync(id) : string.Empty;
+
+            return Content(siteMap, "text/xml");
+        }
+
         #endregion
     }
 }

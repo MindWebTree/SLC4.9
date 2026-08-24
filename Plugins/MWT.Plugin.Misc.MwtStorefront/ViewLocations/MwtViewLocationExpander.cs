@@ -28,6 +28,15 @@ namespace MWT.Plugin.Misc.MwtStorefront.ViewLocations
             "/Plugins/MWT.Plugin.Misc.MwtStorefront/Areas/Admin/Views/Shared/Components/{1}/{0}.cshtml"
         };
             }
+            else if (context.AreaName == "CustomOrder")
+            {
+                locations = new[]
+                {
+            "/Plugins/MWT.Plugin.Misc.MwtStorefront/Areas/CustomOrder/Views/{1}/{0}.cshtml",
+            "/Plugins/MWT.Plugin.Misc.MwtStorefront/Areas/CustomOrder/Views/Shared/{0}.cshtml",
+            "/Plugins/MWT.Plugin.Misc.MwtStorefront/Areas/CustomOrder/Views/Shared/Components/{1}/{0}.cshtml"
+        };
+            }
             else
             {
                 locations = new[]

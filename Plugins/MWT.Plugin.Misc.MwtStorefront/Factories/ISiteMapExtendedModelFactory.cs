@@ -14,5 +14,6 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
         Task<string> PrepareQuestionAnswerSitemapXml();
         Task<string> PrepareKwTermSitemapXml();
         Task<string> PreparePictureSitemapXmlAsync(int? id);
+        Task<string> PrepareTagSitemapXmlAsync(int? id);
     }
 }
