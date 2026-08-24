@@ -812,7 +812,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
             }
             return model;
         }
-        public async Task<CustomOrderSummaryModel> PrepareOderSummaryModel(int orderId, bool isCustomerPaying = false)
+        public async Task<CustomOrderSummaryModel>  PrepareOderSummaryModel(int orderId, bool isCustomerPaying = false)
         {
             CustomOrderSummaryModel model = new CustomOrderSummaryModel();
             var order = await _customOrderService.GetById(orderId);

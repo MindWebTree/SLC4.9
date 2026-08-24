@@ -1,4 +1,4 @@
-﻿@model OrderDetailsModel
+﻿@model OrderDetailsExtendedModel
 @using Nop.Core
 @using Nop.Core.Domain.Seo
 @inject Nop.Core.IWorkContext _workContext;
@@ -12,13 +12,13 @@
 @{
     Layout = "_ColumnsOne";
     //title
-    Html.AddTitleParts(T("PageTitle.Checkout").Text);
+    NopHtml.AddTitleParts(T("PageTitle.Checkout").Text);
     //page class
-    Html.AppendPageCssClassParts("html-checkout-page");
-    Html.AppendPageCssClassParts("html-order-completed-page");
+    NopHtml.AppendPageCssClassParts("html-checkout-page");
+    NopHtml.AppendPageCssClassParts("html-order-completed-page");
     if (seoSettings.CanonicalUrlsEnabled)
     {
-        Html.AddCanonicalUrlParts(Url.RouteUrl("CheckoutCompleted", null, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant(), false);
+        NopHtml.AddCanonicalUrlParts(Url.RouteUrl("CheckoutCompleted", null, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant(), false);
     }
     decimal orderSubtotal = 0;
     var currencyCode = (await _workContext.GetWorkingCurrencyAsync())?.CurrencyCode;

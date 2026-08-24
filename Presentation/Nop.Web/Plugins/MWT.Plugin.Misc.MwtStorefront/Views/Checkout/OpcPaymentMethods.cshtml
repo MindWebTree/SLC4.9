@@ -1,10 +1,10 @@
 ﻿@model CheckoutPaymentMethodModel
-@using Nop.Services.Payments
-@using Nop.Web.Models.Customizations.Common;
+@using Nop.Services.Payments 
 @using Nop.Core.Domain.Orders;
 @inject Nop.Services.Configuration.ISettingService _SettingService
 @inject Nop.Services.Payments.IPaymentPluginManager _paymentPluginManager
 @inject Nop.Core.IWorkContext  _workContext
+@inject ICustomWorkContext  _customWorkContext
 @inject Nop.Core.IStoreContext _storeContext
 @inject Nop.Core.Domain.Payments.PaymentSettings _paymentSettings;
 @inject Nop.Web.Factories.ICheckoutModelFactory _checkoutModelFactory;
@@ -125,12 +125,12 @@
 </script>
 @if (ViewData["Step"] != null && ViewData["Step"] != "#opc-payment_method")
 {
-    @Html.NopInlineScripts(ResourceLocation.Footer)
 
+    @NopHtml.GenerateScripts(ResourceLocation.Footer)
 }
 else if (ViewData["Step"] == null)
 {
-    @Html.NopInlineScripts(ResourceLocation.Footer)
+    @NopHtml.GenerateScripts(ResourceLocation.Footer)
 }
 
 <div class="checkout-data">
@@ -185,7 +185,7 @@ else if (ViewData["Step"] == null)
                         {
                             <input asp-for="UseRewardPoints" class="custom-control-input" />
                         }
-                        <label class="custom-control-label" for="UseRewardPoints" asp-for="UseRewardPoints">@string.Format(T("Checkout.UseRewardPoints").Text, Model.RewardPointsBalance, Model.RewardPointsAmount)</label>
+                        <label asp-for="UseRewardPoints">@string.Format(T("Checkout.UseRewardPoints").Text, Model.RewardPointsToUse, Model.RewardPointsBalance, Model.RewardPointsToUseAmount)</label>
                     </div>
                     @if (Model.RewardPointsEnoughToPayForOrder)
                     {
@@ -205,7 +205,7 @@ else if (ViewData["Step"] == null)
                 var selectedPaymentMethod = '@(Model.PaymentMethods.Where(p=>p.Selected).FirstOrDefault().Name)';
                 </script>
 
-                @if (!_workContext.IsMobileDevice())
+                @if (!_customWorkContext.IsMobileDevice())
                 {
                     <div id="payment-method-block">
                         <div id="payment-methods-container" class="d-flex flex-row flex-wrap justify-content-start align-items-center   p-3 gap-3">
@@ -264,10 +264,10 @@ else if (ViewData["Step"] == null)
 
                             var paymentMethodInst = await _paymentPluginManager
                                 .LoadPluginBySystemNameAsync(paymentMethod.PaymentMethodSystemName, customer, storeId);
-
+                            // need input sir
                             var model = await _checkoutModelFactory.PreparePaymentInfoModelAsync(paymentMethodInst);
-                            model.PaymentViewComponentName = paymentMethod.Name.ToLower().Contains("paypal") ? "WebCustomPayPalCommercePaymentInfo" : model.PaymentViewComponentName;
-
+                            // model.PaymentViewComponentName = paymentMethod.Name.ToLower().Contains("paypal") ? "WebCustomPayPalCommercePaymentInfo" : model.PaymentViewComponentName;
+                            model.PaymentViewComponent = model.PaymentViewComponent;
                             <div class="paymentinfo @(paymentMethod.Selected ? "active" : "")" data-paymentinfo="@paymentMethod.Name">
                                 @if (paymentMethod.Name == "Authorize.Net")
                                 {
@@ -346,10 +346,10 @@ else if (ViewData["Step"] == null)
                                     var paymentMethodInst = await _paymentPluginManager
                                 .LoadPluginBySystemNameAsync(paymentMethod.PaymentMethodSystemName,
                                 customer, storeId);
-
+                                    // need input sir
                                     var model = await _checkoutModelFactory.PreparePaymentInfoModelAsync(paymentMethodInst);
-                                    model.PaymentViewComponentName = paymentMethodName.ToLower().IndexOf("paypal") >= 0 ? "WebCustomPayPalCommercePaymentInfo" :
-                                    model.PaymentViewComponentName;
+                                    // model.PaymentViewComponentName = paymentMethodName.ToLower().IndexOf("paypal") >= 0 ? "WebCustomPayPalCommercePaymentInfo" :
+                                   // model.PaymentViewComponent;
 
                                     <div class="paymentinfo @(paymentMethod.Selected ? "active" : "")" data-paymentinfo="@paymentMethodName">
                                         @if (paymentMethodName == "Authorize.Net")
@@ -424,7 +424,7 @@ else if (ViewData["Step"] == null)
                 }
                 else
                 {
-                    <a class="read" id="read-terms" href="@Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("conditionsofuse") })">@T("Checkout.TermsOfService.Read")</a>
+                    <a class="read" id="read-terms" href="@await NopUrl.RouteTopicUrlAsync("conditionsofuse")">@T("Checkout.TermsOfService.Read")</a>
                 }
             </label>
         </div>

@@ -1,0 +1,40 @@
+@model CustomOrderCustomerSectionModel
+<div class="col-sm-12"><h3>Customer</h3></div>
+
+    @if (Model.ShippingAddress != null && Model.ShippingAddress.Id != 0)
+    {
+        <div class="col-sm-6">
+
+            <h3>SHIPPING ADDRESS</h3>
+            <address>
+                <strong class="text-dark">
+                    @Model.ShippingAddress.FirstName @Model.ShippingAddress.LastName
+                </strong>
+                <br>
+                <a href="#">@Model.ShippingAddress.Email</a><br>
+                @Model.ShippingAddress.PhoneNumber
+
+                @Model.ShippingAddress.Address1,<br>
+                @Model.ShippingAddress.County,  @Model.ShippingAddress.StateProvinceName @Model.ShippingAddress.ZipPostalCode<br>
+                @Model.ShippingAddress.CountryName
+            </address>
+        </div>
+    }
+    @if (Model.BillingAddress != null && Model.BillingAddress.Id != 0)
+    {
+        <div class="col-sm-6">
+
+            <h3>BILLING ADDRESS</h3>
+            <address>
+                <strong class="text-dark">
+                    @Model.BillingAddress.FirstName @Model.BillingAddress.LastName
+                </strong><br>
+                <a href="#">@Model.BillingAddress.Email</a><br>
+                @Model.BillingAddress.PhoneNumber
+
+                @Model.BillingAddress.Address1,<br>
+                @Model.BillingAddress.County,  @Model.BillingAddress.StateProvinceName @Model.BillingAddress.ZipPostalCode<br>
+                @Model.BillingAddress.CountryName
+            </address>
+        </div>
+    }

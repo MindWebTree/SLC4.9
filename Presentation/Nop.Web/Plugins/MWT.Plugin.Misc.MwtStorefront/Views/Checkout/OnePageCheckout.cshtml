@@ -12,18 +12,18 @@
 
     //scripts
 
-    Html.AddScriptParts(ResourceLocation.Head, "~/js/customizations/public.custom.accordion.js?version=2");
-    Html.AddScriptParts(ResourceLocation.Head, "~/js/customizations/public.Custom.onepagecheckout.js?version=126");
+    NopHtml.AddScriptParts(ResourceLocation.Head, "~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/public.custom.accordion.js?version=2");
+    NopHtml.AddScriptParts(ResourceLocation.Head, "~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/public.Custom.onepagecheckout.js?version=126");
 
     var storeLocation = webHelper.GetStoreLocation();
 
     //title
-    Html.AddTitleParts(T("PageTitle.Checkout").Text);
+    NopHtml.AddTitleParts(T("PageTitle.Checkout").Text);
     //page class
-    Html.AppendPageCssClassParts("html-checkout-page");
+    NopHtml.AppendPageCssClassParts("html-checkout-page");
     if (seoSettings.CanonicalUrlsEnabled)
     {
-        Html.AddCanonicalUrlParts(Url.RouteUrl("CheckoutOnePage", null, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant(), false);
+        NopHtml.AddCanonicalUrlParts(Url.RouteUrl("CheckoutOnePage", null, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant(), false);
     } }
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxJavVrIvirKKh4iwR-hxhC5gfQjFmcDI&libraries=places&v=weekly" defer></script>
 <script>

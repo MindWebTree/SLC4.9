@@ -4,8 +4,7 @@
     <div class="section payment-info">
         <div class="info" style="width:100%;">
             <div asp-validation-summary="ModelOnly" class="message-error"></div>
-
-            @await Component.InvokeAsync(Model.PaymentViewComponentName,new{additionalData=Model.AdditionaData})
+            @await Component.InvokeAsync(Model.PaymentViewComponent,new{additionalData=Model.AdditionaData})
         </div>
         </div>
   </div>

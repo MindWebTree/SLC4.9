@@ -1,4 +1,4 @@
-﻿/*
+/*
 ** nopCommerce ajax cart implementation
 */
 
@@ -56,13 +56,10 @@ var AjaxCart = {
 
         this.setLoadWaiting(true);
         url_add = urladd;
-        var postData = {};
-        addAntiForgeryToken(postData);
         $.ajax({
             cache: false,
             url: urladd,
             type: "POST",
-            data: postData,
             success: this.success_process,
             complete: this.resetLoadWaiting,
             error: this.ajaxFailure
@@ -70,7 +67,7 @@ var AjaxCart = {
     },
 
     //add a product to the cart/wishlist from the product details page
-    addproducttocart_details: function (urladd, formselector) { 
+    addproducttocart_details: function (urladd, formselector) {
         if (this.loadWaiting !== false) {
             return;
         }
@@ -82,8 +79,6 @@ var AjaxCart = {
         }
         this.setLoadWaiting(true);
         url_add = urladd;
-        var postData = {};
-        addAntiForgeryToken(postData);
         $.ajax({
             cache: false,
             url: urladd,
@@ -95,13 +90,11 @@ var AjaxCart = {
         });
     }, updateCartQuantity: function (url, quantity) {
         const updatedUrl = `${url}?quantity=${quantity}`
-        var postData = {};
-        addAntiForgeryToken(postData);
         $.ajax({
             cache: false,
             url: updatedUrl,
             type: "POST",
-            data: postData,
+            data: null,
             success: this.success_process,
             complete: this.resetLoadWaiting,
             error: this.ajaxFailure
@@ -115,13 +108,11 @@ var AjaxCart = {
 		else {
             url_add = urladd;
         }
-        var postData = {};
-        addAntiForgeryToken(postData);
         $.ajax({
             cache: false,
             url: urladd,
+            data: null,
             type: "POST",
-            data: postData,
             success: this.success_process,
             complete: this.resetLoadWaiting,
             error: this.ajaxFailure
@@ -134,13 +125,10 @@ var AjaxCart = {
         }
         this.setLoadWaiting(true);
         url_add = "";
-        var postData = {};
-        addAntiForgeryToken(postData);
         $.ajax({
             cache: false,
             url: urladd,
             type: "POST",
-            data: postData,
             success: this.success_process,
             complete: this.resetLoadWaiting,
             error: this.ajaxFailure

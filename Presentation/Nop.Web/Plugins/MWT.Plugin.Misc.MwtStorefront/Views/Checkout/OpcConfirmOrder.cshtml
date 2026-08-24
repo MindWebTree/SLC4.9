@@ -1,4 +1,4 @@
-﻿@model CheckoutConfirmModel
+﻿@model CheckoutConfirmModel 
 <div class="checkout-data">
     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OpCheckoutConfirmTop })
     @if (!string.IsNullOrEmpty(Model.MinOrderTotalWarning) || Model.Warnings.Count > 0)
@@ -51,7 +51,7 @@
                     }
                     else
                     {
-                <a class="read" id="read-terms" href="@Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("conditionsofuse") })">@T("Checkout.TermsOfService.Read")</a>
+                <a class="read" id="read-terms" href="@await NopUrl.RouteTopicUrlAsync("conditionsofuse")">@T("Checkout.TermsOfService.Read")</a>
                     }
                 </label>
             </div>
