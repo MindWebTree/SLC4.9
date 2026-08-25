@@ -1,0 +1,65 @@
+﻿@inject ICustomWorkContext _workContext;
+@{
+    Layout = "_Root";
+}
+
+
+
+<script>
+    var EnableInfiniteScroll = 'True';
+</script>
+<text>
+    <style>
+        .pager {
+            display: none;
+        }
+    </style>
+</text>
+<div class="row mx-0">
+    @await RenderSectionAsync("Heading")
+
+    @if (IsSectionDefined("CatalogSelector"))
+    {
+        @await RenderSectionAsync("CatalogSelector")
+    }
+    @if (_workContext.IsMobileDevice())
+    {
+        @if (IsSectionDefined("SelectedtFilters"))
+        {
+            @await RenderSectionAsync("SelectedtFilters", false)
+        }
+    }
+    @if (IsSectionDefined("CatalogFilters") && !_workContext.IsMobileDevice())
+    {
+        @await RenderSectionAsync("CatalogFilters", false)
+    }
+</div>
+<div class="row version1">
+    @if (IsSectionDefined("CatalogFilters"))
+    {
+        <div class="filters col-0">
+            @if (_workContext.IsMobileDevice())
+            {
+                @await RenderSectionAsync("CatalogFilters", false)
+            }
+            @*@await Component.InvokeAsync("CategoryNavigation", new { currentCategoryId = currentCategoryId, currentProductId = currentProductId })
+                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnAfterCategoryNavigation })
+                @await Component.InvokeAsync("ManufacturerNavigation", new { currentManufacturerId = currentManufacturerId })
+                @await Component.InvokeAsync("VendorNavigation")
+                @await Component.InvokeAsync("RecentlyViewedProductsBlock", new { productThumbPictureSize = 64 })
+                @await Component.InvokeAsync("PopularProductTags")
+                @await Component.InvokeAsync("PollBlock", new { systemKeyword = "LeftColumnPoll" })
+                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnAfter })*@
+        </div>
+    }
+    <div class="listinggrid col-sm-12">
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.MainColumnBefore })
+        @RenderBody()
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.MainColumnAfter })
+    </div>
+</div>
+@*}*@
+
+
+
+

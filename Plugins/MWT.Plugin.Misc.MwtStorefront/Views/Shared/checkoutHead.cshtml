@@ -1,0 +1,30 @@
+﻿@using Nop.Core
+@using Nop.Services.Helpers
+@using Nop.Web.Framework.UI
+@inject IWorkContext workContext
+@inject IThemeContext themeContext
+@inject IUserAgentHelper userAgentHelper
+@{
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+    var themeName = await themeContext.GetWorkingThemeNameAsync();
+
+    //add browser specific CSS files
+    //add main CSS file
+    if (supportRtl)
+    {
+        //Html.AppendCssFileParts($"~/Themes/{themeName}/Content/css/styles.rtl.css");
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts($"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/root-theme-styles.css?ver=547");
+        NopHtml.AppendCssFileParts($"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/checkout.css?ver=205");
+        NopHtml.AppendCssFileParts($"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/bootstrap.min.css");
+        NopHtml.AppendCssFileParts($"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/fontawesome-all.min.css");
+        NopHtml.AppendCssFileParts($"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/slick.css");
+        NopHtml.AppendCssFileParts($"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/slick-theme.css");
+
+
+    }
+    //add jQuery UI css file
+    NopHtml.AppendCssFileParts("~/lib_npm/jquery-ui-dist/jquery-ui.min.css");
+}

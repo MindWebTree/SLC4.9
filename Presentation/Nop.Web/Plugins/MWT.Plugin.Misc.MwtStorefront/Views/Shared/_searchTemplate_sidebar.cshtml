@@ -1,0 +1,51 @@
+﻿@inject Nop.Core.IWorkContext _workContext;
+@inject Nop.Services.Localization.ILocalizationService _localizationService; 
+@{
+    Layout = "_Root";
+    var hidefilter = false;
+    var displayFilters = false;
+    bool.TryParse((string)ViewBag.hidefilter, out hidefilter);
+    bool.TryParse((string)ViewBag.displayFilters, out displayFilters);
+}
+<script>
+    var defaultSortOption = '@((await _localizationService.GetResourceAsync("Common.Select")).Replace(" ", "_"))';
+</script>
+
+
+
+<script>
+    var EnableInfiniteScroll = 'false';
+</script>
+
+<div class="row mx-0">
+    @await RenderSectionAsync("Heading")
+
+    @if (IsSectionDefined("CatalogSelector"))
+    {
+        @await RenderSectionAsync("CatalogSelector")
+    }
+    @if (IsSectionDefined("SelectedtFilters"))
+    {
+        @await RenderSectionAsync("SelectedtFilters", false)
+    }
+</div>
+<div class="row sidebar-container">
+    @if (IsSectionDefined("CatalogFilters"))
+    {
+        <div class="filters @(displayFilters?"show col-sm-3":"col-0")">
+            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnBefore })
+            @await RenderSectionAsync("CatalogFilters", false)
+
+        </div>
+    }
+    <div class="listinggrid  @(displayFilters?"col-sm-9":"col-sm-12")">
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.MainColumnBefore })
+        @RenderBody()
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.MainColumnAfter })
+    </div>
+</div>
+@*}*@
+
+
+
+

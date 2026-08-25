@@ -1,4 +1,4 @@
-@model OrderDetailsModel
+@model OrderDetailsExtendedModel
 @inject Nop.Services.Catalog.IPriceFormatter _priceFormatter;
 @inject Nop.Core.IWorkContext _workContext;
 @inject Nop.Services.Configuration.ISettingService _settingService;
@@ -13,9 +13,9 @@
         Layout = "_Print";
     }
     //title
-    Html.AddTitleParts(T("PageTitle.OrderDetails").Text);
+    NopHtml.AddTitleParts(T("PageTitle.OrderDetails").Text);
     //page class
-    Html.AppendPageCssClassParts("html-order-details-page");
+    NopHtml.AppendPageCssClassParts("html-order-details-page");
     decimal orderSubtotal = 0;
     var currencyCode = (await _workContext.GetWorkingCurrencyAsync())?.CurrencyCode;
       var store = await _storeContext.GetCurrentStoreAsync();

@@ -715,7 +715,8 @@ namespace MWT.Nop.Core.Services.Orders
             details.ShippingStatus = ShippingStatus.NotYetShipped;
 
         }
-        protected virtual async Task PrepareCustomOrderValidateTotalsAsync(PlaceOrderContainer details, ProcessPaymentRequest processPaymentRequest, CustomOrder customOrder, dynamic orderSummary)
+        protected virtual async Task PrepareCustomOrderValidateTotalsAsync(PlaceOrderContainer details, ProcessPaymentRequest processPaymentRequest,
+            CustomOrder customOrder, dynamic orderSummary)
         {
             #region Order totals
 

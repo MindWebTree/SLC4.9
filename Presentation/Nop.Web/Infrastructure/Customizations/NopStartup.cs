@@ -95,10 +95,10 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<IPaymentProfileService, PaymentProfileService>(); 
             services.AddScoped<IOrderProcessingExtendedService, OrderProcessingExtendedService>(); 
 
-
             services.AddScoped<IIpAddressService, IpAddressService>();
             services.AddScoped<IIPLiteService, IPLiteService>();
             services.AddScoped<IBundleLoggerService, BundleLoggerService>(); 
+            services.AddScoped<IPaymentSessionService, PaymentSessionService>(); 
 
             #region Tag
             services.AddScoped<ITagSlugService, TagSlugService>();

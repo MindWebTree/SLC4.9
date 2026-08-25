@@ -56,7 +56,8 @@ using System.Globalization;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Controllers
 {
-    [AutoValidateAntiforgeryToken]
+   [AutoValidateAntiforgeryToken]
+ 
 
     public partial class CheckoutExtendedController : CheckoutController
     {
@@ -116,7 +117,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
      IZohoService zohoService, ICustomerExtendedService customerExtendedService, ICheckoutExtendedModelFactory checkoutExtendedModelFactory,
      IAbandonedCartService abandonedCartService, IOrderExtendedModelFactory orderModelFactory,
      IPaymentSessionService paymentSessionService, IOrderTotalCalculationExtendedService orderTotalCalculationService, ICurrencyService currencyService,
-     IShoppingCartExtendedModelFactory shoppingCartModelFactory, IOrderProcessingExtendedService orderProcessingExtendedService, ISettingService settingService) : base(addressSettings, captchaSettings, customerSettings, addressModelFactory, addressService, addressAttributeParser, checkoutModelFactory, countryService, customerService, genericAttributeService, localizationService, logger, orderProcessingService, orderService, paymentPluginManager, paymentService, productService, shippingService, shoppingCartService, storeContext, taxService, webHelper, workContext, orderSettings, paymentSettings, rewardPointsSettings, shippingSettings, taxSettings)
+     IShoppingCartExtendedModelFactory shoppingCartModelFactory, IOrderProcessingExtendedService orderProcessingExtendedService, ISettingService settingService,
+     ForumSettings forumSettings) : base(addressSettings, captchaSettings, customerSettings, addressModelFactory, addressService, addressAttributeParser, checkoutModelFactory, countryService, customerService, genericAttributeService, localizationService, logger, orderProcessingService, orderService, paymentPluginManager, paymentService, productService, shippingService, shoppingCartService, storeContext, taxService, webHelper, workContext, orderSettings, paymentSettings, rewardPointsSettings, shippingSettings, taxSettings)
         {
             _commonSettings = commonSettings;
             _gdprService = gdprService;
@@ -143,6 +145,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
             _currencyService = currencyService;
             _shoppingCartModelFactory = shoppingCartModelFactory;
             _orderProcessingExtendedService = orderProcessingExtendedService;
+            _forumSettings = forumSettings;
         }
 
         public virtual async Task<IActionResult> CustomOnePageCheckout()
@@ -213,6 +216,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
         }
 
 
+   
         [HttpPost]
         public virtual async Task<IActionResult> OpcSaveCustomerInfo(CheckoutAddressModel model, IFormCollection form, bool saveData = true, bool moveToNextStep = true)
         {
@@ -518,6 +522,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
         }
 
         #region Methods (one page checkout)
+
+       
         public virtual async Task<IActionResult> OpcCustomLoadBillingAddres()
         {
             var billingAddressModel = await _checkoutExtendedModelFactory.PrepareCustomBillingAddressModelAsync(null, null, prePopulateNewAddressWithCustomerFields: true);
@@ -543,6 +549,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
         /// 
 
         [HttpPost]
+ 
         public virtual async Task<IActionResult> OpcCustomSaveBilling(CheckoutAddressModel model, IFormCollection form)
         {
             try
@@ -680,6 +687,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
         /// <returns>A task that represents the asynchronous operation</returns>
         /// 
         [HttpPost]
+     
         protected virtual async Task<JsonResult> OpcCustomSaveShipping(CheckoutAddressModel customaddressModel, IFormCollection form, bool moveToNextStep)
         {
             var model = customaddressModel.CheckoutAddressModelToAddressModel();
@@ -877,6 +885,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
             }
         }
         /// <returns>A task that represents the asynchronous operation</returns>
+        /// 
+ 
         protected virtual async Task<JsonResult> OpcCustomLoadStepAfterShippingAddress(IList<ShoppingCartItem> cart)
         {
             var customer = await _workContext.GetCurrentCustomerAsync();
@@ -908,6 +918,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
         /// <returns>A task that represents the asynchronous operation</returns>
         /// 
         [HttpPost]
+ 
         public virtual async Task<IActionResult> OpcCustomSaveShippingMethod(string shippingoption, IFormCollection form, bool moveToNextStep = true)
         {
             try
@@ -1004,6 +1015,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
 
 
         /// <returns>A task that represents the asynchronous operation</returns>
+
+ 
         protected virtual async Task<JsonResult> OpcCustomLoadStepAfterShippingMethod(IList<ShoppingCartItem> cart, bool loadParent = false)
         {
             //Check whether payment workflow is required
@@ -1045,7 +1058,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
 
         }
 
-        [IgnoreAntiforgeryToken]
+   
         [HttpPost]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> OpcCustomSavePaymentInfo(string paymentMethod, IFormCollection form)
@@ -1170,7 +1183,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
             }
         }
 
-
+    
         protected virtual async Task<JsonResult> OpcCustomLoadStepAfterPaymentMethod(IPaymentMethod paymentMethod, IList<ShoppingCartItem> cart)
         {
             if (paymentMethod.SkipPaymentInfo ||
@@ -1202,7 +1215,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                 goto_section = "payment_info"
             });
         }
-        [IgnoreAntiforgeryToken]
+  
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> OpcCustomConfirmOrder(int filterByCountryId, IPaymentMethod paymentMethod)
         {
@@ -1629,6 +1642,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
 
 
         /// <returns>A task that represents the asynchronous operation</returns>
+        /// 
+
         public virtual async Task<IActionResult> CustomCompleted(int? orderId)
         {
             //validation

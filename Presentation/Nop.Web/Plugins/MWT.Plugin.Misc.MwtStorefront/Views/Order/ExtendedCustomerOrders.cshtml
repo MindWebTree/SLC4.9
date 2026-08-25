@@ -1,0 +1,80 @@
+﻿@model CustomerOrderExtendedListModel
+@using Nop.Core.Domain.Seo
+@using Nop.Web.Models.Order
+@inject Nop.Core.IWebHelper webHelper
+@inject SeoSettings seoSettings
+@{
+    Layout = "_ColumnsTwo";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Account").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-account-page");
+    NopHtml.AppendPageCssClassParts("html-order-list-page");
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        NopHtml.AddCanonicalUrlParts(Url.RouteUrl("CustomerOrders", null, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant(), false);
+    }
+}
+@section left
+{
+    @await Component.InvokeAsync("CustomerNavigation", new { selectedTabId = CustomerNavigationEnum.Orders })
+}
+<div class="page account-page order-list-page">
+    <div class="page-title">
+        <h1>@T("Account.MyAccount") - @T("Account.CustomerOrders")</h1>
+    </div>
+    <div class="page-body">
+        <form asp-controller="Order" asp-action="ExtendedCustomerOrders" method="post">
+            <div class="order-filters">
+                <div class="order-filters__row">
+                    <label class="order-filters__label">@T("Account.CustomerOrders.Period")</label>
+                    <select class="order-filters__input" id="periodSelector" asp-items="@Model.AvailableLimits"></select>
+                </div>
+            </div>
+        </form>
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CustomerOrdersTop, additionalData = Model })
+        @if (Model.Orders.Count > 0)
+        {
+            <div class="order-list">
+                @foreach (var order in Model.Orders)
+                {
+                    <div class="section order-item">
+                        <div class="title">
+                            <strong>@T("Account.CustomerOrders.OrderNumber"): @order.CustomOrderNumber</strong>
+                        </div>
+                        <ul class="info">
+                            <li>@T("Account.CustomerOrders.OrderDate"): <span class="order-date">@order.CreatedOn.ToString("MMM-dd-yyyy")</span></li>
+                            <li>@T("Account.CustomerOrders.OrderTotal"): <span class="order-total">@order.OrderTotal</span></li>
+                        </ul>
+                        <div class="buttons">
+                            @if (order.IsReturnRequestAllowed)
+                            {
+                                <a type="button" target="_blank" href="https://customer.sierralivingconcepts.com/default.aspx?oid=@(order.Id)&email=@(order.CustomerEmail)" class="button-2 btn btn-default return-items-button">@T("Account.CustomerOrders.ReturnItems")</a>
+                            }
+                            <a type="button" target="_blank" href="https://customer.sierralivingconcepts.com/default.aspx?oid=@(order.Id)&email=@(order.CustomerEmail)" class="button-2 btn btn-default order-details-button">@T("Account.CustomerOrders.OrderDetails")</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="no-data">
+                @T("Account.CustomerOrders.NoOrders")
+            </div>
+        }
+
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CustomerOrdersBottom, additionalData = Model })
+    
+    </div>
+</div>
+
+<script asp-location="Footer">
+    $(function() {
+        $('#periodSelector').on('change', function() {
+  
+                 window.location.href = '@Url.Action("ExtendedCustomerOrders", "Order", new { limit = (object)null })/' + $(this).val();
+        });
+    })
+</script>

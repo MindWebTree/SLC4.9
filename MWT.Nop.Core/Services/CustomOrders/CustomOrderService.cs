@@ -444,6 +444,11 @@ namespace MWT.Nop.Core.Services.Customizations.CustomOrders
         public async Task<dynamic> PrepareBriefOderSummaryModel(int orderId, bool isCustomerPaying = false)
         {
             dynamic model = new ExpandoObject();
+            model.SubTotalDiscountDetails = null;
+            model.ShippingDiscountDetails = null;
+            model.SubTotal = null;
+            model.PayableAmount = null;
+         
             var order = await this.GetById(orderId);
             if (order != null)
             {

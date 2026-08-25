@@ -224,7 +224,7 @@ namespace MWT.Plugin.Shipping.FixedByWeightByTotal
                             shippingMethod.Id, storeId, warehouseId, countryId, stateProvinceId, zip, weight, subTotal);
                     if (shippingByWeightByTotalRecord == null)
                     {
-                        if (_fixedByWeightByTotalSettings.LimitMethodsToCreated)
+                            if (_fixedByWeightByTotalSettings.LimitMethodsToCreated)
                             continue;
                     }
                     else
@@ -244,7 +244,7 @@ namespace MWT.Plugin.Shipping.FixedByWeightByTotal
                         AdditionalFee = shippingByWeightByTotalRecord == null ? 0 : shippingByWeightByTotalRecord.AdditionalFixedCost,
                         CustomShippingMethodDescription = string.Equals(customShippingMethodDescription, localeKeyName, StringComparison.InvariantCultureIgnoreCase) ? "" : customShippingMethodDescription,
                         DefaultAmount = getShippingOptionRequest.IsSurchargeApplicable ? wgsAmount : 0,
-                        SurchargeAmount = getShippingOptionRequest.IsSurchargeApplicable ? shippingByWeightByTotalRecord.Surcharge : 0
+                        SurchargeAmount = getShippingOptionRequest.IsSurchargeApplicable ? shippingByWeightByTotalRecord?.Surcharge ?? 0 : 0
                     });
                 }
             }

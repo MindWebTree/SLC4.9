@@ -1,4 +1,4 @@
-﻿@model Nop.Web.Models.Customizations.Custom.ZipCodeTaxRateModel
+﻿@model ZipCodeTaxRateModel
 @inject Nop.Services.Catalog.IPriceFormatter _priceFormatter;
 @if (!Model.Taxes.Where(t => t.TaxType != Nop.Services.Tax.TaxType.Tax && t.TaxRate > 0).Any())
 {

@@ -87,7 +87,7 @@
                 </form>
                 <button name="save" type="button" class="checkoutdesktopbtn customerinfobtn button-1 button-2 btn btn-primary new-address-next-step-button" onclick="customerInfo.save(true)">@T("Common.Continue")</button>
                 <script asp-location="Footer">
-                    customerInfo.init('#co-customerinfo-form', '@(storeLocation)checkout/OpcSaveCustomerInfo/',
+                    customerInfo.init('#co-customerinfo-form', '@(storeLocation)checkoutextended/OpcSaveCustomerInfo/',
         @((await _customerService.IsGuestAsync(await workContext.GetCurrentCustomerAsync())).ToString().ToLowerInvariant()));
                 </script>
 
@@ -98,7 +98,7 @@
 
             @*Step 2*@
             <script>
-                         Shipping.init('#co-shipping-form', '@(storeLocation)checkout/OpcCustomSaveShipping/','@(storeLocation)checkout/GetTaxByZipCode/');
+                Shipping.init('#co-shipping-form', '@(storeLocation)checkoutextended/OpcCustomSaveShipping/','@(storeLocation)checkoutextended/GetTaxByZipCode/');
             </script>
             @*step2 end*@
 
@@ -118,7 +118,7 @@
                             NotAvailableMethodsError: "@T("ShippingMethod.NotAvailableMethodsError")",
                             SpecifyMethodError: "@T("ShippingMethod.SpecifyMethodError")"
                         };
-                        ShippingMethod.init('#co-shipping-method-form', '@(storeLocation)checkout/OpcCustomSaveShippingMethod/', localized_data);
+                        ShippingMethod.init('#co-shipping-method-form', '@(storeLocation)checkoutextended/OpcCustomSaveShippingMethod/', localized_data);
                     </script>
                     <button type="button" class="checkoutdesktopbtn btn btn-primary button-1 new-address-next-step-button" onclick="ShippingMethod.save()">@T("Common.Continue")</button>
                 </form>
@@ -141,9 +141,9 @@
                         NotAvailableMethodsError: "@T("PaymentMethod.NotAvailableMethodsError")",
                         SpecifyMethodError: "@T("PaymentMethod.SpecifyMethodError")"
                     };
-                    PaymentMethod.init('#co-payment-method-form', '@(storeLocation)checkout/OpcCustomSavePaymentInfo/', localized_data,
-                        '@(storeLocation)checkout/OpcCustomLoadBillingAddres/',
-                        '@(storeLocation)checkout/OpcCustomSaveBilling/', '#co-billing-form', '@Url.RouteUrl("CheckoutCompleted")');
+                    PaymentMethod.init('#co-payment-method-form', '@(storeLocation)checkoutextended/OpcCustomSavePaymentInfo/', localized_data,
+                        '@(storeLocation)checkoutextended/OpcCustomLoadBillingAddres/',
+                        '@(storeLocation)checkoutextended/OpcCustomSaveBilling/', '#co-billing-form', '@Url.RouteUrl("CheckoutCompleted")');
                 </script>
                 <div class="term-conditions">
                     <label class="custom-control-label" style="    margin: 20px 0 0px;">
