@@ -44,7 +44,8 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Infrastructure
             services.AddScoped<IProductBundleModelFactory, ProductBundleModelFactory>(); 
             services.AddScoped<IOrderExtendedModelFactory, OrderExtendedModelFactory>(); 
             services.AddScoped<IAddressExtendedModelFactory, AddressExtendedModelFactory>(); 
-            services.AddScoped<ICheckoutExtendedModelFactory, CheckoutExtendedModelFactory>(); 
+            services.AddScoped<ICheckoutExtendedModelFactory, CheckoutExtendedModelFactory>();
+            services.AddScoped<IAbandonedCartModelFactory, AbandonedCartModelFactory>();
             if (DataSettingsManager.IsDatabaseInstalled())
                 services.AddScoped<SlugRouteExtendetTransformer>();
             services.Configure<RazorViewEngineOptions>(options =>

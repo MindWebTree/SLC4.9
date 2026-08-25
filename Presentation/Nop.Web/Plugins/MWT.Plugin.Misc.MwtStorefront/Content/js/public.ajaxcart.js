@@ -83,11 +83,14 @@ var AjaxCart = {
         this.setLoadWaiting(true);
         url_add = urladd;
         var postData = {};
-        addAntiForgeryToken(postData);
+        $.each($(formselector).serializeArray(), function (i, field) {
+            postData[field.name] = field.value;
+        });
+        addAntiForgeryToken(postData);  
         $.ajax({
             cache: false,
             url: urladd,
-            data: $(formselector).serialize(),
+            data: postData,
             type: "POST",
             success: this.success_process,
             complete: this.resetLoadWaiting,

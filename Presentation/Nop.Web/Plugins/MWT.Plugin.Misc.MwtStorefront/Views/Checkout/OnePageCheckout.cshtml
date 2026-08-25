@@ -5,11 +5,10 @@
 @inject IWebHelper webHelper
 @inject IWorkContext workContext
 @inject ICustomerService _customerService
-@inject Nop.Services.Localization.ILocalizationService _localizationService
+@inject Nop.Services.Localization.ILocalizationService  _localizationService
 @inject Nop.Core.Domain.Customers.CustomerSettings _customerSettings
 @inject SeoSettings seoSettings
-@{
-    Layout = "_ColumnsOne_Checkout";
+@{ Layout = "_ColumnsOne_Checkout";
 
     //scripts
 
@@ -25,8 +24,7 @@
     if (seoSettings.CanonicalUrlsEnabled)
     {
         NopHtml.AddCanonicalUrlParts(Url.RouteUrl("CheckoutOnePage", null, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant(), false);
-    }
-}
+    } }
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxJavVrIvirKKh4iwR-hxhC5gfQjFmcDI&libraries=places&v=weekly" defer></script>
 <script>
 
@@ -34,8 +32,7 @@
     var phoneValidationError='@await _localizationService.GetResourceAsync("Account.Fields.Phone.NotValid")';
     var emailValidationError='@await _localizationService.GetResourceAsync("Common.WrongEmail")';
 </script>
-@{
-    //step numbers
+@{ //step numbers
     var userDetaisStepNumber = 1;
     var shippingAddressStepNumber = 2;
     var shippingMethodStepNumber = 3;
@@ -45,8 +42,7 @@
     {
         paymentMethodStepNumber = paymentMethodStepNumber - 1;
         confirmOrderStepNumber = confirmOrderStepNumber - 1;
-    }
-}
+    } }
 <div class="page  checkout-pages">
     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OpcContentBefore })
     <div class="row d-flex justify-content-center">
@@ -63,7 +59,7 @@
 
                     <h4>@T("opc.Breadcrumb.ShippingAddress") </h4>
                 </li>
-                <li id="opc-shipping_method" class="step-title @(Model.StepActive == "#opc-shipping_method" || Model.StepActive == "#opc-payment_method" ? "allow" : "")">
+                <li id="opc-shipping_method" class="step-title @(Model.StepActive=="#opc-shipping_method" || Model.StepActive=="#opc-payment_method"?"allow":"")">
                     <span class="bullet"></span>
                     @*<span class="completed"><img src="/images/tick.svg" /></span>
                         <span class="processing"><img src="/images/checkout-processing.svg" /></span>*@
@@ -91,8 +87,8 @@
                 </form>
                 <button name="save" type="button" class="checkoutdesktopbtn customerinfobtn button-1 button-2 btn btn-primary new-address-next-step-button" onclick="customerInfo.save(true)">@T("Common.Continue")</button>
                 <script asp-location="Footer">
-                                customerInfo.init('#co-customerinfo-form', '@(storeLocation)checkoutextended/OpcSaveCustomerInfo/',
-                    @((await _customerService.IsGuestAsync(await workContext.GetCurrentCustomerAsync())).ToString().ToLowerInvariant()));
+                    customerInfo.init('#co-customerinfo-form', '@(storeLocation)checkoutextended/OpcSaveCustomerInfo/',
+        @((await _customerService.IsGuestAsync(await workContext.GetCurrentCustomerAsync())).ToString().ToLowerInvariant()));
                 </script>
 
             </div>
@@ -115,9 +111,7 @@
                         @if (Model.StepActive == "#opc-shipping_method" || Model.StepActive == "#opc-payment_method")
                         {
                             ViewData["ShippingAddress"] = Model.AddressModel;
-                            @await Html.PartialAsync("OpcShippingMethods", Model.CheckoutShippingMethodModel)
-                        }
- @*shipping methods content will be loaded here*@
+            @await Html.PartialAsync("OpcShippingMethods", Model.CheckoutShippingMethodModel) } @*shipping methods content will be loaded here*@
                     </div>
                     <script asp-location="Footer">
                         var localized_data = {
@@ -139,8 +133,7 @@
                     <div id="checkout-payment-method-load">
                         @if (Model.StepActive == "#opc-payment_method")
                         {
-                            @await Html.PartialAsync("OpcPaymentMethods", Model.CheckoutPaymentMethodModel)
-                        }
+                           @await Html.PartialAsync("OpcPaymentMethods", Model.CheckoutPaymentMethodModel)}
                     </div>
                 </form>
                 <script asp-location="Footer">
@@ -174,78 +167,78 @@
 </g>
 </g>
 </svg>@T("OPC.BACKToPayment")
-                        </a>
-                    </div>
-                </div>
+</a>
+</div>
+</div>
 
-                <form action="" id="co-billing-form">
-                    <div id="checkout-billing-load">
-                        @*billing address content will be loaded here*@
-                    </div>
-                </form>
-                <button type="button" class="checkoutdesktopbtn checkoutdesktopbillingbtn btn btn-primary button-1 new-address-next-step-button" onclick="PaymentMethod.save_Billing()">@T("Common.Continue")</button>
-            </div>
-            @*step4 end*@
-
-
-        </div>
-        <div class="col-6">
-            <div class="order-summary-section">
-                @await Component.InvokeAsync("CheckoutOrderSummary", new { isEditable = false, isConfirmationPage = (Model.StepActive == "#opc-payment_method" ? true : false) })
-            </div>
-        </div>
+<form action="" id="co-billing-form">
+    <div id="checkout-billing-load">
+        @*billing address content will be loaded here*@
     </div>
+</form>
+<button type="button" class="checkoutdesktopbtn checkoutdesktopbillingbtn btn btn-primary button-1 new-address-next-step-button" onclick="PaymentMethod.save_Billing()">@T("Common.Continue")</button>
+</div>
+@*step4 end*@
 
-    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OpcContentAfter })
-    <script asp-location="Footer">
+
+</div>
+<div class="col-6">
+    <div class="order-summary-section">
+        @await Component.InvokeAsync("CheckoutOrderSummary", new { isEditable = false, isConfirmationPage = (Model.StepActive == "#opc-payment_method" ? true : false) })
+    </div>
+</div>
+</div>
+
+@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OpcContentAfter })
+<script asp-location="Footer">
 
 
-            Accordion.init('checkout-steps', '.step-title', '@T("Common.Continue")', '@T("checkout.placeyourorder")', true);
-            Accordion.openSection('@Model.StepActive', true);
-            Checkout.init('@(storeLocation)cart/', '@T("Common.Continue")', '@T("checkout.placeyourorder")');
-            //$('input', 'form').blur(function () {
-            //   $(this).valid();
-            //});
-            $(document).on('blur', 'form input,form textarea,form select', function () {
-                $(this).valid();
+        Accordion.init('checkout-steps', '.step-title', '@T("Common.Continue")', '@T("checkout.placeyourorder")', true);
+        Accordion.openSection('@Model.StepActive', true);
+        Checkout.init('@(storeLocation)cart/', '@T("Common.Continue")', '@T("checkout.placeyourorder")');
+        //$('input', 'form').blur(function () {
+        //   $(this).valid();
+        //});
+        $(document).on('blur', 'form input,form textarea,form select', function () {
+            $(this).valid();
+        });
+        $(document).on('focusout', 'form input,form textarea,form select', function () {
+            $(this).valid();
+        });
+
+    $(document).ready(function () {
+
+        $('body').on('click', ".shipping-section-price-info", function () {
+ 
+            $(this).find('input[type="radio"]').prop('checked', true).trigger("change");
+        });
+            $('.checkoutprocessingModel').show();
+
+            setTimeout(function () {
+
+                $('.checkoutprocessingModel').hide();
+            }, 1000);
+
+        });
+        $(document).on('click', '.checkoutmobilebtn', function () {
+            $(".checkout-pages .a-item").each(function (index) {
+                if ($(this).is(":visible")) {
+                    $(this).find("button").click();
+                }
             });
-            $(document).on('focusout', 'form input,form textarea,form select', function () {
-                $(this).valid();
-            });
-
-        $(document).ready(function () {
-
-            $('body').on('click', ".shipping-section-price-info", function () {
-
-                $(this).find('input[type="radio"]').prop('checked', true).trigger("change");
-            });
-                $('.checkoutprocessingModel').show();
-
-                setTimeout(function () {
-
-                    $('.checkoutprocessingModel').hide();
-                }, 1000);
-
-            });
-            $(document).on('click', '.checkoutmobilebtn', function () {
-                $(".checkout-pages .a-item").each(function (index) {
-                    if ($(this).is(":visible")) {
-                        $(this).find("button").click();
-                    }
-                });
-            });
-        $(document).on('click', '#toggle-summary-view .title-items', function () {
-                $(".order-summary-wrapper .block-content").toggleClass("active");
-                $(".order-summary-wrapper").toggleClass("active");
-                $(this).find(".down-arrow").toggleClass("active");
-             /*   $(".order-summary-wrapper .block-title .total-price").toggleClass("hidelement");*/
-            });
-            $(document).on('click', '.checkout-pages .close-icon', function () {
-                $(this).parent().hide();
-            });
+        });
+    $(document).on('click', '#toggle-summary-view .title-items', function () {
+            $(".order-summary-wrapper .block-content").toggleClass("active");
+            $(".order-summary-wrapper").toggleClass("active");
+            $(this).find(".down-arrow").toggleClass("active");
+         /*   $(".order-summary-wrapper .block-title .total-price").toggleClass("hidelement");*/
+        });
+        $(document).on('click', '.checkout-pages .close-icon', function () {
+            $(this).parent().hide();
+        });
 
 
-    </script>
+</script>
 </div>
 
 <div class="modal fade" id="paymenterror-modal" tabindex="-1" aria-labelledby="paymenterrormodal" aria-hidden="true">
@@ -259,8 +252,8 @@
                 </div>
 
                 <h2 class="text-center fw-normal payment_failed fw-bold mt-4">@T("Payment.Decline.Heading")</h2>
-
-                <div class="text-center fw-semibold p-font mt-4 errormessage" data-message="@T("Common.Payment.Error.Message.Default")">@T("Common.Payment.Error.Message.Default")</div>
+            
+ <div class="text-center fw-semibold p-font mt-4 errormessage" data-message="@T("Common.Payment.Error.Message.Default")">@T("Common.Payment.Error.Message.Default")</div>
                 <button type="button" class="btn btn-primary pay_now mt-4 p-2 pay-now-btn" data-bs-dismiss="modal">@T("Payment.Decline.Popup.Button")</button>
 
                 <h4 class="having-trouble-font-size mt-4">
@@ -334,31 +327,30 @@
 
 @if (TempData["Affirm.Error"] != null)
 {
-    <div class="modal fade" id="paymentErrorModel">
-        <div class="modal-dialog modal-dialog-centered paymentErrorModel">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-center w-100" id="exampleModalLabel">Error</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    @Html.Raw(TempData["Affirm.Error"])
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Return to the Merchant</button>
-                </div>
+<div class="modal fade" id="paymentErrorModel">
+    <div class="modal-dialog modal-dialog-centered paymentErrorModel">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center w-100" id="exampleModalLabel">Error</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @Html.Raw(TempData["Affirm.Error"])
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Return to the Merchant</button>
             </div>
         </div>
     </div>
+</div>
 
-    <script asp-location="Footer">
+                <script asp-location="Footer">
 
-        document.addEventListener("DOMContentLoaded", function () {
-            setTimeout(function () {
-                const merchantModal = new bootstrap.Modal(document.getElementById("paymentErrorModel"));
-                merchantModal.show();
-            }, 1000); // Delay of 1 second
-        });
+                    document.addEventListener("DOMContentLoaded", function () {
+                        setTimeout(function () {
+                            const merchantModal = new bootstrap.Modal(document.getElementById("paymentErrorModel"));
+                            merchantModal.show();
+                        }, 1000); // Delay of 1 second
+                    });
 
-    </script>
-}
+                </script>}
