@@ -1,0 +1,106 @@
+﻿@model CategorySpecificationOptionProductSearchModel
+@{
+    Layout = "_AdminPopupLayout";
+    ViewBag.PageTitle = T("Admin.Catalog.Categories.Products.AddNew").Text;
+}
+
+@if (ViewBag.RefreshPage == true)
+{
+    <script>
+        try { window.opener.updateTable('#categoryProductFilter-grid'); }
+        catch (e) { }
+        window.close();
+    </script>
+}
+else
+{
+    <form asp-controller="Category" asp-action="CategorySpecificationOptionMappingAddPopup"
+          asp-route-categoryId="@Context.Request.Query["categoryId"]"
+          asp-route-specificationAttributeOptionId="@Context.Request.Query["specificationAttributeOptionId"]">
+        <div class="content-header clearfix">
+            <h1 class="float-left">
+                @T("Admin.Catalog.Categories.Products.AddNew")
+            </h1>
+        </div>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="form-horizontal">
+                    <div class="cards-group">
+                        <div class="card card-default">
+                            <div class="card-body">
+                                @await Html.PartialAsync("Table", new DataTablesModel
+                           {
+                               Name = "categoryProductFilterPopup-grid",
+                               UrlRead = new DataUrl("CategorySpecificationOptionMappingAddPopupList", "Category",
+                                        new RouteValueDictionary { [nameof(Model.CategoryId)] = Model.CategoryId, [nameof(Model.SpecificationAttributeOptionId)] = Model.SpecificationAttributeOptionId }),
+                               Length = Model.PageSize,
+                               LengthMenu = Model.AvailablePageSizes,
+                               ColumnCollection = new List<ColumnProperty>
+                                    {
+                                        new ColumnProperty(nameof(CategorySpecificationOptionProductAddPopupModel.Id))
+                                        {
+                                            IsMasterCheckBox = true,
+                                            Render = new RenderCustom("renderCheckboxWithSelected"),
+                                            ClassName = NopColumnClassDefaults.CenterAll,
+                                            Width = "50"
+                                        },
+                                        new ColumnProperty(nameof(CategorySpecificationOptionProductAddPopupModel.Id))
+                                        {
+                                            IsMasterCheckBox = false,
+                                            Render = new RenderCustom("renderProductIds"),
+                                            ClassName = NopColumnClassDefaults.CenterAll,
+                                            Width = "50"
+                                        },
+                                        new ColumnProperty(nameof(CategorySpecificationOptionProductAddPopupModel.Id))
+                                        {
+                                            Title = T("Admin.Catalog.Products.Fields.Id").Text
+                                        },
+                                        new ColumnProperty(nameof(CategorySpecificationOptionProductAddPopupModel.PictureThumbnailUrl))
+                                        {
+                                            Title = T("Admin.Catalog.Products.Fields.PictureThumbnailUrl").Text,
+                                            Width = "100",
+                                            Render = new RenderPicture()
+                                        },
+                                        new ColumnProperty(nameof(CategorySpecificationOptionProductAddPopupModel.Name))
+                                        {
+                                            Title = T("Admin.Catalog.Products.Fields.Name").Text
+                                        },
+                                        new ColumnProperty(nameof(CategorySpecificationOptionProductAddPopupModel.Published))
+                                        {
+                                            Title = T("Admin.Catalog.Products.Fields.Published").Text,
+                                            Width = "100",
+                                            ClassName = NopColumnClassDefaults.CenterAll,
+                                            Render = new RenderBoolean()
+                                        }
+                                    }
+                           })
+                            </div>
+                            <div class="card-footer">
+                                <input type="hidden" name="SpecificationAttributeOptionId" value="@Model.SpecificationAttributeOptionId" />
+                                <button type="submit" name="save" class="btn btn-primary">
+                                    <i class="far fa-save"></i>
+                                    @T("Admin.Common.Save")
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </form>
+}
+<script>
+    function renderCheckboxWithSelected(data, type, row, meta) {
+        const checkedAttr = row.Selected ? 'checked="checked"' : '';
+        return '<input type="checkbox" class="checkboxGroups" name="SelectedProductIds" value="' + data + '" ' + checkedAttr + ' />';
+    }
+    function renderProductIds(data, type, row, meta) {
+        return '<input type="checkbox"  name="ProductIds" value="' + data + '" checked="checked" />';
+    }
+
+</script>
+<style>
+    #categoryProductFilterPopup-grid_wrapper th:nth-child(2n), #categoryProductFilterPopup-grid_wrapper td:nth-child(2n) {
+        display: none;
+    }
+</style>
