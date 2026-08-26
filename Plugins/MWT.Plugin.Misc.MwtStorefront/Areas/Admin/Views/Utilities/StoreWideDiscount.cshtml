@@ -1,0 +1,119 @@
+﻿@model Nop.Web.Areas.Admin.Models.Customization.Utilities.StoreWideDiscountSearchModel
+@using Nop.Web.Areas.Admin.Models.Customization.Utilities
+@using Nop.Web.Framework.Models.AdminAreaTour
+
+<div class="content-header clearfix">
+    <h1 class="float-left">
+        @T("Admin.Utilities.StoreWideDiscount")
+    </h1>
+    <div class="float-right">
+        <a class="btn btn-primary" href="/Admin/Utilities/StoreWideDiscount/Create">
+            <i class="fas fa-plus-square"></i>
+            @T("Admin.Common.AddNew")
+        </a>
+    </div>
+</div>
+
+
+
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="cards-group">
+                <div class="card card-default margin-bottom">
+                    <div class="card-header">
+                        <i class="fas fa-list"></i> Store Wide Discount List
+                    </div>
+
+
+                    <div class="card card-default">
+                        <div class="card-body">
+                            @await Html.PartialAsync("Table", new DataTablesModel
+                       {
+                           Length = Model.PageSize,
+                           LengthMenu = Model.AvailablePageSizes,
+                           Filters = new List<FilterParameter>
+                           {
+                           },
+                           Name = "storeWideDiscount-table",
+                           UrlRead = new DataUrl("StoreWideDiscountList", "Utilities", null),
+                           UrlDelete = new DataUrl("StoreWideDiscountDelete", "Utilities", null),
+
+                           ColumnCollection = new List<ColumnProperty>
+        {
+        new ColumnProperty(nameof(StoreWideDiscountModel.Name))
+        {
+                Title = T("Admin.Utilities.Marketing.Offer.Log.Field.Name").Text,
+        Width = "2900",
+        },
+        new ColumnProperty(nameof(StoreWideDiscountModel.StartDate))
+        {
+        Title = T("Admin.Utilities.Marketing.Offer.Log.Field.StartDate").Text,
+        Width = "120",
+        },
+        new ColumnProperty(nameof(StoreWideDiscountModel.EndDate))
+        {
+        Title = T("Admin.Utilities.Marketing.Offer.Log.Field.EndDate").Text,
+        Width = "120",
+        },
+        new ColumnProperty(nameof(StoreWideDiscountModel.IsProcessed))
+        {
+        Title = T("Admin.Utilities.Marketing.Offer.Log.Field.IsProcessed").Text,
+        Width = "120",
+        },
+        new ColumnProperty(nameof(StoreWideDiscountModel.Published))
+        {
+        Title = T("Admin.Utilities.Marketing.Offer.Log.Field.Published").Text,
+        Width = "120",
+        },
+        new ColumnProperty(nameof(StoreWideDiscountModel.Created_By))
+        {
+        Title = T("Admin.Utilities.Marketing.Offer.Log.Field.CreatedBy").Text,
+        Width = "120",
+        },
+        new ColumnProperty(nameof(StoreWideDiscountModel.CreatedOn))
+        {
+        Title = T("Admin.Utilities.Marketing.Offer.Log.Field.CreatedOn").Text,
+        Width = "120",
+        },
+        new ColumnProperty(nameof(StoreWideDiscountModel.UpdatedOn))
+        {
+        Title = T("Admin.Utilities.Marketing.Offer.Log.Field.UpdatedOn").Text,
+        Width = "120",
+        },
+        new ColumnProperty(nameof(StoreWideDiscountModel.Id))
+        {
+           Title = T("Admin.Common.Edit").Text,
+           Width = "100",
+           ClassName =  NopColumnClassDefaults.Button,
+           Render = new RenderButtonEdit(new DataUrl("Edit"))
+        },
+        new ColumnProperty(nameof(StoreWideDiscountModel.Id))
+        {
+        Title = T("Admin.Common.Delete").Text,
+        Width = "120",
+        ClassName =  NopColumnClassDefaults.Button,
+        Render = new RenderButtonRemove("Delete")
+        },
+        }
+                       }
+        );
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content">
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            @T("Admin.Utilities.Marketing.Offer.History")
+        </h1>
+    </div>
+
+    <div class="container-fluid">
+        @await Component.InvokeAsync("Custom_OfferLogHistory")
+    </div>
+</section>

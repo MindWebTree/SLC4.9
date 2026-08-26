@@ -1,0 +1,139 @@
+﻿@model Nop.Web.Areas.Admin.Models.Customization.Utilities.StoreWideDiscountSettingModel
+@if (ViewBag.RefreshPage == true)
+{
+    <script>
+        try {window.opener.document.forms['@(Context.Request.Query["formId"])'].@(Context.Request.Query["btnId"]).click();}
+        catch (e) { }
+        window.close();
+    </script>
+}
+else
+{
+    <form asp-controller="Utilities" asp-action="StoreWideDiscountSettingCreateUpdate" method="post" name="DiscountSetting-form" id="DiscountSetting-form"
+          asp-route-btnId="@Context.Request.Query["btnId"]"
+          asp-route-formId="@Context.Request.Query["formId"]">
+        <div class="content-header clearfix">
+            <h1 class="float-left">
+                @T("admin.Utilities.Marketing.StoreWideDiscount.Setting.addnew")
+            </h1>
+
+            <div class="float-right">
+                <button type="submit" name="save" class="btn bg-olive">
+                    <i class="far fa-save"></i>
+                    @T("Admin.Common.Save")
+                </button>
+
+            </div>
+        </div>
+        @if (Model.Id > 0)
+        {
+            @Html.HiddenFor(model => model.Id)
+        }
+        <section class="content">
+            <div class="container-fluid">
+                <div class="form-horizontal">
+                    <div class="cards-group">
+                        <div class="card card-default margin-bottom">
+                            <div class="card-header">
+                                <i class="fas fa-info"></i>     @T("admin.Utilities.Marketing.StoreWideDiscountSetting")
+                            </div>
+                            <div class="card-body">
+                                <section class="content">
+                                    <div class="form-group row">
+                                        <div class="col-sm-3">
+                                            <nop-label asp-for="FullStore" />
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <nop-editor asp-for="FullStore" />
+                                            <span asp-validation-for="FullStore"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-sm-3">
+                                            <nop-label asp-for="SelectedCategoryIds" />
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <nop-select asp-for="SelectedCategoryIds" asp-items="Model.AvailableCategories" asp-multiple="true" />
+                                            <span asp-validation-for="SelectedCategoryIds"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row productIdSection">
+                                        <div class="col-sm-3">
+                                            <nop-label asp-for="ProductIds" />
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <nop-textarea asp-for="ProductIds" />
+                                            <span asp-validation-for="ProductIds"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-sm-3">
+                                            <nop-label asp-for="InfoText" />
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <nop-editor asp-for="InfoText" />
+                                            <span asp-validation-for="InfoText"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-sm-3">
+                                            <nop-label asp-for="InfoHelpText" />
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <nop-textarea asp-for="InfoHelpText" />
+                                            <span asp-validation-for="InfoHelpText"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-sm-3">
+                                            <nop-label asp-for="Discount" />
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <nop-editor asp-for="Discount" asp-required="true" />
+                                            <span asp-validation-for="Discount"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-sm-3">
+                                            <nop-label asp-for="Threshold" />
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <nop-editor asp-for="Threshold" />
+                                            <span asp-validation-for="Threshold"></span>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </form>
+
+
+    <script>
+        $(document).ready(function () {
+            changeCategorySelectionLabel($("#FullStore").prop("checked"));
+        })
+        $("#FullStore").change(function () {
+          changeCategorySelectionLabel($(this).prop("checked"));
+        });
+
+
+        function changeCategorySelectionLabel(ischecked) {
+            if (ischecked) {
+                $("#SelectedCategoryIds_label").text('@T("Admin.Utilities.Marketing.Offer.Field.Exclude.SelectedCategoryIds")');
+                $("#SelectedCategoryIds_label").next().attr("data-original-title", '@T("Admin.Utilities.Marketing.Offer.Field.Exclude.SelectedCategoryIds.Hint")');
+                $(".productIdSection").hide();
+            }
+            else {
+                $("#SelectedCategoryIds_label").text('@T("Admin.Utilities.Marketing.Offer.Field.SelectedCategoryIds")');
+                $("#SelectedCategoryIds_label").next().attr("data-original-title", '@T("Admin.Utilities.Marketing.Offer.Field.SelectedCategoryIds")');
+                $(".productIdSection").show();
+            }
+        }
+    </script>
+}
