@@ -36,6 +36,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         /// <returns>A task that represents the asynchronous operation</returns>
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> CustomList(CategorySearchModel searchModel)
         {
