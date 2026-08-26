@@ -1,29 +1,23 @@
-﻿using iTextSharp.text;
-using LinqToDB.Tools;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using MWT.Nop.Core.Domain.StoreWideDiscount;
+using MWT.Nop.Core.Service.Catalog;
+using MWT.Nop.Core.Service.Discounts;
+using MWT.Nop.Core.Services.Catalog;
+using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.Utilities;
 using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Utilities;
 using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Customization.Custom.StoreWideDiscount;
 using Nop.Services.Catalog;
-using Nop.Services.Customizations.Custom;
 using Nop.Services.Localization;
 using Nop.Services.Logging;
 using Nop.Services.Messages;
+using Nop.Services.ScheduleTasks;
 using Nop.Services.Security;
-using Nop.Services.Tasks;
-using Nop.Web.Areas.Admin.Factories.Customization;
 using Nop.Web.Areas.Admin.Infrastructure.Mapper.Extensions;
-using Nop.Web.Areas.Admin.Models.Customization.Utilities;
 
 using Nop.Web.Framework.Mvc;
 using Nop.Web.Framework.Mvc.Filters;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Nop.Web.Areas.Admin.Controllers.Customizations
 {
@@ -32,8 +26,9 @@ namespace Nop.Web.Areas.Admin.Controllers.Customizations
         #region Fields
 
         private readonly IUtilitiesModelFactory _utilitiesModelFactory;
-        private readonly IProductService _productService;
-        private readonly ICategoryService _categoryService;
+        private readonly IProductExtendedService _productService;
+        private readonly ICustomizationFormSerivce  _customizationFormService;
+        private readonly ICustomCategoryService _categoryService;
         private readonly IPermissionService _permissionService;
         private readonly INotificationService _notificationService;
         private readonly ILocalizationService _localizationService;
@@ -47,8 +42,8 @@ namespace Nop.Web.Areas.Admin.Controllers.Customizations
 
         #endregion
         public UtilitiesController(IUtilitiesModelFactory utilitiesModelFactory,
-       IProductService productService,
-       ICategoryService categoryService,
+       IProductExtendedService productService,
+       ICustomCategoryService categoryService,
        IPermissionService permissionService,
        INotificationService notificationService,
        ILocalizationService localizationService,
@@ -57,7 +52,8 @@ namespace Nop.Web.Areas.Admin.Controllers.Customizations
        IWorkContext workContext,
        IStaticCacheManager staticCacheManager,
        IScheduleTaskService scheduleTaskService,
-       ILogger logger
+       ILogger logger,
+       ICustomizationFormSerivce customizationFormService
        )
         {
             this._utilitiesModelFactory = utilitiesModelFactory;
@@ -72,19 +68,19 @@ namespace Nop.Web.Areas.Admin.Controllers.Customizations
             this._staticCacheManager = staticCacheManager;
             this._scheduleTaskService = scheduleTaskService;
             this._logger = logger;
+            this._customizationFormService = customizationFormService;
         }
+
+        [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> ProductNotesManagement()
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
-                return await AccessDeniedDataTablesJson();
+        { 
             return View(await this._utilitiesModelFactory.PrepareProductNotesManagementModel(new ProductNotesManagementModel()));
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> ProductNotesManagement(ProductNotesManagementModel model)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
-                return await AccessDeniedDataTablesJson();
+        { 
             if (ModelState.IsValid)
             {
                 List<Product> products = new List<Product>();
@@ -147,7 +143,7 @@ namespace Nop.Web.Areas.Admin.Controllers.Customizations
                 });
             }
 
-            var customizationFormTemplates = await this._productService.GetAllProductCustomizationFormTemplatesAsync();
+            var customizationFormTemplates = await this._customizationFormService.GetAllProductCustomizationFormTemplatesAsync();
             foreach (var template in customizationFormTemplates)
             {
                 model.CustomizationFormTemplates.Add(new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem()
@@ -211,7 +207,7 @@ namespace Nop.Web.Areas.Admin.Controllers.Customizations
 
                 });
             }
-            var customizationFormTemplates = await this._productService.GetAllProductCustomizationFormTemplatesAsync();
+            var customizationFormTemplates = await this._customizationFormService.GetAllProductCustomizationFormTemplatesAsync();
             foreach (var template in customizationFormTemplates)
             {
                 model.CustomizationFormTemplates.Add(new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem()
@@ -224,19 +220,16 @@ namespace Nop.Web.Areas.Admin.Controllers.Customizations
             return View(model);
         }
 
-
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> Marketing()
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
+        { 
             return View(await this._utilitiesModelFactory.PrepareMarketingModel());
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> Marketing(MarketingModel model)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
+        { 
             if (ModelState.IsValid)
             {
                 await this._utilitiesModelFactory.SaveMarketingSettings(model);
@@ -250,10 +243,9 @@ namespace Nop.Web.Areas.Admin.Controllers.Customizations
         #region StoreWideDiscount 
 
         [Route("/Admin/Utilities/StoreWideDiscount/List")]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> StoreWideDiscountList()
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
+        { 
             var model = new StoreWideDiscountSearchModel();
 
             return View("StoreWideDiscount", await _utilitiesModelFactory.PrepareStoreWideDiscountSearchModel(model));
@@ -261,11 +253,9 @@ namespace Nop.Web.Areas.Admin.Controllers.Customizations
 
         [Route("/Admin/Utilities/StoreWideDiscount/List")]
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> StoreWideDiscountList(StoreWideDiscountSearchModel searchModel)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
-
+        { 
             //prepare model
             var model = await _utilitiesModelFactory.PrepareStoreWideDiscountListModelAsync(searchModel);
 
@@ -274,10 +264,9 @@ namespace Nop.Web.Areas.Admin.Controllers.Customizations
 
         [Route("/Admin/Utilities/StoreWideDiscount/Create")]
         [Route("/Admin/Utilities/StoreWideDiscount/Edit/{id}")]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> StoreWideDiscountCreate(int id = 0)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
+        { 
 
             var storeWideDiscount = new StoreWideDiscount();
             if (id != 0)
@@ -294,12 +283,9 @@ namespace Nop.Web.Areas.Admin.Controllers.Customizations
         [Route("/Admin/Utilities/StoreWideDiscount/Create")]
         [Route("/Admin/Utilities/StoreWideDiscount/Edit/{storewidediscountid}")]
         [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> StoreWideDiscountCreate(StoreWideDiscountModel model, bool continueEditing)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
-
-
+        {  
             var storeWideDiscount = new StoreWideDiscount();
             if (model.Id != 0)
             {
@@ -352,12 +338,10 @@ namespace Nop.Web.Areas.Admin.Controllers.Customizations
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> StoreWideDiscountDelete(int id)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return AccessDeniedView();
-
+        {  
             //try to get a PairWith product with the specified id
             var storeWideDiscount = await _storeWideDiscountService.GetStoreWideDiscountByIdAsync(id)
                 ?? throw new ArgumentException("No Store Wide Discount found with the specified id");
@@ -373,11 +357,9 @@ namespace Nop.Web.Areas.Admin.Controllers.Customizations
 
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> StoreWideDiscountSettingList(StoreWideDiscountSettingSearchModel searchModel)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
-
+        { 
             //prepare model
             var model = await _utilitiesModelFactory.PrepareStoreWideDiscountSettingListModelAsync(searchModel);
 
@@ -386,11 +368,9 @@ namespace Nop.Web.Areas.Admin.Controllers.Customizations
 
         [Route("/Admin/Utilities/StoreWideDiscount/Setting/Create/{storewidediscountid}")]
         [Route("/Admin/Utilities/StoreWideDiscount/Setting/Edit/{storewidediscountid}/{settingid}")]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> StoreWideDiscountSettingCreateUpdate(int storewidediscountid, int settingid = 0)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
-
+        { 
             var storeWideDiscount = new StoreWideDiscount();
             var storeWideDiscountSetting = new StoreWideDiscountSetting();
             storeWideDiscount = await _storeWideDiscountService.GetStoreWideDiscountByIdAsync(storewidediscountid);
@@ -414,12 +394,10 @@ namespace Nop.Web.Areas.Admin.Controllers.Customizations
         [Route("/Admin/Utilities/StoreWideDiscount/Setting/Create/{storewidediscountid}")]
         [Route("/Admin/Utilities/StoreWideDiscount/Setting/Edit/{storewidediscountid}/{settingid}")]
         [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> StoreWideDiscountSettingCreateUpdate(StoreWideDiscountSettingModel model)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
-
-
+        { 
+             
             if (ModelState.IsValid)
             {
                 var storeWideDiscount = new StoreWideDiscount();
@@ -474,12 +452,10 @@ namespace Nop.Web.Areas.Admin.Controllers.Customizations
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> StoreWideDiscountSettingDelete(int id)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return AccessDeniedView();
-
+        {  
             //try to get a PairWith product with the specified id
             var storeWideDiscountSetting = await _storeWideDiscountService.GetStoreWideDiscountSettingByIdAsync(id)
                 ?? throw new ArgumentException("No Store Wide Discount found with the specified id");
@@ -500,10 +476,9 @@ namespace Nop.Web.Areas.Admin.Controllers.Customizations
 
         #region StoreWideProductDiscountInfo
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> OfferDiscountList(StoreWideProductDiscountInfoSearchModel searchModel)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
+        { 
             //prepare model
             var model = await _utilitiesModelFactory.PrepareOfferDiscountListModelAsync(searchModel);
 
@@ -512,10 +487,9 @@ namespace Nop.Web.Areas.Admin.Controllers.Customizations
         #endregion
 
         #region  StoreWideProductDiscountHistory
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> ProductDiscountHistorySearch(int searchProductId)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
+        { 
             var model = new StoreWideProductDiscountHistorySearchModel();
             model.SearchProductId = searchProductId;
             return View(await _utilitiesModelFactory.PrepareProductDiscountHistorySearchModel(model));
@@ -523,21 +497,18 @@ namespace Nop.Web.Areas.Admin.Controllers.Customizations
 
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> ProductOfferDiscountList(StoreWideProductDiscountHistorySearchModel searchModel)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
-
+        { 
             //prepare model
             var model = await _utilitiesModelFactory.PrepareOfferProductDiscountHistoryListModelAsync(searchModel);
 
             return Json(model);
         }
         #endregion
+                [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> StoreWideDiscount()
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
+        { 
             return View(await this._utilitiesModelFactory.PrepareOfferModel());
         }
 
@@ -546,7 +517,7 @@ namespace Nop.Web.Areas.Admin.Controllers.Customizations
         {
             if (ModelState.IsValid)
             {
-                await this._storeWideDiscountService.ApplyDiscount(new Core.Domain.Customization.Custom.StoreWideDiscount.StoreWideDiscountSetting()
+                await this._storeWideDiscountService.ApplyDiscount(new StoreWideDiscountSetting()
                 {
                     CategoryIds = string.Join(',', model.SelectedCategoryIds),
                     Discount = model.Discount,

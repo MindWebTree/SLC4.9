@@ -1,11 +1,8 @@
-﻿using iTextSharp.text;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Nop.Web.Areas.Admin.Factories.Customization;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Web.Framework.Models;
 using Nop.Web.Framework.Mvc.ModelBinding;
-using System.Collections.Generic;
 
-namespace Nop.Web.Areas.Admin.Models.Customization.Utilities
+namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Utilities
 {
     public partial record ProductNotesManagementModel : BaseNopEntityModel
     {

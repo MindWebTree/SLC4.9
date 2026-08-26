@@ -1,38 +1,37 @@
-﻿using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Utilities;
+﻿using MWT.Nop.Core.Domain;
+using MWT.Nop.Core.Domain.Marketing;
+using MWT.Nop.Core.Domain.StoreWideDiscount;
+using MWT.Nop.Core.Service;
+using MWT.Nop.Core.Service.Catalog;
+using MWT.Nop.Core.Service.Discounts;
+using MWT.Nop.Core.Services.Catalog;
+using MWT.Nop.Core.Services.Customers;
+using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Utilities;
 using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Customization.Custom.StoreWideDiscount;
-using Nop.Core.Domain.Customization.Marketing;
 using Nop.Data;
 using Nop.Services.Catalog;
 using Nop.Services.Configuration;
-using Nop.Services.Customers;
-using Nop.Services.Customizations.Custom;
 using Nop.Services.Localization;
 using Nop.Services.Orders;
 using Nop.Services.Topics;
+using Nop.Web.Areas.Admin.Factories;
 using Nop.Web.Areas.Admin.Infrastructure.Mapper.Extensions;
-using Nop.Web.Areas.Admin.Models.Customization.Utilities;
 using Nop.Web.Framework.Models.Extensions;
-using Nop.Web.Infrastructure.Cache;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Nop.Web.Areas.Admin.Factories.Customization
+namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.Utilities
 {
     public partial class UtilitiesModelFactory : IUtilitiesModelFactory
     {
         #region Fields
 
         private readonly ILocalizationService _localizationService;
-        private readonly IProductService _productService;
-        private readonly IProductAttributeService _productAttributeService;
+        private readonly IProductExtendedService _productService;
+        private readonly ICustomProductAttributeService _productAttributeService;
         private readonly ICategoryService _categoryService;
-        private readonly ISpecificationAttributeService _specificationAttributeService;
+        private readonly ICustomSpecificationAttributeService _specificationAttributeService;
         private readonly ISettingService _settingService;
         private readonly IRepository<RelatedProduct> _relatedProductRepository;
         private readonly IRepository<FBTProduct> _fbtProductRepository;
@@ -46,7 +45,7 @@ namespace Nop.Web.Areas.Admin.Factories.Customization
         private readonly IWorkContext _workContext;
         private readonly IBaseAdminModelFactory _baseAdminModelFactory;
         private readonly IStoreWideDiscountService _storeWideDiscountService;
-        private readonly ICustomerService _customerService;
+        private readonly ICustomerExtendedService _customerService;
         private readonly ITestimonialService _testimonialService;
         private readonly IOrderService _orderService;
 
@@ -54,8 +53,8 @@ namespace Nop.Web.Areas.Admin.Factories.Customization
 
         #region Ctor 
         public UtilitiesModelFactory(ILocalizationService localizationService,
-             IProductService productService, IProductAttributeService productAttributeService,
-             ICategoryService categoryService, ISpecificationAttributeService specificationAttributeService,
+             IProductExtendedService productService, ICustomProductAttributeService productAttributeService,
+             ICategoryService categoryService, ICustomSpecificationAttributeService specificationAttributeService,
              ISettingService settingService, IRepository<RelatedProduct> relatedProductRepository,
              IRepository<FBTProduct> fbtProductRepository,
             IRepository<CrossSellProduct> crossSellProductRepository,
@@ -68,7 +67,7 @@ namespace Nop.Web.Areas.Admin.Factories.Customization
             IWorkContext workContext,
             IBaseAdminModelFactory baseAdminModelFactory,
             IStoreWideDiscountService storeWideDiscountService,
-            ICustomerService customerService,
+            ICustomerExtendedService customerService,
             ITestimonialService testimonialService,
              IOrderService orderService
             )
@@ -462,7 +461,7 @@ namespace Nop.Web.Areas.Admin.Factories.Customization
                             {
                                 var product = await _productService.GetProductByIdAsync(productId);
                                 if (product != null)
-                                    await _categoryService.InsertProductCategoryAsync(new Core.Domain.Catalog.ProductCategory()
+                                    await _categoryService.InsertProductCategoryAsync(new ProductCategory()
                                     {
                                         CategoryId = category.Id,
                                         ProductId = productId,
@@ -510,7 +509,7 @@ namespace Nop.Web.Areas.Admin.Factories.Customization
                             {
                                 var product = await _productService.GetProductByIdAsync(productId);
                                 if (product != null)
-                                    await _specificationAttributeService.InsertProductSpecificationAttributeAsync(new Core.Domain.Catalog.ProductSpecificationAttribute()
+                                    await _specificationAttributeService.InsertProductSpecificationAttributeAsync(new ProductSpecificationAttribute()
                                     {
                                         AllowFiltering = true,
                                         AttributeType = SpecificationAttributeType.Option,
@@ -544,11 +543,11 @@ namespace Nop.Web.Areas.Admin.Factories.Customization
                 }
                 #region Clear Cache of Child Section
 
-                await _staticCacheManager.RemoveByPrefixAsync(NopCatalogDefaults.CollectionPrefix);
-                await _staticCacheManager.RemoveByPrefixAsync(NopCatalogDefaults.PairWithPrefix);
-                await _staticCacheManager.RemoveByPrefixAsync(NopCatalogDefaults.FBTPrefix);
-                await _staticCacheManager.RemoveByPrefixAsync(NopModelCacheDefaults.FBTPrefix);
-                await _staticCacheManager.RemoveByPrefixAsync(NopCatalogDefaults.RelatedPrefix);
+                await _staticCacheManager.RemoveByPrefixAsync(CustomNopCatalogDefaults.CollectionPrefix);
+                await _staticCacheManager.RemoveByPrefixAsync(CustomNopCatalogDefaults.PairWithPrefix);
+                await _staticCacheManager.RemoveByPrefixAsync(CustomNopCatalogDefaults.FBTPrefix);
+                await _staticCacheManager.RemoveByPrefixAsync(CustomNopCatalogDefaults.FBTPrefix);
+                await _staticCacheManager.RemoveByPrefixAsync(CustomNopCatalogDefaults.RelatedPrefix);
 
 
                 #endregion

@@ -1,9 +1,7 @@
-﻿using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Utilities;
-using Nop.Core.Domain.Customization.Custom.StoreWideDiscount;
-using Nop.Web.Areas.Admin.Models.Customization.Utilities;
-using System.Threading.Tasks;
+﻿using MWT.Nop.Core.Domain.StoreWideDiscount;
+using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Utilities;
 
-namespace Nop.Web.Areas.Admin.Factories.Customization
+namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.Utilities
 {
     public partial interface IUtilitiesModelFactory
     {

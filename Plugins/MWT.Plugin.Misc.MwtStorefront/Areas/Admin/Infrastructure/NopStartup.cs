@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MWT.Nop.Core.Domain.FAQModule;
 using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories;
-using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.Customization;
 using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.Integrity_Report;
 using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.PostDelievery;
 using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.QA;
+using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.Utilities;
 using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Factories;
 using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Factories.Custom;
 using Nop.Core.Infrastructure;

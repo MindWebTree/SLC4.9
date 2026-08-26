@@ -1,0 +1,135 @@
+﻿ 
+@model StoreWideProductDiscountInfoSearchModel 
+@using Nop.Core.Domain.Catalog;
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="cards-group">
+                <div class="card card-default margin-bottom">
+                    <div class="card-header">
+                        <i class="fas fa-search"></i> Search Results
+                    </div>
+                    <div class="card-body">
+                        <section class="content">
+                            <div class="form-group row">
+                                <div class="col-sm-3">
+                                    <nop-label asp-for="SearchCategoryId" />
+                                </div>
+                                <div class="col-sm-9">
+                                    @*                                    <nop-editor asp-for="SearchCategoryId" />
+                                    *@
+                                    <nop-select asp-for="SearchCategoryId" asp-items="Model.AvailableCategories" />
+
+                                    <span asp-validation-for="SearchCategoryId"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-3">
+                                    <nop-label asp-for="SearchProductIds" />
+                                </div>
+                                <div class="col-sm-9">
+                                    <nop-editor asp-for="SearchProductIds" />
+                                    <span asp-validation-for="SearchProductIds"></span>
+                                </div>
+                            </div>
+                            <div class="text-center col-12">
+                                <button type="button" id="discount-Search" class="btn btn-primary btn-search">
+                                    <i class="fas fa-search"></i>
+                                    Search
+                                </button>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <div class="card card-default">
+                    <div class="card-body">
+                        @await Html.PartialAsync("Table", new DataTablesModel
+                   {
+                       Length = Model.PageSize,
+                       LengthMenu = Model.AvailablePageSizes,
+                       Filters = new List<FilterParameter>
+{
+new FilterParameter("SearchCategoryId"),
+new FilterParameter("SearchProductIds")
+},
+                       Name = "discount-Search-table",
+                       UrlRead = new DataUrl("OfferDiscountList", "Utilities", null),
+                       SearchButtonId = "discount-Search",
+
+
+                       ColumnCollection = new List<ColumnProperty>
+{
+new ColumnProperty(nameof(StoreWideProductDiscountInfoModel.ProductId))
+{
+            Title = T("Admin.Utilities.Marketing.Offer.Log.Field.ProductId").Text,
+Width = "120",
+},
+new ColumnProperty(nameof(StoreWideProductDiscountInfoModel.Discount))
+{
+Title = T("Admin.Utilities.Marketing.Offer.Log.Field.Discount").Text,
+Width = "120",
+},
+new ColumnProperty(nameof(StoreWideProductDiscountInfoModel.InfoText))
+{
+Title = T("Admin.Utilities.Marketing.Offer.Log.Field.InfoText").Text,
+Width = "220",
+},
+new ColumnProperty(nameof(StoreWideProductDiscountInfoModel.InfoHelpText))
+{
+Title = T("Admin.Utilities.Marketing.Offer.Log.Field.InfoHelpText").Text,
+Width = "320",
+},
+new ColumnProperty(nameof(StoreWideProductDiscountInfoModel.CreatedOn))
+{
+Title = T("Admin.Utilities.Marketing.Offer.Log.Field.CreatedOn").Text,
+Width = "120",
+},
+new ColumnProperty(nameof(StoreWideProductDiscountInfoModel.UpdatedOn))
+{
+Title = T("Admin.Utilities.Marketing.Offer.Log.Field.UpdatedOn").Text,
+Width = "120",
+},
+new ColumnProperty(nameof(StoreWideProductDiscountInfoModel.ProductId))
+{
+Title = T("Common.ViewHistory").Text,
+Width = "120",
+ClassName =  NopColumnClassDefaults.Button,
+ Render = new RenderCustom("renderViewButton"),
+},
+}
+                   }
+);
+                    </div>
+                    <div class="card-footer">
+
+                        <button type="submit" id="btnRefreshFBTProducts" style="display: none"></button>
+                        <script>
+                            var popupurl='@(Url.Action("ProductDiscountHistorySearch", "Utilities"))';
+                            $(document).ready(function () {
+                                $('#btnSearchProductLog').click(function () {
+                                    //refresh grid
+                                    updateTable('#discount-Search-table');
+
+                                    //return false to don't reload a page
+                                    return false;
+                                });
+                            });
+
+                            function openProductHistory(productid) {
+                           javascript: OpenWindow(popupurl + "?searchProductId=" + productid);
+                            }
+
+                            function renderViewButton(data, type, row, meta) {
+
+                                return '<a class="btn btn-default" onClick="openProductHistory(' + data+')">'  +
+                                   '@T("Admin.Common.viewhistory")' +
+                                   '</a>';
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

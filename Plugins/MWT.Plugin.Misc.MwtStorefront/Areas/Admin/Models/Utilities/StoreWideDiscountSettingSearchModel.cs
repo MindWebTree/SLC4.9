@@ -1,10 +1,6 @@
 ﻿using Nop.Web.Framework.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Nop.Web.Areas.Admin.Models.Customization.Utilities
+namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Utilities
 {
     public partial record StoreWideDiscountSettingSearchModel : BaseSearchModel
     {

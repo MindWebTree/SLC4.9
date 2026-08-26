@@ -1,12 +1,6 @@
-﻿using Nop.Core.Domain.Customization.Custom.StoreWideDiscount;
-using Nop.Web.Areas.Admin.Models.Catalog;
-using Nop.Web.Framework.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Nop.Web.Framework.Models;
 
-namespace Nop.Web.Areas.Admin.Models.Customization.Utilities
+namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Utilities
 {
     public partial record StoreWideProductDiscountHistoryListModel : BasePagedListModel<StoreWideProductDiscountHistoryModel>
     {

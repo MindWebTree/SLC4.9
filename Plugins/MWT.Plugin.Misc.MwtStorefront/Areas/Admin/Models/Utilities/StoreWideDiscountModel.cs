@@ -1,11 +1,7 @@
 ﻿using Nop.Web.Framework.Models;
 using Nop.Web.Framework.Mvc.ModelBinding;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Nop.Web.Areas.Admin.Models.Customization.Utilities
+namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Utilities
 {
 
     public partial record StoreWideDiscountModel : BaseNopEntityModel
@@ -14,10 +10,10 @@ namespace Nop.Web.Areas.Admin.Models.Customization.Utilities
         public string Name { get; set; }
 
         [NopResourceDisplayName("Admin.Utilities.Marketing.Offer.Field.StartDate")]
-        public DateTime StartDate { get; set; }
+        public DateTime StartDate { get; set; } = DateTime.Today;
 
         [NopResourceDisplayName("Admin.Utilities.Marketing.Offer.Field.EndDate")]
-        public DateTime EndDate { get; set; }
+        public DateTime EndDate { get; set; } = DateTime.Today;
 
         [NopResourceDisplayName("Admin.Utilities.Marketing.Offer.Field.IsProcessed")]
         public bool IsProcessed { get; set; }
