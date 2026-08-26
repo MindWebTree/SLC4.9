@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
-using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.FAQModule;
 using Nop.Data;
-using Nop.Services.Localization; 
+using Nop.Services.Localization;
+using Nop.Web.Areas.Admin.Models.FAQModule;
 using Nop.Web.Framework.Validators;
 
-namespace MWT.Nop.Web.Areas.Admin.Validators.FAQModule
+namespace Nop.Web.Areas.Admin.Validators.Customizations.FAQModule
 {
     public partial class FaqValidator : BaseNopValidator<AddFaqModel>
     {

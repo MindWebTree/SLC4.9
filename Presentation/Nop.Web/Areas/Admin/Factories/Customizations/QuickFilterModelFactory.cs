@@ -1,4 +1,5 @@
-﻿using Nop.Services.Catalog;
+﻿using MWT.Nop.Core.Services.QuickFilters;
+using Nop.Services.Catalog;
 using Nop.Web.Areas.Admin.Models.Catalog;
 using Nop.Web.Framework.Models.Extensions;
 using System;

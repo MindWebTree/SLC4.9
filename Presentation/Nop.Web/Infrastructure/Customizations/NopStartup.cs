@@ -16,6 +16,7 @@ using MWT.Nop.Core.Services.Customers;
 using MWT.Nop.Core.Services.Customizations.CustomOrders;
 using MWT.Nop.Core.Services.Discounts;
 using MWT.Nop.Core.Services.ElasticSearch;
+using MWT.Nop.Core.Services.ExportImport;
 using MWT.Nop.Core.Services.FeedBack;
 using MWT.Nop.Core.Services.Integrity_Report;
 using MWT.Nop.Core.Services.IPLite;
@@ -103,6 +104,8 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<IPaymentSessionService, PaymentSessionService>();
             services.AddScoped<IProductIntegrityReportService, ProductIntegrityReportService>();
             services.AddScoped<IPostDeliveryService, PostDeliveryService>();
+            services.AddScoped<IExportExtendedManager, ExportExtendedManager>();
+            services.AddScoped<IImportExtendedManager, ImportExtendedManager>();
 
             #region Tag
             services.AddScoped<ITagSlugService, TagSlugService>();

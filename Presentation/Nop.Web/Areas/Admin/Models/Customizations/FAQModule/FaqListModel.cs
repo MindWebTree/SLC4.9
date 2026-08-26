@@ -1,5 +1,5 @@
 ﻿using Nop.Web.Framework.Models;
-namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.FAQModule
+namespace Nop.Web.Areas.Admin.Models.FAQModule
 {
     /// <summary>
     /// Represents a related product list model

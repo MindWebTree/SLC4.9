@@ -4,7 +4,7 @@ using Nop.Web.Framework.Models;
 using Nop.Web.Framework.Mvc.ModelBinding;
 using System;
 
-namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.FAQModule
+namespace Nop.Web.Areas.Admin.Models.FAQModule
 {
     /// <summary>
     /// Represents a Faq Entity model

@@ -1,8 +1,8 @@
 ﻿using MWT.Nop.Core.Service.FAQModule;
-using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.FAQModule;
+using Nop.Web.Areas.Admin.Models.FAQModule;
 using Nop.Web.Framework.Models.Extensions;
 
-namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Factories
+namespace Nop.Web.Areas.Admin.Factories
 {
     public partial class FaqModelFactory : IFaqModelFactory
     {

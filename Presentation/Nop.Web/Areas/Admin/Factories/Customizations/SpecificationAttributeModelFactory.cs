@@ -1,16 +1,13 @@
-﻿using Nop.Core.Domain.Catalog;
-using Nop.Web.Areas.Admin.Models.Catalog;
-using System.Threading.Tasks;
-using System;
-using Nop.Web.Framework.Models.Extensions;
-using System.Linq;
+﻿using MWT.Nop.Core.Service;
+using MWT.Nop.Core.Services.Catalog;
+using Nop.Core;
+using Nop.Core.Domain.Catalog;
 using Nop.Core.Infrastructure;
 using Nop.Services.Catalog;
-using Nop.Web.Areas.Admin.Infrastructure.Mapper.Extensions;
-using Nop.Web.Models.Customizations.Custom.ProductApi;
 using Nop.Services.Media;
-using Nop.Services.Customizations.Custom;
-using Nop.Core;
+using Nop.Web.Areas.Admin.Infrastructure.Mapper.Extensions;
+using Nop.Web.Areas.Admin.Models.Catalog;
+using Nop.Web.Framework.Models.Extensions;
 
 namespace Nop.Web.Areas.Admin.Factories
 {
@@ -27,7 +24,8 @@ namespace Nop.Web.Areas.Admin.Factories
                 throw new ArgumentNullException(nameof(specificationAttributeOption));
 
             //get products
-            var products = await _specificationAttributeService.GetProductsSearchBySpecificationAttributeOptionIdAsync(
+            var _customSpecificationAttributeService = EngineContext.Current.Resolve<ICustomSpecificationAttributeService>();
+            var products = await _customSpecificationAttributeService.GetProductsSearchBySpecificationAttributeOptionIdAsync(
                 specificationAttributeOptionId: specificationAttributeOption.Id,
                 pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize, search: searchModel.Search,
                 categoryId: searchModel.SearchCategoryId);
@@ -64,7 +62,7 @@ namespace Nop.Web.Areas.Admin.Factories
         {
 
 
-            Action<SpecificationAttributeOptionLocalizedModel, int> localizedModelConfiguration = null;
+            Func<SpecificationAttributeOptionLocalizedModel, int, Task> localizedModelConfiguration = null;
 
             if (specificationAttributeOption != null)
             {
@@ -95,9 +93,8 @@ namespace Nop.Web.Areas.Admin.Factories
 
         public virtual async Task<SpecificationAttributeModel> CustomPrepareSpecificationAttributeModelAsync(SpecificationAttributeModel model,
     SpecificationAttribute specificationAttribute, bool excludeProperties = false)
-        {
-            Action<SpecificationAttributeLocalizedModel, int> localizedModelConfiguration = null;
-
+        { 
+            Func<SpecificationAttributeLocalizedModel, int, Task> localizedModelConfiguration = null;
             if (specificationAttribute != null)
             {
                 //fill in model values from the entity
@@ -126,7 +123,7 @@ namespace Nop.Web.Areas.Admin.Factories
             return model;
         }
 
-   
+
 
         public virtual async Task<SpecificationAttributeProductListModel> CustomPrepareSpecificationAttributeProductListModelAsync(
        SpecificationAttributeProductSearchModel searchModel, SpecificationAttribute specificationAttribute)
@@ -138,31 +135,32 @@ namespace Nop.Web.Areas.Admin.Factories
                 throw new ArgumentNullException(nameof(specificationAttribute));
 
             //get products
-            var products = await _specificationAttributeService.CustomGetProductsBySpecificationAttributeIdAsync(
+            var _customSpecificationAttributeService = EngineContext.Current.Resolve<ICustomSpecificationAttributeService>();
+            var products = await _customSpecificationAttributeService.CustomGetProductsBySpecificationAttributeIdAsync(
                 specificationAttributeId: specificationAttribute.Id,
                 pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize, search: searchModel.Search, categoryId: searchModel.SearchCategoryId);
             var _pictureService = EngineContext.Current.Resolve<IPictureService>();
             //prepare list model
             var model = await new SpecificationAttributeProductListModel().PrepareToGridAsync(searchModel, products, () =>
              {
-                //fill in model values from the entity
-                return products.SelectAwait(async product =>
-                 {
-                     var specificationAttributeProductModel = product.ToModel<SpecificationAttributeProductModel>();
-                     specificationAttributeProductModel.ProductId = product.Id;
-                     specificationAttributeProductModel.ProductName = product.Name;
-                     specificationAttributeProductModel.OptionName = product.Sku;
-                     specificationAttributeProductModel.SpecificationOptionId = product.ProductTemplateId;
-                     specificationAttributeProductModel.SpecificationAttributeId = specificationAttribute.Id;
-                     var defaultProductPicture = (await _pictureService.GetPicturesByProductIdAsync(product.Id, 1)).FirstOrDefault();
-                     (specificationAttributeProductModel.PictureThumbnailUrl, _) = await _pictureService.GetPictureUrlAsync(defaultProductPicture, 75);
-                     return specificationAttributeProductModel;
-                 });
+                 //fill in model values from the entity
+                 return products.SelectAwait(async product =>
+                  {
+                      var specificationAttributeProductModel = product.ToModel<SpecificationAttributeProductModel>();
+                      specificationAttributeProductModel.ProductId = product.Id;
+                      specificationAttributeProductModel.ProductName = product.Name;
+                      specificationAttributeProductModel.OptionName = product.Sku;
+                      specificationAttributeProductModel.SpecificationOptionId = product.ProductTemplateId;
+                      specificationAttributeProductModel.SpecificationAttributeId = specificationAttribute.Id;
+                      var defaultProductPicture = (await _pictureService.GetPicturesByProductIdAsync(product.Id, 1)).FirstOrDefault();
+                      (specificationAttributeProductModel.PictureThumbnailUrl, _) = await _pictureService.GetPictureUrlAsync(defaultProductPicture, 75);
+                      return specificationAttributeProductModel;
+                  });
              });
 
             return model;
         }
-        public virtual async Task<SpecificationAttributeListModel> CustomPrepareCategorySpecificationAttributeListModelAsync(string entityType,int categoryId, SpecificationAttributeSearchModel searchModel, SpecificationAttributeGroup group)
+        public virtual async Task<SpecificationAttributeListModel> CustomPrepareCategorySpecificationAttributeListModelAsync(string entityType, int categoryId, SpecificationAttributeSearchModel searchModel, SpecificationAttributeGroup group)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
@@ -173,7 +171,7 @@ namespace Nop.Web.Areas.Admin.Factories
                 return specificationAttributes.SelectAwait(async attribute =>
                 {
                     var specificationAttributeModel = attribute.ToModel<SpecificationAttributeModel>();
-                    var filterMapping = await _filtersMappingByEntityService.GetFilterMapping(entityType,categoryId, attribute.Id, "SpecificationAttribute");
+                    var filterMapping = await _filtersMappingByEntityService.GetFilterMapping(entityType, categoryId, attribute.Id, "SpecificationAttribute");
                     specificationAttributeModel.Disabled = !filterMapping?.Disabled ?? true;
                     specificationAttributeModel.DisplayOnTop = filterMapping?.DisplayOnTop ?? false;
                     specificationAttributeModel.DisplayOrder = filterMapping?.DisplayOrder ?? 0;
@@ -199,10 +197,12 @@ namespace Nop.Web.Areas.Admin.Factories
                 return options.SelectAwait(async option =>
                 {
                     var optionModel = option.ToModel<SpecificationAttributeOptionModel>();
-                    var GetFiltersMappingExist = await _filtersMappingByEntityService.GetFilterMapping(entityType,searchModel.CategoryId, option.Id, "SpecificationAttributeOption");
+                    var GetFiltersMappingExist = await _filtersMappingByEntityService.GetFilterMapping(entityType, searchModel.CategoryId, option.Id, "SpecificationAttributeOption");
                     optionModel.Disabled = !GetFiltersMappingExist?.Disabled ?? true;
                     optionModel.DisplayOrder = GetFiltersMappingExist?.DisplayOrder ?? 0;
-                    var ProductsCount = await _specificationAttributeService.CustomGetProductsSpecificationAttributeOptionByCategoryWiseAsync(searchModel.CategoryId, specificationAttributeOptionId: option.Id);
+
+                    var _customSpecificationAttributeService = EngineContext.Current.Resolve<ICustomSpecificationAttributeService>();
+                    var ProductsCount = await _customSpecificationAttributeService.CustomGetProductsSpecificationAttributeOptionByCategoryWiseAsync(searchModel.CategoryId, specificationAttributeOptionId: option.Id);
                     optionModel.NumberOfAssociatedProducts = ProductsCount.Count;
                     optionModel.CategoryId = searchModel.CategoryId;
                     return optionModel;
@@ -218,7 +218,8 @@ namespace Nop.Web.Areas.Admin.Factories
                 throw new ArgumentNullException(nameof(searchModel));
             if (specificationAttributeOption == null)
                 throw new ArgumentNullException(nameof(specificationAttributeOption));
-            var products = (await _specificationAttributeService.CustomGetProductsSpecificationAttributeOptionByCategoryWiseAsync(searchModel.SearchCategoryId, specificationAttributeOption.Id
+            var _customSpecificationAttributeService = EngineContext.Current.Resolve<ICustomSpecificationAttributeService>();
+            var products = (await _customSpecificationAttributeService.CustomGetProductsSpecificationAttributeOptionByCategoryWiseAsync(searchModel.SearchCategoryId, specificationAttributeOption.Id
                 )).ToPagedList(searchModel);
             var pagedProducts = new PagedList<ProductSpecificationAttribute>(
                products, searchModel.Page - 1, searchModel.PageSize);

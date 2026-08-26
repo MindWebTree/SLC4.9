@@ -1,21 +1,18 @@
 ﻿
+using MWT.Nop.Core.Domain;
+using MWT.Nop.Core.Service;
+using MWT.Nop.Core.Service.Catalog;
+using MWT.Nop.Core.Services.Catalog;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Customization.Custom;
 using Nop.Core.Infrastructure;
 using Nop.Services.Catalog;
 using Nop.Services.Customers;
-using Nop.Services.Customizations.Custom;
 using Nop.Services.Media;
 using Nop.Web.Areas.Admin.Infrastructure.Mapper.Extensions;
 using Nop.Web.Areas.Admin.Models.Catalog;
 using Nop.Web.Areas.Admin.Models.Customization.Custom;
 using Nop.Web.Framework.Models.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 namespace Nop.Web.Areas.Admin.Factories
 {
     /// <summary>
@@ -38,6 +35,7 @@ namespace Nop.Web.Areas.Admin.Factories
             IPagedList<Category> categories;
             if (await _customerService.IsInCustomerRoleAsync(customer, "CategoryManager"))
             {
+                var _categoryService = EngineContext.Current.Resolve<ICustomCategoryService>();
                 categories = await _categoryService.GetAccessibleCategoriesAsync(categoryName: searchModel.SearchCategoryName, customerId: customer.Id,
            showHidden: true,
            storeId: searchModel.SearchStoreId,
@@ -167,6 +165,7 @@ namespace Nop.Web.Areas.Admin.Factories
                 throw new ArgumentNullException(nameof(searchModel));
 
             //get products
+            var _productService = EngineContext.Current.Resolve<IProductExtendedService>();
             var products = await _productService.OverriddenSearchProductsAsync(showHidden: true,
                 categoryIds: new List<int> { searchModel.SearchCategoryId },
                 manufacturerIds: new List<int> { searchModel.SearchManufacturerId },

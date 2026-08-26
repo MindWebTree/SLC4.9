@@ -135,6 +135,10 @@
                                     ClassName =  NopColumnClassDefaults.CenterAll,
                                     Width = "50"
                                 },
+                                                new ColumnProperty(nameof(CategoryModel.Id))
+                                                {
+                                                Title = T("Admin.Catalog.Categories.Fields.Id").Text
+                                                },
                                 new ColumnProperty(nameof(CategoryModel.Breadcrumb))
                                 {
                                     Title = T("Admin.Catalog.Categories.Fields.Name").Text

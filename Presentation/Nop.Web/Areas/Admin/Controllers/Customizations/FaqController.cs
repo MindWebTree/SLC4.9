@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MWT.Nop.Core.Domain.FAQModule;
 using MWT.Nop.Core.Service.FAQModule;
-using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Factories;
-using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.FAQModule;
 using Nop.Services.Catalog;
 using Nop.Services.Security;
+using Nop.Web.Areas.Admin.Factories;
+using Nop.Web.Areas.Admin.Models.FAQModule;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc;
 

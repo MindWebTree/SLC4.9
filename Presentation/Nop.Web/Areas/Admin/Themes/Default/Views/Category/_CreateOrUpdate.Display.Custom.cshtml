@@ -1,0 +1,152 @@
+﻿@model CategoryModel
+@inject ICustomizationFormSerivce _customizationService
+@{
+    var customizationFormTemplates = await _customizationService.GetAllProductCustomizationFormTemplatesAsync();
+    var availableCustomizationFormTemplates = new List<SelectListItem>();
+    availableCustomizationFormTemplates.Add(new SelectListItem()
+    {
+        Value = "0",
+        Text = "Please select"
+    });
+    foreach (var customizationFormTemplate in customizationFormTemplates)
+    {
+        availableCustomizationFormTemplates.Add(new SelectListItem()
+        {
+            Text = customizationFormTemplate.Name,
+            Value = customizationFormTemplate.Id.ToString()
+        });
+    }
+}
+
+<div class="card-body">
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="AdditionalDescription" />
+        </div>
+        <div class="col-md-9">
+            <nop-editor asp-for="AdditionalDescription" asp-template="RichEditor" />
+            <span asp-validation-for="AdditionalDescription"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="EnableHoverImage" />
+        </div>
+        <div class="col-md-9">
+            <nop-editor asp-for="EnableHoverImage" />
+            <span asp-validation-for="EnableHoverImage"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="UseNewVersionOfTemplate" />
+        </div>
+        <div class="col-md-9">
+            <nop-editor asp-for="UseNewVersionOfTemplate" />
+            <span asp-validation-for="UseNewVersionOfTemplate"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="EnableNewATCLayout" />
+        </div>
+        <div class="col-md-9">
+            <nop-editor asp-for="EnableNewATCLayout" />
+            <span asp-validation-for="EnableNewATCLayout"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="IsVisibleInCatalog" />
+        </div>
+        <div class="col-md-9">
+            <nop-editor asp-for="IsVisibleInCatalog" />
+            <span asp-validation-for="IsVisibleInCatalog"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="UseNewVersionCustomizationAction" />
+        </div>
+        <div class="col-md-9">
+            <nop-editor asp-for="UseNewVersionCustomizationAction" />
+            <span asp-validation-for="UseNewVersionCustomizationAction"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="ConversionValue" />
+        </div>
+        <div class="col-md-9">
+            <nop-editor asp-for="ConversionValue" />
+            <span asp-validation-for="ConversionValue"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="AlternateDisplayOrder" />
+        </div>
+        <div class="col-md-9">
+            <nop-editor asp-for="AlternateDisplayOrder" />
+            <span asp-validation-for="AlternateDisplayOrder"></span>
+        </div>
+    </div>
+    <div class="form-group row" @(Model.AvailableCategoryTemplates.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null)>
+        <div class="col-md-3">
+            <nop-label asp-for="CustomizationFormTemplateId" />
+        </div>
+        <div class="col-md-9">
+            <nop-select asp-for="CustomizationFormTemplateId" asp-items="availableCustomizationFormTemplates" />
+            <span asp-validation-for="CustomizationFormTemplateId"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="MembershipDiscount" />
+        </div>
+        <div class="col-md-9">
+            <nop-editor asp-for="MembershipDiscount" />
+            <span asp-validation-for="MembershipDiscount"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="EnableInfiniteScroll" />
+        </div>
+        <div class="col-md-9">
+            <nop-editor asp-for="EnableInfiniteScroll" />
+            <span asp-validation-for="EnableInfiniteScroll"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="DisplayGridListOption" />
+        </div>
+        <div class="col-md-9">
+            <nop-editor asp-for="DisplayGridListOption" />
+            <span asp-validation-for="DisplayGridListOption"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="FeaturedListingDisplaySimilarOnTop" />
+        </div>
+        <div class="col-md-9">
+            <nop-editor asp-for="FeaturedListingDisplaySimilarOnTop" />
+            <span asp-validation-for="FeaturedListingDisplaySimilarOnTop"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <nop-label asp-for="QuickFilterHeading" />
+        </div>
+        <div class="col-md-9">
+            <nop-editor asp-for="QuickFilterHeading" />
+            <span asp-validation-for="QuickFilterHeading"></span>
+        </div>
+    </div>
+</div>
+ 

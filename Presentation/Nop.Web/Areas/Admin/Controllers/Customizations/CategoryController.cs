@@ -1,31 +1,31 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MailKit;
+using Microsoft.AspNetCore.Mvc;
+using MWT.Nop.Core.Domain;
+using MWT.Nop.Core.Service;
+using MWT.Nop.Core.Services.Catalog;
+using MWT.Nop.Core.Services.CategoryCollection;
+using MWT.Nop.Core.Services.ExportImport;
+using MWT.Nop.Core.Services.KW;
+using MWT.Nop.Core.Services.QuickFilters;
+using Nop.Core;
 using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Customization.Custom;
+using Nop.Core.Domain.Discounts;
 using Nop.Core.Infrastructure;
 using Nop.Services.Catalog;
 using Nop.Services.Configuration;
-using Nop.Services.Customizations.Custom;
 using Nop.Services.Security;
 using Nop.Web.Areas.Admin.Factories;
+using Nop.Web.Areas.Admin.Infrastructure.Mapper.Extensions;
 using Nop.Web.Areas.Admin.Models.Catalog;
 using Nop.Web.Areas.Admin.Models.Customization.Custom;
-using Nop.Web.Areas.Admin.Models.Orders;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc;
-using System;
-using Nop.Core;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Nop.Services.Customizations.Custom.KW;
-using System.Collections.Generic;
-using Nop.Core.Domain.Discounts;
-using Nop.Web.Areas.Admin.Infrastructure.Mapper.Extensions;
 using Nop.Web.Framework.Mvc.Filters;
+using System.Security.Permissions;
 
 namespace Nop.Web.Areas.Admin.Controllers
 {
-    [CategoryPermission("ManageCategories")]
+   // [SecurityPermission("ManageCategories")]
     public partial class CategoryController : BaseAdminController
     {
 
@@ -36,13 +36,10 @@ namespace Nop.Web.Areas.Admin.Controllers
         /// <returns>A task that represents the asynchronous operation</returns>
 
         [HttpPost]
-        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_VIEW)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> CustomList(CategorySearchModel searchModel)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
-
+        {  
             //prepare model
             var model = await _categoryModelFactory.PrepareCustomCategoryListModelAsync(searchModel);
 
@@ -55,12 +52,9 @@ namespace Nop.Web.Areas.Admin.Controllers
 
         /// <returns>A task that represents the asynchronous operation</returns>
         /// 
-
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> CustomCreate()
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessCategoryCreate))
-                return AccessDeniedView();
-
+        {  
             //prepare model
             var model = await _categoryModelFactory.PrepareCategoryModelAsync(new CategoryModel(), null);
 
@@ -70,11 +64,10 @@ namespace Nop.Web.Areas.Admin.Controllers
 
 
         [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> CustomCreate(CategoryModel model, bool continueEditing)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessCategoryCreate))
-                return AccessDeniedView();
+        { 
 
             if (ModelState.IsValid)
             {
@@ -104,10 +97,10 @@ namespace Nop.Web.Areas.Admin.Controllers
                 await UpdatePictureSeoNamesAsync(category);
 
                 //ACL (customer roles)
-                await SaveCategoryAclAsync(category, model);
+                // need to confirm sir
 
                 //stores
-                await SaveStoreMappingsAsync(category, model);
+                await _storeMappingService.SaveStoreMappingsAsync(category, model.SelectedStoreIds);
 
                 //activity log
                 await _customerActivityService.InsertActivityAsync("AddNewCategory",
@@ -129,10 +122,9 @@ namespace Nop.Web.Areas.Admin.Controllers
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> CustomEdit(int id)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return AccessDeniedView();
+        { 
 
             //try to get a category with the specified id
             var category = await _categoryService.GetCategoryByIdAsync(id);
@@ -147,11 +139,9 @@ namespace Nop.Web.Areas.Admin.Controllers
 
         [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
         /// <returns>A task that represents the asynchronous operation</returns>
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> CustomEdit(CategoryModel model, bool continueEditing)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return AccessDeniedView();
-
+        {  
             //try to get a category with the specified id
             var category = await _categoryService.GetCategoryByIdAsync(model.Id);
             if (category == null || category.Deleted)
@@ -211,10 +201,12 @@ namespace Nop.Web.Areas.Admin.Controllers
                 await UpdatePictureSeoNamesAsync(category);
 
                 //ACL
-                await SaveCategoryAclAsync(category, model);
-
+                //need to confirm sir
+                // await _storeMappingService.SaveCategoryAclAsync(category, model);
+                var _aclService = EngineContext.Current.Resolve<IAclService>();
+                await _aclService.SaveAclAsync(category, model.SelectedCustomerRoleIds);
                 //stores
-                await SaveStoreMappingsAsync(category, model);
+                await _storeMappingService.SaveStoreMappingsAsync(category, model.SelectedStoreIds);
 
                 //activity log
                 await _customerActivityService.InsertActivityAsync("EditCategory",
@@ -240,11 +232,9 @@ namespace Nop.Web.Areas.Admin.Controllers
 
         [HttpPost]
         /// <returns>A task that represents the asynchronous operation</returns>
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> CustomDelete(int id)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessCategoryDelete))
-                return AccessDeniedView();
-
+        {  
             //try to get a category with the specified id
             var category = await _categoryService.GetCategoryByIdAsync(id);
             if (category == null)
@@ -263,12 +253,10 @@ namespace Nop.Web.Areas.Admin.Controllers
 
        
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> CustomDeleteSelected(ICollection<int> selectedIds)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessCategoryDelete))
-                return AccessDeniedView();
-
+        { 
             if (selectedIds != null)
             {
                 await _categoryService.DeleteCategoriesAsync(await (await _categoryService.GetCategoriesByIdsAsync(selectedIds.ToArray())).WhereAwait(async p => await _workContext.GetCurrentVendorAsync() == null).ToListAsync());
@@ -283,13 +271,11 @@ namespace Nop.Web.Areas.Admin.Controllers
 
         #region FiltersMapping
 
-        [HttpPost]
+        [HttpPost] 
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> FiltersMappingByEntityList(FiltersMappingByEntitySearchModel searchModel)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
-
+        { 
             //try to get a product with the specified id
             if (searchModel.EntityType == "Category" || searchModel.EntityType == "KwTerm")
             {
@@ -315,11 +301,10 @@ namespace Nop.Web.Areas.Admin.Controllers
             return Json(model);
         }
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> FiltersMappingByEntityUpdate(FiltersMappingByEntityModel model)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
+        { 
 
             var _filtersMappingByEntityService = EngineContext.Current.Resolve<IFiltersMappingByEntityService>();
 
@@ -339,11 +324,10 @@ namespace Nop.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> FiltersMappingByEntityDelete(int id)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
+        { 
             var _filtersMappingByEntityService = EngineContext.Current.Resolve<IFiltersMappingByEntityService>();
 
             //try to get a Collection product with the specified id
@@ -356,10 +340,9 @@ namespace Nop.Web.Areas.Admin.Controllers
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> FiltersMappingByEntityAddPopup(int entityId, string entityType, string filterType, int id = 0)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
+        { 
             FiltersMappingByEntityModel model = new FiltersMappingByEntityModel();
 
 
@@ -387,7 +370,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 
             var _settingService = EngineContext.Current.Resolve<ISettingService>();
             var filterGroupId = await _settingService.GetSettingByKeyAsync<int>("specification.filter.id");
-            var _specificationAttributeService = EngineContext.Current.Resolve<ISpecificationAttributeService>();
+            var _specificationAttributeService = EngineContext.Current.Resolve<ICustomSpecificationAttributeService>();
             var specsAttrs = await _specificationAttributeService.GetAllSpecificationAttributesAsync();
             specsAttrs = specsAttrs.Where(specAttr => specAttr.SpecificationAttributeGroupId == filterGroupId).ToList();
 
@@ -428,13 +411,12 @@ namespace Nop.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [FormValueRequired("save")]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> FiltersMappingByEntityInsert(FiltersMappingByEntityModel model)
         {
             if (ModelState.IsValid)
-            {
-                if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                    return AccessDeniedView();
+            { 
                 var _filtersMappingByEntityService = EngineContext.Current.Resolve<IFiltersMappingByEntityService>();
                 FiltersMappingByEntityModel filtersMappingByEntityModel = new FiltersMappingByEntityModel();
                 if (!await _filtersMappingByEntityService.IsMappingExist(model.EntityId, model.EntityType, model.FilterId, model.Filtertype, model.Id))
@@ -472,7 +454,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                     ModelState.AddModelError("", "FiltersMapping already exist!!");
                 }
             }
-            var _specificationAttributeService = EngineContext.Current.Resolve<ISpecificationAttributeService>();
+            var _specificationAttributeService = EngineContext.Current.Resolve<ICustomSpecificationAttributeService>();
             if (model.Filtertype == "SpecificationAttribute")
             {
                 var specsAttrs = await _specificationAttributeService.GetAllSpecificationAttributesAsync();
@@ -505,14 +487,13 @@ namespace Nop.Web.Areas.Admin.Controllers
 
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> CategorySpecificationAttributeList(SpecificationAttributeSearchModel searchModel)
         {
 
-            var _specificationAttributeService = EngineContext.Current.Resolve<ISpecificationAttributeService>();
-            var _specificationAttributeModelFactory = EngineContext.Current.Resolve<ISpecificationAttributeModelFactory>();
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
+            var _specificationAttributeService = EngineContext.Current.Resolve<ICustomSpecificationAttributeService>();
+            var _specificationAttributeModelFactory = EngineContext.Current.Resolve<ISpecificationAttributeModelFactory>(); 
             var group = await _specificationAttributeService.GetSpecificationAttributeGroupByIdAsync(searchModel.SpecificationAttributeGroupId)
                                 ?? throw new ArgumentException("No specification attribute group found with the specified id");
             var model = await _specificationAttributeModelFactory.CustomPrepareCategorySpecificationAttributeListModelAsync("category", searchModel.CategoryId, searchModel, group);
@@ -520,10 +501,9 @@ namespace Nop.Web.Areas.Admin.Controllers
         }
 
 
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> CategorySpecificationAttributeMappingUpdate(SpecificationAttributeModel model)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return AccessDeniedView();
+        { 
             string entityType = "category";
             string filtertype = "SpecificationAttribute";
 
@@ -558,12 +538,11 @@ namespace Nop.Web.Areas.Admin.Controllers
         }
 
         [Route("Admin/Category/specificattribute/option")]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> CategorySpecificationAttributeOptionSearchList(int specificationAttributeId, int categoryId)
         {
             var _specificationAttributeModelFactory = EngineContext.Current.Resolve<ISpecificationAttributeModelFactory>();
-            var _specificationAttributeService = EngineContext.Current.Resolve<ISpecificationAttributeService>();
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return AccessDeniedView();
+            var _specificationAttributeService = EngineContext.Current.Resolve<ISpecificationAttributeService>(); 
             var category = await _categoryService.GetCategoryByIdAsync(categoryId);
             if (category == null || category.Deleted)
                 return RedirectToAction("List");
@@ -576,13 +555,12 @@ namespace Nop.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> CategorySpecificationAttributeOptionList(SpecificationAttributeOptionSearchModel searchModel)
         {
             var _specificationAttributeModelFactory = EngineContext.Current.Resolve<ISpecificationAttributeModelFactory>();
-            var _specificationAttributeService = EngineContext.Current.Resolve<ISpecificationAttributeService>();
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
+            var _specificationAttributeService = EngineContext.Current.Resolve<ISpecificationAttributeService>(); 
 
             var category = await _categoryService.GetCategoryByIdAsync(searchModel.CategoryId);
             if (category == null || category.Deleted)
@@ -594,10 +572,9 @@ namespace Nop.Web.Areas.Admin.Controllers
             return Json(model);
         }
 
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> CategorySpecificationAttributeOptionMappingUpdate(SpecificationAttributeOptionModel model)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return AccessDeniedView();
+        { 
 
             var category = await _categoryService.GetCategoryByIdAsync(model.CategoryId);
             if (category == null || category.Deleted)
@@ -632,12 +609,11 @@ namespace Nop.Web.Areas.Admin.Controllers
 
 
         [Route("Admin/Category/specificattribute/option/products")]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> CategorySpecificationOptionUsedByProductsSearchList(int specificationAttributeOptionId, int categoryId)
         {
             var _specificationAttributeService = EngineContext.Current.Resolve<ISpecificationAttributeService>();
-            var _specificationAttributeModelFactory = EngineContext.Current.Resolve<ISpecificationAttributeModelFactory>();
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return AccessDeniedView();
+            var _specificationAttributeModelFactory = EngineContext.Current.Resolve<ISpecificationAttributeModelFactory>(); 
             var category = await _categoryService.GetCategoryByIdAsync(categoryId);
             if (category == null || category.Deleted)
                 return RedirectToAction("List");
@@ -655,13 +631,12 @@ namespace Nop.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> CategorySpecificationOptionUsedByProductsList(SpecificationAttributeOptionProductSearchModel searchModel)
         {
             var _specificationAttributeService = EngineContext.Current.Resolve<ISpecificationAttributeService>();
-            var _specificationAttributeModelFactory = EngineContext.Current.Resolve<ISpecificationAttributeModelFactory>();
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
+            var _specificationAttributeModelFactory = EngineContext.Current.Resolve<ISpecificationAttributeModelFactory>(); 
 
             var category = await _categoryService.GetCategoryByIdAsync(searchModel.SearchCategoryId);
             if (category == null || category.Deleted)
@@ -677,10 +652,9 @@ namespace Nop.Web.Areas.Admin.Controllers
 
 
 
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> CategorySpecificationOptionMappingAddPopup(int specificationAttributeOptionId, int categoryId)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return AccessDeniedView();
+        {  
             var model = new CategorySpecificationOptionProductSearchModel
             {
                 CategoryId = categoryId,
@@ -691,12 +665,11 @@ namespace Nop.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> CategorySpecificationOptionMappingAddPopupList(CategorySpecificationOptionProductSearchModel searchModel)
         {
-            var _specificationAttributeService = EngineContext.Current.Resolve<ISpecificationAttributeService>();
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
+            var _specificationAttributeService = EngineContext.Current.Resolve<ISpecificationAttributeService>(); 
             var category = await _categoryService.GetCategoryByIdAsync(searchModel.CategoryId)
                 ?? throw new ArgumentException("No category found with the specified id");
             var model = await _categoryModelFactory.CustomPrepareCategorySpecificationOptionMappingAddPopupListModelAsync(searchModel, category);
@@ -705,11 +678,10 @@ namespace Nop.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [FormValueRequired("save")]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> CategorySpecificationOptionMappingAddPopup(CategorySpecificationOptionProductSearchModel model)
         {
-            var _specificationAttributeService = EngineContext.Current.Resolve<ISpecificationAttributeService>();
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return AccessDeniedView();
+            var _specificationAttributeService = EngineContext.Current.Resolve<ICustomSpecificationAttributeService>(); 
             var mappedproducts = await _specificationAttributeService.CustomGetProductsSpecificationAttributeOptionByCategoryWiseAsync(model.CategoryId, model.SpecificationAttributeOptionId
                );
             var alreadyMappedProductIds = mappedproducts.Select(p => p.ProductId).ToList();
@@ -749,10 +721,9 @@ namespace Nop.Web.Areas.Admin.Controllers
         }
 
 
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> DeleteProductOptionMapping(int id)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return AccessDeniedView();
+        { 
             var _specificationAttributeService = EngineContext.Current.Resolve<ISpecificationAttributeService>();
             //try to get a product category with the specified id
             var productSpecificationAttribute = await _specificationAttributeService.GetProductSpecificationAttributeByIdAsync(id)
@@ -764,11 +735,9 @@ namespace Nop.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         [IgnoreAntiforgeryToken]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> BulkUpdateSpecificationAttributeOption([FromBody] List<SpecificationAttributeOptionModel> models)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return AccessDeniedView();
-
+        { 
             string entityType = "category";
             string filtertype = "SpecificationAttributeOption";
 
@@ -814,12 +783,10 @@ namespace Nop.Web.Areas.Admin.Controllers
         #region QuickFilters
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> QuickFilterList(RelatedProductSearchModel searchModel)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
-
+        { 
             //try to get a product with the specified id
             if (searchModel.EntityType == "Product")
             {
@@ -839,12 +806,10 @@ namespace Nop.Web.Areas.Admin.Controllers
             return Json(model);
         }
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> QuickFilterUpdate(QuickFilterModel model)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
-
+        { 
             var _quickFilterService = EngineContext.Current.Resolve<IQuickFilterService>();
 
             //try to get a Collection product with the specified id
@@ -861,12 +826,10 @@ namespace Nop.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> QuickFilterDelete(int id)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
-
+        {  
             //try to get a Collection product with the specified id
             var _quickFilterService = EngineContext.Current.Resolve<IQuickFilterService>();
 
@@ -879,10 +842,9 @@ namespace Nop.Web.Areas.Admin.Controllers
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> QuickFilterAddPopup(int entityId, string entityType, int id = 0)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
+        { 
             QuickFilterModel model = new QuickFilterModel();
             if (id != 0)
             {
@@ -907,13 +869,12 @@ namespace Nop.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [FormValueRequired("save")]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> QuickFilterInsert(QuickFilterModel model)
         {
             if (ModelState.IsValid)
-            {
-                if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
-                    return AccessDeniedView();
+            { 
                 var _quickFilterService = EngineContext.Current.Resolve<IQuickFilterService>();
 
                 if (model.Id == 0)
@@ -959,12 +920,10 @@ namespace Nop.Web.Areas.Admin.Controllers
         #region Category_CollectionLinks
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> CollectionLinkList(CollectionLinkSearchModel searchModel)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
-
+        {  
             //try to get a product with the specified id
 
             var category = await _categoryService.GetCategoryByIdAsync(searchModel.EntityId)
@@ -978,12 +937,10 @@ namespace Nop.Web.Areas.Admin.Controllers
             return Json(model);
         }
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> CollectionLinkUpdate(CategoryCollectionLinkModel model)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return AccessDeniedView();
-
+        { 
             var _categoryCollectionLinkService = EngineContext.Current.Resolve<ICategoryCollectionLinkService>();
 
             //try to get a Collection product with the specified id
@@ -999,13 +956,11 @@ namespace Nop.Web.Areas.Admin.Controllers
             return new NullJsonResult();
         }
 
-        [HttpPost]
+        [HttpPost] 
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> CollectionLinkDelete(int id)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return AccessDeniedView();
-
+        { 
             //try to get a Collection product with the specified id
             var _categoryCollectionLinkService = EngineContext.Current.Resolve<ICategoryCollectionLinkService>();
 
@@ -1018,10 +973,9 @@ namespace Nop.Web.Areas.Admin.Controllers
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> CollectionLinkAddPopup(int entityId, int id = 0)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return AccessDeniedView();
+        { 
             CategoryCollectionLinkModel model = new CategoryCollectionLinkModel();
             if (id != 0)
             {
@@ -1042,13 +996,12 @@ namespace Nop.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [FormValueRequired("save")]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> CollectionLinkInsert(CategoryCollectionLinkModel model)
         {
             if (ModelState.IsValid)
-            {
-                if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                    return AccessDeniedView();
+            { 
                 var _categoryCollectionLinkService = EngineContext.Current.Resolve<ICategoryCollectionLinkService>();
 
                 if (model.Id == 0)
@@ -1100,6 +1053,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             }
             try
             {
+                var _exportManager = EngineContext.Current.Resolve<IExportExtendedManager>();
                 var bytes = await _exportManager.ExportCategoryProductsToXlsxAsync(products);
                 return File(bytes, MimeTypes.TextXlsx, "category-products.xlsx");
             }
@@ -1114,6 +1068,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> ImportProductMappingExcel(IFormFile importexcelfile, int id)
         {
+            var _importManager = EngineContext.Current.Resolve<IImportExtendedManager>();
             if (importexcelfile != null && importexcelfile.Length > 0)
                 await _importManager.ImportCategoryProductsFromXlsxAsync(importexcelfile.OpenReadStream(), id);
             else
@@ -1129,11 +1084,9 @@ namespace Nop.Web.Areas.Admin.Controllers
 
         [HttpPost]
         /// <returns>A task that represents the asynchronous operation</returns>
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> CustomProductAddPopupList(AddProductToCategorySearchModel searchModel)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
-
+        {  
             //prepare model
             var model = await _categoryModelFactory.CustomPrepareAddProductToCategoryListModelAsync(searchModel);
 
@@ -1141,12 +1094,10 @@ namespace Nop.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> CustomProductList(CategoryProductSearchModel searchModel)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
-
+        {  
             //try to get a category with the specified id
             var category = await _categoryService.GetCategoryByIdAsync(searchModel.CategoryId)
                 ?? throw new ArgumentException("No category found with the specified id");
@@ -1161,11 +1112,10 @@ namespace Nop.Web.Areas.Admin.Controllers
         #region SuggestedKeyword
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> SuggestedKeywordList(CategorySuggestedKeywordSearchModel model, int categoryId)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return await AccessDeniedDataTablesJson();
+        { 
 
             //try to get a product with the specified id
             if (categoryId != 0)
@@ -1180,11 +1130,10 @@ namespace Nop.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> SuggestedKeywordDelete(int id)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return AccessDeniedView();
+        { 
             //try to get a Collection product with the specified id
             var categorySuggestedKeyword = await _categoryModelFactory.GetCategorySuggestedKeywordById(id)
               ?? throw new ArgumentException("No Suggested Keyword found with the specified id");
@@ -1193,10 +1142,9 @@ namespace Nop.Web.Areas.Admin.Controllers
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
+           [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> SuggestedKeywordAddPopup(int categoryId, int id = 0)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                return AccessDeniedView();
+        { 
             CategorySuggestedKeywordModel model = new CategorySuggestedKeywordModel();
             if (id != 0)
             {
@@ -1209,13 +1157,12 @@ namespace Nop.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> SuggestedKeywordCreateUpdate(CategorySuggestedKeywordModel model)
         {
             if (ModelState.IsValid)
-            {
-                if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
-                    return AccessDeniedView();
+            { 
                 if (await _categoryModelFactory.IsCategoryKeyWordExist(model.Id, model.KeyWord))
                 {
                     ModelState.AddModelError("", "Suggested Keyword already exist!!");

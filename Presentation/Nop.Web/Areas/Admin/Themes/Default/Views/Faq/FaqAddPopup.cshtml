@@ -1,0 +1,58 @@
+﻿@model AddFaqModel
+
+@{
+    Layout = "_AdminPopupLayout";
+
+    //page title
+    ViewBag.PageTitle = T("Admin.Catalog.Faq.Categories.AddNew").Text;
+}
+
+@if (ViewBag.RefreshPage == true)
+{
+    <script>
+        try {window.opener.document.forms['@(Context.Request.Query["formId"])'].@(Context.Request.Query["btnId"]).click();}
+        catch (e){}
+        window.close();
+    </script>
+}
+else
+{
+    <form asp-controller="Faq" asp-action="FaqAddPopup"
+          asp-route-entityId="@Context.Request.Query["entityid"]"
+          asp-route-entityType="@Context.Request.Query["entityType"]"
+          asp-route-btnId="@Context.Request.Query["btnId"]"
+          asp-route-formId="@Context.Request.Query["formId"]">
+        <div class="card-body">
+            <p>
+                @T("Admin.Catalog.Faq.Hint")
+            </p>
+            <div class="form-group row">
+                <div class="col-md-3">
+                    <nop-label asp-for="Question" />
+                </div>
+                <div class="col-md-9">
+                    <nop-textarea asp-for="Question" />
+                    <span asp-validation-for="Question"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-3">
+                    <nop-label asp-for="Answer" />
+                </div>
+                <div class="col-md-9">
+                    <nop-textarea asp-for="Answer" />
+                    <span asp-validation-for="Answer"></span>
+                </div>
+            </div>
+
+        </div>
+        <div class="card-footer">
+            <button type="submit" name="save" class="btn btn-primary">
+                <i class="far fa-save"></i>
+                @T("Admin.Common.Save")
+            </button>
+        </div>
+
+    </form>
+}
