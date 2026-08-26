@@ -185,7 +185,7 @@ else if (ViewData["Step"] == null)
                         {
                             <input asp-for="UseRewardPoints" class="custom-control-input" />
                         }
-                        <label asp-for="UseRewardPoints">@string.Format(T("Checkout.UseRewardPoints").Text, Model.RewardPointsToUse, Model.RewardPointsBalance, Model.RewardPointsToUseAmount)</label>
+                        <label class="custom-control-label" asp-for="UseRewardPoints">@string.Format(T("Checkout.UseRewardPoints").Text, Model.RewardPointsToUse, Model.RewardPointsBalance, Model.RewardPointsToUseAmount)</label>
                     </div>
                     @if (Model.RewardPointsEnoughToPayForOrder)
                     {

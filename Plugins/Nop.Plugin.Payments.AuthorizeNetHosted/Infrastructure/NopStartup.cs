@@ -30,6 +30,6 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Infrastructure
  
         }
 
-        public int Order => 1;
+        public int Order => int.MaxValue;
     }
 }
