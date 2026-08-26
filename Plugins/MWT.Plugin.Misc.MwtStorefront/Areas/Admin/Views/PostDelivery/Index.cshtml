@@ -1,0 +1,92 @@
+﻿@using Nop.Web.Areas.Admin.Models.Customization.Custom.PostDelivery
+@model PostDeliveryQueueEmailSearchModel
+@using Nop.Web.Framework.Models.AdminAreaTour
+
+@{
+    //page title
+    ViewBag.PageTitle = T("Admin.Utilities.PostDeliveryQueueEmail").Text;
+
+
+}
+@{
+
+    //resources for product tags input
+    Html.AppendCssFileParts("~/lib_npm/jquery-tageditor/jquery.tag-editor.css");
+    Html.AppendScriptParts("~/lib_npm/jquery-tageditor/jquery.tag-editor.min.js");
+
+}
+<div class="content-header clearfix">
+    <h1 class="float-left">
+        @T("Admin.Utilities.PostDeliveryQueueEmail.heading")
+
+    </h1>
+</div>
+
+<div class="card card-default">
+    <div class="card-body">
+
+        @await Html.PartialAsync("Table", new DataTablesModel
+   {
+       Name = "PostDeliveryQueueEmail-grid",
+       UrlRead = new DataUrl("PostDeliveryQueueEmailList", "PostDelivery", new RouteValueDictionary { [nameof(PostDeliveryQueueEmailSearchModel.Id)] = 0 }),
+       UrlUpdate = new DataUrl("PostDeliveryQueueEmailUpdate", "PostDelivery", null),
+       Length = 10,
+       LengthMenu = "7, 15, 20, 50, 100",
+       ColumnCollection = new List<ColumnProperty>
+        {
+        new ColumnProperty(nameof(PostDeliveryQueueEmailModel.Id))
+        {
+        Title = T("Admin.Catalog.PostDelivery.Fields.Id").Text,
+
+        },
+        new ColumnProperty(nameof(PostDeliveryQueueEmailModel.Email))
+        {
+        Title = T("Admin.Catalog.PostDelivery.Fields.Email").Text,
+        Width = "100"
+
+        },
+        new ColumnProperty(nameof(PostDeliveryQueueEmailModel.IsActive))
+        {
+        Title = T("Admin.Catalog.PostDelivery.Fields.IsActive").Text,
+        Width = "100",
+        Render=new  RenderBoolean()   ,
+        Editable = true,
+        EditType = EditType.Checkbox
+
+        },
+        new ColumnProperty(nameof(PostDeliveryQueueEmailModel.ReminderNumber))
+        {
+        Title = T("Admin.Catalog.PostDelivery.Fields.ReminderNumber").Text
+        },
+        new ColumnProperty(nameof(PostDeliveryQueueEmailModel.DeactivatedRemarks))
+        {
+        Title = T("Admin.Catalog.PostDelivery.Fields.DeactivatedRemarks").Text,
+        Width = "150",
+        ClassName = NopColumnClassDefaults.CenterAll,
+        Editable = true,
+        EditType = EditType.String
+        },
+        new ColumnProperty(nameof(PostDeliveryQueueEmailModel.ReminderDate))
+        {
+        Title = T("Admin.Catalog.PostDelivery.Fields.ReminderDate").Text,
+        Width = "150",
+        ClassName = NopColumnClassDefaults.CenterAll,
+        Editable = true
+        },
+
+        new ColumnProperty(nameof(FBTProductModel.Id))
+        {
+        Title = T("Admin.Common.Edit").Text,
+        Width = "200",
+        ClassName =  NopColumnClassDefaults.Button,
+        Render = new RenderButtonsInlineEdit()
+        }
+
+        }
+   })
+    </div>
+
+</div>
+
+
+
