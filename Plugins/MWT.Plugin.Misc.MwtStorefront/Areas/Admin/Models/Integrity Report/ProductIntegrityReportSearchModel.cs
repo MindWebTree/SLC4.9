@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Nop.Web.Framework.Models;
+﻿using Nop.Web.Framework.Models;
 using Nop.Web.Framework.Mvc.ModelBinding;
 
-namespace Nop.Web.Areas.Admin.Models.Customization.Custom.Integrity_Report
+namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Integrity_Report
 {
     /// <summary>
     /// Represents a category search model

@@ -72,7 +72,6 @@
   <ItemGroup>
     <Folder Include="Areas\Admin\Factories\Customizations\" />
     <Folder Include="Areas\Admin\Models\Customizations\" />
-    <Folder Include="Areas\Admin\Themes\CustomTheme\" />
     <Folder Include="wwwroot\images\customizationform\" />
   </ItemGroup>
 

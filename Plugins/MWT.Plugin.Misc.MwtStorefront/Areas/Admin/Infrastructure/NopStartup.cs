@@ -4,9 +4,11 @@ using Microsoft.Extensions.DependencyInjection;
 using MWT.Nop.Core.Domain.FAQModule;
 using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories;
 using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.Customization;
+using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.Integrity_Report;
+using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.PostDelievery;
 using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.QA;
 using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Factories;
-using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Factories.Custom; 
+using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Factories.Custom;
 using Nop.Core.Infrastructure;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Infrastructure
@@ -19,7 +21,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Infrastructure
         /// <param name="services">Collection of service descriptors</param>
         /// <param name="typeFinder">Type finder</param>
         /// <param name="appSettings">App settings</param>
-         
+
 
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
@@ -30,14 +32,16 @@ namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Infrastructure
             services.AddScoped<ICustomFormModelFactory, CustomFormModelFactory>();
             services.AddScoped<IUtilitiesModelFactory, UtilitiesModelFactory>();
             services.AddScoped<ICampaignManagementModelFactory, CampaignManagementModelFactory>();
-            services.AddScoped<IFaqModelFactory, FaqModelFactory>(); 
+            services.AddScoped<IFaqModelFactory, FaqModelFactory>();
+            services.AddScoped<IPostDeliveryQueueEmailModelFactory, PostDeliveryQueueEmailModelFactory>();
+            services.AddScoped<IIntegrityReportModelFactory, IntegrityReportModelFactory>();
 
 
         }
 
         public void Configure(IApplicationBuilder application)
         {
-        
+
         }
 
         /// <summary>

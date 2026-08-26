@@ -1,9 +1,9 @@
 ﻿using Nop.Web.Framework.Models;
 
-namespace Nop.Web.Areas.Admin.Models.Customization.Custom.PostDelivery
+namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Models.PostDelivery
 {
     public partial record PostDeliveryQueueEmailSearchModel : BaseSearchModel
     {
-        public int  Id { get; set; }
+        public int Id { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Nop.Core.Infrastructure;
+﻿using MWT.Nop.Core.Domain.CustomOrders;
+using MWT.Nop.Core.Services.Customizations.CustomOrders;
+using Nop.Core.Infrastructure;
 using Nop.Services.Customizations.Phone_Order;
 using Nop.Web.Areas.Admin.Models.Orders;
 using Nop.Web.Framework.Models.Extensions;
@@ -14,6 +16,7 @@ namespace Nop.Web.Areas.Admin.Factories
     /// </summary>
     public partial class OrderModelFactory : IOrderModelFactory
     {
+         
         public virtual async Task<OrderListModel> PrepareCustomOrderListModelAsync(OrderSearchModel searchModel)
         {
             if (searchModel == null)
@@ -52,7 +55,7 @@ namespace Nop.Web.Areas.Admin.Factories
                 pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
 
             var _custiomOrderService = EngineContext.Current.Resolve<ICustomOrderService>();
-            List<Nop.Core.Domain.Customization.PhoneOrder.CustomOrder> customOrders = new List<Core.Domain.Customization.PhoneOrder.CustomOrder>();
+            List<CustomOrder> customOrders = new List<CustomOrder>();
             var orderTypes = await _custiomOrderService.GetOrderTypes();
             if (orders.Count > 0)
             {

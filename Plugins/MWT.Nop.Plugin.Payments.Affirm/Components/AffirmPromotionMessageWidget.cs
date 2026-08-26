@@ -72,7 +72,7 @@ ServiceManager serviceManager)
                 decimal total = 0;
                 int productId = 0;
 
-                if (additionalData is ShoppingCartModel || additionalData is null)`
+                if (additionalData is ShoppingCartModel || additionalData is null)
                 {
 
                     var shoppingCart = (await _shoppingCartService

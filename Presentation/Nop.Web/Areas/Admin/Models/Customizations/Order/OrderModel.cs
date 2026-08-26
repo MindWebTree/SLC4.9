@@ -11,7 +11,7 @@ namespace Nop.Web.Areas.Admin.Models.Orders
         #region Properties
         [NopResourceDisplayName("Admin.Orders.Fields.ParentOrderID")]
         public int ParentOrderID { get; set; }
-      
+
         public string OrderType { get; set; }
 
         #endregion

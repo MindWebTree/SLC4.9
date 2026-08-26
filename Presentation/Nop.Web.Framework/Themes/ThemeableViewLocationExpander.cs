@@ -49,7 +49,16 @@ public partial class ThemeableViewLocationExpander : IViewLocationExpander
                 }
                 .Concat(viewLocations);
         }
-
+        #region Custom updates Need to shift with Upgrade
+        else if (context.AreaName == "Admin")
+        {
+            viewLocations = new[] {
+                        $"/Areas/{{2}}/Themes/Default/Views/{{1}}/{{0}}.cshtml",
+                        $"/Areas/{{2}}/Themes/Default/Views/Shared/{{0}}.cshtml",
+                    }
+            .Concat(viewLocations);
+        }
+        #endregion
         return viewLocations;
     }
 }

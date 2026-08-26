@@ -1026,9 +1026,25 @@ public partial class AdminMenu : IAdminMenu
                           new()
                         {
                             SystemName = "Campaign Management",
-                            Title = await _localizationService.GetResourceAsync("Admin.Catalog.CampaignManagement"),
+                            Title = await _localizationService.GetResourceAsync("Admin.Utilities.CampaignManagement"),
                             PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES },
                             Url = GetMenuItemUrl("CampaignManagement", "List"),
+                            IconClass = "far fa-dot-circle"
+                        },
+                          new()
+                        {
+                            SystemName = "Integrity Reports",
+                            Title = await _localizationService.GetResourceAsync("Admin.Utilities.IntegrityReports"),
+                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES },
+                            Url = GetMenuItemUrl("IntegrityReport", "Product"),
+                            IconClass = "far fa-dot-circle"
+                        },
+                          new()
+                        {
+                            SystemName = "PostDelivery",
+                            Title = await _localizationService.GetResourceAsync("Admin.Utilities.PostDelivery"),
+                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES },
+                            Url = GetMenuItemUrl("PostDelivery", "Index"),
                             IconClass = "far fa-dot-circle"
                         },
                     }

@@ -1,14 +1,9 @@
-﻿using Nop.Services.Customers;
-using Nop.Services.Customizations.Custom.PostPurchaseEmail;
-using Nop.Web.Areas.Admin.Models.Catalog;
-using Nop.Web.Areas.Admin.Models.Customization.Custom.PostDelivery;
+﻿using MWT.Nop.Core.Services.Customers;
+using MWT.Nop.Core.Services.PostDelivery;
+using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Models.PostDelivery;
 using Nop.Web.Framework.Models.Extensions;
-using StackExchange.Redis;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Nop.Web.Areas.Admin.Factories.Customization.PostDelivery
+namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.PostDelievery
 {
     public partial class PostDeliveryQueueEmailModelFactory : IPostDeliveryQueueEmailModelFactory
     {
@@ -16,7 +11,7 @@ namespace Nop.Web.Areas.Admin.Factories.Customization.PostDelivery
         #region fields
 
         private readonly IPostDeliveryService _postDeliveryService;
-        private readonly ICustomerService _customerService;
+        private readonly ICustomerExtendedService _customerService;
 
 
         #endregion
@@ -24,7 +19,7 @@ namespace Nop.Web.Areas.Admin.Factories.Customization.PostDelivery
         #region Ctor
 
         public PostDeliveryQueueEmailModelFactory(IPostDeliveryService postDeliveryService,
-            ICustomerService customerService)
+            ICustomerExtendedService customerService)
         {
             _postDeliveryService = postDeliveryService;
             _customerService = customerService;
@@ -45,7 +40,7 @@ namespace Nop.Web.Areas.Admin.Factories.Customization.PostDelivery
             var queuedEmails = (await _postDeliveryService.GetPostDeliveryQueueEmailList()).ToPagedList(searchModel);
 
             //prepare grid model
-            var model = await new PostDeliveryQueueEmailListModel().PrepareToGridAsync(searchModel, queuedEmails,  () =>
+            var model = await new PostDeliveryQueueEmailListModel().PrepareToGridAsync(searchModel, queuedEmails, () =>
             {
 
                 return queuedEmails.SelectAwait(async queuedEmail =>

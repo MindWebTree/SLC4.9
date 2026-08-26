@@ -1,11 +1,6 @@
-﻿using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Customization.Custom;
-using Nop.Web.Areas.Admin.Models.Customization.Custom;
-using Nop.Web.Areas.Admin.Models.Customization.Custom.Integrity_Report;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Integrity_Report;
 
-namespace Nop.Web.Areas.Admin.Factories.Customization.Integrity_Report
+namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.Integrity_Report
 {
     public partial interface IIntegrityReportModelFactory
     {

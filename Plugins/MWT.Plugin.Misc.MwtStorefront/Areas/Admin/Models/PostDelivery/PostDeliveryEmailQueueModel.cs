@@ -2,7 +2,7 @@
 using System;
 using System.Numerics;
 
-namespace Nop.Web.Areas.Admin.Models.Customization.Custom.PostDelivery
+namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Models.PostDelivery
 {
     public partial record PostDeliveryQueueEmailModel : BaseNopEntityModel
     {

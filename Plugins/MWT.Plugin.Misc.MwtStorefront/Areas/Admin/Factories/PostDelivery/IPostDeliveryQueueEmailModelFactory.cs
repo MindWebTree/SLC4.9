@@ -1,8 +1,6 @@
-﻿using Nop.Web.Areas.Admin.Models.Catalog;
-using Nop.Web.Areas.Admin.Models.Customization.Custom.PostDelivery;
-using System.Threading.Tasks;
+﻿using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Models.PostDelivery;
 
-namespace Nop.Web.Areas.Admin.Factories.Customization.PostDelivery
+namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.PostDelievery
 {
     public partial interface IPostDeliveryQueueEmailModelFactory
     {

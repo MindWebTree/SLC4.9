@@ -1,45 +1,39 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Nop.Services.Catalog;
+using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.Integrity_Report;
+using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Integrity_Report;
 using Nop.Services.Security;
-using Nop.Web.Areas.Admin.Factories;
-using System.Threading.Tasks;
-using Nop.Web.Areas.Admin.Factories.Customization.Integrity_Report;
-using Nop.Web.Areas.Admin.Models.Customization.Custom.Integrity_Report;
+using Nop.Web.Areas.Admin.Controllers;
+using Nop.Web.Framework.Mvc.Filters;
 
 
-namespace Nop.Web.Areas.Admin.Controllers.Customizations
+namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Controllers.Integrity_Report
 {
     public class IntegrityReportController : BaseAdminController
     {
-        #region Fields
+        #region Fields 
 
-        private readonly IProductService _productService;
         private readonly IIntegrityReportModelFactory _productIntegrityReportModelFactory;
-        private readonly IPermissionService _permissionService;
 
         #endregion
-        public IntegrityReportController(IProductService productService,
-          IPermissionService permissionService,
+
+        public IntegrityReportController(
           IIntegrityReportModelFactory productIntegrityReportModelFactory)
         {
-            this._productService = productService;
-            this._permissionService = permissionService;
-            this._productIntegrityReportModelFactory = productIntegrityReportModelFactory;
+            _productIntegrityReportModelFactory = productIntegrityReportModelFactory;
         }
+
+        [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> Product()
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
-                return await AccessDeniedDataTablesJson();
             var searchModel = new ProductIntegrityReportSearchModel();
             searchModel.SetGridPageSize();
             return View(searchModel);
         }
+
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> Product(ProductIntegrityReportSearchModel searchModel)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
-                return await AccessDeniedDataTablesJson();
-
             var model = await _productIntegrityReportModelFactory.PrepareProductIntegrityReportSearchListModelAsync(searchModel);
 
             return Json(model);

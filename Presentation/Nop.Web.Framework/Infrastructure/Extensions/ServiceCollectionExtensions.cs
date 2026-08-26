@@ -185,7 +185,7 @@ public static class ServiceCollectionExtensions
         //themes support
         services.Configure<RazorViewEngineOptions>(options =>
         {
-            options.ViewLocationExpanders.Add(new ThemeableViewLocationExpander());
+            options.ViewLocationExpanders.Add(new   ThemeableViewLocationExpander());
         });
     }
 

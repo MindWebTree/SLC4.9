@@ -1,14 +1,9 @@
-﻿using System.Threading.Tasks;
-using System;
-using Nop.Web.Framework.Models.Extensions;
-using Nop.Services.Catalog;
-using System.Linq;
-using Nop.Web.Areas.Admin.Models.Customization.Custom.Integrity_Report;
+﻿using MWT.Nop.Core.Services.Integrity_Report;
+using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Integrity_Report;
 using Nop.Services.Media;
+using Nop.Web.Framework.Models.Extensions;
 
-using Nop.Services.Customizations.Custom.Integrity_Report;
-
-namespace Nop.Web.Areas.Admin.Factories.Customization.Integrity_Report
+namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.Integrity_Report
 {
     public partial class IntegrityReportModelFactory : IIntegrityReportModelFactory
     {
