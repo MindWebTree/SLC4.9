@@ -1,0 +1,78 @@
+﻿@model CategoryModel
+
+@if (Model.Id > 0)
+{
+<div class="card-body">
+    @await Html.PartialAsync("Table", new DataTablesModel
+    {
+        Name = "categoryproductfilter-grid",
+        UrlRead = new DataUrl("CategorySpecificationAttributeList", "Category", new RouteValueDictionary { { "CategoryId", Model.Id }, { "SpecificationAttributeGroupId", 2 } }),
+        UrlUpdate = new DataUrl("CategorySpecificationAttributeMappingUpdate", "Category", new RouteValueDictionary { { "CategoryId", Model.Id } }),
+        Length = Model.CategoryProductSearchModel.PageSize,
+        LengthMenu = Model.CategoryProductSearchModel.AvailablePageSizes,
+
+        ColumnCollection = new List<ColumnProperty>
+{
+        new ColumnProperty(nameof(SpecificationAttributeModel.Name))
+        {
+            Title = T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Fields.Name").Text,
+            ClassName = NopColumnClassDefaults.CenterAll,
+            Width = "300"
+        },
+
+        new ColumnProperty(nameof(SpecificationAttributeModel.DisplayOrder))
+        {
+            Title = T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Fields.DisplayOrder").Text,
+            Width = "150",
+            Editable= true,
+            ClassName = NopColumnClassDefaults.CenterAll,
+            EditType = EditType.Number
+        },
+        new ColumnProperty(nameof(SpecificationAttributeModel.Disabled))
+        {
+            Title = T("Admin.Catalog.Entity.FiltersMappingByEntity.Fields.Enabled").Text,
+            Width = "150",
+            ClassName = NopColumnClassDefaults.CenterAll,
+            Render = new RenderBoolean(),
+            Editable = true,
+            EditType = EditType.Checkbox
+        },
+        new ColumnProperty(nameof(SpecificationAttributeModel.DisplayOnTop))
+        {
+            Title = T("Admin.Catalog.Entity.FiltersMappingByEntity.Fields.DisplayOnTop").Text,
+            Width = "150",
+            ClassName = NopColumnClassDefaults.CenterAll,
+            Render = new RenderBoolean(),
+            Editable = true,
+            EditType = EditType.Checkbox
+        },
+        new ColumnProperty(nameof(SpecificationAttributeModel.Id))
+        {
+            Title = T("Admin.Common.View").Text,
+            Width = "100",
+            ClassName = NopColumnClassDefaults.Button,
+            Render = new RenderCustom("renderOptionColumnView")
+        },
+        new ColumnProperty(nameof(SpecificationAttributeModel.Id))
+        {
+            Title = T("Admin.Common.Edit").Text,
+            Width = "200",
+            ClassName =  NopColumnClassDefaults.Button,
+            Render = new RenderButtonsInlineEdit()
+        }
+    }
+    })
+
+</div> }
+            else
+            {
+<div class="card-body">
+    @T("Admin.Catalog.Categories.Products.SaveBeforeEdit")
+</div>}
+
+<script>
+    function renderOptionColumnView(data, type, row, meta) {
+    return '<a class="btn btn-default" href="@Url.Action("CategorySpecificationAttributeOptionSearchList", "Category")?specificationAttributeId=' + row.Id + '&categoryId=' + @Model.Id + '"><i class="fas fa-eye"></i> View</a>';
+
+    }
+</script>

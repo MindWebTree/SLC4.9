@@ -1,45 +1,47 @@
-﻿using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Utilities;
+﻿using MWT.Nop.Core.Domain.StoreWideDiscount;
+using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Utilities;
 
-namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.Customization
+namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.Utilities
 {
     public partial interface IUtilitiesModelFactory
     {
-        //Task<ProductNotesManagementModel> PrepareProductNotesManagementModel(ProductNotesManagementModel model);
+        Task<ProductNotesManagementModel> PrepareProductNotesManagementModel(ProductNotesManagementModel model);
 
-        //#region Bulk Update
-        //Task BulkUpdateInventory(string productids, int inventory);
-        //Task BulkUpdateProductCategorySpecificationAttributeMapping(string productids, string categoryIds, string specificationAttributeIds, bool isRemove);
-        //Task BulkPublishUnpublishProductCategories(string productids, string categoryIds, string specificationAttributeIds, bool published);
-        //Task BulkUpdateProductListing(string productIds, int productId, string ProductListingTypes);
-        //Task BulkUpdateTemplate(string categoryIds, int productTemplateId);
-        //Task<MarketingModel> PrepareMarketingModel();
-        //Task SaveMarketingSettings(MarketingModel model);
-        //Task<StoreWideDiscountSettingModel> PrepareOfferModel();
-        //Task BulkUpdateCustomizationFormTemplates(string productids, string categoryIds, int customizationFormTemplateId);
+        #region Bulk Update
+        Task BulkUpdateInventory(string productids, int inventory);
+        Task BulkUpdateProductCategorySpecificationAttributeMapping(string productids, string categoryIds, string specificationAttributeIds, bool isRemove);
+        Task BulkPublishUnpublishProductCategories(string productids, string categoryIds, string specificationAttributeIds, bool published);
+        Task BulkUpdateProductListing(string productIds, int productId, string ProductListingTypes);
+        Task BulkUpdateTemplate(string categoryIds, int productTemplateId);
+        Task<MarketingModel> PrepareMarketingModel();
+        Task SaveMarketingSettings(MarketingModel model);
+        Task<StoreWideDiscountSettingModel> PrepareOfferModel();
+        Task BulkUpdateCustomizationFormTemplates(string productids, string categoryIds, int customizationFormTemplateId);
 
-        //#endregion
+        #endregion
 
-        //#region  StoreWideDiscount
-        //Task<StoreWideDiscountSearchModel> PrepareStoreWideDiscountSearchModel(StoreWideDiscountSearchModel model);
-        //Task<StoreWideDiscountListModel> PrepareStoreWideDiscountListModelAsync(StoreWideDiscountSearchModel searchModel);
-        //Task<StoreWideDiscountModel> PrepareStoreWideDiscountModel(StoreWideDiscountModel model, StoreWideDiscount storeWideDiscount);
-        //#endregion
+        #region  StoreWideDiscount
+        Task<StoreWideDiscountSearchModel> PrepareStoreWideDiscountSearchModel(StoreWideDiscountSearchModel model);
+        Task<StoreWideDiscountListModel> PrepareStoreWideDiscountListModelAsync(StoreWideDiscountSearchModel searchModel);
+        Task<StoreWideDiscountModel> PrepareStoreWideDiscountModel(StoreWideDiscountModel model, StoreWideDiscount storeWideDiscount);
+        #endregion
 
-        //#region  StoreWideDiscountSetting
-        //Task<StoreWideDiscountSettingListModel> PrepareStoreWideDiscountSettingListModelAsync(StoreWideDiscountSettingSearchModel searchModel);
-        //Task<StoreWideDiscountSettingModel> PrepareStoreWideDiscountSettingModel(StoreWideDiscountSettingModel model, StoreWideDiscountSetting storeWideDiscountSetting);
-        //#endregion
+        #region  StoreWideDiscountSetting
+        Task<StoreWideDiscountSettingListModel> PrepareStoreWideDiscountSettingListModelAsync(StoreWideDiscountSettingSearchModel searchModel);
+        Task<StoreWideDiscountSettingModel> PrepareStoreWideDiscountSettingModel(StoreWideDiscountSettingModel model, StoreWideDiscountSetting storeWideDiscountSetting);
+        #endregion
 
-        //#region  StoreWideProductDiscountInfo
-        //Task<StoreWideProductDiscountInfoSearchModel> PrepareOfferDiscountLogSearchModel(StoreWideProductDiscountInfoSearchModel model);
-        //Task<StoreWideProductDiscountInfoListModel> PrepareOfferDiscountListModelAsync(StoreWideProductDiscountInfoSearchModel searchModel);
+        #region  StoreWideProductDiscountInfo
+        Task<StoreWideProductDiscountInfoSearchModel> PrepareOfferDiscountLogSearchModel(StoreWideProductDiscountInfoSearchModel model);
+        Task<StoreWideProductDiscountInfoListModel> PrepareOfferDiscountListModelAsync(StoreWideProductDiscountInfoSearchModel searchModel);
 
-        //#endregion
+        #endregion
 
-        //#region  StoreWideProductDiscountHistory
-        //Task<StoreWideProductDiscountHistorySearchModel> PrepareProductDiscountHistorySearchModel(StoreWideProductDiscountHistorySearchModel model);
-        //Task<StoreWideProductDiscountHistoryListModel> PrepareOfferProductDiscountHistoryListModelAsync(StoreWideProductDiscountHistorySearchModel searchModel);
-        //#endregion
+        #region  StoreWideProductDiscountHistory
+        Task<StoreWideProductDiscountHistorySearchModel> PrepareProductDiscountHistorySearchModel(StoreWideProductDiscountHistorySearchModel model);
+        Task<StoreWideProductDiscountHistoryListModel> PrepareOfferProductDiscountHistoryListModelAsync(StoreWideProductDiscountHistorySearchModel searchModel);
+        #endregion
+
 
 
 
@@ -47,7 +49,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.Customization
 
         Task<TestimonialListModel> SearchTestimonials(TestimonialSearchModel searchModel);
 
-        #endregion
+        #endregion  
 
 
 

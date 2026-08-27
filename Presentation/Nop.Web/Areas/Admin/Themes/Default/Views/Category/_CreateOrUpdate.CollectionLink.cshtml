@@ -1,0 +1,96 @@
+﻿@model CategoryModel
+<div class="card-body">
+    <p>
+        @T("Admin.Catalog.Category.Collectionlink.Hint")
+    </p>
+    @if (Model.Id > 0)
+    {
+        <div class="card card-default">
+            <div class="card-body">
+
+                @await Html.PartialAsync("Table", new DataTablesModel
+           {
+               Name = "Collectionlink-grid",
+            UrlRead = new DataUrl("CollectionLinkList", "Category",
+            new RouteValueDictionary {[nameof(CollectionLinkSearchModel.EntityId)]= Model.Id}),
+               UrlDelete = new DataUrl("CollectionLinkDelete", "Category", null),
+               UrlUpdate = new DataUrl("CollectionLinkUpdate", "Category", null),
+
+               Length = 10,
+               ColumnCollection = new List<ColumnProperty>
+                        {
+                            new ColumnProperty(nameof(CategoryCollectionLinkModel.Title))
+                            {
+                            Title = T("Admin.Catalog.Category.CategoryCollectionLinkModel.Fields.Title").Text,
+                                Width = "150",
+                                ClassName = NopColumnClassDefaults.CenterAll,
+                                Editable = true,
+                                EditType = EditType.String
+                            },
+                              new ColumnProperty(nameof(CategoryCollectionLinkModel.Link))
+                            {
+                                Title = T("Admin.Catalog.Category.CategoryCollectionLinkModel.Fields.Link").Text,
+                                Width = "200",
+                                ClassName = NopColumnClassDefaults.CenterAll,
+                                Editable = true,
+                                EditType = EditType.String
+                            },
+                            new ColumnProperty(nameof(CategoryCollectionLinkModel.DisplayOrder))
+                            {
+                                Title = T("Admin.Catalog.Category.CategoryCollectionLinkModel.Fields.DisplayOrder").Text,
+                                Width = "150",
+                                ClassName = NopColumnClassDefaults.CenterAll,
+                                Editable = true,
+                                EditType = EditType.Number
+                            },
+
+                            new ColumnProperty(nameof(CategoryCollectionLinkModel.Id))
+                            {
+                                Title = T("Admin.Common.Edit").Text,
+                                Width = "200",
+                                ClassName =  NopColumnClassDefaults.Button,
+                              Render = new RenderCustom("renderColumnEdit_filter")
+                            },
+                            new ColumnProperty(nameof(CategoryCollectionLinkModel.Id))
+                            {
+                                Title = T("Admin.Common.Delete").Text,
+                                Width = "100",
+                                Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+                                ClassName = NopColumnClassDefaults.Button
+                            }
+                        }
+           })
+            </div>
+            <div class="card-footer">
+                <button type="submit" id="btnAddNewCollectionLinkProduct" class="btn btn-primary" onclick="javascript:OpenWindow('@(Url.Action("CollectionLinkAddPopup", "Category", new {entityId = Model.Id, btnId = "btnRefreshCollectionLinkProducts", formId = "category-form"}))', 800, 800, true); return false;">
+                    @T("Admin.Catalog.CollectionLink.AddNew")
+                </button>
+                <button type="submit" id="btnRefreshCollectionLinkProducts" style="display: none"></button>
+                <script>
+                    $(document).ready(function () {
+                        $('#btnRefreshCollectionLinkProducts').click(function () {
+                         
+                            //refresh grid
+                            updateTable('#Collectionlink-grid');
+
+                            //return false to don't reload a page
+                            return false;
+                        });
+                    });
+                         function renderColumnEdit_filter(data, type, row, meta) {
+                        return '<button onclick=\"javascript:OpenWindow(\'@Url.Action("CollectionLinkAddPopup", "Category")?entityId=@Model.Id&entityType=category&id=' + data
+                            + '&btnId=btnRefreshCollectionLinkProducts&formId=category-form\', 800, 800, true); return false;\" class="btn btn-default"><i class="fas fa-pencil-alt"></i>@T("Admin.Common.Edit").Text</button>';
+                    }
+                </script>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card card-default">
+            <div class="card-body">
+                @T("Admin.Catalog.Category.RelatedSearch.SaveBeforeEdit")
+            </div>
+        </div>
+    }
+</div>

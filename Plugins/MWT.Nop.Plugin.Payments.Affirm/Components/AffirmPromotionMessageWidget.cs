@@ -7,7 +7,9 @@ using Nop.Core.Domain.Orders;
 using Nop.Services.Orders;
 using Nop.Services.Payments;
 using Nop.Web.Framework.Components;
+using Nop.Web.Framework.Models;
 using Nop.Web.Models.Catalog;
+using Nop.Web.Models.ShoppingCart;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,42 +56,55 @@ ServiceManager serviceManager)
         #endregion
         public async Task<IViewComponentResult> InvokeAsync(string widgetZone, object additionalData)
         {
-            var customer = await _workContext.GetCurrentCustomerAsync();
-            var store = await _storeContext.GetCurrentStoreAsync();
-            if (!await _paymentPluginManager.IsPluginActiveAsync(AffirmCheckoutDefaults.SystemName, customer, store?.Id ?? 0))
-                return Content(string.Empty);
-
-            if (! await _serviceManager.IsConfigured(_affirmSettings,false))
-                return Content(string.Empty);
-
-
-            if (!widgetZone.Equals(_affirmSettings.WidgetProductDetailsPage) && !widgetZone.Equals(_affirmSettings.WidgetZoneShoppingCart) || ((widgetZone.Equals(_affirmSettings.WidgetProductDetailsPage) && !_affirmSettings.EnableOnProductDetailsPage) || (widgetZone.Equals(_affirmSettings.WidgetZoneShoppingCart) && !_affirmSettings.EnableOnShoppingCart)))
-                return Content(string.Empty);
-            decimal total = 0;
-            var productId = additionalData is ProductDetailsModel model ? model.Id : 0;
-            if (productId == 0)
+            try
             {
-                productId = additionalData is ProductOverviewModel overviewModel ? overviewModel.Id : 0;
+                var customer = await _workContext.GetCurrentCustomerAsync();
+                var store = await _storeContext.GetCurrentStoreAsync();
+                if (!await _paymentPluginManager.IsPluginActiveAsync(AffirmCheckoutDefaults.SystemName, customer, store?.Id ?? 0))
+                    return Content(string.Empty);
+
+                if (!await _serviceManager.IsConfigured(_affirmSettings, false))
+                    return Content(string.Empty);
+
+
+                if (!widgetZone.Equals(_affirmSettings.WidgetProductDetailsPage) && !widgetZone.Equals(_affirmSettings.WidgetZoneShoppingCart) || ((widgetZone.Equals(_affirmSettings.WidgetProductDetailsPage) && !_affirmSettings.EnableOnProductDetailsPage) || (widgetZone.Equals(_affirmSettings.WidgetZoneShoppingCart) && !_affirmSettings.EnableOnShoppingCart)))
+                    return Content(string.Empty);
+                decimal total = 0;
+                int productId = 0;
+
+                if (additionalData is ShoppingCartModel || additionalData is null)
+                {
+
+                    var shoppingCart = (await _shoppingCartService
+                .GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart, store.Id))
+                .ToList();
+                    var (shoppingCartTotal, _, _, _, _, _) = await _orderTotalCalculationService
+                     .GetShoppingCartTotalAsync(shoppingCart, usePaymentMethodAdditionalFee: false);
+                    total = Math.Round(shoppingCartTotal ?? decimal.Zero, 2);
+                }
+                else
+                {
+                    productId = additionalData is BaseNopEntityModel model ? model.Id : 0;
+                }
+                PromotionalMessagingInfoModel promotionModel = new PromotionalMessagingInfoModel();
+                promotionModel.PrivateKey = _affirmSettings.PrivateApiKey;
+                promotionModel.PublicKey = _affirmSettings.PublicApiKey;
+                promotionModel.PageType = productId == 0 ? "Cart" : "Product";
+                promotionModel.Amount = AffirmHelper.ConvertDecimalToCents(total);
+                promotionModel.MessageType = _affirmSettings.PromotionalMessageType.ToString();
+                promotionModel.ProductId = productId;
+                promotionModel.MessageColor = _affirmSettings.PromotionalMessageColor.ToString();
+                promotionModel.UseSandBox = _affirmSettings.UseSandbox;
+                return View("~/Plugins/MWT.Nop.Plugin.Payments.Affirm/Views/Promotion.cshtml", promotionModel);
             }
-            if (productId == 0)
+            catch
             {
-                var shoppingCart = (await _shoppingCartService
-            .GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart, store.Id))
-            .ToList();
-                var (shoppingCartTotal, _, _, _, _, _) = await _orderTotalCalculationService
-                 .GetShoppingCartTotalAsync(shoppingCart, usePaymentMethodAdditionalFee: false);
-                total = Math.Round(shoppingCartTotal ?? decimal.Zero, 2);
+
             }
-            PromotionalMessagingInfoModel promotionModel = new PromotionalMessagingInfoModel();
-            promotionModel.PrivateKey = _affirmSettings.PrivateApiKey;
-            promotionModel.PublicKey = _affirmSettings.PublicApiKey;
-            promotionModel.PageType = productId == 0 ? "Cart" : "Product";
-            promotionModel.Amount = AffirmHelper.ConvertDecimalToCents(total);
-            promotionModel.MessageType = _affirmSettings.PromotionalMessageType.ToString();
-            promotionModel.ProductId = productId;
-            promotionModel.MessageColor = _affirmSettings.PromotionalMessageColor.ToString();
-            promotionModel.UseSandBox = _affirmSettings.UseSandbox;
-            return View("~/Plugins/MWT.Nop.Plugin.Payments.Affirm/Views/Promotion.cshtml", promotionModel);
+
+            return Content(string.Empty);
+
+
 
         }
     }

@@ -1,9 +1,10 @@
-@model Nop.Web.Models.Customizations.AbandonedCart.AbandonedCartModel
-@inject Nop.Core.IWorkContext _workcontext
+@using MWT.Plugin.Misc.MwtStorefront.Models.AbandonedCarts
+@model AbandonedCartModel
+@inject ICustomWorkContext _workcontext
 @inject Nop.Services.Catalog.IPriceFormatter _priceFormatter
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor
 
-@{ if (Model.ErrorType == Nop.Web.Models.Customizations.AbandonedCart.AbandonedCartErrorType.Processed)
+@{ if (Model.ErrorType == AbandonedCartErrorType.Processed)
     {
         @Html.Raw("Your cart is empty. Explore our products, check special offers, save favorites. Need help? Contact us. Thank you for choosing! ")
 
@@ -18,7 +19,7 @@
     }
     var url = Url.RouteUrl("RebuildCart", routeValues);
 }
-@if (Model.ErrorType != Nop.Web.Models.Customizations.AbandonedCart.AbandonedCartErrorType.Processed)
+@if (Model.ErrorType != AbandonedCartErrorType.Processed)
 {
     <form action="@url" method="post" id="product-form">
         @Html.ValidationSummary()

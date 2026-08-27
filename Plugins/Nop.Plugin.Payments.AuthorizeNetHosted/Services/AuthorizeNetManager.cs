@@ -594,7 +594,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
                     paymentRequest = new ProcessPaymentRequest();
                 }
                 await this._orderProcessingService.SetProcessPaymentRequestAsync(paymentRequest, customer);
-                paymentRequest = await this._orderProcessingService.GetProcessPaymentRequestAsync(customer);
+               
 
 
                 var billToAddress = formatBillingAddress(

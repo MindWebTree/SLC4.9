@@ -1,0 +1,30 @@
+﻿
+using Nop.Web.Framework.Models;
+using Nop.Web.Framework.Mvc.ModelBinding;
+
+namespace Nop.Web.Areas.Admin.Models.Catalog
+{
+    /// <summary>
+    /// Represents a related product model
+    /// </summary>
+    public partial record FBTProductModel : BaseNopEntityModel
+    {
+        #region Properties
+
+        public int ProductId2 { get; set; }
+
+        [NopResourceDisplayName("Admin.Catalog.Products.RelatedProducts.Fields.Product")]
+        public string Product2Name { get; set; }
+
+        [NopResourceDisplayName("Admin.Catalog.Products.RelatedProducts.Fields.DisplayOrder")]
+        public int DisplayOrder { get; set; }
+
+        [NopResourceDisplayName("Admin.Catalog.Products.RelatedProducts.Fields.DefaultQuantity")]
+        public int DefaultQuantity { get; set; }
+
+        [NopResourceDisplayName("Admin.Catalog.Products.Fields.PictureThumbnailUrl")]
+        public string PictureThumbnailUrl { get; set; }
+
+        #endregion
+    }
+}

@@ -42,13 +42,13 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
 
         #endregion
 
-        public virtual async Task<IActionResult> CustomOrders(int? pageNumber, OrderHistoryPeriods limit)
+        public virtual async Task<IActionResult> ExtendedCustomerOrders(int? pageNumber, OrderHistoryPeriods limit)
         {
             if (!await _customerService.IsRegisteredAsync(await _workContext.GetCurrentCustomerAsync()))
                 return Challenge();
 
             var model = await _orderModelFactory.CustomPrepareCustomerOrderListModelAsync(pageNumber,limit);
-            return View("CustomerOrders", model);
+            return View("ExtendedCustomerOrders", model);
         }
         public virtual async Task<IActionResult> CustomDetails(int orderId)
         {

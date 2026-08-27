@@ -116,7 +116,7 @@ namespace MWT.Nop.Core.Services.Customizations.CustomOrders
             return await _customOrderRepository.Table.Where(m => m.LiveOrderNumber == orderNumber).FirstOrDefaultAsync();
         }
 
-        public async Task<IPagedList<CustomOrder>> SearchCustomorder(string searchterm, int customerId, int statusId,
+        public async Task<IPagedList<CustomOrder>>  SearchCustomorder(string searchterm, int customerId, int statusId,
       int pageIndex = 0, int pageSize = int.MaxValue, bool ispartial = false, bool displayAdditionalService = false, bool isDeleted = false)
         {
             if (!string.IsNullOrWhiteSpace(searchterm))
@@ -444,6 +444,11 @@ namespace MWT.Nop.Core.Services.Customizations.CustomOrders
         public async Task<dynamic> PrepareBriefOderSummaryModel(int orderId, bool isCustomerPaying = false)
         {
             dynamic model = new ExpandoObject();
+            model.SubTotalDiscountDetails = null;
+            model.ShippingDiscountDetails = null;
+            model.SubTotal = null;
+            model.PayableAmount = null;
+         
             var order = await this.GetById(orderId);
             if (order != null)
             {

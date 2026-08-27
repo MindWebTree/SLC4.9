@@ -1,0 +1,248 @@
+﻿@{
+    Layout = "_ColumnsOne";
+
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.PageNotFound").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-not-found-page");
+}
+<div class="page not-found-page">
+    <div class="page-title">
+        <h1>@T("PageTitle.PageNotFound")</h1>
+    </div>
+    <div class="page-body">
+        @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "PageNotFound" })
+    </div>
+</div>
+
+
+<script asp-location="Footer">
+  
+    $("#page_notfound_search_box_form").on("submit", function (event) {
+  
+        if ($("#page_notfound_search_box_form .search-box-text").val() == "") {
+            $("#page_notfound_search_box_form.search-box-text").focus();
+            event.preventDefault();
+        }
+		else{
+		$('input[name="notfound_searchterm"]').attr('name', 'searchterm');
+		}
+    });
+
+    var header = "";
+
+    var notFoundSearchBoxContainerClass = "#page_notfound_search_box_form ";
+    // default suggestions
+    $("body").on("click", '.clear-recent-search', function (event) {
+        event.stopPropagation();
+        bindRecentSearch = false;
+        $.ajax({
+            cache: false,
+            type: "POST",
+            url: "@Url.Action("ClearRecentSearch", "catalog")",
+            dataType: "json",
+            success: function (data, textStatus, jqXHR) {
+                fnNotFounddefaultSearchSuggestions($(notFoundSearchBoxContainerClass + '.search-box-text').val());
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+
+            }
+        });
+    });
+
+    $(notFoundSearchBoxContainerClass + '.search-box-text').on('input', function () {
+        if ($(this).val().length < 3) {
+            fnNotFounddefaultSearchSuggestions($(this).text());
+        }
+    
+
+        // Set the same value to other textboxes
+        console.log(searchBoxContainerClass);
+        $(searchBoxContainerClass + '.search-box-text').val($(this).val());
+    });
+    $(notFoundSearchBoxContainerClass + '.search-box-text').focus(function (event) {
+        if ($(this).val().length < 3) {
+            fnNotFounddefaultSearchSuggestions($(this).text());
+        }
+    });
+
+    $("body").on("click", function (e) {
+        if ($(e.target).is(notFoundSearchBoxContainerClass + '.search-box-text') === false
+            && $(e.target).is('.d-suggestion') === false
+            && $(e.target).is('.close-icon') === false
+        ) {
+            $(".d-suggestion").removeClass("d-suggestion");
+        }
+    });
+
+    function fnNotFounddefaultSearchSuggestions(searchText) {
+        $(notFoundSearchBoxContainerClass+" .ui-autocomplete").css("top", $("#page_notfound_search_box_form").height() + "px");
+        var autocompleteElement = $("#page_notfound_search_box_form").next();
+        $(autocompleteElement).html("");
+        $(autocompleteElement).addClass("d-suggestion");
+        var counter = 1;
+        $.each(defaultSearchSuggestions, function (key, item) {
+            counter = counter + 1;
+            if (item.Header) {
+                if ((item.IsRecentSearch && bindRecentSearch) || !item.IsRecentSearch) {
+                    $(autocompleteElement).append('<li class="heading ' + item.Header + ' ui-menu-item"><b id="ui-id-' + counter + '" tabindex="-1" class="ui-menu-item-wrapper">' + item.Header + '</b></li>')
+
+                }
+            }
+            else {
+                var i = "",
+                    a = String(searchText.replace(/[°"§%()^&*\[\]{}=\\?´`'#<>|,;.:+_-]+/g, "")),
+                    l = a.split(" ").join("|"),
+                    s = t.desc;
+
+                item.name = String(item.Name).replace(new RegExp("(" + l + ")", "gi"),
+                    '<span class="highlight-search-help">$1</span>');
+
+                if (item.Products) {
+
+                    var images = "";
+                    var count = 0;
+                    $.each(item.Products, function (key, prd) {
+                        images = images + "<a href=\"" + prd.Url + "\"><img alt=\"" + prd.Name + "\" src=\"" + prd.ImageUrl + "\"/></a>"
+                        count++;
+                        if (count === 3 && jQuery('body').width() < 992 ) return false;
+                    });
+                    $(autocompleteElement).append("<li class=\"recent-view-images ui-menu-item\">" + images + "</li>");
+
+                }
+                else {
+                    if (bindRecentSearch) {
+                        if (item.Url == "") {
+                            $(autocompleteElement).append("<li><button id = \"ui-id-" + counter + "\" class=\"clear-recent-search\">" + item.Name + "</button></li>");
+
+                        }
+                        else {
+                            $(autocompleteElement).append("<li><a id = \"ui-id-" + counter + "\" href=\"" + item.Url + "\"><span>" + item.Name + "</span></a></li>");
+                        }
+                    }
+                }
+
+
+            }
+        });
+        $(autocompleteElement).show();
+    }
+    // end
+    $(document).ready(function () {
+
+        var notfoundShowLinkToResultSearch;
+        var notfoundSearchText;
+        $(notFoundSearchBoxContainerClass + '.search-box-text').autocomplete({
+            delay: 500,
+            minLength: 3,
+            source: '@(Url.RouteUrl("ProductSearchAutoComplete"))',
+            appendTo: '.page_notfound_search_box',
+            select: function (event, ui) {
+                $(notFoundSearchBoxContainerClass + ".search-box-text").val(ui.item.label);
+                if (ui.item.url != "") {
+                    setLocation(ui.item.producturl);
+                }
+                else {
+                    event.preventDefault();
+
+                }
+
+                return false;
+            },
+            response: function (event, ui) {
+                if (ui.content.length == 1) {
+
+                    $.each(defaultSearchSuggestions, function (key, suggestion) {
+                        if ((suggestion.IsRecentSearch == true && bindRecentSearch) || !suggestion.IsRecentSearch) {
+
+                            ui.content.push({
+                                url: suggestion.Url, name: suggestion.Name, Header: suggestion.Header
+                                ,
+                                Products: suggestion.Products
+                            });
+                        }
+                    });
+
+                }
+            },
+            close: function (event) {
+
+            },
+            //append link to the end of list
+            open: function (event, ui) {
+
+                //display link to search page
+                if (notfoundShowLinkToResultSearch) {
+                    notfoundSearchText = $(notFoundSearchBoxContainerClass + ".search-box-text").val();
+                    $(".ui-autocomplete").append("<li class=\"ui-menu-item\" role=\"presentation\"><a href=\"/search?q=" + notfoundSearchText + "\">@T("Search.SearchBox.SearchPageLink")</a></li>");
+                }
+            }
+        })
+            .data("ui-autocomplete")._renderItem = function (ul, item) {
+                $("#page_notfound_search_box_form").next().removeClass("d-suggestion");
+                // console.log(item);
+                var t = item.label;
+                notfoundShowLinkToResultSearch = item.showlinktoresultsearch;
+                //html encode
+                // Mind Web tree 16/02/2023 elastic search tab work
+                t = htmlEncode(t);
+                if (item.Header) {
+                    header = item.Header;
+                    return $("<li class=\"ui-state-disabled heading " + header + "\"></li>")
+                        .data("item.autocomplete", item)
+                        .append("<b>" + item.Header + "</b>")
+                        .appendTo(ul);
+                }
+                else {
+                    var i = "",
+                        a = String(this.term.replace(/[°"§%()^&*\[\]{}=\\?´`'#<>|,;.:+_-]+/g, "")),
+                        l = a.split(" ").join("|"),
+                        s = t.desc;
+
+                    item.name = String(item.name).replace(new RegExp("(" + l + ")", "gi"),
+                        '<span class="highlight-search-help">$1</span>');
+
+                    if (header == "PRODUCTS") {
+                        return $("<li></li>")
+                            .data("item.autocomplete", item)
+                            .append("<a href=\"" + item.url + "\"><img src=\"" + item.ImageUrl + "\"/><span>" + item.name + "</span></a>")
+
+                            .appendTo(ul);
+                    }
+                    else {
+                        if (item.Products) {
+                            var images = "";
+							var count=0;
+                            $.each(item.Products, function (key, prd) {
+                                images = images + "<a href=\"" + prd.Url + "\"><img alt=\"" + prd.Name + "\" src=\"" + prd.ImageUrl + "\"/></a>";
+								  count++;
+                        if (count === 3 && jQuery('body').width() < 992 ) return false;
+								
+                            });
+                            return $("<li class=\"recent-view-images\"></li>")
+                                .data("item.autocomplete", item)
+                                .append(images)
+                                .appendTo(ul);
+                        }
+                        else {
+                            if (item.url == "") {
+                                return $("<li></li>")
+                                    .data("item.autocomplete", item)
+                                    .append("<button class=\"clear-recent-search\">" + item.name + "</button>")
+
+                                    .appendTo(ul);
+                            }
+                            else {
+                                return $("<li></li>")
+                                    .data("item.autocomplete", item)
+                                    .append("<a href=\"" + item.url + "\"><span>" + item.name + "</span></a>")
+
+                                    .appendTo(ul);
+                            }
+                        }
+                    }
+
+                }
+            };
+    });
+</script>

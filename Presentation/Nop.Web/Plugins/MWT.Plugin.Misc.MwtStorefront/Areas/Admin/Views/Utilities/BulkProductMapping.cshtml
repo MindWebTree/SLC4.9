@@ -1,0 +1,231 @@
+﻿@model ProductMappingModel 
+
+@{
+    //page title
+    ViewBag.PageTitle = T("Admin.Utilities.Bulk.productmapping").Text;
+
+    //active menu item (system name)
+    NopHtml.SetActiveMenuItemSystemName("BulkNotes");
+}
+@{
+
+    //resources for product tags input
+    NopHtml.AppendCssFileParts("~/lib_npm/jquery-tageditor/jquery.tag-editor.css");
+    NopHtml.AppendScriptParts(ResourceLocation.Head,"~/lib_npm/jquery-tageditor/jquery.tag-editor.min.js");
+
+}
+
+<form asp-controller="Utilities" asp-action="BulkProductMapping" method="post" id="product-form">
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            @T("Admin.Utilities.ProductMapping.Heading")
+        </h1>
+        <div class="float-right">
+            <button type="submit" name="save" class="btn btn-primary">
+                <i class="far fa-save"></i>
+                @T("Admin.Common.Save")
+            </button>
+
+
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="form-horizontal">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="Action" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-select asp-for="Action" asp-items="Model.Actions" />
+                        <span asp-validation-for="Action"></span>
+                    </div>
+                </div>
+                <div class="form-group row ProductListingTypesSection ProductListingTypes">
+                    <div class="col-md-3">
+                        <nop-label asp-for="ProductListingType" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-select asp-for="ProductListingType" asp-items="Model.ProductListingTypes" />
+                        <span asp-validation-for="ProductListingType"></span>
+                    </div>
+                </div>
+                <div class="form-group row CustomizationFormSection customizationformtemplate">
+                    <div class="col-md-3">
+                        <nop-label asp-for="CustomizationFormTemplateId" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-select asp-for="CustomizationFormTemplateId" asp-items="Model.CustomizationFormTemplates" />
+                        <span asp-validation-for="CustomizationFormTemplateId"></span>
+                    </div>
+                </div>
+                <div class="form-group row ProductIdSection ProductId">
+                    <div class="col-md-3">
+                        <nop-label asp-for="ProductId" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="ProductId" />
+                        <span asp-validation-for="ProductId"></span>
+                    </div>
+                </div>
+                <div class="form-group row productSection productids">
+                    <div class="col-md-3">
+                        <nop-label asp-for="ProductIds" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="ProductIds" />
+                        <span asp-validation-for="ProductIds"></span>
+                    </div>
+                </div>
+
+
+                <div class="form-group row ProductListingTypesSection producttemplate">
+                    <div class="col-md-3">
+                        <nop-label asp-for="ProductTemplateId" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-select asp-for="ProductTemplateId" asp-items="Model.ProductTemplates" />
+                        <span asp-validation-for="ProductTemplateId"></span>
+                    </div>
+                </div>
+
+
+                <div class="form-group row categorySection categoryids">
+                    <div class="col-md-3">
+                        <nop-label asp-for="CategoryIds" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="CategoryIds" />
+                        <span asp-validation-for="CategoryIds"></span>
+                    </div>
+                </div>
+                <div class="form-group row categorySection specattrids">
+                    <div class="col-md-3">
+                        <nop-label asp-for="SpecificationAttributeIds" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="SpecificationAttributeIds" />
+                        <span asp-validation-for="SpecificationAttributeIds"></span>
+                    </div>
+                </div>
+                <div class="form-group row iventory">
+                    <div class="col-md-3">
+                        <nop-label asp-for="Inventory" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="Inventory" />
+                        <span asp-validation-for="Inventory"></span>
+                    </div>
+                </div>
+                <div class="form-group row publish">
+                    <div class="col-md-3">
+                        <nop-label asp-for="Published" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="Published" />
+                        <span asp-validation-for="Published"></span>
+                    </div>
+                </div>
+                <div class="form-group row remove">
+                    <div class="col-md-3">
+                        <nop-label asp-for="Remove" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="Remove" />
+                        <span asp-validation-for="Remove"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</form>
+
+
+<script>
+    $("#Action").change(function () {
+        hideDisplayFields($(this).val());
+    })
+
+    $(document).ready(function () {
+        hideDisplayFields($("#Action").val());
+    });
+
+    function hideDisplayFields(action) {
+        if (action == "Product Category Department Mapping") {
+            $(".customizationformtemplate").hide();
+            $(".producttemplate").hide();
+            $(".productids").show();
+            $(".categoryids").show();
+            $(".specattrids").show();
+            $(".iventory").hide();
+            $(".remove").show();
+            /* $(".similarproductskey").hide();*/
+            $(".ProductListingTypes").hide();
+            $(".ProductId").hide();
+            $(".publish").hide();
+        }
+        else if (action == "Category Products Publish/Unpublish") {
+            $(".customizationformtemplate").hide();
+            $(".producttemplate").hide();
+            $(".productids").show();
+            $(".categoryids").show();
+            $(".specattrids").hide();
+            $(".iventory").hide();
+            $(".remove").hide();
+            $(".ProductListingTypes").hide();
+            $(".ProductId").hide();
+            $(".publish").show();
+        }
+        else if (action == "Product Listing Section") {
+            $(".customizationformtemplate").hide();
+            $(".producttemplate").hide();
+            $(".productids").show();
+            $(".categoryids").hide();
+            $(".specattrids").hide();
+            $(".iventory").hide();
+            $(".ProductId").show();
+            $(".ProductListingTypes").show();
+            /* $(".similarproductskey").show();*/
+            $(".remove").hide();
+            $(".publish").hide();
+        }
+        else if (action == "Product Template Mapping") {
+            $(".customizationformtemplate").hide();
+            $(".producttemplate").show();
+            $(".productids").hide();
+            $(".categoryids").show();
+            $(".specattrids").hide();
+            $(".iventory").hide();
+            $(".remove").hide();
+            $(".publish").hide();
+            $(".ProductListingTypes").hide();
+            $(".ProductId").hide();
+        }
+        else if (action == "Customization Form Template") {
+            $(".customizationformtemplate").show();
+            $(".producttemplate").hide();
+            $(".productids").show();
+            $(".categoryids").show();
+            $(".specattrids").hide();
+            $(".iventory").hide();
+            $(".remove").hide();
+            $(".publish").hide();
+            $(".ProductListingTypes").hide();
+            $(".ProductId").hide();
+        }
+        else {
+            $(".producttemplate").hide();
+            $(".customizationformtemplate").hide();
+            $(".productids").show();
+            $(".categoryids").hide();
+            $(".specattrids").hide();
+            $(".iventory").show();
+            $(".remove").hide();
+            $(".publish").hide();
+            $(".ProductListingTypes").hide();
+            $(".ProductId").hide();
+        }
+    }
+</script>

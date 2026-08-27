@@ -1,0 +1,37 @@
+﻿@inject Nop.Core.IWorkContext _workContext;
+@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HeaderBefore })
+
+<!-- Seema : 13-01-2022: Added new container and modify the location of search box-->
+<div class="container">
+    <div class="header-lower logo-section">
+        <div class="row align-items-center mx-0">
+            <div class="logo col-12 col-sm-12 col-md-12">
+                <div class="header-logo">
+
+                    @await Component.InvokeAsync("Logo")
+                </div>
+            </div>
+        </div>
+        <div class="row align-items-center mx-0">
+            <div class="col-12 col-sm-12 col-md-12">
+                <div class="page-heading">
+                    @T("Checkout.Page.heading")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

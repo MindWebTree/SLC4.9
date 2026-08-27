@@ -1,0 +1,74 @@
+﻿@model Nop.Web.Areas.Admin.Models.Customization.Custom.CategorySuggestedKeywordModel
+
+@{
+    Layout = "_AdminPopupLayout";
+
+    //page title
+    ViewBag.PageTitle = T("Admin.Catalog.Entity.SuggestedKeyword.AddNew").Text;
+}
+
+@if (ViewBag.RefreshPage == true)
+{
+<script>
+    try { window.opener.document.forms['@(Context.Request.Query["formId"])'].@(Context.Request.Query["btnId"]).click(); }
+    catch (e) {
+    }
+        window.close();
+</script>
+}
+else
+{
+    <form asp-controller="Category" asp-action="SuggestedKeywordCreateUpdate"
+          asp-route-entityId="@Context.Request.Query["entityid"]"
+          asp-route-btnId="@Context.Request.Query["btnId"]"
+          asp-route-entityType="@Context.Request.Query["entityType"]"
+          asp-route-filterType="@Context.Request.Query["filterType"]"
+          asp-route-formId="@Context.Request.Query["formId"]">
+        @Html.ValidationSummary()
+        <div class="content-header clearfix">
+            <h1 class="float-left">
+                @if (@Context.Request.Query["id"].ToString() == "0" || string.IsNullOrEmpty(@Context.Request.Query["id"].ToString()))
+                {
+                    @T("Admin.Catalog.Entity.SuggestedKeyword" + Context.Request.Query["filterType"] + ".AddNew")
+                }
+                else
+                {
+
+                    @T("Admin.Catalog.Entity.SuggestedKeyword" + Context.Request.Query["filterType"] + ".Edit")
+                }
+            </h1>
+            <div class="pull-right">
+                &nbsp;
+            </div>
+        </div>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="form-horizontal">
+                    <div class="cards-group">
+                        @Html.HiddenFor(m => m.Id)
+                        @Html.HiddenFor(m => m.CategoryId)
+                        <div class="card card-default">
+                            <div class="card-body">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="@Model.KeyWord" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="@Model.KeyWord" />
+                                        <span asp-validation-for="@Model.KeyWord"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button type="submit" name="save" class="btn btn-primary">
+                                    <i class="far fa-save"></i>
+                                    @T("Admin.Common.Save")
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </form>
+}

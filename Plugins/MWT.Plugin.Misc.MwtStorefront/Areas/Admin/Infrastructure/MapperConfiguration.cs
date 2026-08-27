@@ -3,10 +3,12 @@ using MWT.Nop.Core.Domain;
 using MWT.Nop.Core.Domain.Custom.Campaign_Management;
 using MWT.Nop.Core.Domain.Custom.LandingPage_Management;
 using MWT.Nop.Core.Domain.QA;
+using MWT.Nop.Core.Domain.StoreWideDiscount;
 using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Models.Catalog.LandingPage_Management;
 using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models;
 using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Campaign_Management;
 using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.QA;
+using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Utilities;
 using Nop.Core.Infrastructure.Mapper;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Infrastructure
@@ -22,7 +24,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Infrastructure
             CreateCampaignManagemenMap();
             //CreateProductMap();
 
-            //CreateStoreWideDiscountMap();
+            CreateStoreWideDiscountMap();
 
             //CreateKwtermMap();
             CreateLandingPageMap();
@@ -31,20 +33,20 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Infrastructure
 
         }
         #region Utilities
-        //     protected virtual void CreateStoreWideDiscountMap()
-        //     {
-        //         CreateMap<StoreWideDiscount, StoreWideDiscountModel>();
-        //         CreateMap<StoreWideDiscountModel, StoreWideDiscount>();
+        protected virtual void CreateStoreWideDiscountMap()
+        {
+            CreateMap<StoreWideDiscount, StoreWideDiscountModel>();
+            CreateMap<StoreWideDiscountModel, StoreWideDiscount>();
 
-        //         CreateMap<StoreWideDiscountSetting, StoreWideDiscountSettingModel>();
-        //         CreateMap<StoreWideDiscountSettingModel, StoreWideDiscountSetting>();
+            CreateMap<StoreWideDiscountSetting, StoreWideDiscountSettingModel>();
+            CreateMap<StoreWideDiscountSettingModel, StoreWideDiscountSetting>();
 
-        //         CreateMap<StoreWideProductDiscountInfo, StoreWideProductDiscountInfoModel>();
-        //         CreateMap<StoreWideProductDiscountInfoModel, StoreWideProductDiscountInfoModel>();
+            CreateMap<StoreWideProductDiscountInfo, StoreWideProductDiscountInfoModel>();
+            CreateMap<StoreWideProductDiscountInfoModel, StoreWideProductDiscountInfoModel>();
 
-        //         CreateMap<StoreWideProductDiscountHistory, StoreWideProductDiscountHistoryModel>();
-        //         CreateMap<StoreWideProductDiscountHistoryModel, StoreWideProductDiscountHistory>();
-        //     }
+            CreateMap<StoreWideProductDiscountHistory, StoreWideProductDiscountHistoryModel>();
+            CreateMap<StoreWideProductDiscountHistoryModel, StoreWideProductDiscountHistory>();
+        }
         protected virtual void CreateCustomFormMaps()
         {
             CreateMap<CustomForm, CustomFormModel>();

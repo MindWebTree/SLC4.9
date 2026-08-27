@@ -70,7 +70,7 @@ var AjaxCart = {
     },
 
     //add a product to the cart/wishlist from the product details page
-    addproducttocart_details: function (urladd, formselector) { 
+    addproducttocart_details: function (urladd, formselector) {
         if (this.loadWaiting !== false) {
             return;
         }
@@ -83,11 +83,14 @@ var AjaxCart = {
         this.setLoadWaiting(true);
         url_add = urladd;
         var postData = {};
-        addAntiForgeryToken(postData);
+        $.each($(formselector).serializeArray(), function (i, field) {
+            postData[field.name] = field.value;
+        });
+        addAntiForgeryToken(postData);  
         $.ajax({
             cache: false,
             url: urladd,
-            data: $(formselector).serialize(),
+            data: postData,
             type: "POST",
             success: this.success_process,
             complete: this.resetLoadWaiting,
@@ -109,10 +112,10 @@ var AjaxCart = {
     },
     deleteCartItem: function (urladd, formselector) {
         var element = $("[data-wishlist='" + urladd.split("/")[3] + "']");
-        if (typeof element !== 'undefined' && element !== false  && element.length > 0) {
+        if (typeof element !== 'undefined' && element !== false && element.length > 0) {
             url_add = urladd + "?remove-wishlist=true&wishlistid=" + $("[data-wishlist='" + urladd.split("/")[3] + "']").attr('data-wishlist');
         }
-		else {
+        else {
             url_add = urladd;
         }
         var postData = {};

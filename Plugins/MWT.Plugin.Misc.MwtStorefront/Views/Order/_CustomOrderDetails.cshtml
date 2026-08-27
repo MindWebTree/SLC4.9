@@ -1,17 +1,15 @@
-@model OrderDetailsModel
+@using MWT.Nop.Core.Domain.CustomOrders
+@model OrderDetailsExtendedModel
 @inject Nop.Services.Catalog.IPriceFormatter _priceFormatter;
 @inject Nop.Core.IWorkContext _workContext;
 @inject Nop.Services.Configuration.ISettingService _settingService;
 @inject Nop.Core.IStoreContext _storeContext;
-@inject IThemeContext themeContext
-@using Nop.Core.Domain.Customization.PhoneOrder
+@inject IThemeContext themeContext 
 @{
     var themeName = await themeContext.GetWorkingThemeNameAsync();
-        <link href="/Themes/@themeName/Content/css/fontawesome-all.min.css"  rel="stylesheet" type="text/css" />
-<link href="/Themes/@themeName/Content/css/bootstrap-reboot.min.css"  rel="stylesheet" type="text/css" />
-<link href="/Themes/@themeName/Content/css/bootstrap-grid.min.css"  rel="stylesheet" type="text/css" />
-<link href="/Themes/@themeName/Content/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-<link href="/Themes/@themeName/Content/css/root-theme-styles.css"   rel="stylesheet" type="text/css" />
+<link href="~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/fontawesome-all.min.css"  rel="stylesheet" type="text/css" />
+<link href="/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/root-theme-styles.css"   rel="stylesheet" type="text/css" />
         }
 
 @{

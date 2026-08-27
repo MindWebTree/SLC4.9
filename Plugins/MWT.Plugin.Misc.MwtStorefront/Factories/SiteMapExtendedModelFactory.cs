@@ -3,10 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using MWT.Nop.Core.Domain.KW;
+using MWT.Nop.Core.Domain.TagPage;
+using MWT.Nop.Core.Domain.TagPage.Cache;
+using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Core.Services.KW;
 using MWT.Nop.Core.Services.Media;
 using MWT.Nop.Core.Services.QA;
-
+using MWT.Nop.Core.Services.TagPage;
 using MWT.Plugin.Misc.MwtStorefront.Models.Sitemap;
 using Nop.Core;
 using Nop.Core.Caching;
@@ -50,6 +53,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
         private readonly IActionContextAccessor _actionContextAccessor;
         private readonly IUrlHelperFactory _urlHelperFactory;
         private readonly IUrlRecordService _urlRecordService;
+        private readonly ITagSlugService _tagSlugService;
 
         #endregion
         public SiteMapExtendedModelFactory(BlogSettings blogSettings, ForumSettings forumSettings, IBlogService blogService, ICategoryService categoryService, ICustomerService customerService,
@@ -58,7 +62,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
             IProductService productService, IProductTagService productTagService, IStaticCacheManager staticCacheManager, IStoreContext storeContext, ITopicService topicService,
             IWebHelper webHelper, IWorkContext workContext, LocalizationSettings localizationSettings, NewsSettings newsSettings, SitemapSettings sitemapSettings, SitemapXmlSettings sitemapXmlSettings,
             IQuestionAnswerService questionAnswerService, IKwTermService kwTermService, IPictureExtendedService pictureService, MediaSettings mediaSettings,
-            IActionContextAccessor actionContextAccessor, IUrlHelperFactory urlHelperFactory, IUrlRecordService urlRecordService)
+            IActionContextAccessor actionContextAccessor, IUrlHelperFactory urlHelperFactory, IUrlRecordService urlRecordService, ITagSlugService tagSlugService)
             : base(blogSettings, forumSettings, blogService, categoryService, customerService, eventPublisher, httpContextAccessor, languageService, localizationService, locker, manufacturerService, newsService, nopFileProvider, nopUrlHelper, productService, productTagService, staticCacheManager, storeContext, topicService, webHelper, workContext, localizationSettings, newsSettings, sitemapSettings, sitemapXmlSettings)
         {
             _questionAnswerService = questionAnswerService;
@@ -68,6 +72,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
             _actionContextAccessor = actionContextAccessor;
             _urlHelperFactory = urlHelperFactory;
             _urlRecordService = urlRecordService;
+            _tagSlugService = tagSlugService;
         }
 
 
@@ -780,7 +785,79 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
 
         #endregion
 
+        #region Tags
+        public virtual async Task<string> PrepareTagSitemapXmlAsync(int? id)
+        {
+            var language = await _workContext.GetWorkingLanguageAsync();
+            var customer = await _workContext.GetCurrentCustomerAsync();
+            var customerRoleIds = await _customerService.GetCustomerRoleIdsAsync(customer);
+            var store = await _storeContext.GetCurrentStoreAsync();
+            var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(NopTagCatalogDefaults.TagsSitemapSeoModelKey,
+                id, language, customerRoleIds, store);
+            var siteMap = await _staticCacheManager.GetAsync(cacheKey, async () => await GenerateTagSitemapXmlAsync());
+            return siteMap;
+        }
 
+        public async Task<string> GenerateTagSitemapXmlAsync()
+        {
+            await using var stream = new MemoryStream();
+            await GenerateTagSitemapXmlAsync(stream);
+
+            return Encoding.UTF8.GetString(stream.ToArray());
+        }
+
+        protected virtual async Task<IList<SitemapUrlExtendedModel>> GetExtendedTagUrlsAsync()
+        {
+            var sitemapUrls = new List<SitemapUrlExtendedModel>();
+            sitemapUrls.AddRange(await GetTagsUrlsAsync());
+            return sitemapUrls;
+        }
+
+        protected virtual async Task<IEnumerable<SitemapUrlExtendedModel>> GetTagsUrlsAsync()
+        {
+
+
+            return await (await _tagSlugService.GetAllAsync())
+                .SelectAwait(async tag => await GetLocalizedSitemapUrlAsync("TagPage", GetTagSeoRouteParamsAwait(tag), tag.UpdatedOnUtc)).ToListAsync();
+
+        }
+        protected virtual Func<int?, Task<object>> GetTagSeoRouteParamsAwait(TagSlugMapping model)
+
+        {
+            return async lang => new { tagSlug = model.Slug };
+        }
+        protected virtual async Task GenerateTagSitemapXmlAsync(MemoryStream stream)
+        {
+            var sitemapUrls = new List<SitemapUrlExtendedModel>();
+
+            if (_sitemapXmlSettings.SitemapXmlIncludeProducts)
+                sitemapUrls.AddRange(await GetExtendedTagUrlsAsync());
+
+            //await _eventPublisher.PublishAsync(new SitemapCreatedEvent(sitemapUrls));
+            //split URLs into separate lists based on the max size 
+            var sitemaps = sitemapUrls
+              .Select((url, index) => new { Index = index, Value = url })
+              .GroupBy(group => group.Index / NopSeoDefaults.SitemapMaxUrlNumber)
+              .Select(group => group
+                  .Select(url => url.Value)
+                  .ToList()).ToList();
+
+            if (!sitemaps.Any())
+                return;
+            if (sitemapUrls.Count >= NopSeoDefaults.SitemapMaxUrlNumber)
+            {
+                //write a sitemap index file into the stream
+                await WriteSitemapIndexAsync(stream, sitemaps.Count);
+            }
+            else
+            {
+                //otherwise generate a standard sitemap
+                await WriteSitemapExtendedAsync(stream, sitemaps.First());
+            }
+
+        }
+
+        #endregion
 
         #region Common
         protected virtual Func<int?, Task<object>> CustomGetSeoRouteParamsAwait<T>(T model)

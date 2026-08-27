@@ -1,11 +1,16 @@
-{
+﻿{
   "Group": "Payment methods",
-  "FriendlyName": "Authorize.NET (Accept Hosted)",
-  "SystemName": "Payments.AuthorizeNetHostedPayment",
-  "Version": "2.00",
-  "SupportedVersions": [ "4.90" ],
+  "FriendlyName": "Authorize.NET",
+  "SupportedVersions": [
+    "4.90"
+  ],
   "Author": "Mindwebtree",
   "DisplayOrder": 1,
   "FileName": "Nop.Plugin.Payments.AuthorizeNetHosted.dll",
-  "Description": "Authorize.NET Accept Hosted — iframe, Webhook, Bank Account, Visa Click to Pay"
+  "Description": "Authorize.NET Accept Hosted — iframe, Webhook, Bank Account, Visa Click to Pay",
+  "LimitedToStores": [],
+  "LimitedToCustomerRoles": [],
+  "DependsOnSystemNames": [],
+  "SystemName": "Payments.AuthorizeNetHostedPayment",
+  "Version": "2.00"
 }

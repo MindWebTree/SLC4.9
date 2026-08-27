@@ -1008,10 +1008,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                     paymentInfo.CustomerId = customer.Id;
                     paymentInfo.PaymentMethodSystemName = paymentMethod;
 
-                    await this._orderProcessingService.SetProcessPaymentRequestAsync(await _paymentMethod.GetPaymentInfoAsync(form), customer);
-
-                    paymentInfo = await this._orderProcessingService.GetProcessPaymentRequestAsync(customer);
-
+                    await this._orderProcessingService.SetProcessPaymentRequestAsync(paymentInfo, customer);
                     return await ConfirmOrder(order, customer, paymentMethod, paymentInfo, filterByCountryId, _paymentMethod);
                 }
                 else
@@ -1345,6 +1342,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
                     var content = await this._workflowMessageService.CustomOrderReceiptContentAsync(order, (await this._workContext.GetWorkingLanguageAsync()).Id);
                     content = "<div data-orderid=\"" + placeOrderResult.PlacedOrder.Id + "\">" + content + "</div>";
+                    await this._orderProcessingService.SetProcessPaymentRequestAsync(null, customer);
                     return Json(new
                     {
                         response = await PrepareResponse(
@@ -1358,6 +1356,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
            await _localizationService.GetResourceAsync("CustomOrder.Message.OrderPlacedSuccessfully")
           )
                     });
+                   
                 }
                 else
                 {

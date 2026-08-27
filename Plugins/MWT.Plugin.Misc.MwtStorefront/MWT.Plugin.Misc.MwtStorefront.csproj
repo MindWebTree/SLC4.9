@@ -31,6 +31,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Content Include="Content\js\customorder.common.js" />
 		<Content Include="logo.jpg">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
@@ -41,6 +42,9 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Areas\Admin\Views\**\*.cshtml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Areas\CustomOrder\Views\**\*.cshtml">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Remove="Views\Shared\ProductBundle\**" />
@@ -72,6 +76,7 @@
 		<Content Remove="Views\TagCategory\_ProductsInGridOrLines-3x3.cshtml" />
 		<Content Remove="Views\TagCategory\_SelectedtFilters.cshtml" />
 		<Content Remove="Views\TagCategory\_version2ProductsInGridOrLines-3x3.cshtml" />
+		<Content Remove="Views\_ViewStart.cshtml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -105,11 +110,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Update="Content\js\customorder.common.js">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Update="Content\TagPages\css\style.css">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Views\Customer\Login.cshtml">
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Views\TagCategory\CategoryTemplate-FilterOnSide-3x3.cshtml">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -149,6 +161,9 @@
 		</None>
 		<None Update="Views\TagCategory\_version2ProductsInGridOrLines-3x3.cshtml">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Views\_ViewStart.cshtml">
+		  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</None>
 	</ItemGroup>
 

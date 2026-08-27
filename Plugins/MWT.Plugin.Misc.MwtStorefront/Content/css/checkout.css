@@ -248,7 +248,7 @@ ul#checkout-steps {
     display: flex;
     gap: 15px;
 }
-ul#checkout-steps h3, ul#checkout-steps a {
+ul#checkout-steps h4, ul#checkout-steps a {
     color: #666666;
     font-size: 16px;
     font-weight: 600;
@@ -271,7 +271,7 @@ ul#checkout-steps li:before {
     background-size: 18px;
     display: block;
 }
-ul#checkout-steps li.active h3 {
+ul#checkout-steps li.active h4 {
     text-decoration: none !important;
     color: #000 !important;
 }
@@ -549,11 +549,13 @@ border-left:none;
     width: 100%;
     color: #444444;
     display: none;
+	max-width: 520px;
 }
+
 
 .checkout-pages .paymentinfo.active {
     display: block;
-    padding: 10px;
+    padding: 16px;
 }
 
 .checkout-pages .paymentinfo label {
@@ -570,7 +572,7 @@ border-left:none;
 }
 
 .checkout-pages input::placeholder {
-    color: #575757 !important;
+    color: #ddd !important;
 }
 
 .checkout-pages li.fields.half.expiry-dates {
@@ -612,7 +614,7 @@ border-left:none;
     display: block !important;
 }
 body .checkout-pages input::placeholder {
-    color: #575757 !important;
+    color: #777777 !important;
     font-size: 16px;
     font-weight: 400;
   }
@@ -695,7 +697,7 @@ body #checkout-step-customerinfo .checkout-shipping-address-form .form-row.gdpr-
 }
 
 .checkout-pages .billing-address {
-    margin: 25px 0 0px 0;
+    margin: 0px 0 40px 0;
     width: 100%;
     box-sizing: border-box;
     float: left;
@@ -710,7 +712,6 @@ body #checkout-step-customerinfo .checkout-shipping-address-form .form-row.gdpr-
 }
 
 .checkout-pages .billing-address a {
-    float: right;
     text-decoration: underline;
 }
 
@@ -775,7 +776,7 @@ input.input-validation-error {
     margin-bottom: 5px;
     display: none;
     width: 100%;
-    float: left;
+  
 }
 
 .checkout-pages .errors-container .error-message {
@@ -935,14 +936,12 @@ html#onepagecheckout-page .master-wrapper-content.container {
 }
 
 .checkout-page .address-item ul {
-    margin: 0 0 15px;
-    background-color: #575757;
+    margin: 0 0 0px;
+    background-color: #828282;
     padding: 20px;
     color: #fff;
 }
-.checkout-pages .field-validation-error span {
-    color: #B80000 !important;
-}
+
 .checkout-page .address-item li {
     padding: 3px 0;
 }
@@ -981,7 +980,7 @@ html#onepagecheckout-page .master-wrapper-content.container {
     top: -24px;
     transform: translateY(-50%);
     font-size: 16px;
-    color: #575757;
+    color: #999;
     transition: all 0.3s ease-in-out;
     pointer-events: none;
     z-index: 99;
@@ -996,7 +995,7 @@ html#onepagecheckout-page .master-wrapper-content.container {
     top: -36px;
     left: 10px;
     font-size: 12px;
-    color: #575757;
+    color: #777;
 	    background: transparent;
 }
 .checkout-label {
@@ -1021,7 +1020,7 @@ html#onepagecheckout-page .master-wrapper-content.container {
 }
 /* Required (*) styling with animation */
 .checkout-label .required {
-    color: #B80000 !important;
+    color: red;
     font-size: 16px;
     transition: all 0.3s ease-in-out;
     z-index: 999;
@@ -1031,7 +1030,7 @@ html#onepagecheckout-page .master-wrapper-content.container {
 .form-group input:focus ~ .checkout-label .required,
 .form-group input:not(:placeholder-shown) ~ .checkout-label .required {
     font-size: 12px;
-    color: #B80000 !important;
+    color: red;
     top: -45px;
     left: 10px;
 }
@@ -1052,7 +1051,7 @@ html#onepagecheckout-page .master-wrapper-content.container {
  .form-group select:focus:not(:placeholder-shown) ~ .checkout-label .required,
  .show-label ~ .checkout-label .required{
     font-size: 12px;
-    color: #B80000 !important;
+    color: red;
     top: -45px;
     left: 10px;
 }
@@ -1070,11 +1069,11 @@ html#onepagecheckout-page .master-wrapper-content.container {
     display: flex;
     padding: 0;
 }
-.shipping-option.clear>div fieldset {
-     width: 50% !important;
-    padding: 20px 15px !important;
-        position: relative !important;
-        border: 1px solid #666 !important;
+.shipping-option.clear>div .section-option {
+     width: 50%;
+    padding: 20px 15px;
+        position: relative;
+        border: 1px solid #666;
 }
 .shipping-option.clear>div .section-option label span {
     font-size: 16px;
@@ -1097,7 +1096,6 @@ html#onepagecheckout-page .master-wrapper-content.container {
     background: transparent;
     border: none;
     color: #fff;
-    text-decoration: underline;
     font-weight: 300 !important;
 }
 .shipping-address-button button.cancel {
@@ -1296,7 +1294,7 @@ div#checkout-step-payment-method .term-conditions label.custom-control-label br 
     width: 100% !important;
     margin: 0 10px 5px 0;
 }
-#checkout-step-shipping-method .address-item ul li:last-child, #checkout-step-payment-method .address-item ul li:last-child {
+div#checkout-step-shipping-method .address-item ul li:last-child, div#checkout-step-payment-method .address-item ul li:last-child {
     text-align: right;
     background: none !important;
     margin: -25px 0 0;
@@ -1306,22 +1304,22 @@ div#checkout-step-payment-method .term-conditions label.custom-control-label br 
     width: 100%;
     margin-top: 0px;
 }
-#payment-methods-container span.ml-0 {
+div#payment-methods-container span.ml-0 {
     display: none !important;
 }
 
-#payment-methods-container {
+div#payment-methods-container {
     padding: 0 !important;
 }
 
-#checkout-step-payment-method .term-conditions label.custom-control-label {
+div#checkout-step-payment-method .term-conditions label.custom-control-label {
     margin: 16px 0 -20px 0 !important;
     text-align: left;
     width: 100%;
     padding: 0 0 20px 0;
 }
 
-#checkout-step-payment-method .term-conditions label.custom-control-label a {
+div#checkout-step-payment-method .term-conditions label.custom-control-label a {
     color: #000;
     text-decoration: underline;
 }
@@ -1329,12 +1327,12 @@ div#checkout-step-payment-method .term-conditions label.custom-control-label br 
     accent-color: black;
 }
 div#checkout-step-payment-method .step-title {
-    display: flex;
+    display: flex
+;
     justify-content: space-between;
 }
 div#checkout-step-payment-method a#edit-billing-address {
-    display: flex
-;
+
     border: none;
     gap: 4px;
     align-items: center;
@@ -1426,6 +1424,8 @@ div#checkout-step-payment-method a#edit-billing-address {
     background-repeat: no-repeat;
     background-position: center left;
     padding: 0 0 0 22px;
+	    position: relative;
+    left: 5px;
 }
 div#checkout-step-billing div#checkout-billing-load {
     margin-top: 30px !important;
@@ -1516,7 +1516,7 @@ tr#taxcalculatecontentsection .input-group input {
     width: 190px;
 }
 tr#taxcalculatecontentsection .errormessage {
-    color: #B80000 !important;
+    color: red;
     padding-bottom: 0px;
     padding-top: 5px;
 }
@@ -1529,11 +1529,11 @@ tr#taxcalculatecontentsection {
     position: relative;
     top: 5px;
 }
-#checkout-step-payment-method #payment-methods-container {
+#checkout-step-payment-method div#payment-methods-container {
     padding: 0 !important;
     gap: 40px !important;
 }
-#checkout-step-payment-method #payment-methods-container div {
+#checkout-step-payment-method div#payment-methods-container div {
     min-width: 118px !important;
 }
 ul#checkout-steps .allow {
@@ -1563,7 +1563,27 @@ span.delivery-tag {
     display: flex;
     white-space: nowrap;
 }
+button.shipping-address-edit {
+    background-image: url(/images/uploaded/Edit-check.png) !important;
+    background-repeat: no-repeat !important;
+    background-position: center left !important;
+    padding: 0 0 0 22px;
+}
+button.shipping-address-edit i {
+    display: none !important;
+}
+div#checkout-step-customerinfo .address-item ul button.shipping-address-edit {
+    background-image: url(/images/uploaded/Edit-check-white.png) !important;
+}
+
 @media only screen and (max-width: 767px) {
+    .checkout-pages .paymentinfo {
+    max-width: 100%;
+    }
+	 img.payment-cards-supported {
+               margin: 15px 0 -10px 15px !important;
+        max-width: 136px;
+    }  
 	div#checkout-step-billing div#checkout-billing-load {
 	MARGIN-BOTTOM: 20px;
 }
@@ -1576,11 +1596,6 @@ span.delivery-tag {
 .checkout-pages .billing-address .step-title h2 {
     padding-bottom: 0;
 }
-div#checkout-step-payment-method a#edit-billing-address {
-        margin-right: 0 !important;
-        background: none !important;
-        text-decoration: underline;
-    }
     div#checkout-step-shipping-method .address-item {
         max-width: 212px;
     }
@@ -1642,9 +1657,6 @@ div#checkout-step-payment-method a#edit-billing-address {
     div#checkout-step-shipping-method .section-option-description {
         font-size: 12px;
     }
-    div#checkout-step-payment-method a#edit-billing-address{
-    margin-right: 50px;
-    }
     #checkout-step-payment-method .billing-address p{
     font-size:12px;
     }
@@ -1667,7 +1679,7 @@ div#checkout-step-payment-method a#edit-billing-address {
     }
     
     .checkout-pages .paymentinfo.active .checkout-data .info {
-        padding: 0 15px;
+        padding: 5px 15px;
     }
     
     .checkout-pages .checkout-payment-methods {
@@ -1753,10 +1765,10 @@ div#checkout-step-payment-method a#edit-billing-address {
         flex-wrap: unset !important;
         align-items: center;
     }
-.shipping-option.clear>div fieldset {
-    width: 100% !important;
-    padding: 20px 15px !important;
-    position: relative !important;
+.shipping-option.clear>div .section-option {
+    width: 100%;
+    padding: 20px 15px;
+    position: relative;
     border: 1px solid #444 !important;
 }
 .checkout-pages .shipping-option.clear {
@@ -1777,7 +1789,7 @@ div#checkout-step-payment-method a#edit-billing-address {
         text-align: center;
         width: 100%;
     }
-    ul#checkout-steps h3, ul#checkout-steps a {
+    ul#checkout-steps h4, ul#checkout-steps a {
         font-size: 12px;
     }
     ul#checkout-steps li {
@@ -1841,20 +1853,12 @@ div#checkout-step-payment-method a#edit-billing-address {
     .need-help-heading h2 {
         padding-bottom: 10px;
     }
-	.page.checkout-pages .row.d-flex.justify-content-center {
-    margin: 0;
-    white-space: nowrap;
-}
     .page.checkout-pages .row.sections {
         display: flex    ;
-        flex-direction: column-reverse; 
-		    margin: 0;
+        flex-direction: column-reverse;
     }
-	.page.checkout-pages .col-6 {
-    padding: 0 15px;
-}
     .checkout-pages .progress-bar-wrapper {
-        padding: 20px 15px 0 15px;
+        padding: 20px 25px 0 25px;
     }    
     .checkout-pages .order-summary-wrapper .block-title {
         display: block;
@@ -1884,12 +1888,6 @@ div#checkout-step-payment-method a#edit-billing-address {
         padding-right: 15px;
     }
   }
-  @media only screen and (max-width: 410px) {
-    img.payment-cards-supported {
-        margin: 0 0 0 0;
-        max-width: 130px;
-    }  
-}
   @media (min-width: 768px) and (max-width: 959px) {
     tr#taxcalculatecontentsection .input-group input {
         width: 160px;
@@ -1928,4 +1926,3 @@ div#checkout-step-payment-method a#edit-billing-address {
 .checkout-pages.hideSteps ul#checkout-steps {
     display: none !important;
 }
-

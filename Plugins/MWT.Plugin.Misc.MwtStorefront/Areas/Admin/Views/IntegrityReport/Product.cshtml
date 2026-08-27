@@ -1,0 +1,50 @@
+@model ProductIntegrityReportSearchModel
+<div class="content-header clearfix">
+    <h1 class="float-left">
+        @T("Admin.Catalog.Products.ErrorReport.Hint")
+    </h1>
+</div>
+<div class="card-body">
+
+    <div class="card card-default">
+        <div class="card-body">
+
+            @await Html.PartialAsync("Table", new DataTablesModel
+            {
+                Name = "ErrorReport-grid",
+                        UrlRead = new DataUrl("Product", "IntegrityReport", null),
+                        Length = Model.PageSize,
+                        LengthMenu = Model.AvailablePageSizes,
+                        ColumnCollection = new List<ColumnProperty>
+                        {
+                        new ColumnProperty(nameof(ProductIntegrityReportModel .Id))
+                        {
+                        Title = T("Admin.Catalog.Products.Fields.Id").Text,
+
+                        },     new ColumnProperty(nameof(ProductIntegrityReportModel .PictureThumbnailUrl))
+                        {
+                        Title = T("Admin.Catalog.Products.Fields.PictureThumbnailUrl").Text,
+                        Width = "100",
+                        Render = new RenderPicture()
+                        },
+                        new ColumnProperty(nameof(ProductIntegrityReportModel .Name))
+                        {
+                        Title = T("Admin.Catalog.Products.Fields.Name").Text
+                        },
+                        new ColumnProperty(nameof(ProductIntegrityReportModel .ErrorReason))
+                        {
+                        Title = T("Admin.Integrity.Report.ErrorReason").Text
+                        },
+                        new ColumnProperty(nameof(ProductIntegrityReportModel.Id))
+                        {
+                        Title = T("Admin.Common.View").Text,
+                        Width = "150",
+                        ClassName = NopColumnClassDefaults.Button,
+                        Render = new RenderButtonView(new DataUrl("~/Admin/Product/Edit/"))
+                        }
+
+                        }
+                        })
+        </div>
+    </div>
+</div>

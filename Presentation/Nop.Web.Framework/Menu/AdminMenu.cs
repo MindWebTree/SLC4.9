@@ -1009,6 +1009,30 @@ public partial class AdminMenu : IAdminMenu
                     {
                         new()
                         {
+                            SystemName = "Products Notes Management",
+                            Title = await _localizationService.GetResourceAsync("Admin.Utilities.ProductsNotesManagement"),
+                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES},
+                            Url = GetMenuItemUrl("Utilities", "ProductNotesManagement"),
+                            IconClass = "far fa-dot-circle"
+                        } ,
+                        new()
+                        {
+                            SystemName = "Bulk Product Mapping",
+                            Title = await _localizationService.GetResourceAsync("Admin.Utilities.MarketingManagement"),
+                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES},
+                            Url = GetMenuItemUrl("Utilities", "Marketing"),
+                            IconClass = "far fa-dot-circle"
+                        } ,
+                        new()
+                        {
+                            SystemName = "Marketing Management",
+                            Title = await _localizationService.GetResourceAsync("Admin.Utilities.BulkProductMapping"),
+                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES},
+                            Url = GetMenuItemUrl("Utilities", "BulkProductMapping"),
+                            IconClass = "far fa-dot-circle"
+                        } ,
+                        new()
+                        {
                             SystemName = "Testimonials",
                             Title = await _localizationService.GetResourceAsync("Admin.Utilities.Testimonials"),
                             PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES},
@@ -1026,9 +1050,25 @@ public partial class AdminMenu : IAdminMenu
                           new()
                         {
                             SystemName = "Campaign Management",
-                            Title = await _localizationService.GetResourceAsync("Admin.Catalog.CampaignManagement"),
+                            Title = await _localizationService.GetResourceAsync("Admin.Utilities.CampaignManagement"),
                             PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES },
                             Url = GetMenuItemUrl("CampaignManagement", "List"),
+                            IconClass = "far fa-dot-circle"
+                        },
+                          new()
+                        {
+                            SystemName = "Integrity Reports",
+                            Title = await _localizationService.GetResourceAsync("Admin.Utilities.IntegrityReports"),
+                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES },
+                            Url = GetMenuItemUrl("IntegrityReport", "Product"),
+                            IconClass = "far fa-dot-circle"
+                        },
+                          new()
+                        {
+                            SystemName = "PostDelivery",
+                            Title = await _localizationService.GetResourceAsync("Admin.Utilities.PostDelivery"),
+                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES },
+                            Url = GetMenuItemUrl("PostDelivery", "Index"),
                             IconClass = "far fa-dot-circle"
                         },
                     }

@@ -1,0 +1,112 @@
+﻿@model  StoreWideDiscountModel 
+
+
+<form asp-controller="Utilities" asp-action="StoreWideDiscountCreate" method="post" id="storewidediscount-form">
+
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            @if (Model.Id != 0)
+            {
+                <text>
+                    @T("Admin.Utilities.Marketing.Offer.EditDetails")-@Model.Name
+                </text>
+            }
+            else
+            {
+
+                @T("Admin.Utilities.Marketing.Offer.AddNew")
+            }
+            <small>
+                <i class="fas fa-arrow-circle-left"></i>
+                <a asp-action="StoreWideDiscountList">@T("Admin.Utilities.Marketing.BackToOfferList")</a>
+            </small>
+        </h1>
+        <div class="float-right">
+            <button type="submit" name="save" class="btn btn-primary">
+                <i class="far fa-save"></i>
+                @T("Admin.Common.Save")
+            </button>
+            <button type="submit" name="save-continue" class="btn btn-primary">
+                <i class="far fa-save"></i>
+                @T("Admin.Common.SaveContinue")
+            </button>
+        </div>
+    </div>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="form-horizontal">
+                <div class="card card-secondary card-outline" data-card-name="product-info" data-hideattribute="ProductPage.HideInfoBlock" id="product-info" bis_skin_checked="1">
+                    <div class="card-header with-border clearfix" bis_skin_checked="1">
+                        <div class="card-title" bis_skin_checked="1">
+                            <i class="fas fa-info"></i>
+                            @T("admin.Utilities.Marketing.StoreWideDiscount")
+                        </div><div class="card-tools float-right">
+                            <button class="btn btn-tool" data-card-widget="collapse" type="button">
+                                <i class="fa-minus toggle-icon fa"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+                        @if (Model.Id > 0)
+                        {
+                            @Html.HiddenFor(model => model.Id)
+                            @Html.HiddenFor(model => model.CreatedOn)
+                            @Html.HiddenFor(model => model.UpdatedOn)
+                            @Html.HiddenFor(model => model.Created_By)
+                        }
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <nop-label asp-for="Name" />
+                            </div>
+                            <div class="col-md-9">
+                                <nop-editor class="form-text-row" asp-for="Name"></nop-editor>
+                                <span asp-validation-for="Name"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <nop-label asp-for="StartDate" />
+                            </div>
+                            <div class="col-md-9">
+                                <nop-editor asp-for="StartDate" />
+                                <span asp-validation-for="StartDate"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <nop-label asp-for="EndDate" />
+                            </div>
+                            <div class="col-md-9">
+                                <nop-editor asp-for="EndDate" />
+                                <span asp-validation-for="EndDate"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <nop-label asp-for="Published" />
+                            </div>
+                            <div class="col-md-9">
+                                <nop-editor asp-for="Published" />
+                                <span asp-validation-for="Published"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+                @await Html.PartialAsync("_StoreWideDiscount.Setting.List", Model);
+            </div>
+        </div>
+    </section>
+
+</form>
+
+
+

@@ -16,7 +16,9 @@ using MWT.Nop.Core.Services.Customers;
 using MWT.Nop.Core.Services.Customizations.CustomOrders;
 using MWT.Nop.Core.Services.Discounts;
 using MWT.Nop.Core.Services.ElasticSearch;
+using MWT.Nop.Core.Services.ExportImport;
 using MWT.Nop.Core.Services.FeedBack;
+using MWT.Nop.Core.Services.Integrity_Report;
 using MWT.Nop.Core.Services.IPLite;
 using MWT.Nop.Core.Services.KW;
 using MWT.Nop.Core.Services.LandingPage_Management;
@@ -27,6 +29,7 @@ using MWT.Nop.Core.Services.Media;
 using MWT.Nop.Core.Services.Message;
 using MWT.Nop.Core.Services.Orders;
 using MWT.Nop.Core.Services.Payments;
+using MWT.Nop.Core.Services.PostDelivery;
 using MWT.Nop.Core.Services.QA;
 using MWT.Nop.Core.Services.QuickFilters;
 using MWT.Nop.Core.Services.Search;
@@ -85,20 +88,24 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<ICustomWishlistService, CustomWishlistService>();
             services.AddScoped<IAbandonedCartService, AbandonedCartService>();
             services.AddScoped<IPriceCalculationExtendedService, PriceCalculationExtendedService>();
-            services.AddScoped<IOrderTotalCalculationExtendedService, OrderTotalCalculationExtendedService>(); 
-            services.AddScoped<IDiscountExtendedService, DiscountExtendedService>(); 
-            services.AddScoped<ICustomBackInStockSubscriptionService, CustomBackInStockSubscriptionService>(); 
-            services.AddScoped<ICustomWorkflowMessageService, CustomWorkflowMessageService>(); 
-            services.AddScoped<ICustomOrderService, CustomOrderService>(); 
-            services.AddScoped<ICustomMessageTokenProvider, CustomMessageTokenProvider>(); 
-            services.AddScoped<IOrderExtendedService, OrderExtendedService>(); 
-            services.AddScoped<IPaymentProfileService, PaymentProfileService>(); 
-            services.AddScoped<IOrderProcessingExtendedService, OrderProcessingExtendedService>(); 
-
+            services.AddScoped<IOrderTotalCalculationExtendedService, OrderTotalCalculationExtendedService>();
+            services.AddScoped<IDiscountExtendedService, DiscountExtendedService>();
+            services.AddScoped<ICustomBackInStockSubscriptionService, CustomBackInStockSubscriptionService>();
+            services.AddScoped<ICustomWorkflowMessageService, CustomWorkflowMessageService>();
+            services.AddScoped<ICustomOrderService, CustomOrderService>();
+            services.AddScoped<ICustomMessageTokenProvider, CustomMessageTokenProvider>();
+            services.AddScoped<IOrderExtendedService, OrderExtendedService>();
+            services.AddScoped<IPaymentProfileService, PaymentProfileService>();
+            services.AddScoped<IOrderProcessingExtendedService, OrderProcessingExtendedService>();
 
             services.AddScoped<IIpAddressService, IpAddressService>();
             services.AddScoped<IIPLiteService, IPLiteService>();
             services.AddScoped<IBundleLoggerService, BundleLoggerService>();
+            services.AddScoped<IPaymentSessionService, PaymentSessionService>();
+            services.AddScoped<IProductIntegrityReportService, ProductIntegrityReportService>();
+            services.AddScoped<IPostDeliveryService, PostDeliveryService>();
+            services.AddScoped<IExportExtendedManager, ExportExtendedManager>();
+            services.AddScoped<IImportExtendedManager, ImportExtendedManager>();
 
             #region Tag
             services.AddScoped<ITagSlugService, TagSlugService>();

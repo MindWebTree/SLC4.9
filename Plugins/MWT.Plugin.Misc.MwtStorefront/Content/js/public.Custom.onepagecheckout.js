@@ -501,6 +501,10 @@ var customerInfo = {
             'event': 'add_shipping_info'
         });
         var formData = $(this.form).serialize();
+        var tokenInput = $('input[name=__RequestVerificationToken]');
+        if (tokenInput.length) {
+            formData += "&__RequestVerificationToken=" + tokenInput.val();
+        }
         if ($(".checkout-shipping-address-form").hasClass("d-none")) {
             formData = formData + '&saveData=false';
         }
@@ -538,7 +542,7 @@ var customerInfo = {
         $("#checkout-step-customerinfo .shipping-address-button").removeClass("d-none");
     },
     resetLoadWaiting: function () {
-        $(".order-summary-section").load("/checkout/CheckoutOrderSummary", function () {
+        $(".order-summary-section").load("/CheckoutExtended/CheckoutOrderSummary", function () {
             Checkout.setLoadWaiting(false);
         });
     },
@@ -700,10 +704,15 @@ var Shipping = {
 
         Checkout.setLoadWaiting('shipping');
         Checkout.mailChimp("", "Delivery Address");
+        var formData = $(this.form).serialize();
+        var tokenInput = $('input[name=__RequestVerificationToken]');
+        if (tokenInput.length) {
+            formData += "&__RequestVerificationToken=" + tokenInput.val();
+        }
         $.ajax({
             cache: false,
             url: this.saveUrl,
-            data: $(this.form).serialize(),
+            data: formData,
             type: "POST",
             success: this.nextStep,
             complete: this.resetLoadWaiting,
@@ -712,7 +721,7 @@ var Shipping = {
     },
 
     resetLoadWaiting: function () {
-        $(".order-summary-section").load("/checkout/CheckoutOrderSummary", function () {
+        $(".order-summary-section").load("/CheckoutExtended/CheckoutOrderSummary", function () {
             Checkout.setLoadWaiting(false);
         });
     },
@@ -774,7 +783,12 @@ var ShippingMethod = {
             Checkout.setLoadWaiting('shipping-method');
             Checkout.mailChimp("", "Shipping");
             var formData = $(this.form).serialize();
+            var tokenInput = $('input[name="__RequestVerificationToken"]');
             formData = formData + '&moveToNextStep=' + movetoNextStep;
+
+            if (tokenInput.length) {
+                formData += "&__RequestVerificationToken=" + encodeURIComponent(tokenInput.val());
+            }
             $(this.form).find(".errors-container").html("");
             $(this.form).find(".errors-container").hide();
             $.ajax({
@@ -790,7 +804,7 @@ var ShippingMethod = {
     },
 
     resetLoadWaiting: function () {
-        $(".order-summary-section").load("/checkout/CheckoutOrderSummary?isConfirmationPage=true", function () {
+        $(".order-summary-section").load("/CheckoutExtended/CheckoutOrderSummary?isConfirmationPage=true", function () {
             Checkout.setLoadWaiting(false);
         });
     },
@@ -880,10 +894,17 @@ var PaymentMethod = {
             if (this.validate()) {
                 Checkout.mailChimp("", "Payment");
                 Checkout.setLoadWaiting('payment-method');
+                var formData = $(this.form).serialize();
+
+                var tokenInput = $('input[name="__RequestVerificationToken"]');
+
+                if (tokenInput.length) {
+                    formData += "&__RequestVerificationToken=" + encodeURIComponent(tokenInput.val());
+                }
                 $.ajax({
                     cache: false,
                     url: this.saveUrl,
-                    data: $(this.form).serialize(),
+                    data: formData,
                     type: "POST",
                     success: this.nextStep,
                     complete: this.resetLoadWaiting,
@@ -897,7 +918,7 @@ var PaymentMethod = {
     },
 
     resetLoadWaiting: function () {
-        $(".order-summary-section").load("/checkout/CheckoutOrderSummary", function () {
+        $(".order-summary-section").load("/CheckoutExtended/CheckoutOrderSummary", function () {
             Checkout.setLoadWaiting(false);
         });
     },
@@ -992,12 +1013,19 @@ var PaymentMethod = {
         if (!$(this.billingForm).valid())
             return;
         if (this.validate()) {
+            var formData = $(this.billingForm).serialize();
+
+            var tokenInput = $('input[name="__RequestVerificationToken"]');
+
+            if (tokenInput.length) {
+                formData += "&__RequestVerificationToken=" + encodeURIComponent(tokenInput.val());
+            }
             Checkout.setLoadWaiting('billing');
             Checkout.mailChimp("", "Billing Address");
             $.ajax({
                 cache: false,
                 url: this.billingSave,
-                data: $(this.billingForm).serialize(),
+                data: formData,
                 type: "POST",
                 success: this.nextStep,
                 complete: function (response) {
@@ -1074,7 +1102,7 @@ var PaymentInfo = {
     },
 
     resetLoadWaiting: function () {
-        $(".order-summary-section").load("/checkout/CheckoutOrderSummary", function () {
+        $(".order-summary-section").load("/CheckoutExtended/CheckoutOrderSummary", function () {
             Checkout.setLoadWaiting(false);
         });
     },
@@ -1137,7 +1165,7 @@ var ConfirmOrder = {
     },
 
     resetLoadWaiting: function (transport) {
-        $(".order-summary-section").load("/checkout/CheckoutOrderSummary", function () {
+        $(".order-summary-section").load("/CheckoutExtended/CheckoutOrderSummary", function () {
             Checkout.setLoadWaiting(false, ConfirmOrder.isSuccess);
         });
     },

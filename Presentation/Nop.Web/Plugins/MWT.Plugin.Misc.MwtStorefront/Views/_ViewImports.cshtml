@@ -2,6 +2,7 @@
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @addTagHelper *, Nop.Web.Framework
+@using System.Globalization
 @using System.Text.Encodings.Web
 @using MWT.Nop.Core.Infrastructure
 @using Microsoft.AspNetCore.Mvc.ViewFeatures
@@ -47,6 +48,7 @@
 @using MWT.Plugin.Misc.MwtStorefront.Models.RelatedSearch;
 @using MWT.Plugin.Misc.MwtStorefront.Models.QuickFilter;
 @using MWT.Plugin.Misc.MwtStorefront.Models.Customer;
+@using MWT.Nop.Core.Services.Orders;
 @using Nop.Web.Extensions.Customizations;
 @using Nop.Services.Configuration;
 @using MWT.Nop.Core.Service.Catalog;
@@ -56,6 +58,11 @@
 @using Nop.Services.Html;
 @using MWT.Plugin.Misc.MwtStorefront.Models.Common
 @using Nop.Web.Framework.Mvc.Routing
+@using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Orders
+@using MWT.Nop.Core.Services.Customizations.CustomOrders
+@using MWT.Plugin.Misc.MwtStorefront.Models.Order
+@using MWT.Plugin.Misc.MwtStorefront.Models.CustomOrder
+@using MWT.Plugin.Misc.MwtStorefront.Models.Checkout
 @inject INopHtmlHelper NopHtml;
 @inject IUserAgentHelper _useragentContext;
 @inject ICustomWorkContext _customworkContext;

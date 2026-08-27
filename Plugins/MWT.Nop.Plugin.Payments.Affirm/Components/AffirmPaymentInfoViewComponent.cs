@@ -56,6 +56,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Components
             _addresService = addresService;
             _affirmCheckoutSettings = affirmCheckoutSettings;
             _customServiceManager = customServiceManager;
+            _orderProcessingExtendedService = orderProcessingExtendedService;
         }
 
         #endregion
@@ -72,7 +73,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Components
         /// The task result contains the view component result
         /// </returns>
         public async Task<IViewComponentResult> InvokeAsync(string widgetZone, object additionalData)
-        {
+            {
 
 
             var model = new PaymentInfoModel();

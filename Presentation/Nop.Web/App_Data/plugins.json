@@ -4,10 +4,6 @@
   ],
   "InstalledPlugins": [
     {
-      "SystemName": "Payments.PayPalCommerce",
-      "Version": "4.90.20"
-    },
-    {
       "SystemName": "Payments.PayPalStandard",
       "Version": "1.66"
     },

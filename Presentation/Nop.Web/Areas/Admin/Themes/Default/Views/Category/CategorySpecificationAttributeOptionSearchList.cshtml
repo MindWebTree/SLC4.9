@@ -1,0 +1,243 @@
+﻿@model SpecificationAttributeModel
+
+<form asp-controller="Category" asp-action="CustomViewProductFilterSpecificationAttribute" method="post" id="specificationattribute-form">
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            @T("Admin.Catalog.Attributes.SpecificationAttributes.ProductFilter") - @Model.Name
+            <small>
+                <i class="fas fa-arrow-circle-left"></i>
+                <a href="javascript:void(0);" onclick="goToSpecificationAttribute()">
+                    @T("Admin.Catalog.Attributes.CategotyEdit.BackToList")
+                </a>
+            </small>
+        </h1>
+    </div>
+    <div class="content-header clearfix k-text-align-right mr-1">
+        <button type="button" class="btn btn-primary" id="bulkToggleButton" onclick="toggleBulkEditMode()">
+            @T("Admin.Catalog.Attributes.BulkEdit")
+        </button>
+    </div>
+    <div class="card-body">
+        @await Html.PartialAsync("Table", new DataTablesModel
+   {
+       Name = "specificationattributeoptions-grid",
+       UrlRead = new DataUrl("CategorySpecificationAttributeOptionList", "Category",
+       new RouteValueDictionary
+       {
+           [nameof(Model.SpecificationAttributeOptionSearchModel.SpecificationAttributeId)] = Model.SpecificationAttributeOptionSearchModel.SpecificationAttributeId,
+           [nameof(Model.SpecificationAttributeOptionSearchModel.CategoryId)] = Model.CategoryId
+       }),
+       UrlUpdate = new DataUrl("CategorySpecificationAttributeOptionMappingUpdate", "Category", new RouteValueDictionary
+       {
+        [nameof(Model.SpecificationAttributeOptionSearchModel.CategoryId)] = Model.CategoryId
+       }),
+       Length = Model.SpecificationAttributeOptionSearchModel.PageSize,
+       LengthMenu = Model.SpecificationAttributeOptionSearchModel.AvailablePageSizes,
+       ColumnCollection = new List<ColumnProperty>
+            {
+                new ColumnProperty(nameof(SpecificationAttributeOptionModel.Id))
+                {
+                    Title = T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Options.Fields.Id").Text,
+                    ClassName = NopColumnClassDefaults.CenterAll
+                },
+                new ColumnProperty(nameof(SpecificationAttributeOptionModel.Name))
+                {
+                    Title = T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Options.Fields.Name").Text,
+                    ClassName = NopColumnClassDefaults.CenterAll
+                },
+                new ColumnProperty(nameof(SpecificationAttributeOptionModel.DisplayOrder))
+                {
+                    Title = T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Options.Fields.DisplayOrder").Text,
+                    Width = "100",
+                    ClassName = NopColumnClassDefaults.CenterAll,
+                    Editable=true,
+                    EditType = EditType.Number
+                },
+                new ColumnProperty(nameof(SpecificationAttributeOptionModel.Disabled))
+                {
+                    Title = T("Admin.Catalog.Entity.FiltersMappingByEntity.Fields.Enabled").Text,
+                    Width = "150",
+                    ClassName = NopColumnClassDefaults.CenterAll,
+                    Render = new RenderBoolean(),
+                    Editable = true,
+                    EditType = EditType.Checkbox
+                },
+                new ColumnProperty(nameof(SpecificationAttributeOptionModel.NumberOfAssociatedProducts))
+                {
+                    Title = T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Options.Fields.NumberOfAssociatedProducts").Text,
+                    Width = "250",
+                    ClassName = NopColumnClassDefaults.CenterAll
+                },
+                new ColumnProperty(nameof(SpecificationAttributeOptionModel.Id))
+                {
+                    Title = T("Admin.Common.View").Text,
+                    Width = "100",
+                    ClassName = NopColumnClassDefaults.Button,
+                    Render = new RenderCustom("renderProductColumnView")
+                },
+                new ColumnProperty(nameof(SpecificationAttributeOptionModel.Id))
+                {
+                    Title = T("Admin.Common.Edit").Text,
+                    Width = "200",
+                    ClassName =  NopColumnClassDefaults.Button,
+                    Render = new RenderButtonsInlineEdit()
+                }
+            }
+   })
+    </div>
+</form>
+<script>
+    function goToSpecificationAttribute() {
+        const params = new URLSearchParams(window.location.search);
+        const categoryId = params.get("categoryId");
+        if (categoryId) {
+            window.location.href = "/Admin/Category/Edit/" + categoryId;
+        }
+    }
+    function renderProductColumnView(data, type, row, meta) {
+        const params = new URLSearchParams(window.location.search);
+        const categoryId = params.get("categoryId");
+
+        return '<a class="btn btn-default" href="@Url.Action("CategorySpecificationOptionUsedByProductsSearchList", "Category")?specificationAttributeOptionId='
+            + row.Id + '&categoryId=' + categoryId + '"><i class="fas fa-eye"></i> View</a>';
+    }
+    let isBulkEditMode = false;
+
+    function toggleBulkEditMode() {
+    const button = document.getElementById("bulkToggleButton");
+
+        if (!isBulkEditMode) {
+            enableBulkEdit();
+            isBulkEditMode = true;
+
+            button.textContent = '@T("Admin.Catalog.Attributes.BulkUpdate").Text';
+            button.classList.remove("btn-primary");
+            button.classList.add("btn-success");
+        } else {
+            saveBulkEnabled();
+            isBulkEditMode = false;
+
+            button.textContent = '@T("Admin.Catalog.Attributes.BulkEdit").Text';
+            button.classList.remove("btn-success");
+            button.classList.add("btn-primary");
+        }
+    }
+
+
+
+    $(document).on('click', "[id^='buttonEdit_']", function () {
+        const row = $(this).closest('tr');
+        cancelBulkEditModeWithoutSave(row);
+        $("#bulkToggleButton").hide();
+    });
+
+    $(document).on('click', "[id^='buttonConfirm_']", function () {
+        $("#bulkToggleButton").show();
+    });
+
+
+    $(document).on('click', "[id^='buttonCancel_']", function () {
+
+        $('#specificationattributeoptions-grid').DataTable().ajax.reload(null, false);
+        $("#bulkToggleButton").show();
+    });
+
+    function cancelBulkEditModeWithoutSave(rowToSkip) {
+      if (isBulkEditMode) {
+        isBulkEditMode = false;
+
+        const button = document.getElementById("bulkToggleButton");
+        button.textContent = '@T("Admin.Catalog.Attributes.BulkEdit").Text';
+        button.classList.remove("btn-success");
+        button.classList.add("btn-primary");
+        button.style.display = 'none';
+
+        const table = $('#specificationattributeoptions-grid').DataTable();
+        const rows = table.rows().nodes();
+
+        $(rows).each(function () {
+            const row = $(this);
+            const rowData = table.row(row).data();
+
+            if (rowToSkip && row[0] === rowToSkip[0]) return;
+
+            const isDisabled = rowData.Disabled === true;
+            const displayValue = isDisabled
+                ? '<i class="fas fa-check true-icon"></i>'
+                : '<i class="fas fa-times false-icon"></i>';
+
+            row.find("td[data-columnname='Disabled']").html(displayValue);
+        });
+        if (rowToSkip) {
+            const rowData = table.row(rowToSkip).data();
+            const isDisabled = rowData.Disabled === true;
+            var checkboxHtml = `<input type="checkbox" value=${isDisabled ? 'true' : 'false'}
+                onclick="checkBoxClick_specificationattributeoptions_grid(this)"
+                class="inline-edit-checkbox" ${isDisabled ? 'checked' : ''} />`;
+            $(rowToSkip).find("td[data-columnname='Disabled']").html(checkboxHtml);
+        }
+      }
+    }
+
+    function enableBulkEdit() {
+        var table = $('#specificationattributeoptions-grid').DataTable();
+        var rows = table.rows().nodes();
+
+        $(rows).each(function (index) {
+            var row = $(this);
+            row.attr("editState", "editState");
+
+            var rowData = table.row(row).data();
+            var isDisabled = rowData?.Disabled === true;
+
+            // ✅ Create checkbox that matches actual data
+            var checkboxHtml = `<input type="checkbox" class="bulk-edit-checkbox"
+                ${isDisabled ? 'checked' : ''} />`;
+
+            var cell = row.find("td[data-columnname='Disabled']");
+            cell.html(checkboxHtml);
+        });
+    }
+
+
+    function saveBulkEnabled() {
+        var rows = $('#specificationattributeoptions-grid').DataTable().rows().nodes();
+        var dataToSend = [];
+
+        $(rows).each(function () {
+            var row = $(this);
+            var id = row.find("td[data-columnname='Id']").text().trim();
+            var checkbox = row.find("input.bulk-edit-checkbox");
+            if (checkbox.length === 0)
+                return;
+
+            var isChecked = checkbox.is(":checked");
+
+            dataToSend.push({
+                Id: parseInt(id),
+                Disabled: isChecked
+            });
+        });
+
+
+        $.ajax({
+            url: "@Html.Raw(Url.Action("BulkUpdateSpecificationAttributeOption", "Category", null))",
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(dataToSend),
+            success: function (response) {
+                if (response.success) {
+                    $('#specificationattributeoptions-grid').DataTable().ajax.reload(null, false);
+                } else {
+                    display_nop_error(response.message || 'Bulk update failed.');
+                }
+            },
+            error: function (xhr, status, error) {
+                alert("Error while saving changes: " + error);
+            }
+        });
+    }
+
+    // End  bulk edit enabled code
+</script>
+

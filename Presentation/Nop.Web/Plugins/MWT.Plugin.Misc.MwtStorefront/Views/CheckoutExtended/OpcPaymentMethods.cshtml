@@ -1,0 +1,434 @@
+﻿@model CheckoutPaymentMethodModel
+@using Nop.Services.Payments 
+@using Nop.Core.Domain.Orders;
+@inject Nop.Services.Configuration.ISettingService _SettingService
+@inject Nop.Services.Payments.IPaymentPluginManager _paymentPluginManager
+@inject Nop.Core.IWorkContext  _workContext
+@inject ICustomWorkContext  _customWorkContext
+@inject Nop.Core.IStoreContext _storeContext
+@inject Nop.Core.Domain.Payments.PaymentSettings _paymentSettings;
+@inject Nop.Web.Factories.ICheckoutModelFactory _checkoutModelFactory;
+@inject Nop.Services.Orders.IShoppingCartService _shoppingCartService;
+@inject Nop.Services.Customers.ICustomerService _customerService;
+@inject Nop.Services.Localization.ILocalizationService _localizationService
+@{
+    int billingAddressId = 0;
+    int shippingAddressId = 0;
+    var customer = await _workContext.GetCurrentCustomerAsync();
+    var storeId = (await _storeContext.GetCurrentStoreAsync()).Id;
+    var cart = await _shoppingCartService.GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart, storeId);
+    var billingAddress = await _customerService.GetCustomerBillingAddressAsync(customer);
+    var addressLine = "";
+    if (billingAddress != null)
+    {
+        billingAddressId = billingAddress.Id;
+        addressLine = billingAddress.FirstName + " " + billingAddress.LastName + ", ";
+        addressLine += billingAddress.Address1;
+        if (!string.IsNullOrEmpty(billingAddress.City))
+            addressLine += ", " + billingAddress.City;
+        if (!string.IsNullOrEmpty(billingAddress.ZipPostalCode))
+            addressLine += ", " + billingAddress.ZipPostalCode;
+    }
+    bool displayPaypalMessage = await _SettingService.GetSettingByKeyAsync<bool>("Display.Paypal.Message");
+    string message = await _localizationService.GetResourceAsync("Paypal.Message");
+
+    if (ViewData["ShippingAddress"] != null)
+    {
+        shippingAddressId = ((CheckoutAddressModel)ViewData["ShippingAddress"]).Id;
+    }
+}
+<script type="text/javascript" asp-location="Footer">
+    $(document).ready(function () {
+        $(document).on('change', '#payment-method-block input[type=radio]', function () {
+            $(".checkout-payment-methods, .paymentinfo").removeClass("active");
+            $(this).parent().addClass("active");
+            $("div[data-paymentinfo='" + $(this).parent().attr("data-paymethodname") + "']").addClass("active");
+            if ($(this).val().toLowerCase().indexOf("affirm") > 0) {
+                if (!$('.payment-info-next-step-button').is(":visible")) {
+                    // $('.checkoutmobilebtnplaceyourorder').show();
+                }
+                $('.payment-info-next-step-button').show();
+            }
+            else {
+
+                $('.payment-info-next-step-button').hide();
+                if (!$('.payment-info-next-step-button').is(":visible")) {
+                    //  $('.checkoutmobilebtnplaceyourorder').show();
+                }
+            }
+        });
+    });
+
+</script>
+<script type="text/javascript" asp-location="Footer">
+    $(document).ready(function () {
+        $.validator.unobtrusive.parse("#co-payment-method-form");
+    });
+    $(document).on("keydown", '#CardNumber', function (e) {
+        var cursor = this.selectionStart;
+        if (this.selectionEnd != cursor) return;
+        if (e.which == 46) {
+            if (this.value[cursor] == " ") this.selectionStart++;
+        } else if (e.which == 8) {
+            if (cursor && this.value[cursor - 1] == " ") this.selectionEnd--;
+        }
+    });
+    $(document).on("input", '#CardNumber', function (e) {
+        var value = this.value;
+        var cursor = this.selectionStart;
+        var matches = value.substring(0, cursor).match(/[^0-9]/g);
+        if (matches) cursor -= matches.length;
+        value = value.replace(/[^0-9]/g, "").substring(0, 16);
+        var formatted = "";
+        for (var i = 0, n = value.length; i < n; i++) {
+            if (i && i % 4 == 0) {
+                if (formatted.length <= cursor) cursor++;
+                formatted += " ";
+            }
+            formatted += value[i];
+        }
+        if (formatted != this.value) {
+            this.value = formatted;
+            this.selectionEnd = cursor;
+        }
+        console.log(formatted.length);
+        if (formatted.length >= 2) {
+            // cardType
+            var typeCheck = formatted.substring(0, 2);
+            console.log(typeCheck);
+            var cType = 'visa';
+            if (typeCheck.length == 2) {
+                typeCheck = parseInt(typeCheck);
+                if (typeCheck >= 40 && typeCheck <= 49) {
+                    cType = 'visa';
+                }
+                else if (typeCheck >= 51 && typeCheck <= 55) {
+                    cType = 'MasterCard';
+                }
+                else if ((typeCheck >= 60 && typeCheck <= 62) || (typeCheck == 64) || (typeCheck == 65)) {
+                    cType = 'Discover';
+                }
+                else if (typeCheck == 34 || typeCheck == 37) {
+                    cType = 'Amex';
+                }
+                else {
+                    cType = 'Visa';
+                }
+                console.log(cType);
+
+                $("#CreditCardType").val(cType);
+            }
+
+        }
+        // end
+    })
+</script>
+@if (ViewData["Step"] != null && ViewData["Step"] != "#opc-payment_method")
+{
+
+    @NopHtml.GenerateScripts(ResourceLocation.Footer)
+}
+else if (ViewData["Step"] == null)
+{
+    @NopHtml.GenerateScripts(ResourceLocation.Footer)
+}
+
+<div class="checkout-data">
+    <div class="checkout-shipping-address" data-addressId="">
+        @if (ViewData["ShippingAddress"] != null)
+        {
+            @await Html.PartialAsync("OpcShippingAddress", ViewData["ShippingAddress"])
+        }
+    </div>
+    <div class="billing-address">
+        <div class="step-title">
+            <h2>
+                @T("checkout.billingaddress")
+            </h2>
+
+        </div>
+        <p>
+            @if (shippingAddressId == billingAddressId)
+            {
+                @T("checkout.Same.As.Shipping.Address")
+            }
+            else
+            {
+                @Html.Raw(!string.IsNullOrEmpty(addressLine) ? addressLine : "----")
+            }
+            <a onclick="PaymentMethod.billingLoad(); return false;" id="edit-billing-address">
+                @Html.Raw(string.IsNullOrEmpty(addressLine) ? "<i class='fas fa-add'></i>" : "<i class='fas fa-edit'></i>") @T((string.IsNullOrEmpty(addressLine) ? "checkout.btn.Add" : "common.edit"))
+            </a>
+        </p>
+    </div>
+    <div class="section-payment-methods">
+        <div class="step-title"><h2>@T("opc.heading.Payment")</h2></div>
+        <div class="errors-container"></div>
+        @if (displayPaypalMessage)
+        {
+            <div style="color: #A04747;font-weight:bold; margin: 5px; float: left; width: 100%; letter-spacing: 1px; line-height: 20px; ">
+                @Html.Raw(message)
+            </div>
+        }
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OpCheckoutPaymentMethodTop })
+        <div class="section payment-method">
+
+            @if (Model.DisplayRewardPoints && Model.PaymentMethods.Count > 0)
+            {
+                <div class="use-reward-points">
+                    <div class="custom-control custom-checkbox">
+                        @if (Model.RewardPointsEnoughToPayForOrder)
+                        {
+                            <input asp-for="UseRewardPoints" onclick="PaymentMethod.toggleUseRewardPoints(this)" class="custom-control-input" />
+                        }
+                        else
+                        {
+                            <input asp-for="UseRewardPoints" class="custom-control-input" />
+                        }
+                        <label asp-for="UseRewardPoints">@string.Format(T("Checkout.UseRewardPoints").Text, Model.RewardPointsToUse, Model.RewardPointsBalance, Model.RewardPointsToUseAmount)</label>
+                    </div>
+                    @if (Model.RewardPointsEnoughToPayForOrder)
+                    {
+                        <script>
+                        $(document).ready(function() {
+                            PaymentMethod.toggleUseRewardPoints($('#@Html.IdFor(model => model.UseRewardPoints)'));
+                        });
+                        </script>
+                    }
+                </div>
+            }
+
+
+            @if (Model.PaymentMethods.Count > 0)
+            {
+                <script>
+                var selectedPaymentMethod = '@(Model.PaymentMethods.Where(p=>p.Selected).FirstOrDefault().Name)';
+                </script>
+
+                @if (!_customWorkContext.IsMobileDevice())
+                {
+                    <div id="payment-method-block">
+                        <div id="payment-methods-container" class="d-flex flex-row flex-wrap justify-content-start align-items-center   p-3 gap-3">
+                            @for (var i = 0; i < Model.PaymentMethods.Count; i++)
+                            {
+                                var paymentMethod = Model.PaymentMethods[i];
+                                if (!paymentMethod.Name.ToLower().Contains("cash"))
+                                {
+                                    var paymentMethodName = paymentMethod.Name;
+                                    if (!string.IsNullOrEmpty(paymentMethod.Fee))
+                                    {
+                                        paymentMethodName = T("Checkout.SelectPaymentMethod.MethodAndFee", paymentMethodName, paymentMethod.Fee).Text;
+                                    }
+
+                                    <div class="z @(paymentMethod.Selected ? "active" : "") d-flex flex-row align-items-center"
+                                         data-paymethodname="@paymentMethodName"
+                                         style="min-width: 180px; width:auto;">
+
+                                        <!-- Radio button on the left -->
+                                        <input type="radio" id="paymentmethod_@(i)" name="paymentmethod"
+                                               value="@(paymentMethod.PaymentMethodSystemName)" class="radio"
+                                               checked="@paymentMethod.Selected"
+                                               style="margin-right: 10px;" /> <!-- Space between radio button and name -->
+                                        <!-- Payment method name -->
+                                        <label for="paymentmethod_@(i)" class="d-flex w-100 align-items-center">
+                                            <span class="ml-0">
+                                                @(paymentMethodName == "Authorize.Net" ? T("Authorize.Net.Friendly.Name") : paymentMethodName)
+                                            </span>
+                                            @if (!string.IsNullOrEmpty(paymentMethod.LogoUrl))
+                                            {
+                                                <span>
+                                                    <img src="@(paymentMethod.LogoUrl.Replace("logo.jpg","logo.svg").Replace("logo.png","logo.svg").Replace("logo.gif","logo.svg"))" alt="@paymentMethodName" />
+                                                </span>}
+                                        </label>
+                                    </div>}
+                            }
+                        </div>
+                        @for (var i = 0; i < Model.PaymentMethods.Count; i++)
+                        {
+                            var paymentMethod = Model.PaymentMethods[i];
+
+                            if (paymentMethod.Selected && (paymentMethod.PaymentMethodSystemName.ToLower().Contains("paypal") || paymentMethod.PaymentMethodSystemName.ToLower().Contains("authorize")))
+                            {
+                                <style type="text/css">
+                                    .payment-info-next-step-button {
+                                        display: none;
+                                    }
+
+                                    @@media all and (max-width:959px) {
+                                        .checkout-pages .order-summary-section .checkoutmobilebtn.checkoutmobilebtnplaceyourorder {
+                                            display: none;
+                                        }
+                                    }
+                                </style>
+                            }
+
+                            var paymentMethodInst = await _paymentPluginManager
+                                .LoadPluginBySystemNameAsync(paymentMethod.PaymentMethodSystemName, customer, storeId);
+                            // need input sir
+                            var model = await _checkoutModelFactory.PreparePaymentInfoModelAsync(paymentMethodInst);
+                            // model.PaymentViewComponentName = paymentMethod.Name.ToLower().Contains("paypal") ? "WebCustomPayPalCommercePaymentInfo" : model.PaymentViewComponentName;
+                            model.PaymentViewComponent = model.PaymentViewComponent;
+                            <div class="paymentinfo @(paymentMethod.Selected ? "active" : "")" data-paymentinfo="@paymentMethod.Name">
+                                @if (paymentMethod.Name == "Authorize.Net")
+                                {
+                                    <img src="/images/uploaded/payment-labels-checkout.svg" class="payment-cards-supported" />
+                                }
+
+                                @if (paymentMethod.Selected)
+                                {
+                                    @if (Model.Warnings != null)
+                                    {
+                                        <div class="errors d-block">
+                                            <div class="message-error validation-summary-errors paymentmehod-errors p-3">
+                                                <ul>
+                                                    @foreach (var error in Model.Warnings)
+                                                    {
+                                                        <li>
+                                                            @Html.Raw(error == "Payment error: Error #2: This transaction has been declined." ? T("Authorize.Net.Friendly.Error.Message") : error)
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>}}
+                                @await Html.PartialAsync("OpcPaymentInfo", model)
+                            </div>}
+                    </div>
+
+                }
+                else
+                {
+                    <div id="payment-method-block">
+                        @for (var i = 0; i < Model.PaymentMethods.Count; i++)
+                        {
+
+                            var paymentMethod = Model.PaymentMethods[i];
+                            if (!paymentMethod.Name.ToLower().Contains("cash"))
+                            {
+                                var paymentMethodName = paymentMethod.Name;
+                                if (!string.IsNullOrEmpty(paymentMethod.Fee))
+                                {
+                                    paymentMethodName = T("Checkout.SelectPaymentMethod.MethodAndFee", paymentMethodName, paymentMethod.Fee).Text;
+                                }
+
+                                <div class="checkout-payment-methods @(paymentMethod.Selected ? "active" : "")" data-paymethodname="@paymentMethodName">
+
+
+                                    <input type="radio" id="paymentmethod_@(i)" name="paymentmethod" value="@(paymentMethod.PaymentMethodSystemName)" class="radio" checked="@paymentMethod.Selected" />
+                                    <label for="paymentmethod_@(i)" class="d-flex width w-100">
+                                        <span class="ml-0">   @(paymentMethodName== "Authorize.Net"?T("Authorize.Net.Friendly.Name"): paymentMethodName)</span>
+                                        @if (!string.IsNullOrEmpty(paymentMethod.LogoUrl))
+                                        {
+                                            <span>
+                                                <img src="@(paymentMethod.LogoUrl.Replace("logo.jpg","logo.svg").Replace("logo.png","logo.svg").Replace("logo.gif","logo.svg"))" alt="@paymentMethodName" />
+                                            </span>
+                                        }
+
+                                    </label>
+
+                                </div>
+                                if (@paymentMethod.Selected && (paymentMethod.PaymentMethodSystemName.ToLower().IndexOf("paypal") > 0 || paymentMethod.PaymentMethodSystemName.ToLower().IndexOf("authorize") > 0))
+                                {
+                                    <style type="text/css">
+                                        .payment-info-next-step-button {
+                                            display: none;
+                                        }
+
+                                        @@media all and (max-width:959px) {
+                                            .checkout-pages .order-summary-section .checkoutmobilebtn.checkoutmobilebtnplaceyourorder {
+                                                display: none;
+                                            }
+                                        }
+                                    </style>
+                                }
+
+                                {
+
+                                    var paymentMethodInst = await _paymentPluginManager
+                                .LoadPluginBySystemNameAsync(paymentMethod.PaymentMethodSystemName,
+                                customer, storeId);
+                                    // need input sir
+                                    var model = await _checkoutModelFactory.PreparePaymentInfoModelAsync(paymentMethodInst);
+                                    // model.PaymentViewComponentName = paymentMethodName.ToLower().IndexOf("paypal") >= 0 ? "WebCustomPayPalCommercePaymentInfo" :
+                                   // model.PaymentViewComponent;
+
+                                    <div class="paymentinfo @(paymentMethod.Selected ? "active" : "")" data-paymentinfo="@paymentMethodName">
+                                        @if (paymentMethodName == "Authorize.Net")
+                                        {
+                                            <img src="/images/uploaded/payment-labels-checkout.svg" class="payment-cards-supported" />
+                                        }
+                                        @if (paymentMethod.Selected)
+                                        {
+
+                                            @if (Model.Warnings != null)
+                                            {
+                                                <div class="errors d-block">
+                                                    <div class="message-error validation-summary-errors paymentmehod-errors p-3">
+                                                        <ul>
+                                                            @foreach (var error in Model.Warnings)
+                                                            {
+                                                                <li>
+                                                                    @Html.Raw(error == "Payment error: Error #2: This transaction has been declined." ? T("Authorize.Net.Friendly.Error.Message") : error)
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            }
+
+                                        }
+                                        @await Html.PartialAsync("OpcPaymentInfo", model)
+                                    </div>
+
+
+                                }
+                            }
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="message-error">
+                    @T("Checkout.NoPaymentMethods")
+                </div>
+            }
+        </div>
+
+
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OpCheckoutPaymentMethodBottom })
+    </div>
+
+
+</div>
+<div id="terms-of-service-warning-box" title="@T("Checkout.TermsOfService")" style="display:none;">
+    <p>@T("Checkout.TermsOfService.PleaseAccept")</p>
+</div>
+@if (Model.TermsOfServiceOnOrderConfirmPage)
+{
+    <div class="terms-of-service">
+        <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="termsofservice" @(Model.CheckoutPaymentInfoModel != null ? "checked" : "") name="termsofservice">
+            <label class="custom-control-label" for="termsofservice">
+                @T("Checkout.TermsOfService.IAccept")
+                @if (Model.TermsOfServicePopup)
+                {
+                    <a class="read" id="read-terms">@T("Checkout.TermsOfService.Read")</a>
+                    <script asp-location="Footer">
+                            $(document).ready(function() {
+                                $('#read-terms').on('click', function(e) {
+                                    e.preventDefault();
+                                    displayPopupContentFromUrl('@Url.RouteUrl("TopicPopup", new { SystemName = "conditionsofuse" })', '@T("Checkout.TermsOfService")');
+                                });
+                            });
+                    </script>
+                }
+                else
+                {
+                    <a class="read" id="read-terms" href="@await NopUrl.RouteTopicUrlAsync("conditionsofuse")">@T("Checkout.TermsOfService.Read")</a>
+                }
+            </label>
+        </div>
+    </div>
+}
+
+

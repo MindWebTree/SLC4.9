@@ -1,0 +1,92 @@
+﻿@using MWT.Nop.Core.Service.Catalog
+ 
+@model StoreWideProductDiscountHistorySearchModel  
+@inject  IProductExtendedService _productService
+@{
+    Layout = "_AdminPopupLayout";
+
+    //page title
+    ViewBag.PageTitle = T("Admin.Utilities.Marketing.Offer.Log.History.Search").Text;
+    var product = await _productService.GetProductByIdAsync(Model.SearchProductId);
+}
+<div class="content-header clearfix" bis_skin_checked="1">
+    <h1 class="float-left">
+        @T("Admin.Utilities.Marketing.Offer.Log.History.Title",product?.Name??"")
+    </h1>
+    <div class="pull-right" bis_skin_checked="1">
+        &nbsp;
+    </div>
+</div>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="form-horizontal">
+                <div class="cards-group">
+
+                    <div class="card card-default">
+                        <div class="card-body">
+                            @await Html.PartialAsync("Table", new DataTablesModel
+                       {
+                           Length = Model.PageSize,
+                           LengthMenu = Model.AvailablePageSizes,
+                           Filters = new List<FilterParameter>
+    {
+
+    new FilterParameter("SearchProductId")
+    },
+                           Name = "discount-Search-table",
+                           UrlRead = new DataUrl("ProductOfferDiscountList", "Utilities", new RouteValueDictionary
+                           {
+                               [nameof(Model.SearchProductId)] = Model.SearchProductId
+                           }),
+                           SearchButtonId = "discount-Search",
+
+
+                           ColumnCollection = new List<ColumnProperty>
+    {
+    new ColumnProperty(nameof(StoreWideProductDiscountHistoryModel.ProductId))
+    {
+    Title = T("Admin.Utilities.Marketing.Offer.Log.History.Field.ProductId").Text,
+    Width = "120",
+    },
+    new ColumnProperty(nameof(StoreWideProductDiscountHistoryModel.Discount))
+    {
+    Title = T("Admin.Utilities.Marketing.Offer.Log.History.Field.Discount").Text,
+    Width = "620",
+    },
+    new ColumnProperty(nameof(StoreWideProductDiscountHistoryModel.Name))
+    {
+    Title = T("Admin.Utilities.Marketing.Offer.Log.History.Field.StoreWideDiscountName").Text,
+    Width = "120",
+    },
+    new ColumnProperty(nameof(StoreWideProductDiscountHistoryModel.InfoText))
+    {
+    Title = T("Admin.Utilities.Marketing.Offer.Log.History.Field.InfoText").Text,
+    Width = "220",
+    },
+    new ColumnProperty(nameof(StoreWideProductDiscountHistoryModel.InfoHelpText))
+    {
+    Title = T("Admin.Utilities.Marketing.Offer.Log.History.Field.InfoHelpText").Text,
+    Width = "320",
+    },
+
+    new ColumnProperty(nameof(StoreWideProductDiscountHistoryModel.UpdatedBy))
+    {
+    Title = T("Admin.Utilities.Marketing.Offer.Log.History.Field.UpdatedBy").Text,
+    Width = "120",
+    },
+    new ColumnProperty(nameof(StoreWideProductDiscountHistoryModel.CreatedOn))
+    {
+    Title = T("Admin.Utilities.Marketing.Offer.Log.History.Field.CreatedOn").Text,
+    Width = "120",
+    },
+    }
+                       }
+    );
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>

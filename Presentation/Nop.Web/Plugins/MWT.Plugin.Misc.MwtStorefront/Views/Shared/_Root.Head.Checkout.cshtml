@@ -1,0 +1,125 @@
+﻿
+@using Nop.Core.Configuration
+@using Nop.Core.Domain.Common
+@using Nop.Core.Domain.Seo
+@using Nop.Services.Events
+@using Nop.Services.Security
+@using Nop.Web.Framework.Events
+@using Nop.Core
+@using Nop.Core.Events
+@inject CommonSettings commonSettings
+@inject IEventPublisher eventPublisher
+@inject IPermissionService permissionService
+@inject IWorkContext workContext
+@inject SeoSettings seoSettings
+@inject AppSettings appSettings
+@inject Nop.Services.Localization.ILanguageService languageService
+@inject IThemeContext themeContext
+
+
+
+@{
+    var themeName = await themeContext.GetWorkingThemeNameAsync();
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/slick.js");
+
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/bootstrap.min.js");
+
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/head.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/js/public.countryselect.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/public.ajaxcart.js?ver=11");
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/js/public.common.js?ver=4");
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/common.js?ver48");
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, $"~/campaignassets/js/apicall.js?ver=7", string.Empty, false);
+
+    //when jQuery migrate script logging is active you will see the log in the browser console
+    if (commonSettings.JqueryMigrateScriptLoggingActive)
+    {
+        NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/jquery-migrate/jquery-migrate.js");
+    }
+    else
+    {
+        NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/jquery-migrate/jquery-migrate.min.js");
+    }
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/jquery-ui-dist/jquery-ui.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/jquery-validation/jquery.validate.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/jquery/jquery.min.js");
+    //custom tag(s);
+    if (!string.IsNullOrEmpty(seoSettings.CustomHeadTags))
+    {
+        NopHtml.AppendHeadCustomParts(seoSettings.CustomHeadTags);
+    }
+
+    //event
+    await eventPublisher.PublishAsync(new PageRenderingEvent(NopHtml));
+
+
+}
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor httpContextAccessor
+@{
+    var url = httpContextAccessor.HttpContext.Request.Host + httpContextAccessor.HttpContext.Request.Path;
+    var title = await NopHtml.GenerateTitleAsync();
+    var description = await @NopHtml.GenerateMetaDescriptionAsync();
+    var keywords = await NopHtml.GenerateMetaKeywordsAsync();
+}
+<!DOCTYPE html>
+<html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName" dir="@Html.GetUIDirection(!await Html.ShouldUseRtlThemeAsync())" class="@NopHtml.GeneratePageCssClasses()">
+<head itemscope itemtype="http://schema.org/WebSite">
+    <title>@title</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    <meta name="description" content="@description" />
+    <meta name="keywords" content="@keywords" />
+    <meta name="viewport" content="width=device-width">
+    @NopHtml.GenerateHeadCustom()
+    @*This is used so that themes can inject content into the header*@
+    @await Html.PartialAsync("checkoutHead")
+    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HeadHtmlTag })
+    @NopHtml.GenerateCssFiles()
+    @NopHtml.GenerateScripts(ResourceLocation.Head)
+    @NopHtml.GenerateCanonicalUrls()
+    @await Component.InvokeAsync(typeof(NewsRssHeaderLinkViewComponent))
+    @await Component.InvokeAsync(typeof(BlogRssHeaderLinkViewComponent))
+    @*Insert favicon and app icons head code*@
+    @await Component.InvokeAsync(typeof(FaviconViewComponent))
+    
+	  <script>
+         function generateUUID() {
+            const bytes = new Uint8Array(16);
+            crypto.getRandomValues(bytes);
+
+            bytes[6] = (bytes[6] & 0x0f) | 0x40; // version 4
+            bytes[8] = (bytes[8] & 0x3f) | 0x80; // variant
+
+            const hex = [...bytes].map(b => b.toString(16).padStart(2, '0'));
+
+            return `${hex[0]}${hex[1]}${hex[2]}${hex[3]}-` +
+                `${hex[4]}${hex[5]}-` +
+                `${hex[6]}${hex[7]}-` +
+                `${hex[8]}${hex[9]}-` +
+                `${hex[10]}${hex[11]}${hex[12]}${hex[13]}${hex[14]}${hex[15]}`;
+        }
+        window.ContentEvent_Id = window.Event_Id = generateUUID();
+        window.dataLayer = window.dataLayer || [];
+        dataLayer.push({
+            'Event_Id': window.Event_Id,
+            'ContentEvent_Id': window.Event_Id
+        });
+
+    </script>
+    @NopHtml.GenerateInlineScripts(ResourceLocation.Head)
+    <!--Powered by nopCommerce - https://www.nopCommerce.com-->
+</head>
+<body>
+    <nop-antiforgery-token />
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://load.sgtm.sierralivingconcepts.com/ns.html?id=GTM-W6HNFNNM" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+    @RenderBody()
+    @NopHtml.GenerateScripts(ResourceLocation.Footer)
+    @NopHtml.GenerateInlineScripts(ResourceLocation.Footer)
+    <script type="text/javascript">
+        lazyLoadImagesEvent();
+    </script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+﻿@model MarketingModel 
+
+@{
+    //page title
+    ViewBag.PageTitle = T("Admin.Utilities.Marketing").Text;
+
+
+}
+@{
+
+    //resources for product tags input
+    NopHtml.AppendCssFileParts("~/lib_npm/jquery-tageditor/jquery.tag-editor.css");
+    NopHtml.AppendScriptParts(ResourceLocation.Head,"~/lib_npm/jquery-tageditor/jquery.tag-editor.min.js");
+
+}
+
+<form asp-controller="Utilities" asp-action="Marketing" method="post" id="product-form">
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            @T("Admin.Utilities.Marketing.heading")
+
+        </h1>
+        <div class="float-right">
+            <button type="submit" name="save" class="btn bg-olive">
+                <i class="far fa-save"></i>
+                @T("Admin.Common.Save")
+            </button>
+            <a href="/Admin/WidgetsNivoSlider/Configure" class="btn btn-primary" target="_blank">
+                @T("Admin.Utilities.Marketing.BannerManagement")
+            </a>
+            <a href="@Url.Action("List","CampaignManagement")" class="btn btn-primary" target="_blank">
+                @T("Admin.Utilities.Marketing.CampaignManagement")
+            </a>
+
+
+            <a href="@Url.Action("StoreWideDiscountList","Utilities")" class="btn btn-primary" >
+
+           
+                @T("Admin.Utilities.Marketing.StoreWideDiscount")
+            </a>
+            <a href="@Url.Action("ImportProductUnpubishedVariant","Utilities")" class="btn btn-primary">
+                @T("Admin.Utilities.Marketing.ImportProductUnpubishedVariant")
+            </a>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="form-horizontal">
+                <div class="cards-group">
+                    <div class="card card-default margin-bottom">
+                        <div class="card-header">
+                            <i class="fas fa-info"></i>     @T("admin.Utilities.Marketing.BuyMoreSaveMore")
+                        </div>
+                        <div class="card-body">
+                            <section class="content">
+                                <div class="form-group row">
+                                    <div class="col-sm-3">
+                                        <nop-label asp-for="BuyMoreSaveMoreDiscountConfiguration" />
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <nop-editor asp-for="BuyMoreSaveMoreDiscountConfiguration" asp-required="true" />
+                                        <span asp-validation-for="BuyMoreSaveMoreDiscountConfiguration"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-3">
+                                        <nop-label asp-for="EnableBuyMoreSaveMoreDiscount" />
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <nop-editor asp-for="EnableBuyMoreSaveMoreDiscount" asp-required="true" />
+                                        <span asp-validation-for="EnableBuyMoreSaveMoreDiscount"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-3">
+                                        <nop-label asp-for="ShowBuyMoreSaveMoreBanner" />
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <nop-editor asp-for="ShowBuyMoreSaveMoreBanner" asp-required="true" />
+                                        <span asp-validation-for="ShowBuyMoreSaveMoreBanner"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-3">
+                                        <nop-label asp-for="BuyMoreSaveMoreContent" />
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <nop-editor asp-for="BuyMoreSaveMoreContent" asp-required="true" asp-template="RichEditor" />
+                                        <span asp-validation-for="BuyMoreSaveMoreContent"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-3">
+                                        <nop-label asp-for="EnableEmailExclusiveOffer" />
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <nop-editor asp-for="EnableEmailExclusiveOffer" asp-required="true" />
+                                        <span asp-validation-for="EnableEmailExclusiveOffer"></span>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+
+                    <div class="card card-default margin-bottom">
+                        <div class="card-header">
+                            <i class="fas fa-info"></i>     @T("admin.Utilities.Marketing.OtherSettings")
+                        </div>
+                        <div class="card-body">
+                            <section class="content">
+                                <div class="form-group row">
+                                    <div class="col-sm-3">
+                                        <nop-label asp-for="LimitedOfferContent" />
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <nop-textarea asp-for="LimitedOfferContent" asp-required="true"  />
+                                        <span asp-validation-for="LimitedOfferContent"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-3">
+                                        <nop-label asp-for="HeaderStripContent" />
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <nop-editor asp-for="HeaderStripContent" asp-required="true" asp-template="RichEditor" />
+                                        <span asp-validation-for="HeaderStripContent"></span>
+                                    </div>
+                                </div>
+                                
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>
+
+

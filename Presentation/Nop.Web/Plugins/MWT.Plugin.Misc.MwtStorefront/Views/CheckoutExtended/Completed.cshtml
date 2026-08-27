@@ -1,0 +1,630 @@
+﻿@model OrderDetailsExtendedModel
+@using Nop.Core
+@using Nop.Core.Domain.Seo
+@inject Nop.Core.IWorkContext _workContext;
+@inject Nop.Services.Catalog.IPriceFormatter _priceFormatter;
+@inject Nop.Core.IStoreContext _storeContext;
+@inject Nop.Services.Configuration.ISettingService _settingService;
+@using System.Text.Json
+@inject SeoSettings seoSettings
+@inject IWebHelper webHelper
+
+@{
+    Layout = "_ColumnsOne";
+    //title
+    NopHtml.AddTitleParts(T("PageTitle.Checkout").Text);
+    //page class
+    NopHtml.AppendPageCssClassParts("html-checkout-page");
+    NopHtml.AppendPageCssClassParts("html-order-completed-page");
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        NopHtml.AddCanonicalUrlParts(Url.RouteUrl("CheckoutCompleted", null, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant(), false);
+    }
+    decimal orderSubtotal = 0;
+    var currencyCode = (await _workContext.GetWorkingCurrencyAsync())?.CurrencyCode;
+
+    var store = await _storeContext.GetCurrentStoreAsync();
+    var storeEmail = await _settingService.GetSettingByKeyAsync<string>("store.email");
+    var orderLink = "https://customer.sierralivingconcepts.com/default.aspx?oid=" + @Model.CustomOrderNumber + "&email=" + @Model.Email;
+
+}
+
+<script>
+    window.dataLayer = window.dataLayer || [];
+    dataLayer.push({
+        'Event_Id': '@Model.OrderGuid',
+    });
+</script>
+
+@if (Model.PrintMode)
+{
+    <script asp-location="Footer">
+        $(document).ready(function () {
+            window.print();
+        });
+    </script>
+}
+<div class="page order-details-page">
+    @*    @if (!Model.OnePageCheckoutEnabled)
+        {
+        @await Component.InvokeAsync("CheckoutProgress",  new { step = CheckoutProgressStep.Complete })
+        }*@
+    @*    @if (!Model.PrintMode)
+        {
+        <div class="page-title">
+        <h1>@T("Order.OrderInformation")</h1>
+        <a href="@Url.RouteUrl("PrintOrderDetails", new { orderId = Model.Id })" target="_blank" class="button-2 btn btn-primary print-order-button">@T("Order.Print")</a>
+        @if (!Model.PdfInvoiceDisabled)
+        {
+        <a href="@Url.RouteUrl("GetOrderPdfInvoice", new { orderId = Model.Id })" class="button-2 btn btn-default pdf-invoice-button">@T("Order.GetPDFInvoice")</a>
+        }
+        </div>
+        }*@
+
+
+    <div class="page-body">
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CheckoutCompletedTop, additionalData = Model })
+
+        <div class="d-lg-flex d-md-flex d-block justify-content-between section-1">
+            <div>
+                <h2> @T("Order.ThankYou.Message")</h2>
+                <p>@T("Order.Order.No") <b> @Model.CustomOrderNumber</b></p>
+                <p>@T("Order.Email.Confirmation.Message", Model.Email)</p>
+                <p>You can <a href="@Url.ActionLink("CustomPrintOrderDetails","Order", new { orderId = Model.Id })">@T("Order.Print")</a> or <a href="@Url.ActionLink("CustomGetPdfInvoice","Order", new { orderId = Model.Id })">@T("Order.GetPDFInvoice")</a> order receipt.</p>
+            </div>
+            <div>
+                <p>@T("Order.help.Label") </p>
+                <p>
+                    <a href="tel:@store.CompanyPhoneNumber"> @T("common.callus", store.CompanyPhoneNumber)</a> or <a href="mailto:@storeEmail">@T("Common.Email.Us")</a>
+                </p>
+            </div>
+        </div>
+
+
+        <div class="order_detail_heading">
+            <h3>@T("Common.orderdetails")</h3>
+        </div>
+
+        <div class="section-2">
+
+            <p>
+                @T("Order.Order.No")<b> @Model.CustomOrderNumber</b>
+            </p>
+            <p>@T("Order.Order.DateTime")<b> @Model.CreatedOn.ToString("dd MMMM yyyy HH:mm:ss tt")</b> </p>
+
+            <div class="d-lg-flex d-md-flex d-block order_detail_parent_div">
+                <div class="order-details">
+                    @if (!Model.PickupInStore)
+                    {
+                        <p><b>@T("Common.shiptotitle") : @Model.ShippingAddress.FirstName @Model.ShippingAddress.LastName</b></p>
+                    }
+                    <p><b>@T("Common.Ship.Address.Title")</b></p>
+                    <p>
+                        @if (Model.ShippingAddress.StreetAddressEnabled && !string.IsNullOrEmpty(Model.ShippingAddress.Address1))
+                        {
+                            @Model.ShippingAddress.Address1
+
+                            <br>
+                        }
+                        @if (Model.ShippingAddress.StreetAddress2Enabled && !string.IsNullOrEmpty(Model.ShippingAddress.Address2))
+                        {
+                            @Model.ShippingAddress.Address2
+
+                            <br>
+                        }
+                        @if (Model.ShippingAddress.CountyEnabled && !string.IsNullOrEmpty(Model.ShippingAddress.County))
+                        {
+                            @Model.ShippingAddress.County
+                            <text>,</text>
+
+                        }
+                        @if (Model.ShippingAddress.CityEnabled && !string.IsNullOrEmpty(Model.ShippingAddress.City))
+                        {
+                            @Model.ShippingAddress.City
+                            <text>,</text>
+                        }
+
+                        @if (Model.ShippingAddress.StateProvinceEnabled && !string.IsNullOrEmpty(Model.ShippingAddress.StateProvinceName))
+                        {
+                            @Model.ShippingAddress.StateProvinceName
+                            @if (Model.ShippingAddress.ZipPostalCodeEnabled && !string.IsNullOrEmpty(Model.ShippingAddress.ZipPostalCode))
+                            {
+                                <text>,</text>
+                            }
+                        }
+                        @if (Model.ShippingAddress.ZipPostalCodeEnabled && !string.IsNullOrEmpty(Model.ShippingAddress.ZipPostalCode))
+                        {
+                            @Model.ShippingAddress.ZipPostalCode
+                        }
+                        <br>
+                        @Model.ShippingAddress.CountryName
+                    </p>
+                </div>
+
+                <div class="order-details">
+                    <p><b>@T("Common.Billtotitle") : @Model.BillingAddress.FirstName @Model.BillingAddress.LastName</b></p>
+                    <p><b>@T("Common.Bill.Address.Title")</b></p>
+                    <p>
+                        @if (Model.BillingAddress.StreetAddressEnabled && !string.IsNullOrEmpty(Model.BillingAddress.Address1))
+                        {
+                            @Model.BillingAddress.Address1
+
+                            <br>
+                        }
+                        @if (Model.BillingAddress.StreetAddress2Enabled && !string.IsNullOrEmpty(Model.BillingAddress.Address2))
+                        {
+                            @Model.BillingAddress.Address2
+
+                            <br>
+                        }
+                        @if (Model.BillingAddress.CountyEnabled && !string.IsNullOrEmpty(Model.BillingAddress.County))
+                        {
+                            @Model.BillingAddress.County
+                            <text>,</text>
+
+                        }
+                        @if (Model.BillingAddress.CityEnabled && !string.IsNullOrEmpty(Model.BillingAddress.City))
+                        {
+                            @Model.BillingAddress.City
+                            <text>,</text>
+                        }
+
+                        @if (Model.BillingAddress.StateProvinceEnabled && !string.IsNullOrEmpty(Model.BillingAddress.StateProvinceName))
+                        {
+                            @Model.BillingAddress.StateProvinceName
+                            @if (Model.BillingAddress.ZipPostalCodeEnabled && !string.IsNullOrEmpty(Model.BillingAddress.ZipPostalCode))
+                            {
+                                <text>,</text>
+                            }
+                        }
+                        @if (Model.BillingAddress.ZipPostalCodeEnabled && !string.IsNullOrEmpty(Model.BillingAddress.ZipPostalCode))
+                        {
+                            @Model.BillingAddress.ZipPostalCode
+                        }
+                        <br>
+                        @Model.BillingAddress.CountryName
+                    </p>
+                </div>
+
+                <div class="order-details">
+                    <p><b>@T("Common.PaymentMethod") : @Model.PaymentMethod @(string.IsNullOrEmpty(Model.CreditCardNumber) ? "" : "| " + Model.CreditCardNumber)</b></p>
+                    <p><b>@T("Common.ShippingMethod") : @Model.ShippingMethod</b></p>
+                </div>
+            </div>
+
+
+        </div>
+
+
+        <div class="section-3">
+            <div class="container">
+
+                @foreach (var item in Model.Items)
+                {
+                    <div class="row">
+                        <div class="col-12 col-md-7 col-lg-6">
+                            <div class="section-3-contant-1">
+                                <div class="row align-items-lg-center align-items-md-start">
+
+                                    <div class="section-3-order-details col-12 col-md-6 col-lg-4 ">
+                                        <img src="@item.ImageUrl" style="width:90px;height:90px" />
+                                    </div>
+
+                                    <div class="col-12  col-md-6 col-lg-8  margin-top">
+                                        <p>
+                                            <a href="@Url.RouteUrl("Product", new {id=item.ProductId, SeName = item.ProductSeName })">@item.ProductName</a>
+                                            <b>@T("order.product(s).sku")</b> :  @item.Sku
+                                        </p>
+
+                                        @{
+                                            if (!string.IsNullOrEmpty(item.AttributeInfo))
+                                            {
+                                                string[] attrs = item.AttributeInfo.Split(new String[] { "<br />" }, StringSplitOptions.None);
+                                                if (attrs.Length > 0)
+                                                {
+                                                    <p>
+                                                        @foreach (var attr in attrs)
+                                                        {
+                                                            string[] attrsParts = attr.Split(':');
+                                                            @Html.Raw("<b>" + attrsParts[0] + ":</b>" + System.Net.WebUtility.HtmlDecode(string.Join(':', attrsParts.Skip(1))))
+                                                            <br />
+                                                        }
+                                                    </p>
+                                                }
+                                            }
+
+                                        }
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            @if (!string.IsNullOrEmpty(item.SpecialInstructions))
+                            {
+                                <p class="mt-4"><b>@T("cOMMON.Common.Note") :</b>@Html.Raw(item.SpecialInstructions)</p>
+                            }
+                        </div>
+
+                        <div class="col-md-2 d-flex align-items-lg-center align-items-md-start">
+                            <div class="section-3-order-details-price">
+                                <p>@T("Order.Product(s).Price"): @item.UnitPrice <br>@T("Order.Product(s).Quantity"): @item.Quantity</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-lg-center align-items-md-start justify-content-lg-center justify-content-md-center">
+                            <div class=" text-md-right text-lg-right ">
+                                <p class="m-0">@item.SubTotal</p>
+                                @if (!string.IsNullOrEmpty(item.MembershipDiscountIncTax))
+                                {
+                                    <br />
+                                    <p class="text-danger m-0"> @T("shoppingcart.Item.MembershipDiscount", item.MembershipDiscountIncTax)</p>
+                                }
+                                @if (!string.IsNullOrEmpty(item.OfferDiscountIncTax))
+                                {
+                                    <br />
+                                    <p class="text-danger m-0"> @item.OfferDiscountIncTax</p>
+                                }
+                                @if (!string.IsNullOrEmpty(item.BuyMoreSaveMoreDiscountIncTax))
+                                {
+                                    <br />
+                                    <p class="text-danger m-0">@item.BuyMoreSaveMoreDiscountIncTax</p>
+                                }
+                                @if (!string.IsNullOrEmpty(item.TotalDiscount))
+                                {
+                                    <br />
+                                    <span class="product-subtotal discount float-left pt-2" style="color:red"> @item.TotalDiscount</span>
+                                }
+
+
+                                <p class="m-0"><b>@T("Order.Product(s).ItemTotal"):</b> @item.ItemTotal</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+
+
+
+
+
+
+            </div>
+        </div>
+        <div class=" d-lg-flex d-md-flex d-block section-4">
+            <div class="col-12 col-md-8 col-lg-8 margin-top">
+                @if (Model.OrderNotes.Count > 0)
+                {
+                    <p class="text-break"><b>@T("Order.ordernotes")</b></p>
+                    foreach (var note in Model.OrderNotes)
+                    {
+                        <p class="text-break">
+                            @note.Note
+                        </p>
+                    }
+                }
+                <p class="text-break">
+                    @T("Order.confirmation.Tracking.Text", @orderLink)
+                </p>
+                <p>
+                    @T("Order.confirmation.Products.Text")
+                </p>
+
+                <p>
+                    <b>
+                        Regards,<br>
+                        The Team at Sierra Living Concepts
+                    </b>
+                </p>
+            </div>
+
+            <div class="col-12 col-md-4 col-lg-4 text-md-right text-lg-right">
+
+
+
+                <p>@T("Order.SubTotal") :<b>@Model.OrderSubtotal</b></p>
+                @if (!string.IsNullOrEmpty(Model.MembershipFee))
+                {
+                    <p>@T("ShoppingCart.Totals.MemberShipFee") :<b>@Model.MembershipFee</b></p>
+                }
+                @if (!string.IsNullOrEmpty(Model.MembershipFeeDiscount))
+                {
+                    <p>@T("ShoppingCart.Totals.MemberShipFee.Discount") :<b>@Model.MembershipFeeDiscount</b></p>
+                }
+                @if (!string.IsNullOrEmpty(Model.MembershipDiscountIncTax))
+                {
+                    <p>@T("ShoppingCart.Totals.MemberShipDiscount") :<b class="discount">@Model.MembershipDiscountIncTax</b></p>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.OfferDiscountIncTax))
+                {
+                    <p>@T("ShoppingCart.Totals.offerDiscount") :<b class="discount">@Model.OfferDiscountIncTax</b></p>
+                }
+
+
+                @if (!string.IsNullOrEmpty(Model.BuyMoreSaveMoreDiscountIncTax))
+                {
+                    <p>@T("ShoppingCart.Totals.BuyMoreSaveMoreDiscount") :<b class="discount">@Model.BuyMoreSaveMoreDiscountIncTax</b></p>
+                }
+                @if (!string.IsNullOrEmpty(Model.OrderSubTotalDiscount))
+                {
+                    <p>@T("Order.SubTotalDiscount") :<b class="discount">@Model.OrderSubTotalDiscount</b></p>
+                }
+                @if (Model.IsShippable)
+                {
+                    @if (Model.ShippingMethod == @T("freeshipping.method.name").Value ||
+                 Model.ShippingMethod == @T("WhiteGloveService.method.name").Value)
+                    {
+                        <p>
+                            @T("ShoppingCart.Totals.Shipping") @(T("freeshipping.method.display", T("freeshipping.method.name").Value)) :
+                            <b>
+                                @if (Model.ShippingMethod == @T("freeshipping.method.name").Value)
+                                {
+                                    @Html.Raw(Model.OrderShipping)
+                                }
+                                else
+                                {
+                                    @Html.Raw("Free")
+                                }
+                            </b>
+                        </p>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.ShippingMethod)
+                 && Model.ShippingMethod != @T("freeshipping.method.name").Value)
+                    {
+                        <p>@Model.ShippingMethod :<b>  @Model.OrderShipping</b></p>
+                    }
+
+                    if (!string.IsNullOrEmpty(Model.AdditonalShippingCharges))
+                    {
+                        <p>@T("shoppingcart.shipping.additionalfee") :<b>  @Model.AdditonalShippingCharges</b></p>
+                    }
+                }
+
+                @if (!string.IsNullOrEmpty(Model.PaymentMethodAdditionalFee))
+                {
+                    <p>@T("Order.PaymentMethodAdditionalFee") :<b>  @Model.PaymentMethodAdditionalFee</b></p>
+                }
+
+                @if (Model.DisplayTaxRates && Model.TaxRates.Count > 0)
+                {
+                    foreach (var taxRate in Model.TaxRates)
+                    {
+
+                        <p>@string.Format(T("Order.TaxRateLine").Text, taxRate.Rate) :<b>  @taxRate.Value</b></p>
+                    }
+                }
+                @if (!string.IsNullOrEmpty(Model.CustomDuty))
+                {
+                    <p> @T("ShoppingCart.Totals.CustomDuty", Model.CustomDutyPercentage) :<b>  @Model.CustomDuty</b></p>
+                }
+                @if (Model.DisplayTax)
+                {
+                    if (!Model.Taxes.Where(t => t.TaxType != Nop.Services.Tax.TaxType.Tax && t.TaxRate > 0).Any())
+                    {
+                        <p>@T("OrderDetail.Tax", Model.ShippingAddress?.ZipPostalCode, Model.TaxRates.Count > 0 ? "(" + Model.TaxRates.FirstOrDefault().Rate + "% )" : "") :<b>  @Model.Tax</b></p>
+                    }
+                    else
+                    {
+                        <p>@T("ShoppingCart.Totals.DisplayTax.Info")<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></p>
+
+                        @foreach (var taxInfo in Model.Taxes.Where(t => t.TaxRate > 0))
+                        {
+                            <p><span style="text-transform: uppercase;">@T("Canada.Tax.Label", taxInfo.TaxType.ToString(), taxInfo.TaxRate.ToString("F2"))</span> :<b>  @await _priceFormatter.FormatPriceAsync(taxInfo.Amount, true, false)</b></p>
+
+                        }
+                    }
+                }
+
+                @if (!string.IsNullOrEmpty(Model.OrderTotalDiscount))
+
+                {
+                    <p>@T("Order.TotalDiscount") :<b>  @Model.OrderTotalDiscount</b></p>
+                }
+
+                <p>@T("Order.OrderTotal") :<b class="discount">@Model.OrderTotal</b></p>
+
+
+
+
+
+            </div>
+        </div>
+        <div class="accordion-section">
+            <div id="accordion" class="accordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            @T("Product.Shipping .Delivery.Tab.heading")
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse " aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "shipping-delivery" })
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            @T("Product.Returns.Cancellation.Tab.heading")
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "return-policy" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+
+
+
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CheckoutCompletedBottom, additionalData = Model })
+    </div>
+</div>
+<img width="1" height="1" src="https://shareasale.com/sale.cfm?amount=@(Model.OrderSubtotal.Replace("$", "").Replace(",", ""))&tracking=@(Model.Id)&transtype=sale&merchantID=72541" />
+@{
+    var products = new List<dynamic>();
+    var line_items = new List<dynamic>();
+    var index = 0;
+    foreach (var item in Model.Items)
+    {
+        var product = new
+        {
+            product_id = item.ProductId,
+            item_id =$"{item.ProductId}-{item.VariantId}--",
+            index = index,
+            item_sku = item.Sku,
+            item_name = item.ProductName,
+            price = decimal.TryParse(item.SubTotal.Replace("$", "").Replace(",", ""), out decimal Price) ? Price : 0,
+            quantity = item.Quantity,
+            item_variant = item.VariantId
+        };
+        line_items.Add(new { product_id = item.ProductId + "-" + item.VariantId + "--" });
+        products.Add(product);
+        index++;
+    }
+
+    var orderDetails = new
+    {
+
+        transaction_id = Model.Id,
+        affiliation = "Sierra Living Concepts",
+        brand = "sierralivingconcepts",
+        item_category = " ",
+        type = "Sales",
+        value = decimal.TryParse(Model.OrderTotal.Replace("$", "").Replace(",", ""), out decimal TransactionTotal) ? TransactionTotal : 0,
+        shipping = decimal.TryParse(Model.OrderShipping.Replace("$", "").Replace(",", ""), out decimal shipping) ? shipping : 0,
+        tax = decimal.TryParse(Model.Tax.Replace("$", "").Replace(",", ""), out decimal tax) ? tax : 0,
+        payment_type = Model.PaymentMethod,
+        currency = currencyCode,
+        items = products,
+        send_to = "G-KZS8HKJ18D",
+        content_ids = string.Join(",", @products.Select(p => p.product_id))
+    };
+
+
+
+}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var phoneNumber = '@(Model.ShippingAddress?.PhoneNumber ?? "")';
+        phoneNumber = phoneNumber.replace(/ /g, "").replace(/-/g, "");
+        var country = '@(Model.ShippingAddress?.CountryName ?? "")';
+        var countryCode = country == "" ? "" : "+1";
+        phoneNumber = countryCode + phoneNumber;
+        if ('@Model.OrderConfirmed' != 'True') {
+
+            // if (gtag) {
+            //     gtag('set', 'user_data', {
+            //         "email": '@Model.Email',
+            //         "phone_number": phoneNumber,
+            //         "address": {
+            //             "first_name": '@Model.ShippingAddress?.FirstName',
+            //             "last_name": '@Model.ShippingAddress?.LastName',
+            //             "street": '@Model.ShippingAddress?.Address1',
+            //             "city": '@Model.ShippingAddress?.City',
+            //             "region": '@Model.ShippingAddress?.County',
+            //             "postal_code": '@Model.ShippingAddress?.ZipPostalCode',
+            //             "country": '@(Model.ShippingAddress?.CountryTwoLetterSeoCode ?? "")'
+            //         }
+
+            //     });
+            // }
+
+
+            // for puchase gtag Nikhil
+            if (typeof gtag_purchase_report_conversion === "function") {
+            //   gtag_purchase_report_conversion(@Html.Raw(Json.Serialize(orderDetails.value)), @Html.Raw(Json.Serialize(orderDetails.transaction_id)));
+            }
+           // if (gtag) {
+
+               // gtag('event', 'purchase', @Html.Raw(Json.Serialize(orderDetails)));
+          //  }
+
+            // bing purchase script
+            if (window.uetq) {
+
+                window.uetq.push('event', 'purchase', {
+                    "revenue_value": @orderDetails.value,
+                    "currency": "USD"
+                });
+
+                window.uetq.push('set', {
+                    'pid': {
+                        'em': '@Model.Email', // Replace with the variable that holds the user's email address.
+                        'ph': phoneNumber, // Replace with the variable that holds the user's phone number.
+                    }
+                });
+            }
+            // end
+
+
+            var productIds = "@string.Join(",", @products.Select(p => p.product_id))";
+            window.dataLayer.push({
+                'event': 'purchase',
+                'ecommerce': {
+                    'transaction_id': '@Model.Id',
+                    'affiliation': 'Sierra Living Concepts',
+                    'value': @(decimal.TryParse(Model.OrderTotal.Replace("$", "").Replace(",", ""), out decimal val) ? val : 0),
+                    'tax': @(decimal.TryParse(Model.Tax.Replace("$", "").Replace(",", ""), out decimal t) ? t : 0),
+                    'shipping': @(decimal.TryParse(Model.OrderShipping.Replace("$", "").Replace(",", ""), out decimal s) ? s : 0),
+                    'currency': '@currencyCode',
+                    'payment_type': '@Model.PaymentMethod',
+                    'items': @Html.Raw(Json.Serialize(products)),
+                    'order_quantity': @(Model.Items.Sum(i => i.Quantity)),
+                    'line_items': @(Html.Raw(Json.Serialize(line_items))),
+                    'content_ids': productIds,
+                       },'user_data': {
+                    'email': '@Model.Email',
+                    "phone_number": phoneNumber,
+                    'address': {
+                        "first_name": '@Model.ShippingAddress?.FirstName',
+                        "last_name": '@Model.ShippingAddress?.LastName',
+                        "street": '@Model.ShippingAddress?.Address1',
+                        "city": '@Model.ShippingAddress?.City',
+                        "region": '@Model.ShippingAddress?.County',
+                        "postal_code": '@Model.ShippingAddress?.ZipPostalCode',
+                        "state": '@(Model.ShippingAddress?.StateAbbreviation ?? "")',
+                        "externalid": '@((await _workContext.GetCurrentCustomerAsync())?.Id)',
+                        "country": '@(Model.ShippingAddress?.CountryTwoLetterSeoCode ?? "")'
+                    }
+                       }
+            });
+
+            // facebook
+            // var productIds = "@string.Join(",", @products.Select(p => p.product_id))";
+            // dataLayer.push({
+            //     'event': 'Fb-purchase',
+            //     content_ids: productIds,
+            //     value: @orderDetails.value,
+
+            // });
+
+            // end
+
+            // pinterest
+            @*if (window.pintrk) {
+
+                pintrk('track', 'checkout', {
+
+                    value: '@(decimal.TryParse(Model.OrderTotal.Replace("$", "").Replace(",", ""), out decimal total) ? total : 0)',
+                    order_quantity: '@(Model.Items.Sum(i => i.Quantity))',
+                    currency: 'USD',
+                    order_id: '@(Model.Id)',
+                    line_items: @(Html.Raw(Json.Serialize(line_items)))
+
+                    });
+            }*@
+
+            // end
+        }
+    });
+</script>
