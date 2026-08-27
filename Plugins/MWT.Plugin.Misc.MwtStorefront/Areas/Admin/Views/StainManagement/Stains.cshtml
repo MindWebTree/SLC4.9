@@ -1,0 +1,125 @@
+﻿@model ProductAttributeModel
+
+
+<div class="content-header clearfix" bis_skin_checked="1">
+    <h1>@T("Admin.Catalog.Attributes.ProductAttributes.PredefinedValues.Stain.Image.heading")</h1>
+
+</div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="card card-default card-search" >
+                <div class="card-body">
+                    <div class="row search-row" data-hideAttribute="stain-search">
+                        <div class="search-text">@T("Admin.Common.Search")</div>
+                        <div class="icon-search"><i class="fas fa-search" aria-hidden="true"></i></div>
+
+                    </div>
+
+                    <div class="search-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <nop-label asp-for="PredefinedProductAttributeValueSearchModel.SearchTerm" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input class="form-control text-box single-line" id="SearchTerm" name="SearchTerm" type="text" value="">
+                                    </div>
+                                </div>
+                                
+                                
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="text-center col-12">
+                                <button type="button" id="search-stain" class="btn btn-primary btn-search">
+                                    <i class="fas fa-search"></i>
+                                    @T("Admin.Common.Search")
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <form id="productImage">
+                <div class="card-body">
+                    @await Html.PartialAsync("Table", new DataTablesModel
+               {
+                   Name = "productattributevalues-grid",
+                   UrlRead = new DataUrl("Stains", "StainManagement",
+                   new RouteValueDictionary {
+                       [nameof(Model.PredefinedProductAttributeValueSearchModel.ProductAttributeId)] =
+                       Model.PredefinedProductAttributeValueSearchModel.ProductAttributeId
+                   }),
+                   
+                   Length = Model.PredefinedProductAttributeValueSearchModel.PageSize,
+                   LengthMenu = Model.PredefinedProductAttributeValueSearchModel.AvailablePageSizes,
+                   SearchButtonId = "search-stain",
+                   Filters = new List<FilterParameter>
+                        {
+                       new FilterParameter("SearchTerm")
+                        },
+                   ColumnCollection = new List<ColumnProperty>
+                        {
+
+                        new ColumnProperty(nameof(PredefinedProductAttributeValueModel.Name))
+                        {
+                            Title = T("Admin.Catalog.Products.PredefinedProductAttributeValueModel.Attributes.Values.Fields.Name").Text,
+                            Width = "200"
+                        },
+                          new ColumnProperty(nameof(PredefinedProductAttributeValueModel.Image))
+                        {
+                            Title = T("Admin.Catalog.Products.ProductAttributes.PredefinedProductAttributeValueModel.Values.Fields.Image").Text,
+                            Width = "200",
+                            Render = new RenderCustom("renderPicturesColumnProductPictureUrl")
+                        },
+                       new ColumnProperty(nameof(PredefinedProductAttributeValueModel.Id))
+                                {
+                                    Title = T("Admin.Common.Edit").Text,
+                                    Width = "100",
+                                    ClassName =  NopColumnClassDefaults.Button,
+                                    Render = new RenderCustom("renderColumnEdit")
+                                },
+
+                    }
+               })
+
+                    <script>
+        function renderColumnEdit(data, type, row, meta) {
+
+                return '<button onclick=\"javascript:OpenWindow(\'@Url.Content("~/Admin/StainManagement/StainsEdit?stain=")' + row.Name + '&btnId=btnRefresh&formId=productImage\', 800, 750, true); return false;\" class="btn btn-default"><i class="fas fa-pencil-alt"></i>@T("Admin.Common.Edit").Text</button>';
+            }
+                    </script>
+
+                </div>
+                <div class="card-footer">
+                    <button type="submit" id="btnRefresh" style="display: none"></button>
+                    <script>
+                        $(document).ready(function () {
+                            $('#btnRefresh').click(function () {
+                                updateTable('#productattributevalues-grid');
+
+
+                                return false;
+                            });
+                        });
+                    </script>
+                </div>
+            </form>
+
+            <script>
+                function renderPicturesColumnProductPictureUrl(data, type, row, meta) {
+                    var hostname = window.location.origin;
+                    var imagePathWithoutTilde = row.Image.replace(/^~/, '');
+                    var fullImagePath = hostname + imagePathWithoutTilde;
+
+                    return '<a href="' + fullImagePath + '" target="_blank"><img alt="' + row.Id + '" src="' + fullImagePath + '" width="150" /></a>';
+                }
+            </script>
+
+
+
+        </div>
+    </div>
+</section>

@@ -115,23 +115,6 @@ public partial class AdminMenu : IAdminMenu
                         },
                         new()
                         {
-                            SystemName = "Question Answer",
-                            Title = await _localizationService.GetResourceAsync("Admin.Catalog.QuestionAnswer"),
-                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_QA_VIEW},
-                            Url = GetMenuItemUrl("QuestionAnswer", "List"),
-                            IconClass = "far fa-dot-circle"
-                        },
-                        new()
-                        {
-                            SystemName = "Landing Page",
-                            Title = await _localizationService.GetResourceAsync("Admin.Catalog.LandingPage"),
-                            PermissionNames = new List<string> { StandardPermission.Catalog.CATEGORIES_VIEW },
-                            Url = GetMenuItemUrl("LandingPage", "List"),
-                            IconClass = "far fa-dot-circle"
-                        },
-
-                        new()
-                        {
                             SystemName = "Manufacturers",
                             Title = await _localizationService.GetResourceAsync("Admin.Catalog.Manufacturers"),
                             PermissionNames = new List<string> { StandardPermission.Catalog.MANUFACTURER_VIEW },
@@ -999,80 +982,6 @@ public partial class AdminMenu : IAdminMenu
                         }
                     }
                 },
-                       new()
-                {
-                    SystemName = "Utilities",
-                    Title = await _localizationService.GetResourceAsync("Admin.Utilities"),
-                    IconClass = "fas fa-chart-line",
-                    PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES},
-                    ChildNodes = new List<AdminMenuItem>
-                    {
-                        new()
-                        {
-                            SystemName = "Products Notes Management",
-                            Title = await _localizationService.GetResourceAsync("Admin.Utilities.ProductsNotesManagement"),
-                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES},
-                            Url = GetMenuItemUrl("Utilities", "ProductNotesManagement"),
-                            IconClass = "far fa-dot-circle"
-                        } ,
-                        new()
-                        {
-                            SystemName = "Bulk Product Mapping",
-                            Title = await _localizationService.GetResourceAsync("Admin.Utilities.MarketingManagement"),
-                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES},
-                            Url = GetMenuItemUrl("Utilities", "Marketing"),
-                            IconClass = "far fa-dot-circle"
-                        } ,
-                        new()
-                        {
-                            SystemName = "Marketing Management",
-                            Title = await _localizationService.GetResourceAsync("Admin.Utilities.BulkProductMapping"),
-                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES},
-                            Url = GetMenuItemUrl("Utilities", "BulkProductMapping"),
-                            IconClass = "far fa-dot-circle"
-                        } ,
-                        new()
-                        {
-                            SystemName = "Testimonials",
-                            Title = await _localizationService.GetResourceAsync("Admin.Utilities.Testimonials"),
-                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES},
-                            Url = GetMenuItemUrl("Utilities", "Testimonials"),
-                            IconClass = "far fa-dot-circle"
-                        } ,
-                        new()
-                        {
-                            SystemName = "Custom Forms",
-                            Title = await _localizationService.GetResourceAsync("Admin.Utilities.CustomForms"),
-                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES},
-                            Url = GetMenuItemUrl("CustomForm", "Index"),
-                            IconClass = "far fa-dot-circle"
-                        },
-                          new()
-                        {
-                            SystemName = "Campaign Management",
-                            Title = await _localizationService.GetResourceAsync("Admin.Utilities.CampaignManagement"),
-                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES },
-                            Url = GetMenuItemUrl("CampaignManagement", "List"),
-                            IconClass = "far fa-dot-circle"
-                        },
-                          new()
-                        {
-                            SystemName = "Integrity Reports",
-                            Title = await _localizationService.GetResourceAsync("Admin.Utilities.IntegrityReports"),
-                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES },
-                            Url = GetMenuItemUrl("IntegrityReport", "Product"),
-                            IconClass = "far fa-dot-circle"
-                        },
-                          new()
-                        {
-                            SystemName = "PostDelivery",
-                            Title = await _localizationService.GetResourceAsync("Admin.Utilities.PostDelivery"),
-                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES },
-                            Url = GetMenuItemUrl("PostDelivery", "Index"),
-                            IconClass = "far fa-dot-circle"
-                        },
-                    }
-                },
                 //help
                 new()
                 {
@@ -1123,24 +1032,6 @@ public partial class AdminMenu : IAdminMenu
                         }
                     }
                 },
-                  new()
-                {
-                    SystemName = "Custom.TagPages",
-                    Title = await _localizationService.GetResourceAsync("Admin.TagPages"),
-                    IconClass = "fa fa-tags",
-                      ChildNodes = new List<AdminMenuItem>
-                    {
-                        new()
-                        {
-                            SystemName = "Custom.TagPages.TagSlugs",
-                            Title ="Tag Slugs (1st segment)",
-                            PermissionNames = new List<string> { StandardPermission.CustomPermission.CUSTOM_ACCESS_UTILITITES},
-                            Url = GetMenuItemUrl("TagAdmin", "TagSlugs"),
-                            IconClass = "fa fa-tag"
-                        },
-
-                    }
-                  },
                 //third party plugins
                 new()
                 {

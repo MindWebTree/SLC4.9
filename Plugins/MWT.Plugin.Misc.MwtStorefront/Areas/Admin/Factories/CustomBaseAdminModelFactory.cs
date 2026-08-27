@@ -32,24 +32,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories
         {
         }
 
-        #region Methods
-
-        public virtual async Task PrepareKWTemplatesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null)
-        {
-            if (items == null)
-                throw new ArgumentNullException(nameof(items));
-
-            //prepare available category templates
-            var _kwTemplatetService = EngineContext.Current.Resolve<IKwTemplateService>();
-            var availableTemplates = await _kwTemplatetService.GetAllKwTemplatesAsync();
-            foreach (var template in availableTemplates)
-            {
-                items.Add(new SelectListItem { Value = template.Id.ToString(), Text = template.Name });
-            }
-
-            //insert special item for the default value
-            await PrepareDefaultItemAsync(items, withSpecialDefaultItem, defaultItemText);
-        }
+        #region Methods 
 
         public virtual async Task PrepareQuestionAnswerTemplatesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null)
         {

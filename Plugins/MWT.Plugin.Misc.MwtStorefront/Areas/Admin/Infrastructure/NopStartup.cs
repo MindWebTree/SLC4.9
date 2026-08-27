@@ -33,6 +33,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Infrastructure
             services.AddScoped<ICampaignManagementModelFactory, CampaignManagementModelFactory>(); 
             services.AddScoped<IPostDeliveryQueueEmailModelFactory, PostDeliveryQueueEmailModelFactory>();
             services.AddScoped<IIntegrityReportModelFactory, IntegrityReportModelFactory>();
+            services.AddScoped<ISecurityModelExtendedFactory, SecurityModelExtendedFactory>();
 
 
         }

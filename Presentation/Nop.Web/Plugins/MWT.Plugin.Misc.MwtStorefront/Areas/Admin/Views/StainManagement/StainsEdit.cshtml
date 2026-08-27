@@ -1,0 +1,123 @@
+﻿@model PredefinedProductAttributeValueModel
+
+@{
+    Layout = "_AdminPopupLayout";
+    // page title
+    ViewBag.PageTitle = T("Admin.Catalog.Attributes.ProductAttributes.PredefinedValues.Stain.Image").Text;
+}
+@if (ViewBag.RefreshPage == true)
+{
+    <script>
+        try {window.opener.document.forms['@(Context.Request.Query["formId"])'].@(Context.Request.Query["btnId"]).click();}
+        catch (e) { }
+        window.close();
+    </script>
+}
+
+<form asp-controller="StainManagement" asp-action="StainsEdit"
+      asp-route-btnId="@Context.Request.Query["btnId"]"
+      asp-route-formId="@Context.Request.Query["formId"]" method="post" enctype="multipart/form-data">
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            @T("Admin.Catalog.Attributes.ProductAttributes.PredefinedValues.Stain.Image")
+        </h1>
+        <button type="button" class="btn btn-danger float-right" onclick="closeTab()">
+            <i class="fas fa-times"></i>
+            @T("common.close")
+        </button>
+    </div>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="form-horizontal">
+                <div class="form-horizontal">
+                    <div class="cards-group">
+                        <div class="card card-default card-popup">
+                            <div class="card-body">
+                                @Html.AntiForgeryToken()
+
+                                <div class="form-group">
+                                    <h1 for="stain">@Model.Name</h1>
+                                    <input type="hidden" name="stain" value="@Model.Name" />
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="Image" />
+                                    </div>
+                                    <div class="col-md-9">
+
+                                        @if (Model.Image != "NA")
+                                        {
+                                            <img src="@Url.Content(Model.Image)" />
+                                        }
+                                        else
+                                        {
+                                            <span>No image available</span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <div class="label-wrapper" bis_skin_checked="1">
+                                            <label for="imagefile">@T("Admin.Catalog.Products.ProductAttributes.PredefinedProductAttributeValueModel.Values.Fields.UploadImage")</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <input type="file" id="uploadedFile" name="uploadedFile" accept="image/jpeg" />
+                                        <span id="fileError" style="color: red;"></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <center>
+                                            <button type="submit" name="save" class="btn btn-primary" onclick="return validateForm()">
+                                                <i class="far fa-save"></i>
+                                                @T("Admin.Common.Save")
+                                            </button>
+                                        </center>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </section>
+</form>
+
+<script>
+    function closeTab() {
+        if (window.opener && !window.opener.closed) {
+            window.close();
+        } else if (window.parent) {
+            var iframe = window.frameElement;
+            if (iframe) {
+                var parentWindow = window.parent;
+                parentWindow.postMessage('closeTab', '*');
+            }
+        } else {
+            window.close();
+        }
+    }
+
+    function validateForm() {
+        var fileInput = document.getElementById('uploadedFile');
+        var fileError = document.getElementById('fileError');
+
+        if (fileInput.files.length === 0) {
+            fileError.textContent = 'Please upload a file.';
+            return false;
+        }
+
+        var allowedExtensions = /(\.jpg)$/i;
+        if (!allowedExtensions.exec(fileInput.value)) {
+            fileError.textContent = 'Only JPG files are allowed.';
+            fileInput.value = '';
+            return false;
+        }
+
+        fileError.textContent = '';
+        return true;
+    }
+</script>

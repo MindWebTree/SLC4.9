@@ -34,6 +34,7 @@ using MWT.Nop.Core.Services.QA;
 using MWT.Nop.Core.Services.QuickFilters;
 using MWT.Nop.Core.Services.Search;
 using MWT.Nop.Core.Services.Search.RewardClaim;
+using MWT.Nop.Core.Services.Security;
 using MWT.Nop.Core.Services.Seo;
 using MWT.Nop.Core.Services.Shared;
 using MWT.Nop.Core.Services.TagPage;
@@ -106,6 +107,8 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<IPostDeliveryService, PostDeliveryService>();
             services.AddScoped<IExportExtendedManager, ExportExtendedManager>();
             services.AddScoped<IImportExtendedManager, ImportExtendedManager>();
+            services.AddScoped<ICustomerExtendedService, CustomerExtendedService>();
+            services.AddScoped<IPermissionExtendedService, PermissionExtendedService>();
 
             #region Tag
             services.AddScoped<ITagSlugService, TagSlugService>();

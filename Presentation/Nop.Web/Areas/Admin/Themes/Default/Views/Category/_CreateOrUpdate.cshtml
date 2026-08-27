@@ -56,51 +56,52 @@
 
             <nop-cards id="category-cards">
 
-                 @*<div class="@(!(await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessCategoryInfo)) ? "card-hide" : "")"> *@
+                <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_CATEGORY_INFO)) ? "card-hide" : "")">
 
-                <nop-card asp-name="category-info" asp-icon="fas fa-info" asp-title="@T("Admin.Catalog.Categories.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Info", Model)</nop-card>
-                 @*</div> *@
+                    <nop-card asp-name="category-info" asp-icon="fas fa-info" asp-title="@T("Admin.Catalog.Categories.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Info", Model)</nop-card>
+                </div>
 
-                 @*<div class="@(!(await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessCategoryDisplay)) ? "card-hide" : "")"> *@
-                <nop-card asp-name="category-display" asp-icon="fas fa-tv" asp-title="@T("Admin.Catalog.Categories.Display")" asp-hide-block-attribute-name="@hideDisplayBlockAttributeName" asp-hide="@hideDisplayBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Display", Model)</nop-card>
-                <nop-card asp-name="category-display-custom" asp-icon="fas fa-tv" asp-title="@T("Admin.Catalog.Categories.Display.Custom")" asp-hide-block-attribute-name="@hideDisplayBlockAttributeName" asp-hide="@hideDisplayBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Display.Custom", Model)</nop-card>
-                @*div> *@
+                <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_CATEGORY_DISPLAY)) ? "card-hide" : "")">
+                    <nop-card asp-name="category-display" asp-icon="fas fa-tv" asp-title="@T("Admin.Catalog.Categories.Display")" asp-hide-block-attribute-name="@hideDisplayBlockAttributeName" asp-hide="@hideDisplayBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Display", Model)</nop-card>
+                    <nop-card asp-name="category-display-custom" asp-icon="fas fa-tv" asp-title="@T("Admin.Catalog.Categories.Display.Custom")" asp-hide-block-attribute-name="@hideDisplayBlockAttributeName" asp-hide="@hideDisplayBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Display.Custom", Model)</nop-card>
+                </div>
 
-                @*<div class="@(!(await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessCategoryMappings)) ? "card-hide" : "")"> *@
-                <nop-card asp-name="category-mappings" asp-icon="fas fa-bookmark" asp-title="@T("Admin.Catalog.Categories.Mappings")" asp-hide-block-attribute-name="@hideMappingsBlockAttributeName" asp-hide="@hideMappingsBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.Mappings", Model)</nop-card>
-                @* </div> *@
-               @*  <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessCategorySeo)) ? "card-hide" : "")"> *@
-                <nop-card asp-name="category-seo" asp-icon="fas fa-magnifying-glass-plus" asp-title="@T("Admin.Common.SEO")" asp-hide-block-attribute-name="@hideSeoBlockAttributeName" asp-hide="@hideSeoBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.Seo", Model)</nop-card>
-                @* </div> *@
-               @*<div class="@(!(await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessCategoryProducts)) ? "card-hide" : "")"> *@
-                <nop-card asp-name="category-products" asp-icon="fas fa-table-list" asp-title="@T("Admin.Catalog.Categories.Products")" asp-hide-block-attribute-name="@hideProductsBlockAttributeName" asp-hide="@hideProductsBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.Products", Model)</nop-card>
-               @*</div> *@
-    
-                @* <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessCategoryRelatedSearch)) ? "card-hide" : "")"> *@
+                <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_CATEGORY_MAPPING)) ? "card-hide" : "")">
+                    <nop-card asp-name="category-mappings" asp-icon="fas fa-bookmark" asp-title="@T("Admin.Catalog.Categories.Mappings")" asp-hide-block-attribute-name="@hideMappingsBlockAttributeName" asp-hide="@hideMappingsBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.Mappings", Model)</nop-card>
+                </div>
+                <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_CATEGORY_SEO)) ? "card-hide" : "")">
+                    <nop-card asp-name="category-seo" asp-icon="fas fa-magnifying-glass-plus" asp-title="@T("Admin.Common.SEO")" asp-hide-block-attribute-name="@hideSeoBlockAttributeName" asp-hide="@hideSeoBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.Seo", Model)</nop-card>
+                </div>
+                <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_CATEGORY_PRODUCTS)) ? "card-hide" : "")">
+                    <nop-card asp-name="category-products" asp-icon="fas fa-table-list" asp-title="@T("Admin.Catalog.Categories.Products")" asp-hide-block-attribute-name="@hideProductsBlockAttributeName" asp-hide="@hideProductsBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.Products", Model)</nop-card>
+                </div>
+
+                <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_CATEGORY_RELATED_SEARCH)) ? "card-hide" : "")">
                     <nop-card asp-name="category-RelatedSearch" asp-icon="fas fa-random" asp-title="@T("Admin.Catalog.Products.RelatedSearch")" asp-hide-block-attribute-name="@hideRelatedSearchBlockAttributeName" asp-hide="@hideRelatedSearchBlockBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Relatedearch", Model)</nop-card>
-                @* </div> *@
-                @* <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessCategoryQuickFilter)) ? "card-hide" : "")"> *@
+                </div>
+                <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_CATEGORY_QUICK_FILTER)) ? "card-hide" : "")">
                     <nop-card asp-name="category-QuickFilter" asp-icon="fas fa-random" asp-title="@T("Admin.Catalog.Products.QuickFilter")" asp-hide-block-attribute-name="@hideQuickFilterBlockAttributeName" asp-hide="@hideQuickFilterBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.QuickFilter", Model)</nop-card>
-                @* </div> *@
-               @*  <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessCategoryCollectionLink)) ? "card-hide" : "")"> *@
+                </div>
+                <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_CATEGORY_COLLECTION_LINK)) ? "card-hide" : "")">
                     <nop-card asp-name="category-CollectionLink" asp-icon="fas fa-random" asp-title="@T("Admin.Catalog.Products.CollectionLink")" asp-hide-block-attribute-name="@hideCollectionLinkBlockAttributeName" asp-hide="@hideCollectionLinkBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.CollectionLink", Model)</nop-card>
-                @* </div> *@
-               @*  <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessCategoryProductsFilter)) ? "card-hide" : "")"> *@
+                </div>
+                <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_CATEGORY_PRODUCT_FILTER)) ? "card-hide" : "")">
                     <nop-card asp-name="category-products-filter" asp-icon="fas fa-random" asp-title="@T("Admin.Catalog.Categories.ProductsFilter")" asp-hide-block-attribute-name="@hideProductFilterAttributeName" asp-hide="@hideProductsFilter" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.ProductsFilter", Model)</nop-card>
-                @* </div> *@
-               @*  <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessCategorySuggestedKeyword)) ? "card-hide" : "")"> *@
+                </div>
+                <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_CATEGORY_SUGGESTED_KEYWORD)) ? "card-hide" : "")">
                     <nop-card asp-name="category_SuggestedKeyword_MappingByEntity-specsattributes-options" asp-icon="fas fa-random" asp-title="@T("admin.catalog.category.suggestedkeyword")" asp-hide-block-attribute-name="@hideFilterMappingByEntityBlockAttributeName" asp-hide="@hideFilterMappingByEntityBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.SuggestedKeyword", Model)</nop-card>
-                @* </div> *@
+                </div>
 
-                @* <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessCategoryFAQ)) ? "card-hide" : "")"> *@
+                <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_CATEGORY_FAQ)) ? "card-hide" : "")">
                     <nop-card asp-name="category-Faq" asp-icon="fas fa-random" asp-title="@T("Admin.Catalog.Categories.Faq")"
                               asp-hide-block-attribute-name="@hideFaqBlockAttributeName" asp-hide="@hideFaqBlockBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Faq", Model)</nop-card>
-                @* </div> *@
+                </div>
 
-                @* <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessCategoryATCRecommend)) ? "card-hide" : "")"> *@
+                <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_CATEGORY_ATC_RECOMMEND)) ? "card-hide" : "")">
                     <nop-card asp-name="category-atc-recommend" asp-icon="fas fa-info" asp-title="@T("Admin.Catalog.Categories.ATC.Recommendation")"
                               asp-hide-block-attribute-name="@hideATCRecommendBlockAttributeName" asp-hide="@hideATCBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.ATCRecommend", Model)</nop-card>
                     
+                </div>
                 @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.CategoryDetailsBlock, additionalData = Model })
             </nop-cards>
         </div>

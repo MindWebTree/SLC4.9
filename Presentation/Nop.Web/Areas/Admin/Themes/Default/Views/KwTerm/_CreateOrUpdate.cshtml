@@ -1,0 +1,65 @@
+﻿@model KwTermModel
+
+@{
+    const string hideInfoBlockAttributeName = "KwTermPage.HideInfoBlock";
+    var hideInfoBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideInfoBlockAttributeName);
+
+    const string hideDisplayBlockAttributeName = "KwTermPage.HideDisplayBlock";
+    var hideDisplayBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideDisplayBlockAttributeName, defaultValue: true);
+
+    const string hideMappingsBlockAttributeName = "KwTermPage.HideMappingsBlock";
+    var hideMappingsBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideMappingsBlockAttributeName, defaultValue: true);
+
+    const string hideSeoBlockAttributeName = "KwTermPage.HideSEOBlock";
+    var hideSeoBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideSeoBlockAttributeName, defaultValue: true);
+
+    const string hideProductsBlockAttributeName = "KwTermPage.HideProductsBlock";
+    var hideProductsBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideProductsBlockAttributeName, defaultValue: true);
+
+    const string hideRelatedSearchBlockAttributeName = "KwTermPage.HideRelatedSearchBlock";
+    var hideRelatedSearchBlockBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideRelatedSearchBlockAttributeName, defaultValue: true);
+
+    const string hideFilterMappingByEntityBlockAttributeName = "KwTermPage.HideFilterMappingByEntity";
+    var hideFilterMappingByEntityBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideFilterMappingByEntityBlockAttributeName, defaultValue: true);
+
+    const string hideQuickFilterBlockAttributeName = "KwTermPage.HideQuickFilterBlock";
+    var hideQuickFilterBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideQuickFilterBlockAttributeName, defaultValue: true);
+
+    const string hideCollectionLinkBlockAttributeName = "KwTermPage.HideCollectionLinkBlock";
+    var hideCollectionLinkBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideCollectionLinkBlockAttributeName, defaultValue: true);
+    const string hideCategoriesBlockAttributeName = "KwTermPage.HideCategoriesBlock";
+    var hideCategoriesBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideCategoriesBlockAttributeName, defaultValue: true);
+
+}
+
+<div asp-validation-summary="All"></div>
+<input asp-for="Id" type="hidden" />
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="row">
+                <div class="col-md-12 clearfix">
+                    <div class="float-left">
+                        @await Component.InvokeAsync("SettingMode", new { modeName = "kwterm-advanced-mode" })
+                    </div>
+                </div>
+            </div>
+
+            <nop-cards id="kwterm-cards">
+                <nop-card asp-name="kwterm-info" asp-icon="fas fa-info" asp-title="@T("Admin.Catalog.kwterm.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Info", Model)</nop-card>
+                <nop-card asp-name="kwterm-display" asp-icon="fas fa-tv" asp-title="@T("Admin.Catalog.kwterm.Display")" asp-hide-block-attribute-name="@hideDisplayBlockAttributeName" asp-hide="@hideDisplayBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Display", Model)</nop-card>
+                <nop-card asp-name="kwterm-seo" asp-icon="fas fa-search-plus" asp-title="@T("Admin.Common.SEO")" asp-hide-block-attribute-name="@hideSeoBlockAttributeName" asp-hide="@hideSeoBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.Seo", Model)</nop-card>
+                <nop-card asp-name="kwterm-categories" asp-icon="fas fa-th-list" asp-title="@T("Admin.Catalog.kwterm.Categories")"  asp-hide-block-attribute-name="@hideCategoriesBlockAttributeName" asp-hide="@hideCategoriesBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.Categories", Model)</nop-card>
+                <nop-card asp-name="kwterm-products" asp-icon="fas fa-th-list" asp-title="@T("Admin.Catalog.kwterm.Products")" asp-hide-block-attribute-name="@hideProductsBlockAttributeName" asp-hide="@hideProductsBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.Products", Model)</nop-card>
+                <nop-card asp-name="kwterm-FilterMappingByEntity-specsattributes" asp-icon="fas fa-random" asp-title="@T("Admin.Catalog.Products.FilterMappingByEntity.SpecificationAttributes")" asp-hide-block-attribute-name="@hideFilterMappingByEntityBlockAttributeName" asp-hide="@hideFilterMappingByEntityBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.filtermapping.SpecificationAttributes", Model)</nop-card>
+                <nop-card asp-name="kwterm-FilterMappingByEntity-specsattributes-options" asp-icon="fas fa-random" asp-title="@T("Admin.Catalog.Products.FilterMappingByEntity.SpecificationAttributeOptions")" asp-hide-block-attribute-name="@hideFilterMappingByEntityBlockAttributeName" asp-hide="@hideFilterMappingByEntityBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.filtermapping.SpecificationAttributes.Options", Model)</nop-card>
+          @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.CategoryDetailsBlock, additionalData = Model })
+		  
+		   <nop-card asp-name="category-RelatedSearch" asp-icon="fas fa-random" asp-title="@T("Admin.Catalog.Products.RelatedSearch")" asp-hide-block-attribute-name="@hideRelatedSearchBlockAttributeName" asp-hide="@hideRelatedSearchBlockBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Relatedearch", Model)</nop-card>
+                <nop-card asp-name="category-QuickFilter" asp-icon="fas fa-random" asp-title="@T("Admin.Catalog.Products.QuickFilter")" asp-hide-block-attribute-name="@hideQuickFilterBlockAttributeName" asp-hide="@hideQuickFilterBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.QuickFilter", Model)</nop-card>
+
+            </nop-cards>
+        </div>
+    </div>
+</section>

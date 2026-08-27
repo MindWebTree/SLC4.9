@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MWT.Nop.Core.Infrastructure; 
+using MWT.Nop.Core.Infrastructure;
+using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Factories;
 using MWT.Plugin.Misc.MwtStorefront.Factories;
 using MWT.Plugin.Misc.MwtStorefront.Factories.Catalog;
 using MWT.Plugin.Misc.MwtStorefront.Factories.QA;
@@ -46,6 +47,7 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Infrastructure
             services.AddScoped<IAddressExtendedModelFactory, AddressExtendedModelFactory>(); 
             services.AddScoped<ICheckoutExtendedModelFactory, CheckoutExtendedModelFactory>();
             services.AddScoped<IAbandonedCartModelFactory, AbandonedCartModelFactory>();
+            services.AddScoped<IProductAttributeExtendedModelFactory, ProductAttributeExtendedModelFactory>();
             if (DataSettingsManager.IsDatabaseInstalled())
                 services.AddScoped<SlugRouteExtendetTransformer>();
             services.Configure<RazorViewEngineOptions>(options =>

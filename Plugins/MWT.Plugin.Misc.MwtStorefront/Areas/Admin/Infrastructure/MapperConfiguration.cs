@@ -3,11 +3,13 @@ using MWT.Nop.Core.Domain;
 using MWT.Nop.Core.Domain.Custom.Campaign_Management;
 using MWT.Nop.Core.Domain.Custom.LandingPage_Management;
 using MWT.Nop.Core.Domain.QA;
+using MWT.Nop.Core.Domain.Security;
 using MWT.Nop.Core.Domain.StoreWideDiscount;
 using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Models.Catalog.LandingPage_Management;
 using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models;
 using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Campaign_Management;
 using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.QA;
+using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Security;
 using MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Models.Utilities;
 using Nop.Core.Infrastructure.Mapper;
 
@@ -25,11 +27,10 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Infrastructure
             //CreateProductMap();
 
             CreateStoreWideDiscountMap();
-
-            //CreateKwtermMap();
+             
             CreateLandingPageMap();
             CreateQuestionAnswerMap();
-      //      CreateCategoryPermissionMap();
+            CreateCategoryPermissionMap();
 
         }
         #region Utilities
@@ -72,14 +73,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Infrastructure
             CreateMap<MWT_CampaignTemplates, DesignModel>();
             CreateMap<DesignModel, MWT_CampaignTemplates>();
         }
-
-        //     public virtual void CreateKwtermMap()
-        //     {
-        //         CreateMap<ProductKwTerm, KwTermProductModel>();
-        //         CreateMap<KwTermProductModel, ProductKwTerm>();
-        //         CreateMap<KwTermCategoryModel, CategoryKwTerm>();
-        //         CreateMap<CategoryKwTerm, KwTermCategoryModel>();
-        //     }
+         
         public virtual void CreateLandingPageMap()
         {
             CreateMap<LandingPage, LandingPageModel>();
@@ -91,11 +85,11 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Infrastructure
             CreateMap<QuestionAnswerProductModel, ProductQuestionAnswer>();
         }
 
-        //public virtual void CreateCategoryPermissionMap()
-        //{
-        //    CreateMap<CategoryUserMapping, CategoryPermissionModel>();
-        //    CreateMap<CategoryPermissionModel, CategoryUserMapping>();
-        //}
+        public virtual void CreateCategoryPermissionMap()
+        {
+            CreateMap<CategoryUserMapping, CategoryPermissionModel>();
+            CreateMap<CategoryPermissionModel, CategoryUserMapping>();
+        }
         #endregion
 
         #region Properties

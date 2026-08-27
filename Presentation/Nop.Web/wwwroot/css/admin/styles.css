@@ -1,6 +1,11 @@
 ﻿/* COMMON */
+
+
+.card-hide{
+    display:none;
+}
 .content, .content-wrapper > .content {
-  padding: 0 10px 55px 10px;
+    padding: 0 10px 55px 10px;
 }
 
 .content-header {

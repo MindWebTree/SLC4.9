@@ -71,6 +71,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\images\customizationform\" />
+    <Folder Include="wwwroot\images\shades\large\" />
   </ItemGroup>
 
   <!-- This target execute after "Build" target.
