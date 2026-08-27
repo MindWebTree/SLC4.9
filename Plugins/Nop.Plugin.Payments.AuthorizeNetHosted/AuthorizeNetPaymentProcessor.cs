@@ -432,7 +432,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Models
         public override string GetConfigurationPageUrl()
             => $"{_webHelper.GetStoreLocation()}Admin/AuthorizeNetHostedPaymentSettings/Configure";
 
-        public string GetPublicViewComponentName() => "PaymentAuthorizeNetHosted";
+  
 
         public async Task<string> GetPaymentMethodDescriptionAsync()
             => await _localizationService.GetResourceAsync(
