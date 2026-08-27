@@ -6,17 +6,17 @@
         //<![CDATA[
 
         // DEBUG: Log to parent console
-   
+
 
         function callParentFunction(str) {
-      
+
 
             // Try parent
             try {
                 if (window.parent
                     && window.parent.AuthorizeNetPopup
                     && window.parent.AuthorizeNetPopup.onReceiveCommunication) {
-                    window.parent.console.log("CALLING window.parent.AuthorizeNetPopup");
+
                     window.parent.AuthorizeNetPopup.onReceiveCommunication(str);
                     return;
                 }
@@ -29,7 +29,7 @@
                 if (window.parent.parent
                     && window.parent.parent.AuthorizeNetPopup
                     && window.parent.parent.AuthorizeNetPopup.onReceiveCommunication) {
-                    window.parent.parent.console.log("CALLING window.parent.parent.AuthorizeNetPopup");
+
                     window.parent.parent.AuthorizeNetPopup.onReceiveCommunication(str);
                     return;
                 }

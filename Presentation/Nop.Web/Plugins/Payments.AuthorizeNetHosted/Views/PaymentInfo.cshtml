@@ -23,7 +23,7 @@
     }
 
     #authnet-error {
-        display: none;
+    
         background: #fff0f0;
         border: 1px solid #e74c3c;
         border-radius: 4px;
@@ -154,6 +154,7 @@
     height: 0px !important;
     width: 0px !important;
     min-height: 0px !important;
+	padding:0px!important;
 		}
 	
 </style>
@@ -180,7 +181,7 @@ else
     </div>
 
     <div id="authorizenethostedpayment-form">
-        <div id="authnet-error"></div>
+        <div id="authnet-error" class="hidepaymentsection"></div>
 
         <div id="authnet-iframe-wrapper">
             <div id="authnet-loading">Loading secure payment form...</div>
@@ -314,7 +315,10 @@ else
                     .then(function (r) { return r.json(); })
                     .then(function (data) {
                         if (!data.success) {
-                            showError(data.message || "Unable to load payment form. Please try again.");
+                           showError(data.message || "Unable to load payment form. Reloading the page...");
+setTimeout(function () {
+    location.reload();
+}, 5000);
                             return;
                         }
                         hostedPaymentToken = data.token;
