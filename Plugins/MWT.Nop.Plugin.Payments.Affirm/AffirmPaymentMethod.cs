@@ -358,17 +358,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm
         /// </summary>
         /// <param name="widgetZone">Name of the widget zone</param>
         /// <returns>View component name</returns>
-        public string GetWidgetViewComponentName(string widgetZone)
-        {
-            if (PublicWidgetZones.OrderSummaryContentBefore.ToString() == widgetZone)
-            {
-                return AffirmCheckoutDefaults.WIDGET_COMPONENT_NAME;
-            }
-            else
-            {
-                return AffirmCheckoutDefaults.WIDGET_PROMOTION_MESSAGE_COMPONENT_NAME;
-            }
-        }
+     
 
         /// <summary>
         /// Install the plugin
@@ -511,10 +501,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm
         {
             return await _localizationService.GetResourceAsync("Plugins.Payments.Affirm.PaymentMethodDescription");
         }
-       public string GetPublicViewComponentName()
-       {
-           return AffirmCheckoutDefaults.PAYMENT_INFO_VIEW_COMPONENT_NAME;
-      }
+     
         public Type GetPublicViewComponent()
         {
             return typeof(AffirmPaymentInfoViewComponent);

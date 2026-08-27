@@ -6,81 +6,79 @@
     .affirm-promo-container a {
         text-decoration: underline;
     }
-	.affirm-promo-container {
-	display:block;
-	float:left;
-	}
+
+    .affirm-promo-container {
+        display: block;
+        float: left;
+    }
 </style>
-@if (Model.UseSandBox)
-{
-    <script defer src="https://sandbox.affirm.com/js/v2/affirm.js"></script>
-}
-else
-{
-    <script defer src="https://cdn1.affirm.com/js/v2/affirm.js"></script>
-}
+
 @if (Model.ProductId != 0)
 {
-    <p class="affirm-promo-container" data-productid="@Model.ProductId" data-affirm-type="@Model.MessageType" data-affirm-color="@Model.MessageColor" data-page-type="@Model.PageType" data-amount="@Model.Amount"></p>
+    <p class="affirm-promo-container" data-productid="@Model.ProductId" data-affirm-type="@Model.MessageType" data-affirm-color="@Model.MessageColor" data-page-type="@Model.PageType.ToLower()" data-amount="@Model.Amount"></p>
 }
 else
 {
-    <p class="affirm-promo-container" style="text-align:center;float: unset;" data-productid="1" data-affirm-type="@Model.MessageType" data-affirm-color="@Model.MessageColor" data-page-type="Cart" data-amount="0"></p>
+    <p class="affirm-promo-container" style="text-align:center;float: unset;" data-productid="1" data-affirm-type="@Model.MessageType" data-affirm-color="@Model.MessageColor" data-page-type="cart" data-amount="0"></p>
 }
 <script asp-location="Footer">
-    _affirm_config = {
-        public_api_key: "@Model.PublicKey",
-        script: "@(Model.UseSandBox? "https://sandbox.affirm.com/js/v2/affirm.js" : "https://cdn1.affirm.com/js/v2/affirm.js")"
-    };
-    (function (m, g, n, d, a, e, h, c) {
-        var b = m[n] || {}, k = document.createElement(e), p = document.getElementsByTagName(e)[0], l = function (a, b, c) { return function () { a[b]._.push([c, arguments]) } }; b[d] = l(b, d, "set"); var f = b[d]; b[a] = {}; b[a]._ = []; f._ = []; b._ = []; b[a][h] = l(b, a, h); b[c] = function () { b._.push([h, arguments]) }; a = 0; for (c = "set add save post open empty reset on off trigger ready setProduct".split(" "); a < c.length; a++)f[c[a]] = l(b, d, c[a]); a = 0; for (c = ["get", "token", "url", "items"]; a < c.length; a++)f[c[a]] = function () { }; k.async =
-            !0; k.src = g[e]; p.parentNode.insertBefore(k, p); delete g[e]; f(g); m[n] = b
-    })(window, _affirm_config, "affirm", "checkout", "ui", "script", "ready", "jsReady");
+        _affirm_config = {
+            public_api_key: "@Model.PublicKey",
+            script: "@(Model.UseSandBox ? "https://cdn1-sandbox.affirm.com/js/v2/affirm.js" : "https://cdn1.affirm.com/js/v2/affirm.js")"
+        };
+        (function (m, g, n, d, a, e, h, c) {
+            var b = m[n] || {}, k = document.createElement(e), p = document.getElementsByTagName(e)[0], l = function (a, b, c) { return function () { a[b]._.push([c, arguments]) } }; b[d] = l(b, d, "set"); var f = b[d]; b[a] = {}; b[a]._ = []; f._ = []; b._ = []; b[a][h] = l(b, a, h); b[c] = function () { b._.push([h, arguments]) }; a = 0; for (c = "set add save post open empty reset on off trigger ready setProduct".split(" "); a < c.length; a++)f[c[a]] = l(b, d, c[a]); a = 0; for (c = ["get", "token", "url", "items"]; a < c.length; a++)f[c[a]] = function () { }; k.async =
+                !0; k.src = g[e]; p.parentNode.insertBefore(k, p); delete g[e]; f(g); m[n] = b
+        })(window, _affirm_config, "affirm", "checkout", "ui", "script", "ready", "jsReady");
 
-    $(document).on("#product-details-form product_attributes_changed", function (event) {
-
-
-               var price = "0";
-       if (event.changedData.price.indexOf(".") > 0) { 
-price=event.changedData.price.replace("$", "").replace(",", "").replace(".", "").replace(" ", "");
-       }
-       else{
-        price=   event.changedData.price.replace("$", "").replace(",", "").replace(".", "").replace(" ", "")+"00";
-       }
-
-        if (event.changedData.productId > 0 && ($(".affirm-as-low-as").filter("[data-productid=" + event.changedData.productId + "]").length > 0 || $(".affirm-promo-container").filter("[data-productid=" + event.changedData.productId + "]").length > 0)) {
-            if (!$(".affirm-promo-container").hasClass("affirm-as-low-as")) {
-                $(".affirm-promo-container").addClass("affirm-as-low-as");
-            }
-            $(".affirm-as-low-as").filter("[data-productid=" + event.changedData.productId + "]").attr("data-amount", price);
-
-            affirm.ui.refresh();
-
-        }
+        $(document).on("#product-details-form product_attributes_changed", function (event) {
 
 
+                   var price = "0";
+           if (event.changedData.price.indexOf(".") > 0) {
+    price=event.changedData.price.replace("$", "").replace(",", "").replace(".", "").replace(" ", "");
+           }
+           else{
+            price=   event.changedData.price.replace("$", "").replace(",", "").replace(".", "").replace(" ", "")+"00";
+           }
 
-    });
+            if (event.changedData.productId > 0 && ($(".affirm-as-low-as").filter("[data-productid=" + event.changedData.productId + "]").length > 0 || $(".affirm-promo-container").filter("[data-productid=" + event.changedData.productId + "]").length > 0)) {
+                if (!$(".affirm-promo-container").hasClass("affirm-as-low-as")) {
+                    $(".affirm-promo-container").addClass("affirm-as-low-as");
+                }
+                $(".affirm-as-low-as").filter("[data-productid=" + event.changedData.productId + "]").attr("data-amount", price);
 
-   if ('@Model.PageType' == 'Cart') {
-
-        function promotionMessageonCartPage() {
-            var price = $(".order-total .cart-total-right .value-summary").text().replace("$", "").replace(",", "").replace(".", "").replace(" ", "").trim();
-
-            if (!$(".affirm-promo-container").hasClass("affirm-as-low-as")) {
-                $(".affirm-promo-container").addClass("affirm-as-low-as");
-            }
-            $(".affirm-as-low-as").attr("data-amount", price);
-           affirm.ui.refresh();
-
-        }
-
-       function deferjqueryloading(method) {
-
-           setTimeout(function () { promotionMessageonCartPage() }, 50);
+                if (window.affirm?.ui && typeof window.affirm.ui.refresh === "function") {
+      window.affirm.ui.refresh();
     }
-        deferjqueryloading(promotionMessageonCartPage);
+
+            }
+
+
+
+        });
+
+       if ('@Model.PageType' == 'Cart') {
+
+            function promotionMessageonCartPage() {
+                var price = $(".order-total .cart-total-right .value-summary").text().replace("$", "").replace(",", "").replace(".", "").replace(" ", "").trim();
+
+                if (!$(".affirm-promo-container").hasClass("affirm-as-low-as")) {
+                    $(".affirm-promo-container").addClass("affirm-as-low-as");
+                }
+                $(".affirm-as-low-as").attr("data-amount", price);
+               if (window.affirm?.ui && typeof window.affirm.ui.refresh === "function") {
+      window.affirm.ui.refresh();
     }
+
+            }
+
+           function deferjqueryloading(method) {
+
+               setTimeout(function () { promotionMessageonCartPage() }, 50);
+        }
+            deferjqueryloading(promotionMessageonCartPage);
+        }
 
 
 </script>
