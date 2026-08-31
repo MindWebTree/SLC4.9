@@ -1,0 +1,92 @@
+@using Nop.Web.Areas.Admin.Models.Customization.Custom
+@using System.Linq
+@model List<GroupedProductConfigurationModel>
+
+@{
+    Layout = "_AdminPopupLayout";
+
+    //page title
+    ViewBag.PageTitle = T("admin.catalog.products.associatedproducts.configuration").Text;
+    List<string> columns = new List<string>();
+    if (Model.FirstOrDefault() != null)
+    {
+        columns = Model.FirstOrDefault().Configurations.Select(c => c.Sku).ToList();
+    }
+}
+
+@if (ViewBag.RefreshPage == true)
+{
+       <script>
+
+                window.close();
+    </script>
+}
+
+@if (columns.Count > 0)
+{
+    <form asp-controller="Product" asp-action="GroupedProductUpdate" method="post">
+        <table class="table table-bordered table-hover table-striped dataTable no-footer" width="100%" id="associatedproducts-grid" role="grid" aria-describedby="associatedproducts-grid_info" style="width: 100%;">
+            <thead>
+                <tr role="row" style="height: 0px;">
+                    <th class="sorting_disabled" rowspan="1" colspan="1">
+                        @T("Common.Name")
+                    </th>
+                    @foreach (var column in columns)
+                    {
+                        <th class="sorting_disabled" rowspan="1" colspan="1">
+                            @column
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var i = 0;
+
+                    foreach (var configuration in Model)
+                    {
+                        <tr class="odd">
+
+                            <td>
+                                <input asp-for="@Model[i].ProductAttributeOptionId" type="hidden" />
+                                <input asp-for="@Model[i].ProductId" type="hidden" />
+                                <input asp-for="@Model[i].Id" type="hidden" />
+                                @configuration.ProductAttributeOptionName
+                            </td>
+
+                            @{
+                                var j = 0;
+                                foreach (var prd in configuration.Configurations)
+                                {
+                                    <td>
+                                        <input asp-for="@Model[i].Configurations[j].ProductId" type="hidden" />
+                                        <input asp-for="@Model[i].Configurations[j].Quantity" type="number" />
+                                    </td>
+                                    j = j + 1;
+                                }
+
+                            }
+
+                        </tr>
+                        i = i + 1;
+                    }
+                }
+
+            </tbody>
+        </table>
+
+        <div class="card-footer">
+            <button type="submit" id="btnAddNewAssociatedProduct" class="btn btn-primary">
+                @T("admin.common.save")
+            </button>
+        </div>
+    </form>
+}
+else
+{
+    <div class="card card-default">
+        <div class="card-body">
+            @T("Admin.Catalog.Products.associatedproducts.AddProductBeforeEdit")
+        </div>
+    </div>
+}

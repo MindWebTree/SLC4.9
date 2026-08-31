@@ -1,0 +1,103 @@
+﻿@model ProductModel
+<div class="card-body">
+    <p>
+        @T("Admin.Catalog.Products.FBTProducts.Hint")
+    </p>
+    @if (Model.Id > 0)
+    {
+        <div class="card card-default">
+            <div class="card-body">
+
+                @await Html.PartialAsync("Table", new DataTablesModel
+           {
+               Name = "FBTproducts-grid",
+               UrlRead = new DataUrl("FBTProductList", "Product", new RouteValueDictionary { [nameof(Model.FBTProductSearchModel.ProductId)] = Model.Id }),
+               UrlDelete = new DataUrl("FBTProductDelete", "Product", null),
+               UrlUpdate = new DataUrl("FBTProductUpdate", "Product", null),
+               Length = 10,
+               LengthMenu = "7, 15, 20, 50, 100",
+               ColumnCollection = new List<ColumnProperty>
+            {
+                  new ColumnProperty(nameof(FBTProductModel.ProductId2))
+                    {
+                        Title = T("Admin.Catalog.Products.Fields.Id").Text,
+
+                    },
+                     new ColumnProperty(nameof(FBTProductModel      .PictureThumbnailUrl))
+    {
+    Title = T("Admin.Catalog.Products.Fields.PictureThumbnailUrl").Text,
+    Width = "100",
+    Render = new RenderPicture()
+    },
+            new ColumnProperty(nameof(FBTProductModel.Product2Name))
+            {
+            Title = T("Admin.Catalog.Products.FBTProducts.Fields.Product").Text
+            },
+            new ColumnProperty(nameof(FBTProductModel.DefaultQuantity))
+            {
+            Title = T("Admin.Catalog.Products.FBTProducts.Fields.DefaultQuantity").Text,
+            Width = "150",
+            ClassName = NopColumnClassDefaults.CenterAll,
+            Editable = true,
+            EditType = EditType.Number
+            },
+            new ColumnProperty(nameof(FBTProductModel.DisplayOrder))
+            {
+            Title = T("Admin.Catalog.Products.FBTProducts.Fields.DisplayOrder").Text,
+            Width = "150",
+            ClassName = NopColumnClassDefaults.CenterAll,
+            Editable = true,
+            EditType = EditType.Number
+            },
+            new ColumnProperty(nameof(FBTProductModel.ProductId2))
+            {
+            Title = T("Admin.Common.View").Text,
+            Width = "150",
+            ClassName = NopColumnClassDefaults.Button,
+            Render = new RenderButtonView(new DataUrl("~/Admin/Product/Edit/", nameof(FBTProductModel.Product2Name)))
+            },
+            new ColumnProperty(nameof(FBTProductModel.Id))
+            {
+            Title = T("Admin.Common.Edit").Text,
+            Width = "200",
+            ClassName =  NopColumnClassDefaults.Button,
+            Render = new RenderButtonsInlineEdit()
+            },
+            new ColumnProperty(nameof(FBTProductModel.Id))
+            {
+            Title = T("Admin.Common.Delete").Text,
+            Width = "100",
+            Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+            ClassName = NopColumnClassDefaults.Button
+            }
+            }
+           })
+            </div>
+            <div class="card-footer">
+                <button type="submit" id="btnAddNewFBTProduct" class="btn btn-primary" onclick="javascript:OpenWindow('@(Url.Action("FBTProductAddPopup", "Product", new {productId = Model.Id, btnId = "btnRefreshFBTProducts", formId = "product-form"}))', 800, 800, true); return false;">
+                    @T("Admin.Catalog.Products.FBTProducts.AddNew")
+                </button>
+                <button type="submit" id="btnRefreshFBTProducts" style="display: none"></button>
+                <script>
+                    $(document).ready(function () {
+                        $('#btnRefreshFBTProducts').click(function () {
+                            //refresh grid
+                            updateTable('#FBTproducts-grid');
+
+                            //return false to don't reload a page
+                            return false;
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card card-default">
+            <div class="card-body">
+                @T("Admin.Catalog.Products.FBTProducts.SaveBeforeEdit")
+            </div>
+        </div>
+    }
+</div>

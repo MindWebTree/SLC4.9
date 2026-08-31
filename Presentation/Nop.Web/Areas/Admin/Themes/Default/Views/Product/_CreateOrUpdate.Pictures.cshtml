@@ -1,0 +1,148 @@
+@model ProductPictureModel
+@if (ViewBag.RefreshPage == true)
+{
+    <script>
+        try {
+            var btnId = new URLSearchParams(window.location.search).get('btnId')
+            var button = window.opener.document.getElementById(btnId)
+            if (button) {
+                button.click()
+            }
+        }
+        catch (e) { }
+        window.close()
+    </script>
+}
+else
+{
+    <div class="card card-default">
+        <div class="card-header">
+            @if (Model.Id == 0)
+            {
+                <style>
+                    .remove-image-button {
+                        display: block !important;
+                    }
+                </style>
+                @T("Admin.Catalog.Products.Pictures.AddNew")
+            }
+            else
+            {
+                <style>
+                    .remove-image-button {
+                        display: none !important;
+                    }
+                </style>
+                @T("Admin.Catalog.Products.Pictures.Update")
+            }
+        </div>
+
+        <form asp-controller="Product" asp-action="CustomProductPictureAdd" method="post" name="addUpdatePicture-form" id="addUpdatePicture-form"
+              asp-route-btnId="@Context.Request.Query["btnId"]"
+              asp-route-formId="@Context.Request.Query["formId"]">
+
+            @Html.HiddenFor(model => model.PictureUrl)
+            @Html.HiddenFor(model => model.Id)
+            @Html.HiddenFor(model => model.ProductId)
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="PictureId" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="PictureId" />
+                        <span asp-validation-for="PictureId"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="OverrideAltAttribute" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="OverrideAltAttribute" />
+                        <span asp-validation-for="OverrideAltAttribute"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="OverrideTitleAttribute" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="OverrideTitleAttribute" />
+                        <span asp-validation-for="OverrideTitleAttribute"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="DisplayOrder" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="DisplayOrder" />
+                        <span asp-validation-for="DisplayOrder"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="HideOnProductPage" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="HideOnProductPage" />
+                        <span asp-validation-for="HideOnProductPage"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="DisplayOnCategoryPage" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="DisplayOnCategoryPage" />
+                        <span asp-validation-for="DisplayOnCategoryPage"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="IsDimensionImage" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="IsDimensionImage" />
+                        <span asp-validation-for="IsDimensionImage"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="DisplayOnListingModules" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="DisplayOnListingModules" />
+                        <span asp-validation-for="DisplayOnListingModules"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-9 offset-md-3">
+
+                        <button type="submit" id="addProductPicture" class="btn btn-primary">
+                            @if (Model.Id == 0)
+                            {
+                                @T("Admin.Catalog.Products.Pictures.AddButton")
+                            }
+                            else
+                            {
+                                @T("Admin.Catalog.Products.Pictures.Update")
+
+                            }
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+}
+<script>
+    document.getElementById('addUpdatePicture-form').onsubmit = function (event) {
+        var pictureId = document.getElementById('PictureId').value
+        if (pictureId == '0') {
+            event.preventDefault()
+            alert('Please select a picture.')
+        }
+    };
+</script>

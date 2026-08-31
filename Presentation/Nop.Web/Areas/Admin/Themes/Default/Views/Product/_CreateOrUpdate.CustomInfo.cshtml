@@ -1,0 +1,264 @@
+﻿@model ProductModel
+
+@inject IStoreService storeService
+
+@using Nop.Core.Domain.Catalog;
+@using Nop.Services
+@using Nop.Services.Stores
+@inject Nop.Services.Catalog.IProductService _productService
+@{
+    var customizationFormTemplates = await _productService.GetAllProductCustomizationFormTemplatesAsync();
+    var availableCustomizationFormTemplates = new List<SelectListItem>();
+    availableCustomizationFormTemplates.Add(new SelectListItem()
+    {
+        Value = "0",
+        Text = "Please select"
+    });
+    foreach (var customizationFormTemplate in customizationFormTemplates)
+    {
+        availableCustomizationFormTemplates.Add(new SelectListItem()
+        {
+            Text = customizationFormTemplate.Name,
+            Value = customizationFormTemplate.Id.ToString()
+        });
+    }
+    var stores = await storeService.GetAllStoresAsync();
+
+    //resources for product tags input
+    Html.AppendCssFileParts("~/lib_npm/jquery-tageditor/jquery.tag-editor.css");
+    Html.AppendScriptParts("~/lib_npm/jquery-tageditor/jquery.tag-editor.min.js");
+    Html.AppendScriptParts("~/lib_npm/jquery-tageditor/jquery.caret.min.js");
+}
+
+
+
+
+<div class="card-body">
+    <div id="product-details-area">
+        <div class="form-group row @(Model.ProductEditorSettingsModel.ProductTemplate ? null : "advanced-setting")" @(Model.AvailableProductTemplates.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null) id="nnpnlProductTemplateId">
+            <div class="col-md-3">
+                <nop-label asp-for="CustomizationFormTemplateId" />
+            </div>
+            <div class="col-md-9">
+                <nop-select asp-for="CustomizationFormTemplateId" asp-items="availableCustomizationFormTemplates" />
+                <span asp-validation-for="CustomizationFormTemplateId"></span>
+            </div>
+        </div>
+
+        <div class="form-group row ">
+            <div class="col-md-3">
+                <nop-label asp-for="EstimatedDeliveryDate" />
+            </div>
+            <div class="col-md-9">
+                @{
+                    var selectListItems = new List<SelectListItem> {
+        new SelectListItem { Text = "", Value = "" },
+        new SelectListItem { Text = "6-8 Weeks", Value = "6-8 Weeks" },
+        new SelectListItem { Text = "8-10 Weeks", Value = "8-10 Weeks" },
+        new SelectListItem { Text = "10-12 Weeks", Value = "10-12 Weeks" },
+        new SelectListItem { Text = "12-14 Weeks", Value = "12-14 Weeks" }
+    };
+                }
+                <nop-select asp-for="EstimatedDeliveryDate" asp-items="selectListItems" />
+                <span asp-validation-for="EstimatedDeliveryDate"></span>
+            </div>
+        </div>
+
+        <div class="form-group row ">
+            <div class="col-md-3">
+                <nop-label asp-for="RelatedProductId" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="RelatedProductId" />
+                <span asp-validation-for="RelatedProductId"></span>
+            </div>
+        </div>
+
+        <div class="form-group row ">
+            <div class="col-md-3">
+                <nop-label asp-for="DisplayDimensionOfVariant" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="DisplayDimensionOfVariant" />
+                <span asp-validation-for="DisplayDimensionOfVariant"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+
+            <div class="col-md-3">
+                <nop-label asp-for="EnableCustomizationModule" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="EnableCustomizationModule" />
+                <span asp-validation-for="EnableCustomizationModule"></span>
+            </div>
+        </div>
+        <div class="form-group row ">
+            <div class="col-md-3">
+                <nop-label asp-for="EnableCategoryWiseSimilarProducts" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="EnableCategoryWiseSimilarProducts" />
+                <span asp-validation-for="EnableCategoryWiseSimilarProducts"></span>
+            </div>
+        </div>
+        <div class="form-group row @(Model.ProductEditorSettingsModel.AllowCustomerReviews ? null : "advanced-setting")">
+            <div class="col-md-3">
+                <nop-label asp-for="FeaturedListingDisplaySimilarOnTop" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="FeaturedListingDisplaySimilarOnTop" />
+                <span asp-validation-for="FeaturedListingDisplaySimilarOnTop"></span>
+            </div>
+        </div>
+        <div class="form-group row @(Model.ProductEditorSettingsModel.AllowCustomerReviews ? null : "advanced-setting")">
+            <div class="col-md-3">
+                <nop-label asp-for="MainCollectionProductId" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="MainCollectionProductId" />
+                <span asp-validation-for="MainCollectionProductId"></span>
+            </div>
+        </div>
+        <div class="form-group row @(Model.ProductEditorSettingsModel.AllowCustomerReviews ? null : "advanced-setting")">
+            <div class="col-md-3">
+                <nop-label asp-for="CollectionListingDisplayVertically" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="CollectionListingDisplayVertically" />
+                <span asp-validation-for="CollectionListingDisplayVertically"></span>
+            </div>
+        </div>
+        <div class="form-group row @(Model.ProductEditorSettingsModel.AllowCustomerReviews ? null : "advanced-setting")">
+            <div class="col-md-3">
+                <nop-label asp-for="VisiblityOncategoryPage" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="VisiblityOncategoryPage" />
+                <span asp-validation-for="VisiblityOncategoryPage"></span>
+            </div>
+        </div>
+
+        <div class="form-group row @(Model.ProductEditorSettingsModel.AllowCustomerReviews ? null : "advanced-setting")">
+            <div class="col-md-3">
+                <nop-label asp-for="AlternateImageSequence" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="AlternateImageSequence" />
+                <span asp-validation-for="AlternateImageSequence"></span>
+            </div>
+        </div>
+        <div class="form-group row @(Model.ProductEditorSettingsModel.AllowCustomerReviews ? null : "advanced-setting")">
+            <div class="col-md-3">
+                <nop-label asp-for="IsServiceTypeProduct" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="IsServiceTypeProduct" />
+                <span asp-validation-for="IsServiceTypeProduct"></span>
+            </div>
+        </div>
+
+
+
+        <div class="form-group row">
+            <div class="col-md-3">
+                <nop-label asp-for="ImproviseDate" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="ImproviseDate" />
+                <span asp-validation-for="ImproviseDate"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <nop-label asp-for="ContentImproviseDate" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="ContentImproviseDate" />
+                <span asp-validation-for="ContentImproviseDate"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-md-3">
+                <nop-label asp-for="FeatureDescription" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="FeatureDescription" asp-template="RichEditor" />
+                <span asp-validation-for="FeatureDescription"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <nop-label asp-for="suggestedKeywordsForDesc" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="suggestedKeywordsForDesc" />
+                <span asp-validation-for="suggestedKeywordsForDesc"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <nop-label asp-for="MiscText" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="MiscText" asp-template="RichEditor" />
+                <span asp-validation-for="MiscText"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <nop-label asp-for="SuggestedTitle" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="SuggestedTitle" />
+                <span asp-validation-for="SuggestedTitle"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <nop-label asp-for="EnableConditionalAttributes" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="EnableConditionalAttributes" />
+                <span asp-validation-for="EnableConditionalAttributes"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <nop-label asp-for="IsBundleProduct" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="IsBundleProduct" />
+                <span asp-validation-for="IsBundleProduct"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <nop-label asp-for="DisplayBundleConfiguration" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="DisplayBundleConfiguration" />
+                <span asp-validation-for="DisplayBundleConfiguration"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <nop-label asp-for="EnableBundleQuickView" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="EnableBundleQuickView" />
+                <span asp-validation-for="EnableBundleQuickView"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <nop-label asp-for="EnableNewATCLayout" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="EnableNewATCLayout" />
+                <span asp-validation-for="EnableNewATCLayout"></span>
+            </div>
+        </div>
+    </div>
+</div>

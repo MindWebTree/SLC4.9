@@ -1,0 +1,91 @@
+﻿@model Nop.Web.Areas.Admin.Models.Customization.Catalog.LogProductPictureSearchModel
+
+@{
+    Layout = "_AdminPopupLayout";
+
+    //page title
+    ViewBag.PageTitle = T("Admin.Catalog.Product.Picture.History").Text;
+}
+<div class="card-body">
+    <div class="clearfix">
+        <h1>@T("Admin.Catalog.Product.Picture.History")</h1>
+    </div>
+    <div class="card card-default">
+        <div class="card-body">
+            @await Html.PartialAsync("Table", new DataTablesModel
+            {
+                Name = "productpictures-log-grid",
+                UrlRead = new DataUrl("ProductPictureLogList", "Product", new RouteValueDictionary { [nameof(Model.ProductId)] = Model.ProductId }),
+                Length = 10,
+                LengthMenu = Model.AvailablePageSizes,
+                ColumnCollection = new List<ColumnProperty>
+            {
+                          new ColumnProperty(nameof(Nop.Web.Areas.Admin.Models.Customization.Catalog.LogProductPictureModel.CreatedOn))
+            {
+            Title = T("Admin.Catalog.Products.Pictures.Fields.CreatedOn").Text,
+            },
+                    new ColumnProperty(nameof(Nop.Web.Areas.Admin.Models.Customization.Catalog.LogProductPictureModel.Action))
+            {
+            Title = T("Admin.Catalog.Products.Pictures.Fields.Action").Text,
+            ClassName="action"
+            },
+            new ColumnProperty(nameof(ProductPictureModel.PictureUrl))
+            {
+            Title = T("Admin.Catalog.Products.Pictures.Fields.Picture").Text,
+            Render = new RenderCustom("renderPicturesColumnProductPictureUrl")
+            },
+            new ColumnProperty(nameof(ProductPictureModel.DisplayOrder))
+            {
+            Title = T("Admin.Catalog.Products.Pictures.Fields.DisplayOrder").Text,
+            Width = "150",
+            ClassName = NopColumnClassDefaults.CenterAll,
+            EditType = EditType.Number
+            },
+            new ColumnProperty(nameof(ProductPictureModel.OverrideAltAttribute))
+            {
+            Title = T("Admin.Catalog.Products.Pictures.Fields.OverrideAltAttribute").Text,
+            Width = "200",
+            EditType = EditType.String
+            },
+
+            new ColumnProperty(nameof(ProductPictureModel.OverrideTitleAttribute))
+            {
+            Title = T("Admin.Catalog.Products.Pictures.Fields.OverrideTitleAttribute").Text,
+            Width = "200",
+            EditType = EditType.String
+            },
+            new ColumnProperty(nameof(ProductPictureModel.DisplayOnCategoryPage))
+            {
+            Title = T("Admin.Catalog.Products.Pictures.Fields.DisplayOnCategoryPage").Text,
+            Width = "200",
+            EditType = EditType.Checkbox
+            },
+            new ColumnProperty(nameof(ProductPictureModel.DisplayOnListingModules))
+            {
+            Title = T("Admin.Catalog.Products.Pictures.Fields.DisplayOnListingModules").Text,
+            Width = "200",
+            EditType = EditType.Checkbox
+            },
+                new ColumnProperty(nameof(ProductPictureModel.HideOnProductPage))
+            {
+            Title = T("Admin.Catalog.Products.Pictures.Fields.HideOnProductPage").Text,
+            Width = "200",
+            EditType = EditType.Checkbox
+            }
+                ,
+                new ColumnProperty(nameof(Nop.Web.Areas.Admin.Models.Customization.Catalog.LogProductPictureModel.UserName))
+            {
+            Title = T("Admin.Catalog.Products.Pictures.Fields.UserName").Text,
+            Width = "200",
+            EditType = EditType.Checkbox
+            }
+            }
+            })
+            <script>
+                function renderPicturesColumnProductPictureUrl(data, type, row, meta) {
+                    return '<a href="' + row.PictureUrl + '" target="_blank"><img alt="' + row.PictureId + '" src="' + row.PictureUrl + '" width="150" /></a>';
+                }
+            </script>
+        </div>
+    </div>
+</div>

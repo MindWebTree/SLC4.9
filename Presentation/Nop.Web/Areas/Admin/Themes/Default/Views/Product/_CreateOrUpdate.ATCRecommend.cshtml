@@ -1,0 +1,60 @@
+﻿@model ProductModel
+@using Nop.Core.Domain.Catalog;
+@using Nop.Services
+@using Nop.Core.Domain.Customization.Catalog
+
+<script>
+    $(document).ready(function () {
+
+        $("#@Html.IdFor(model => model.ATCRecommendTypeId)").change(toggleATCRecommend);
+        toggleATCRecommend();
+    });
+
+    function toggleATCRecommend() {
+     var selectedATCRecommendMethodId = $("#@Html.IdFor(model => model.ATCRecommendTypeId)").val();
+        if (selectedATCRecommendMethodId == "@((int)ATCRecommendType.None)") {
+            $('#atcRecommendIds').hideElement();
+        } else if (selectedATCRecommendMethodId == "@((int)ATCRecommendType.SimilarItems)") {
+            $('#atcRecommendIds').hideElement();
+        } else if (selectedATCRecommendMethodId == "@((int)ATCRecommendType.Collection)") {
+            $('#atcRecommendIds').hideElement();
+        } else if (selectedATCRecommendMethodId == "@((int)ATCRecommendType.Other)") {
+            $('#atcRecommendIds').showElement();
+        }
+    }
+</script>
+
+<div class="card-body">
+    <div id="product-ATCRecommend-area">
+
+        <div class="form-group row">
+            <div class="col-md-3">
+                <nop-label asp-for="ATCRecommendHeading" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="ATCRecommendHeading" />
+                <span asp-validation-for="ATCRecommendHeading"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-md-3">
+                <nop-label asp-for="ATCRecommendTypeId" />
+            </div>
+            <div class="col-md-9">
+                <nop-select asp-for="ATCRecommendTypeId" asp-items="@await (((ATCRecommendType)Model.ATCRecommendTypeId).ToSelectListAsync())" />
+                <span asp-validation-for="ATCRecommendTypeId"></span>
+            </div>
+        </div>
+
+        <div class="form-group row" id="atcRecommendIds">
+            <div class="col-md-3">
+                <nop-label asp-for="ATCRecommendedProductIds" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="ATCRecommendedProductIds" />
+                <span asp-validation-for="ATCRecommendedProductIds"></span>
+            </div>
+        </div>
+    </div>
+</div>

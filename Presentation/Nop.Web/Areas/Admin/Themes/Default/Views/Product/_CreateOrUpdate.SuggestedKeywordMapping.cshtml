@@ -1,0 +1,68 @@
+﻿@model Nop.Web.Areas.Admin.Models.Catalog.ProductModel
+@using  Nop.Web.Areas.Admin.Models.Customization.Custom
+
+<div class="card-body">
+    <p>
+        @T("admin.catalog.entity.suggestedkeyword.hint")
+    </p>
+    @if (Model.Id > 0)
+    {
+        <div class="card card-default">
+            <div class="card-body">
+
+                @await Html.PartialAsync("Table", new DataTablesModel
+           {
+               Name = "SuggestedKeyword-grid",
+               UrlRead = new DataUrl("SuggestedKeywordList", "Product",
+               new RouteValueDictionary { [nameof(ProductSuggestedKeywordModel.ProductId)] = Model.Id }),
+               UrlDelete = new DataUrl("SuggestedKeywordDelete", "Product", null),
+               Length = 10,
+               ColumnCollection = new List<ColumnProperty>
+                        {                            
+                            new ColumnProperty(nameof(ProductSuggestedKeywordModel.KeyWord))
+                            {
+                                Title = T("Admin.Catalog.Entity.SuggestedKeyword.Keyword").Text,
+                                Width = "200",
+                                ClassName = NopColumnClassDefaults.CenterAll,
+                                Editable = true,
+                                EditType = EditType.String
+                            },
+                            new ColumnProperty(nameof(ProductSuggestedKeywordModel.ProductId))
+                            {
+                                Title = T("Admin.Catalog.Entity.SuggestedKeyword.Id").Text,
+                                Width = "150",
+                                ClassName = NopColumnClassDefaults.CenterAll,
+                                Editable = false,
+                                EditType = EditType.Number
+                            }
+               }
+            })
+            </div>
+            <div class="card-footer">
+                <button type="submit" id="btnAddNewKeyword" class="btn btn-primary"
+                        onclick="javascript:OpenWindow('@(Url.Action("SuggestedKeywordAddPopup", "Product",
+        new {productId = Model.Id,btnId = "btnRefreshSuggestedKeyword", formId = "product-form"}))', 800, 800, true); return false;">
+                    @T("Admin.Catalog.Entity.SuggestedKeyword.AddNew")
+                </button>
+                <button type="submit" id="btnRefreshSuggestedKeyword" style="display: none"></button>
+                <script>
+                    $(document).ready(function () {
+                        $('#btnRefreshSuggestedKeyword').click(function () {
+                            //refresh grid
+                            updateTable('#SuggestedKeyword-grid');//return false to don't reload a page
+                            return false;
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card card-default">
+            <div class="card-body">
+                @T("Admin.Catalog.Entity.SuggestedKeyword.SaveBeforeEdit")
+            </div>
+        </div>
+    }
+</div>

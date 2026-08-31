@@ -1,0 +1,121 @@
+﻿@model ProductModel
+<div class="card-body">
+    <p>
+        @T("Admin.Catalog.Products.Faq.Hint")
+    </p>
+    @if (Model.Id > 0)
+    {
+        <div class="card card-default">
+            <div class="card-body">
+
+                @await Html.PartialAsync("Table", new DataTablesModel
+           {
+               Name = "Faq-grid",
+               UrlRead = new DataUrl("FaqList", "Faq",
+               new RouteValueDictionary
+               {
+                   [nameof(FaqSearchModel.EntityId)] = Model.Id,
+                   [nameof(FaqSearchModel.EntityType)]
+               = "Product"
+               }),
+               UrlDelete = new DataUrl("FaqDelete", "Faq", null),
+               UrlUpdate = new DataUrl("FaqUpdate", "Faq",
+               new RouteValueDictionary
+               {
+                   [nameof(FaqSearchModel.EntityId)] = Model.Id,
+                   [nameof(FaqSearchModel.EntityType)]
+               = "Product"
+               }),
+
+               Length = 10,
+               ColumnCollection = new List<ColumnProperty>
+                        {
+                   new ColumnProperty(nameof(FaqModel.Id))
+                            {
+                                Title = T("Admin.Catalog.Products.Faq.Fields.Id").Text,
+                                Width = "150",
+                                ClassName = NopColumnClassDefaults.CenterAll
+                            },
+                            new ColumnProperty(nameof(FaqModel.Question))
+                            {
+                                Title = T("Admin.Catalog.Products.Faq.Fields.Question").Text,
+                                Width = "150",
+                                ClassName = NopColumnClassDefaults.CenterAll,
+                                Editable = true,
+                                EditType = EditType.String
+                            },
+                              new ColumnProperty(nameof(FaqModel.Answer))
+                            {
+                                Title = T("Admin.Catalog.Products.Faq.Fields.Answer").Text,
+                                Width = "200",
+                                ClassName = NopColumnClassDefaults.CenterAll,
+                                Editable = true,
+                                EditType = EditType.String
+                            },
+                             
+                                  new ColumnProperty(nameof(FaqModel.DisplayOrder))
+                            {
+                                Title = T("Admin.Catalog.Products.Faq.Fields.DisplayOrder").Text,
+                                Width = "200",
+                                ClassName = NopColumnClassDefaults.CenterAll,
+                                Editable = true,
+                                EditType = EditType.Number
+                            },
+                                  new ColumnProperty(nameof(FaqModel.CreatedOnUtc))
+                            {
+                                Title = T("Admin.Catalog.Products.Faq.Fields.CreatedOnUtc").Text,
+                                Width = "200",
+                                ClassName = NopColumnClassDefaults.CenterAll
+                            },
+                                new ColumnProperty(nameof(FaqModel.UpdatedOnUtc))
+                            {
+                                Title = T("Admin.Catalog.Products.Faq.Fields.UpdatedOnUtc").Text,
+                                Width = "200",
+                                ClassName = NopColumnClassDefaults.CenterAll
+                            },
+                            new ColumnProperty(nameof(FaqModel.Id))
+                            {
+                                Title = T("Admin.Common.Edit").Text,
+                                Width = "200",
+                                ClassName =  NopColumnClassDefaults.Button,
+                                Render = new RenderButtonsInlineEdit()
+                            },
+                            new ColumnProperty(nameof(FaqModel.Id))
+                            {
+                                Title = T("Admin.Common.Delete").Text,
+                                Width = "100",
+                                Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+                                ClassName = NopColumnClassDefaults.Button
+                            }
+                        }
+           })
+            </div>
+            <div class="card-footer">
+                <button type="submit" id="btnAddNewFaq" class="btn btn-primary" onclick="javascript:OpenWindow('@(Url.Action("FaqAddPopup", "Faq", new {entityId = Model.Id,entityType="Product", btnId = "btnRefreshFaqs", formId = "product-form"}))', 800, 800, true); return false;">
+                    @T("Admin.Catalog.Products.Faq.AddNew")
+                </button>
+                <button type="submit" id="btnRefreshFaqs" style="display: none"></button>
+                <script>
+                    $(document).ready(function () {
+                        $('#btnRefreshFaqs').click(function () {
+                            debugger
+                            //refresh grid
+                            updateTable('#Faq-grid');
+
+                            //return false to don't reload a page
+                            return false;
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card card-default">
+            <div class="card-body">
+                @T("Admin.Catalog.Products.Faq.SaveBeforeEdit")
+            </div>
+        </div>
+    }
+</div>

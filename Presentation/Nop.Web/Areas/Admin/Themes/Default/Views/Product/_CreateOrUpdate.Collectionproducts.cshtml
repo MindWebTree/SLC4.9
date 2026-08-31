@@ -1,0 +1,94 @@
+﻿@model ProductModel
+<div class="card-body">
+    <p>
+        @T("Admin.Catalog.Products.CollectionProducts.Hint")
+    </p>
+    @if (Model.Id > 0)
+    {
+        <div class="card card-default">
+            <div class="card-body">
+
+                @await Html.PartialAsync("Table", new DataTablesModel
+           {
+               Name = "CollectionProducts-grid",
+               UrlRead = new DataUrl("CollectionProductList", "Product", new RouteValueDictionary { [nameof(Model.RelatedProductSearchModel.ProductId)] = Model.RelatedProductSearchModel.ProductId }),
+               UrlDelete = new DataUrl("CollectionProductDelete", "Product", null),
+               UrlUpdate = new DataUrl("CollectionProductUpdate", "Product", null),
+               Length = Model.RelatedProductSearchModel.PageSize,
+               LengthMenu = Model.RelatedProductSearchModel.AvailablePageSizes,
+               ColumnCollection = new List<ColumnProperty>
+                        {
+                      new ColumnProperty(nameof(CollectionProductModel.ProductId2))
+                                {
+                                    Title = T("Admin.Catalog.Products.Fields.Id").Text
+
+                                },   new ColumnProperty(nameof(ProductModel .PictureThumbnailUrl))
+    {
+    Title = T("Admin.Catalog.Products.Fields.PictureThumbnailUrl").Text,
+    Width = "100",
+    Render = new RenderPicture()
+    },
+                            new ColumnProperty(nameof(CollectionProductModel.Product2Name))
+                            {
+                                Title = T("Admin.Catalog.Products.CollectionProducts.Fields.Product").Text
+                            },
+                            new ColumnProperty(nameof(CollectionProductModel.DisplayOrder))
+                            {
+                                Title = T("Admin.Catalog.Products.CollectionProducts.Fields.DisplayOrder").Text,
+                                Width = "150",
+                                ClassName = NopColumnClassDefaults.CenterAll,
+                                Editable = true,
+                                EditType = EditType.Number
+                            },
+                            new ColumnProperty(nameof(CollectionProductModel.ProductId2))
+                            {
+                                Title = T("Admin.Common.View").Text,
+                                Width = "150",
+                                ClassName = NopColumnClassDefaults.Button,
+                                Render = new RenderButtonView(new DataUrl("~/Admin/Product/Edit/", nameof(CollectionProductModel.Product2Name)))
+                            },
+                            new ColumnProperty(nameof(CollectionProductModel.Id))
+                            {
+                                Title = T("Admin.Common.Edit").Text,
+                                Width = "200",
+                                ClassName =  NopColumnClassDefaults.Button,
+                                Render = new RenderButtonsInlineEdit()
+                            },
+                            new ColumnProperty(nameof(CollectionProductModel.Id))
+                            {
+                                Title = T("Admin.Common.Delete").Text,
+                                Width = "100",
+                                Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+                                ClassName = NopColumnClassDefaults.Button
+                            }
+                        }
+           })
+            </div>
+            <div class="card-footer">
+                <button type="submit" id="btnAddNewCollectionProduct" class="btn btn-primary" onclick="javascript:OpenWindow('@(Url.Action("CollectionProductAddPopup", "Product", new {productId = Model.Id, btnId = "btnRefreshCollectionProducts", formId = "product-form"}))', 800, 800, true); return false;">
+                    @T("Admin.Catalog.Products.CollectionProducts.AddNew")
+                </button>
+                <button type="submit" id="btnRefreshCollectionProducts" style="display: none"></button>
+                <script>
+                    $(document).ready(function () {
+                        $('#btnRefreshCollectionProducts').click(function () {
+                            //refresh grid
+                            updateTable('#CollectionProducts-grid');
+
+                            //return false to don't reload a page
+                            return false;
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card card-default">
+            <div class="card-body">
+                @T("Admin.Catalog.Products.CollectionProducts.SaveBeforeEdit")
+            </div>
+        </div>
+    }
+</div>

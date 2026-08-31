@@ -1,0 +1,924 @@
+﻿@model ProductModel
+
+@await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.ProductDetailsProductAttributesCombinationsTop, additionalData = Model })
+
+<div class="cards-group">
+    <div class="card card-default">
+        @*<div class="card-body">  
+                <button id="delete-selected-btn" class="btn btn-danger">
+                    @T("Admin.Delete.Bulk")
+                </button>
+            </div>*@
+
+        <div class="panel panel-default" id="smart-attribute-manager" style="border: 2px solid #3c8dbc; border-radius: 4px; padding: 15px; margin-bottom: 25px; background: #fdfdfd;">
+            <h4 style="margin-top:0; color:#3c8dbc; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <span><i class="fas fa-magic"></i> Smart Attribute Injector</span>
+                <button type="button" id="btn-smart-reset" class="btn btn-sm btn-outline-secondary" style="font-size: 14px; padding: 4px 10px;">
+                    <i class="fas fa-undo"></i> Clear Selection
+                </button>
+            </h4>
+
+            <div id="smart-swatch-grid">
+            </div>
+
+            <div id="smart-action-panel" style="display: none; background: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 4px; margin-top: 15px;">
+                <div class="action-panel-header" style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                    <h4 id="action-panel-title" style="margin: 0; color: #333;">Variation Details</h4>
+                    <p id="action-panel-message" style="margin: 5px 0 0 0; color: #666;"></p>
+                </div>
+
+                <div id="full-creation-inputs" style="display: none;">
+                    <div class="row" style="margin-bottom: 15px;">
+                        <div class="col-md-3">
+                            <label>Stock quantity</label>
+                            <input type="number" id="smart-stock" class="form-control" value="10000" />
+                        </div>
+                        <div class="col-md-3">
+                            <label>Allow out of stock</label>
+                            <select id="smart-allow-out-of-stock" class="form-control">
+                                <option value="false">No</option>
+                                <option value="true">Yes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Notify admin below qty</label>
+                            <input type="number" id="smart-notify-qty" class="form-control" value="1" />
+                        </div>
+                        <div class="row" style="margin-bottom: 15px;">
+                            <div class="col-md-12">
+                                <label>Main Picture (Select One)</label>
+                                <div id="smart-picture-gallery" style="display:flex; gap:20px; flex-wrap:wrap; padding: 10px; background: #f9f9f9; border: 1px solid #eee; border-radius: 4px; margin-bottom: 15px;">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label>Gallery Pictures (Select Multiple)</label>
+                                <div id="smart-gallery-pictures" style="display:flex; gap:20px; flex-wrap:wrap; padding: 10px; background: #f9f9f9; border: 1px solid #eee; border-radius: 4px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-bottom: 15px;">
+                        <div class="col-md-4">
+                            <label>SKU</label>
+                            <input type="text" id="smart-sku" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label>Manufacturer part number</label>
+                            <input type="text" id="smart-mpn" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label>GTIN</label>
+                            <input type="text" id="smart-gtin" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-4">
+                            <label>Price</label>
+                            <input readonly type="number" placeholder="Use variantCombination to set value" step="0.01" id="smart-price" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label>Sale Price</label>
+                            <input readonly type="number" placeholder="Use variantCombination to set value" step="0.01" id="smart-sale-price" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label>MSRP</label>
+                            <input readonly type="number" placeholder="Use variantCombination to set value" step="0.01" id="smart-msrp" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" id="btn-smart-submit" class="btn btn-primary btn-lg">
+                        Processing...
+                    </button>
+                    <button type="button" id="btn-smart-cancel" class="btn btn-secondary btn-lg">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+
+
+            <p>
+                <input type="hidden" id="validCombinationIds" name="validCombinationIds" value="" />
+            </p>
+            @await Html.PartialAsync("Table", new DataTablesModel
+       {
+           Name = "customattributecombinations-grid",
+           UrlRead = new DataUrl("CustomProductAttributeCombinationList", "Product", new RouteValueDictionary { [nameof(Model.ProductAttributeCombinationSearchModel.ProductId)] = Model.ProductAttributeCombinationSearchModel.ProductId }),
+           // 3. ADD THIS FILTERS BLOCK:
+           Filters = new List<FilterParameter>
+    {
+        new FilterParameter("validCombinationIds")
+    },
+           UrlDelete = new DataUrl("ProductAttributeCombinationDelete", "Product", new RouteValueDictionary { ["isSmartInjector"] = "true" }),
+           Length = Model.ProductAttributeCombinationSearchModel.PageSize,
+           LengthMenu = Model.ProductAttributeCombinationSearchModel.AvailablePageSizes,
+           ColumnCollection = new List<ColumnProperty>
+                {
+                    //new ColumnProperty(nameof(ProductAttributeCombinationModel.Id))
+                    //{
+                    //    Title = "<input type='checkbox' id='select-all'/>",
+                    //    Width = "50",
+                    //    Render = new RenderCustom("renderProductAttributeCheckbox"),
+                    //    ClassName = NopColumnClassDefaults.CenterAll
+                    //},
+                    new ColumnProperty(nameof(ProductAttributeCombinationModel.AttributesXml))
+                    {
+                        Title = T("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.Fields.Attributes").Text,
+                        Width = "400",
+                        Render = new RenderCustom("renderProductAttributesCombinationsColumnAttributesXml")
+                    },
+                    new ColumnProperty(nameof(ProductAttributeCombinationModel.StockQuantity))
+                    {
+                        Title = T("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.Fields.StockQuantity").Text,
+                        Width = "150"
+                    },
+                    new ColumnProperty(nameof(ProductAttributeCombinationModel.AllowOutOfStockOrders))
+                    {
+                        Title = T("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.Fields.AllowOutOfStockOrders").Text,
+                        Width = "150",
+                        ClassName =  NopColumnClassDefaults.CenterAll,
+                        Render = new RenderBoolean()
+                    },
+                    new ColumnProperty(nameof(ProductAttributeCombinationModel.Sku))
+                    {
+                        Title = T("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.Fields.Sku").Text,
+                        Width = "200"
+                    },
+                    new ColumnProperty(nameof(ProductAttributeCombinationModel.ManufacturerPartNumber))
+                    {
+                        Title = T("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.Fields.ManufacturerPartNumber").Text,
+                        Width = "200"
+                    },
+                    new ColumnProperty(nameof(ProductAttributeCombinationModel.Gtin))
+                    {
+                        Title = T("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.Fields.Gtin").Text,
+                        Width = "200"
+                    },
+                    new ColumnProperty(nameof(ProductAttributeCombinationModel.OverriddenMsrp))
+                    {
+                        Title = T("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.Fields.OverriddenMsrp").Text,
+                        Width = "200",
+                        Render = new RenderCustom("renderProductAttributesCombinationsColumnPrice")
+                    },
+                    new ColumnProperty(nameof(ProductAttributeCombinationModel.OverriddenOldPrice))
+                    {
+                        Title = T("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.Fields.OverriddenOldPrice").Text,
+                        Width = "200",
+                        Render = new RenderCustom("renderProductAttributesCombinationsColumnPrice")
+                    },
+                    new ColumnProperty(nameof(ProductAttributeCombinationModel.OverriddenPrice))
+                    {
+                        Title = T("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.Fields.OverriddenPrice").Text,
+                        Width = "200",
+                        Render = new RenderCustom("renderProductAttributesCombinationsColumnPrice")
+                    },
+                    new ColumnProperty(nameof(ProductAttributeCombinationModel.NotifyAdminForQuantityBelow))
+                    {
+                        Title = T("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.Fields.NotifyAdminForQuantityBelow").Text,
+                        Width = "150"
+                    },
+                    new ColumnProperty(nameof(ProductAttributeCombinationModel.PictureThumbnailUrl))
+                    {
+                        Title = T("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.Fields.Picture").Text,
+                        Width = "200",
+                        Render = new RenderPicture()
+                    },
+                    new ColumnProperty(nameof(ProductAttributeCombinationModel.Id))
+                    {
+                        Title = T("Admin.Common.Edit").Text,
+                        Width = "100",
+                        ClassName =  NopColumnClassDefaults.Button,
+                        Render = new RenderCustom("renderProductAttributesCombinationsColumnEdit")
+                    },
+                    new ColumnProperty(nameof(ProductAttributeCombinationModel.Id))
+                    {
+                        Title = T("Admin.Common.Delete").Text,
+                        Width = "100",
+                        Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+                        ClassName =  NopColumnClassDefaults.Button
+                    }
+                }
+       })
+        </div>
+            <style>
+                .swatch-row.sequence-locked {
+                    opacity: 0.5;
+                    pointer-events: none;
+                    filter: grayscale(1);
+                }
+
+                .smart-swatch.sequence-locked {
+                    cursor: not-allowed;
+                    background: #fafafa;
+                    border-style: dotted;
+                }
+                /* Container for the pictures */
+                #smart-picture-gallery, #smart-gallery-pictures {
+                    display: flex;
+                    flex-wrap: wrap; /* Allows items to wrap to a new row */
+                    background: #f9f9f9;
+                    border: 1px solid #eee;
+                    border-radius: 4px;
+                    padding: 10px;
+                }
+
+
+
+
+                /* 5-per-row item wrapper (from your code) */
+                .smart-pic-item {
+                    flex: 0 0 20%; /* Exactly 20% width */
+                    max-width: 20%;
+                    text-align: center;
+                    padding: 10px;
+                    box-sizing: border-box; /* Ensures padding doesn't break the 20% width */
+                }
+
+                    .smart-pic-item img {
+                        width: 100%;
+                        max-width: 85px; /* Keeps images consistent */
+                        height: auto;
+                        border: 1px solid #ccc;
+                        padding: 2px;
+                        border-radius: 4px;
+                        background: #fff;
+                        cursor: pointer;
+                    }
+
+                        .smart-pic-item img:hover {
+                            transform: scale(1.1);
+                            border-color: #3c8dbc;
+                        }
+						
+                .btn-inject {
+                    background-color: #28a745 !important;
+                    border-color: #28a745 !important;
+                    color: white !important;
+                }
+
+                    .btn-inject:hover {
+                        background-color: #218838 !important;
+                        border-color: #1e7e34 !important;
+                    }
+                .swatch-row {
+                    margin-bottom: 12px;
+                    display: flex;
+                    align-items: center;
+                }
+
+                .swatch-row-label {
+                    width: 130px;
+                    font-weight: 600;
+                    color: #444;
+                }
+
+                .swatch-group {
+                    display: flex;
+                    gap: 8px;
+                    flex-wrap: wrap;
+                }
+
+                .smart-swatch {
+                    background: #fff;
+                    border: 1px solid #ccc;
+                    padding: 6px 12px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    user-select: none;
+                }
+
+                    .smart-swatch.active {
+                        background: #3c8dbc;
+                        color: white;
+                        border-color: #367fa9;
+                        font-weight: bold;
+                    }
+
+                    .smart-swatch.disabled {
+                        background: #f4f4f4;
+                        color: #aaa;
+                        text-decoration: line-through;
+                        opacity: 0.7;
+                    }
+
+                    .smart-swatch.locked {
+                        background: #e0e0e0;
+                        color: #666;
+                        pointer-events: none;
+                        border-style: dashed;
+                    }
+
+            </style>
+
+            <script>
+
+                // At the top with your other variables:
+                          const productPictures = @Html.Raw(string.IsNullOrEmpty(Model.AvailablePicturesJson) ? "[]" : Model.AvailablePicturesJson);
+                         const blueprintData = @Html.Raw(string.IsNullOrEmpty(Model.FullAttributeDefinitionsJson) ? "[]" : Model.FullAttributeDefinitionsJson);
+                         window.logicMasterList = @Html.Raw(string.IsNullOrEmpty(Model.LogicMasterListJson) ? "[]" : Model.LogicMasterListJson);
+                         const currentProductId = @Model.Id;
+
+                $(document).ready(function () {
+                    let picHtml = `
+                    <div class="form-check" style="text-align: center;">
+                        <label class="form-check-label" style="cursor: pointer;">
+                            <input class="form-check-input" type="radio" name="smart-picture-id" value="0" checked="checked">
+                            <br/><span style="margin-top:5px; display:inline-block; font-weight:bold; color:#666;">No Picture</span>
+                        </label>
+                    </div>`;
+
+                    let galleryHtml = ''; // New variable for checkboxes
+
+                    productPictures.forEach(p => {
+                        // 1. Main Picture (Radio Button)
+                        picHtml += `
+                        <div class="form-check" style="text-align: center;">
+                            <label class="form-check-label" style="cursor: pointer;">
+                                <input class="form-check-input" type="radio" name="smart-picture-id" value="${p.PictureId}">
+                                <br/>
+                                <img src="${p.ImageUrl}" width="75" style="border: 1px solid #ccc; padding: 2px; border-radius: 4px; background: #fff; margin-top: 5px;">
+                            </label>
+                        </div>`;
+
+                        // 2. Gallery Pictures (Checkbox)
+                        galleryHtml += `
+                        <div class="form-check" style="text-align: center;">
+                            <label class="form-check-label" style="cursor: pointer;">
+                                <input class="form-check-input gallery-checkbox" type="checkbox" name="GalleryPictures" value="${p.PictureId}">
+                                <br/>
+                                <img src="${p.ImageUrl}" width="75" style="border: 1px solid #ccc; padding: 2px; border-radius: 4px; background: #fff; margin-top: 5px;">
+                            </label>
+                        </div>`;
+                    });
+
+                    $('#smart-picture-gallery').html(picHtml);
+                    $('#smart-gallery-pictures').html(galleryHtml); // Inject checkboxes
+                    // Render the Smart Swatches
+                    renderSmartSwatches(blueprintData);
+
+                    // --- B. STANDARD NOPCOMMERCE GRID LOGIC ---
+               
+                    @*$("#delete-selected-btn").on("click", function (event) {
+                        event.preventDefault();
+                        let ids = $(".select-checkbox:checked").map(function () { return Number($(this).val()); }).get();
+
+                        if (ids.length === 0) { alert("Please select at least one item to delete."); return; }
+                        if (!confirm("Are you sure you want to delete the selected items?")) return;
+
+                        var postData = { ids: ids };
+                        addAntiForgeryToken(postData);
+
+                        $.ajax({
+                            cache: false, type: "POST", dataType: "json",
+                            url: "@(Url.Action("BulkDeleteCombinations", "Product"))",
+                            data: postData,
+                            success: function (response) {
+                                if (response.Result) {
+                                    updateTable("#customattributecombinations-grid");
+                                    $("#select-all").prop("checked", false);
+                                } else { alert("Failed to delete selected items."); }
+                            },
+                            error: function () { alert("Error deleting items."); }
+                        });
+                    });*@
+
+                    evaluateDependencies();
+                  
+
+                });
+
+                // --- C. SMART MANAGER RENDER FUNCTION ---
+                function renderSmartSwatches(blueprint) {
+                    if (!blueprint || blueprint.length === 0) return;
+
+                    let html = '';
+                    blueprint.forEach(attr => {
+                        html += `<div class="swatch-row" data-mapping-id="${attr.AttributeMappingId}">`;
+                        html += `  <div class="swatch-row-label">${attr.Name}</div>`;
+                        html += `  <div class="swatch-group">`;
+                        attr.Values.forEach(val => {
+                            html += `    <button type="button" class="smart-swatch"
+                                            data-mapping-id="${attr.AttributeMappingId}"
+                                            data-value-id="${val.ValueId}">
+                                            ${val.Name}
+                                         </button>`;
+                        });
+                        html += `  </div></div>`;
+                    });
+                    $('#smart-swatch-grid').html(html);
+                }
+
+
+                // ==========================================
+// THE SMART JAVASCRIPT "BRAIN"
+// ==========================================
+
+// --- State Management ---
+let currentSelection = {}; // Stores { mappingId: valueId }
+let isGapMode = false;
+let injectionTargetId = null;
+let injectionPayload = {};
+
+$(document).ready(function () {
+
+    // 1. THE CLICK LISTENER
+    // Listens for clicks on any swatch button
+    // 1. THE CLICK LISTENER
+    $('#smart-swatch-grid').on('click', '.smart-swatch', function () {
+        const $this = $(this);
+
+        // 1. BLOCK CLICKS: If row is frozen or sequence-locked, do nothing
+        if ($this.hasClass('locked') || $this.hasClass('sequence-locked')) return;
+
+        const mappingId = $this.data('mapping-id');
+        const valueId = $this.data('value-id');
+        const isActuallyDisabled = $this.hasClass('disabled');
+
+        // GAP MODE TOGGLE: Cancel if clicking the same active swatch
+        if (isGapMode && $this.hasClass('active')) {
+            resetSmartManager();
+            return;
+        }
+
+        // 2. SELECTION: Handle Radio Button behavior
+        $this.closest('.swatch-row').find('.smart-swatch').removeClass('active');
+        $this.addClass('active');
+        currentSelection[mappingId] = valueId;
+
+        // 3. CASCADING RESET: Wipe lower rows
+        const $currentRow = $this.closest('.swatch-row');
+        const clickedRowIndex = $('.swatch-row').index($currentRow);
+
+        $('.swatch-row').each(function (index) {
+            if (index > clickedRowIndex) {
+                const lowerMappingId = $(this).data('mapping-id');
+                delete currentSelection[lowerMappingId];
+                $(this).find('.smart-swatch').removeClass('active locked');
+            }
+        });
+
+        // 4. RE-EVALUATE: Run the dependency engine to gray out rows that don't match
+        // This will now correctly disable Configuration 1 if Medium is selected.
+        evaluateDependencies();
+
+        // 5. GRID VS GAP MODE
+        if (isActuallyDisabled) {
+            triggerGapMode($this);
+        } else {
+            isGapMode = false;
+            $('#smart-action-panel').slideUp();
+            updateGridFilter(); // Refresh the grid
+        }
+    });
+
+    // 2. THE SUBMIT ACTION (AJAX POST)
+$('#btn-smart-submit').on('click', function() {
+        const $btn = $(this);
+        $btn.prop('disabled', true);
+
+        if (injectionTargetId !== null) {
+            // --- INJECTION MODE (Keeps using our custom endpoint) ---
+            const postData = {
+                TargetCombinationId: injectionTargetId,
+                AttributesToInjectJson: JSON.stringify(injectionPayload)
+            };
+            addAntiForgeryToken(postData);
+
+            $.ajax({
+                cache: false, type: "POST", data: postData,
+                url: "@(Url.Action("InjectAttributeValue", "Product"))",
+                success: function (res) {
+                    if (res.success)
+                    {
+                        refreshSmartInjectorData();
+                        resetSmartManager();
+                    }
+                    else { alert(res.message); $btn.prop('disabled', false); }
+                },
+                error: function () { alert("Error"); $btn.prop('disabled', false); }
+            });
+
+        } else {
+            // ================================================================
+            // --- CREATE NEW MODE (Using EXISTING nopCommerce Endpoint!) ---
+            // ================================================================
+
+            let selectedGalleryPics = [];
+            $('.gallery-checkbox:checked').each(function () {
+                selectedGalleryPics.push($(this).val());
+            });
+
+            const postData = {
+                productId: currentProductId,
+                StockQuantity: $('#smart-stock').val(),
+                AllowOutOfStockOrders: $('#smart-allow-out-of-stock').val() === 'true',
+                NotifyAdminForQuantityBelow: $('#smart-notify-qty').val(),
+                PictureId: $('input[name="smart-picture-id"]:checked').val(),
+                GalleryPictures: selectedGalleryPics,
+                Sku: $('#smart-sku').val(),
+                ManufacturerPartNumber: $('#smart-mpn').val(),
+                Gtin: $('#smart-gtin').val(),
+                OverriddenPrice: $('#smart-price').val() || null,
+                OverriddenMsrp: $('#smart-msrp').val() || null
+            };
+
+            // CRITICAL: Format the attributes exactly how the C# IFormCollection expects them
+            for (const [mappingId, valueId] of Object.entries(currentSelection)) {
+                postData[`product_attribute_${mappingId}`] = valueId;
+            }
+
+            addAntiForgeryToken(postData);
+
+            $btn.text('Creating...');
+
+            $.ajax({
+                cache: false,
+                type: "POST",
+                data: postData,
+                // Point straight to the existing C# action
+                url: "@(Url.Action("ProductCustomAttributeCombinationCreatePopup", "Product"))",
+                success: function (response) {
+                    // Because this endpoint returns an HTML view, we look for the success script
+                    if (response.includes("RefreshPage") || response.includes("window.close()")) {
+                        // Success! Reload the page to update the grid and our JS memory
+                        refreshSmartInjectorData();
+                        resetSmartManager();
+                    } else {
+                        // If there is no success script, it means the C# hit a warning
+                        // (e.g., combination already exists, missing values)
+                        alert("Creation failed. A combination with these exact attributes might already exist, or a required value is missing.");
+                        $btn.text('Create New Combination').prop('disabled', false);
+                    }
+                },
+                error: function () {
+                    alert("A server error occurred during creation.");
+                    $btn.text('Create New Combination').prop('disabled', false);
+                }
+            });
+        }
+    });
+
+    function handleSuccess(response, $btn) {
+        if (response.success) {
+            // Force a hard refresh of the page to rebuild the Master List!
+            location.reload();
+        } else {
+            alert("Error: " + response.message);
+            $btn.prop('disabled', false);
+        }
+    }
+    function handleError($btn) {
+        alert("A critical error occurred.");
+        $btn.prop('disabled', false);
+    }
+});
+                $(document).ajaxComplete(function (event, xhr, settings) {
+                    // 1. Check if the URL contains our unique fingerprint
+                    // 2. Ensure it was a POST request (standard for deletions)
+                    if (settings.url && settings.url.indexOf("isSmartInjector=true") !== -1 && settings.type === "POST") {
+
+                        // 3. Only refresh if the server confirms the deletion was successful
+                        if (xhr.status === 200) {
+                            // Instead of location.reload(), we fetch new data via AJAX
+                            refreshSmartInjectorData();
+                        }
+                    }
+                });
+                function renderPictureGalleries(picturesJson) {
+                    const pictures = typeof picturesJson === "string" ? JSON.parse(picturesJson) : (picturesJson || []);
+
+                    // Slot 1: "No Picture" option for Radio Buttons
+                    let picHtml = `
+        <div class="smart-pic-item">
+            <label style="cursor: pointer; width: 100%;">
+                <input type="radio" name="smart-picture-id" value="0" checked="checked">
+                <div style="margin-top:5px; font-weight:bold; color:#666; font-size: 11px;">No Picture</div>
+            </label>
+        </div>`;
+
+                    let galleryHtml = '';
+
+                    pictures.forEach(p => {
+                        const imgTag = `<img src="${p.ImageUrl}" title="Click to select">`;
+
+                        // Main Picture Radio (Wraps at 5th item)
+                        picHtml += `
+            <div class="smart-pic-item">
+                <label style="cursor: pointer; width: 100%;">
+                    <input type="radio" name="smart-picture-id" value="${p.PictureId}">
+                    <br/>${imgTag}
+                </label>
+            </div>`;
+
+                        // Gallery Picture Checkbox (Wraps at 5th item)
+                        galleryHtml += `
+            <div class="smart-pic-item">
+                <label style="cursor: pointer; width: 100%;">
+                    <input type="checkbox" class="gallery-checkbox" value="${p.PictureId}">
+                    <br/>${imgTag}
+                </label>
+            </div>`;
+                    });
+
+                    $('#smart-picture-gallery').html(picHtml);
+                    $('#smart-gallery-pictures').html(galleryHtml);
+                }
+
+
+ function refreshSmartInjectorData() {
+    $.ajax({
+        cache: false,
+        type: "GET",
+        url: "@Url.Action("GetLatestSmartInjectorData", "Product", new { productId = Model.Id })",
+        success: function (data) {
+            if (data) {
+                let rawList = data.logicMasterListJson || data.logicMasterList || data.LogicMasterListJson;
+
+                window.logicMasterList = typeof rawList === "string"
+                    ? JSON.parse(rawList)
+                    : (rawList || []); 
+
+                let rawBlueprint = data.fullAttributeDefinitionsJson || data.fullAttributeDefinitions || data.FullAttributeDefinitionsJson;
+
+                const newBlueprint = typeof rawBlueprint === "string"
+                    ? JSON.parse(rawBlueprint)
+                    : (rawBlueprint || []);
+
+                if (newBlueprint.length > 0) {
+                    renderSmartSwatches(newBlueprint);
+                }
+                let rawPictures = data.availablePicturesJson || data.availablePictures;
+                renderPictureGalleries(rawPictures);
+                evaluateDependencies();
+
+                updateGridFilter();
+            }
+        },
+        error: function () {
+            console.error("Failed to refresh data: Server unreachable or error in Controller.");
+        }
+    });
+}
+                $(document).ajaxComplete(function (event, xhr, settings) {
+
+                    if (settings.url.includes("/ProductAttributeCombinationList") || settings.url.includes("/ProductPictureList")) {
+
+                        refreshSmartInjectorData();
+
+                    }
+
+                });
+                // ==========================================
+// CORE ALGORITHMS & LOGIC FUNCTIONS
+// ==========================================
+
+// --- A. The Dependency Engine ---
+                function evaluateDependencies() {
+                    // 1. Reset visual states
+                    $('.smart-swatch').removeClass('disabled sequence-locked');
+                    $('.swatch-row').removeClass('sequence-locked');
+
+                    const $rows = $('.swatch-row');
+                    const selectedMappingIds = Object.keys(currentSelection);
+
+                    // TRACKER: The first row is always satisfied to begin with
+                    let previousRowSatisfied = true;
+
+                    $rows.each(function (index) {
+                        const $currentRow = $(this);
+                        const currentRowMappingId = $currentRow.data('mapping-id');
+
+                        // --- NEW: SEQUENCE LOCK LOGIC ---
+                        if (!previousRowSatisfied) {
+                            $currentRow.addClass('sequence-locked');
+                            $currentRow.find('.smart-swatch').addClass('sequence-locked');
+                        }
+
+                        // Check if THIS row has a selection to satisfy the NEXT row
+                        const hasActiveSelection = $currentRow.find('.smart-swatch.active').length > 0;
+
+                        // --- EXISTING: GLOBAL INTERSECTION LOGIC ---
+                        const matchingRowsInDb = window.logicMasterList.filter(dbRow => {
+                            for (const mId of selectedMappingIds) {
+                                if (mId == currentRowMappingId) continue;
+                                if (dbRow.Attributes[mId] != currentSelection[mId]) {
+                                    return false;
+                                }
+                            }
+                            return true;
+                        });
+
+                        const validValueIds = matchingRowsInDb.map(r => r.Attributes[currentRowMappingId]);
+
+                        $currentRow.find('.smart-swatch').each(function () {
+                            const btnValueId = $(this).data('value-id');
+
+                            if (currentSelection[currentRowMappingId] == btnValueId) {
+                                $(this).removeClass('disabled');
+                                return;
+                            }
+
+                            const existsInDb = validValueIds.some(v => v == btnValueId);
+                            if (!existsInDb) {
+                                $(this).addClass('disabled');
+                            }
+                        });
+
+                        // Update the tracker for the next iteration
+                        previousRowSatisfied = hasActiveSelection;
+                    });
+                }
+
+// --- B. Trigger Gap Mode (The Freeze) ---
+                function triggerGapMode($clickedSwatch) {
+                    isGapMode = true;
+                    const $currentRow = $clickedSwatch.closest('.swatch-row');
+                    const clickedRowIndex = $('.swatch-row').index($currentRow);
+
+                    // 1. Lock only rows ABOVE the current selection
+                    $('.swatch-row').each(function (index) {
+                        if (index < clickedRowIndex) {
+                            $(this).find('.smart-swatch').addClass('locked');
+                        } else if (index > clickedRowIndex) {
+                            // Ensure lower rows are NOT locked yet, just ready for input
+                            $(this).find('.smart-swatch').removeClass('locked active');
+                        }
+                    });
+
+                    // 2. Show the injection/creation panel
+                    $('#smart-action-panel').slideDown();
+
+                    // 3. Re-evaluate if the full combination is ready
+                    evaluateSequenceCompletion();
+                }
+
+                function evaluateSequenceCompletion() {
+                    const totalRows = $('.swatch-row').length;
+                    const selectedRows = Object.keys(currentSelection).length;
+
+                    if (selectedRows < totalRows) {
+                        $('#btn-smart-submit').prop('disabled', true).text('Complete Sequence...');
+                        return;
+                    }
+
+                    // --- NEW: Identify if the user is on a brand new path ---
+                    // If any selected swatch has the 'disabled' class, this is NOT an injection
+                    let isNewCombination = false;
+                    $('.smart-swatch.active').each(function () {
+                        if ($(this).hasClass('disabled')) {
+                            isNewCombination = true;
+                        }
+                    });
+
+                    injectionTargetId = null;
+                    injectionPayload = {};
+
+                    // Only search for a subset match if we are NOT on a brand new path
+                    if (!isNewCombination) {
+                        for (const dbRow of window.logicMasterList) {
+                            let isSubsetMatch = true;
+                            for (const [dbMapId, dbValId] of Object.entries(dbRow.Attributes)) {
+                                if (currentSelection[dbMapId] != dbValId) {
+                                    isSubsetMatch = false;
+                                    break;
+                                }
+                            }
+
+                            if (isSubsetMatch) {
+                                injectionTargetId = dbRow.CombinationId;
+                                injectionPayload = Object.assign({}, currentSelection);
+                                for (const mapId of Object.keys(dbRow.Attributes)) {
+                                    delete injectionPayload[mapId];
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+                    // --- Update UI Panel ---
+                    const $submitBtn = $('#btn-smart-submit');
+                    $submitBtn.prop('disabled', false);
+
+                    if (injectionTargetId !== null) {
+                        // INJECTION MODE (Existing Base Found)
+                        $('#action-panel-message').html(`<span style="color:green;"><i class="fas fa-check-circle"></i> Smart Match Detected!</span> Injecting into ID: ${injectionTargetId}.`);
+                        $('#full-creation-inputs').slideUp();
+                        $submitBtn.text('Inject Attributes').addClass('btn-inject').removeClass('btn-primary');
+                    } else {
+                        // CREATION MODE (Brand New Combination)
+                        $('#action-panel-message').html(`<span style="color:#007bff;"><i class="fas fa-plus-circle"></i> New Combination Detected.</span> Please fill out the inventory details.`);
+                        $('#full-creation-inputs').slideDown();
+                        $submitBtn.text('Create New Combination').addClass('btn-primary').removeClass('btn-inject');
+                    }
+                }
+
+// --- D. Reset Function ---
+function resetSmartManager() {
+    isGapMode = false;
+    currentSelection = {};
+    injectionTargetId = null;
+    injectionPayload = {};
+
+    $('.smart-swatch').removeClass('active disabled locked');
+    $('#smart-action-panel').slideUp();
+    $('#btn-smart-submit').text('Complete Sequence').prop('disabled', true).removeClass('btn-inject');
+    $('#standard-inventory-inputs').show();
+}
+
+                // --- D. STANDARD DATATABLES RENDERERS ---
+                function renderProductAttributeCheckbox(data, type, row) {
+                    return `<input type="checkbox" class="select-checkbox" value="${row.Id}" />`;
+                }
+                function renderProductAttributesCombinationsColumnPrice(data, type, row, meta) {
+                    return (data) ? Number.parseFloat(data).toFixed(2) : '';
+                }
+                function renderProductAttributesCombinationsColumnAttributesXml(data, type, row, meta) {
+                    var warnings = (row.Warnings != null) ? '<div><span style="color: red">' + row.Warnings + '</span></div>' : '';
+                    return row.AttributesXml + warnings;
+                }
+                function renderProductAttributesCombinationsColumnEdit(data, type, row, meta) {
+                    return '<button onclick=\"javascript:OpenWindow(\'@Url.Content("~/Admin/Product/ProductCustomAttributeCombinationEditPopup/")' + data + '?btnId=btnRefreshCombinations&formId=product-form\', 800, 700, true); return false;\" class="btn btn-default"><i class="fas fa-pencil-alt"></i>@T("Admin.Common.Edit").Text</button>';
+                }
+                $(document).on("click", "#select-all", function () {
+                    $(".select-checkbox").prop("checked", this.checked);
+                    console.log("hello");
+                });
+                $(document).on("click", ".select-checkbox", function () {
+                    let total = $(".select-checkbox").length;
+                    let checked = $(".select-checkbox:checked").length;
+                    $("#select-all").prop("checked", total === checked);
+                    console.log("hello");
+                });
+
+                // --- D. Reset Function ---
+                function resetSmartManager() {
+                    // 1. Wipe JavaScript Memory
+                    isGapMode = false;
+                    currentSelection = {};
+                    injectionTargetId = null;
+                    injectionPayload = {};
+
+                    // 2. Wipe UI states
+                    $('.smart-swatch').removeClass('active disabled locked sequence-locked');
+                    $('#smart-action-panel').slideUp();
+                    $('#btn-smart-submit').text('Processing...').prop('disabled', false).removeClass('btn-inject');
+
+                    // 3. Clear Grid Filter and Reload
+                    $('#validCombinationIds').val(""); // Empty string means "Show All"
+                    $("#customattributecombinations-grid").DataTable().ajax.reload();
+
+                    // 4. Re-run dependencies to set the board back to its default starting state
+                    if (typeof evaluateDependencies === "function") {
+                        evaluateDependencies();
+                    }
+                }
+
+                // Attach the click events to our new buttons!
+                $(document).on('click', '#btn-smart-reset, #btn-smart-cancel', function () {
+                    resetSmartManager();
+                });
+
+                setTimeout(function () {
+                    evaluateDependencies();
+                }, 200);
+
+                function updateGridFilter() {
+                    let filterValue = "";
+
+                    // If something is selected, find the matching Combination IDs
+                    if (Object.keys(currentSelection).length > 0) {
+                        const survivors = window.logicMasterList.filter(row => {
+                            let isMatch = true;
+                            for (const [mapId, valId] of Object.entries(currentSelection)) {
+                                if (row.Attributes[mapId] != valId) {
+                                    isMatch = false;
+                                    break;
+                                }
+                            }
+                            return isMatch;
+                        }).map(row => row.CombinationId);
+
+                        // If no combinations match this path, send [-1] so the grid shows "No Data"
+                        filterValue = survivors.length > 0 ? JSON.stringify(survivors) : "[-1]";
+                    }
+
+                    // Update the hidden input that the DataTable uses as a filter parameter
+                    $('#validCombinationIds').val(filterValue);
+
+                    // Reload the grid
+                    if ($.fn.DataTable.isDataTable('#customattributecombinations-grid')) {
+                        $("#customattributecombinations-grid").DataTable().ajax.reload();
+                    }
+                }
+            </script>
+        </div> 
+</div>
+
+@await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.ProductDetailsProductAttributesCombinationsBottom, additionalData = Model })
+<nop-alert asp-alert-id="generateAllAttributeCombinationsAlert" asp-alert-message="@T("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.Alert.FailedGenerate")" />
+
+<div id="importProductaAttributeCombinations" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="importProductaAttributeCombinations">
+</div>

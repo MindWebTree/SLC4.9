@@ -1,0 +1,171 @@
+﻿@model ProductModel
+@using Nop.Web.Areas.Admin.Models.Customization.Catalog
+<div class="card-body">
+    <p>
+        @T("Admin.Catalog.Products.Variant.Hint")
+    </p>
+    @if (Model.Id > 0)
+    {
+        <div class="card card-default">
+            <div class="card-body">
+
+                @await Html.PartialAsync("Table", new DataTablesModel
+       {
+           Name = "Variant-grid",
+           UrlRead = new DataUrl("VariantList", "Product",
+            new RouteValueDictionary
+            {
+                [nameof(Model.RelatedProductSearchModel.ProductId)]
+            = Model.RelatedProductSearchModel.ProductId
+            }),
+           UrlUpdate = new DataUrl("VariantUpdate", "Product", null),
+
+           Length = Model.RelatedProductSearchModel.PageSize,
+           LengthMenu = Model.RelatedProductSearchModel.AvailablePageSizes,
+           ColumnCollection = new List<ColumnProperty>
+            {
+            new ColumnProperty(nameof(VariantModel.Attributes))
+            {
+            Title = T("Admin.Catalog.Products.Variant.Fields.Product.Attributes").Text,
+            Width = "150",
+            ClassName = NopColumnClassDefaults.CenterAll,
+            Editable = false,
+            EditType = EditType.String
+            },
+            new ColumnProperty(nameof(VariantModel.VariantId))
+            {
+            Title = T("Admin.Catalog.Products.Variant.Fields.Product.VariantId").Text,
+            Width = "100",
+            ClassName = NopColumnClassDefaults.CenterAll,
+            Editable = false,
+            EditType = EditType.String
+            },
+            new ColumnProperty(nameof(VariantModel.Title))
+            {
+            Title = T("Admin.Catalog.Products.Variant.Fields.Product.Title").Text,
+            Width = "150",
+            ClassName = NopColumnClassDefaults.CenterAll,
+            Editable = true,
+            EditType = EditType.String
+            },
+            new ColumnProperty(nameof(VariantModel.Msrp))
+            {
+            Title = T("Admin.Catalog.Products.Variant.Fields.Product.Msrp").Text,
+            Width = "150",
+            ClassName = NopColumnClassDefaults.CenterAll,
+            Editable = true,
+            EditType = EditType.Number
+            },
+            new ColumnProperty(nameof(VariantModel.OldPrice))
+            {
+            Title = T("Admin.Catalog.Products.Variant.Fields.Product.OldPrice").Text,
+            Width = "150",
+            ClassName = NopColumnClassDefaults.CenterAll,
+            Editable = true,
+            EditType = EditType.Number
+            },
+            new ColumnProperty(nameof(VariantModel.Price))
+            {
+            Title = T("Admin.Catalog.Products.Variant.Fields.Product.Price").Text,
+            Width = "150",
+            ClassName = NopColumnClassDefaults.CenterAll,
+            Editable = true,
+            EditType = EditType.Number
+            },
+            new ColumnProperty(nameof(VariantModel.Published))
+            {
+            Title = T("Admin.Catalog.Products.Variant.Fields.Product.Published").Text,
+            Width = "150",
+            ClassName = NopColumnClassDefaults.CenterAll,
+            Render=new  RenderBoolean(),
+            Editable = false,
+            EditType = EditType.Checkbox
+            },
+            new ColumnProperty(nameof(VariantModel.WgsRequired))
+            {
+            Title = T("Admin.Catalog.Products.Variant.Fields.Product.WgsRequired").Text,
+            Width = "150",
+            ClassName = NopColumnClassDefaults.CenterAll,
+            Render=new  RenderBoolean()   ,
+            Editable = true,
+            EditType = EditType.Checkbox
+            },new ColumnProperty(nameof(VariantModel.EnableSurcharge))
+            {
+            Title = T("Admin.Catalog.Products.Variant.Fields.Product.EnableSurcharge").Text,
+            Width = "150",
+            ClassName = NopColumnClassDefaults.CenterAll,
+            Render=new  RenderBoolean()   ,
+            Editable = true,
+            EditType = EditType.Checkbox
+            }
+
+            ,new ColumnProperty(nameof(VariantModel.EstimatedDeliveryDate))
+            {
+            Title = T("Admin.Catalog.Products.Variant.Fields.Product.EstimatedDeliveryDate").Text,
+            Width = "150",
+            ClassName = NopColumnClassDefaults.CenterAll,
+            Editable = true,
+            EditType = EditType.String
+            }
+            ,new ColumnProperty(nameof(VariantModel.QueryParameter))
+            {
+            Title = T("Admin.Catalog.Products.Variant.Fields.Product.QueryParameter").Text,
+            Width = "150",
+            ClassName = NopColumnClassDefaults.CenterAll,
+            Editable = true,
+            EditType = EditType.String
+            },new ColumnProperty(nameof(VariantModel.Weight))
+            {
+            Title = T("Admin.Catalog.Products.Variant.Fields.Product.Weight").Text,
+            Width = "150",
+            ClassName = NopColumnClassDefaults.CenterAll,
+            Editable = true,
+            EditType = EditType.String
+            },new ColumnProperty(nameof(VariantModel.ManufacturerPartNumber))
+            {
+            Title = T("Admin.Catalog.Products.Variant.Fields.Product.ManufacturerPartNumber").Text,
+            Width = "150",
+            ClassName = NopColumnClassDefaults.CenterAll,
+            Editable = true,
+            EditType = EditType.String
+            }
+            ,
+            new ColumnProperty(nameof(VariantModel.CreatedOn))
+            {
+            Title = T("Admin.Catalog.Products.Variant.Fields.Product.CreatedOn").Text,
+            Width = "150",
+            ClassName = NopColumnClassDefaults.CenterAll,
+            Editable = false,
+            EditType = EditType.Checkbox
+            },
+            new ColumnProperty(nameof(VariantModel.Id))
+            {
+            Title = T("Admin.Common.Edit").Text,
+            Width = "200",
+            ClassName =  NopColumnClassDefaults.Button,
+           Render = new RenderButtonEdit(new DataUrl("~/Admin/Product/VariantEdit/"))
+            }
+
+            }
+       })
+            </div>
+            <div class="card-footer">
+
+                <button type="submit" id="btnRefreshRelatedSearchProducts" style="display: none"></button>
+                <script>
+                    $('#Variant-grid').on('draw.dt', function () {
+                        updateTable('#attributecombinations-grid');
+                    });
+                </script>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card card-default">
+            <div class="card-body">
+                @T("Admin.Catalog.Products.RelatedSearch.SaveBeforeEdit")
+            </div>
+        </div>
+    }
+</div>

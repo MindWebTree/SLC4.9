@@ -1,0 +1,153 @@
+﻿@using Nop.Web.Areas.Admin.Models.Customization.Catalog
+@model ProductModel
+<div class="card-body">
+
+    @if (Model.Id > 0)
+    {
+        <div class="card card-default">
+            <div class="card-body">
+
+
+                <div class="card card-default bulkDimensionImageUploadsection">
+                    <div class="card-header">
+                        @T("admin.catalog.products.bulk.upload.heading")
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <label class="col-form-label" for="productImages">@T("common.upload")</label>
+                            </div>
+                            <div class="col-md-5">
+                                <input id="productImages" type="file" multiple accept="image/*">
+                            </div>
+                            <div class="col-md-4">
+                                <button type="button" id="bulk-upload-Dimension-image" class="btn btn-primary">
+                                    @T("common.upload")
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+
+                        $(document).ready(function () {
+                            const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+        function onUploadSuccess(result) {
+            $('#imageContainer').empty();
+            $('#productImages').val('');
+            updateTable('#pdimension-pictures-grid');
+        }
+
+                            $("#productImages").on("change", function (val) {
+            var images = document.getElementById('productImages');
+            for (i = 0; i < images.files.length; i++) {
+                const fileType = images.files[i]['type'];
+                if (!validImageTypes.includes(fileType)) {
+                    $('#productImages').val('');
+                    alert("Only Images file allowed!!!");
+                }
+            }
+        });
+
+        $("#bulk-upload-Dimension-image").click(function () {
+            var formdata = new FormData();
+            var fileInput = document.getElementById('productImages');
+            if (fileInput.files.length == 0) {
+                alert("Please upload images!!!");
+                return;
+            }
+            for (i = 0; i < fileInput.files.length; i++) {
+                formdata.append("Images[" + i + "]", fileInput.files[i]);
+            }
+
+            formdata.append('ProductId', @Model.Id);
+            formdata.append('producyType', "Product");
+            var tokenInput = $('input[name=__RequestVerificationToken]');
+            if (tokenInput.length) {
+                formdata.append("__RequestVerificationToken", tokenInput.val());
+            }
+            $.ajax({
+                url: "@(Url.Action("BulkUploadDimensionImages", "Product"))",
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: formdata,
+                async: false,
+                success: onUploadSuccess,
+                error: function (err) {
+                    $('#productImages').val('');
+
+                }
+            });
+        });
+    });
+                    </script>
+
+
+                </div>
+            </div>
+        </div>
+        <div class="card card-default">
+            <div class="card-body">
+
+                @await Html.PartialAsync("Table", new DataTablesModel
+           {
+               Name = "pdimension-pictures-grid",
+               UrlRead = new DataUrl("DimesionImagesList", "Product", new RouteValueDictionary { [nameof(Model.FBTProductSearchModel.ProductId)] = Model.Id }),
+               UrlDelete = new DataUrl("DeleteDimensionImage", "Product", null),
+               Length = 10,
+               LengthMenu = "7, 15, 20, 50, 100",
+               ColumnCollection = new List<ColumnProperty>
+            {
+
+             new ColumnProperty(nameof(ProductDimensionPictureModel.Url))
+              {
+              Title = T("Admin.Catalog.Products.Fields.Dimension.Picture").Text,
+              Width = "100",
+              Render = new RenderPicture()
+          },
+            new ColumnProperty(nameof(ProductDimensionPictureModel.CreatedOn))
+            {
+            Title = T("Admin.Catalog.Products.Fields.Dimension.CreatedOn").Text
+            },
+
+            new ColumnProperty(nameof(ProductDimensionPictureModel.Url))
+            {
+            Title = T("Admin.Common.Delete").Text,
+            Width = "100",
+            Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+            ClassName = NopColumnClassDefaults.Button
+            }
+            }
+           })
+            </div>
+            <div class="card-footer">
+
+                <button type="submit" id="btnRefreshProductDimensionImage" style="display: none"></button>
+                <script>
+                    $(document).ready(function () {
+                        $('#btnRefreshProductDimensionImage').click(function () {
+                            //refresh grid
+                            updateTable('#pdimension-pictures-grid');
+
+                            //return false to don't reload a page
+                            return false;
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card card-default">
+            <div class="card-body">
+                @T("Admin.Catalog.Products.Products.Dimension.SaveBeforeEdit")
+            </div>
+        </div>
+    }
+</div>
+<style>
+    #pdimension-pictures-grid_wrapper img {
+        width: 100px;
+    }
+</style>
