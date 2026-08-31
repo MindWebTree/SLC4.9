@@ -3,29 +3,22 @@ using Nop.Services.Localization;
 using Nop.Services.Security;
 using Nop.Services.Stores;
 using Nop.Services.Topics;
-using Nop.Web.Models.Topics;
 using Nop.Web.Framework;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Infrastructure;
 using Nop.Services.Catalog;
 using Nop.Services.Seo;
-using Microsoft.AspNetCore.Http.Extensions;
-using System.Security.Policy;
-using System.Collections.Generic;
 using Nop.Services.Configuration;
 using Nop.Web.Controllers;
-using Nop.Web.Factories;
 using MWT.Plugin.Misc.MwtStorefront.Factories.Topics;
 using MWT.Plugin.Misc.MwtStorefront.Models.Topics;
 using MWT.Plugin.Misc.MwtStorefront.Components;
-using System.Xml;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Controllers;
 
 [AutoValidateAntiforgeryToken]
-public partial class CustomTopicController : BasePublicController
+public partial class TopicExtendedController : BasePublicController
 {
     #region Fields
 
@@ -36,7 +29,7 @@ public partial class CustomTopicController : BasePublicController
     private readonly IPermissionService _permissionService;
     private readonly ILocalizationService _localizationService;
     #endregion
-    public CustomTopicController(ICustomTopicModelFactory customTopicModelFactory, ITopicService topicService, IAclService aclService, IStoreMappingService storeMappingService,
+    public TopicExtendedController(ICustomTopicModelFactory customTopicModelFactory, ITopicService topicService, IAclService aclService, IStoreMappingService storeMappingService,
         IPermissionService permissionService, ILocalizationService localizationService)
     {
         _customTopicModelFactory= customTopicModelFactory;

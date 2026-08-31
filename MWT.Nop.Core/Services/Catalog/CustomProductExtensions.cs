@@ -26,7 +26,7 @@ namespace MWT.Nop.Core.Services.Catalog
                 ProductSortingEnum.PriceAsc => productsQuery.OrderBy(p => p.Price),
                 ProductSortingEnum.PriceDesc => productsQuery.OrderByDescending(p => p.Price),
                 ProductSortingEnum.CreatedOn => productsQuery.OrderByDescending(p => p.CreatedOnUtc),
-                ProductSortingEnum.BestSeller => productsQuery.OrderByDescending(p => p.NoOfSales).ThenBy(p=>p.DisplayOrder),
+                ProductSortingEnum.BestSeller => productsQuery.OrderBy(p => p.BestSellerRank == null || p.BestSellerRank == 0 ? int.MaxValue : p.BestSellerRank).ThenBy(p => p.DisplayOrder),
                 ProductSortingEnum.Position when productsQuery is IOrderedQueryable => productsQuery,
                 _ => productsQuery.OrderBy(p => p.DisplayOrder).ThenBy(p => p.Id)
             };

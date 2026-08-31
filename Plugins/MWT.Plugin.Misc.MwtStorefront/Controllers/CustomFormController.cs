@@ -9,6 +9,7 @@ using MWT.Nop.Core.Services.MailChimp;
 using MWT.Nop.Core.Services.Message;
 using MWT.Nop.Core.Services.Shared;
 using MWT.Nop.Core.Services.Zoho;
+using MWT.Plugin.Misc.MwtStorefront.Infrastructure.Filters;
 using MWT.Plugin.Misc.MwtStorefront.Models.Custom;
 using Nop.Core;
 using Nop.Core.Domain.Logging;
@@ -66,7 +67,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
 
         [CheckAccessPublicStore(true)]
         [HttpPost]
-        [ValidateCaptcha]
+        [ValidateCaptchaExtended]
         public async Task<IActionResult> SubmitCustomInquiry(IFormCollection form, bool captchaValid)
         {
 

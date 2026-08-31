@@ -5,9 +5,7 @@
 @using Nop.Core.Domain.Tax
 @inject CatalogSettings catalogSettings
 @inject ICustomWorkContext workContext
-@{ 
-    string offerText = CustomCommonHelper.GetProductOfferText(Model.Id, Model.ProductPrice.OfferText, Model.ProductPrice.OfferPlaceHolder, Model.ProductPrice.DiscountAmount, Model.ProductPrice.DiscountPercentage, Model.ProductPrice.SaleEndDate, false);
-}
+
 <div data-productid="@Model.Id">
 
     <a href="@Url.RouteUrl("Product", new {id=Model.Id, SeName = Model.SeName })" title="@Model.DefaultPictureModel.Title">

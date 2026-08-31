@@ -1,0 +1,11 @@
+{
+  "Group": "Misc",
+  "FriendlyName": "UTM & GCLID Capture",
+  "SystemName": "MWT.Misc",
+  "Version": "1.00",
+  "SupportedVersions": [ "4.40" ],
+  "Author": "Mind Web Treet",
+  "DisplayOrder": 1,
+  "FileName": "MWT.Plugin.Misc.dll",
+  "Description": "Captures gclid and UTM parameters site-wide into cookies so any form on the site can read them back."
+}

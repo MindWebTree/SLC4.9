@@ -31,8 +31,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
 
             if (!await _permissionService.AuthorizeAsync(StandardPermission.PublicStore.ENABLE_SHOPPING_CART))
                 return Content("");
-
-            var model = await _shoppingCartModelFactory.PrepareCustomMiniShoppingCartModelAsync(ShoppingCartType.ShoppingCart);
+            var model = await _shoppingCartModelFactory.PrepareCustomFlyoutShoppingCartModelAsync(ShoppingCartType.ShoppingCart);
             model.Heading = actionType;
             if (cartItems == null)
                 model.cartItems = model.Items.Count == 0 ? new List<int>() : new List<int>() { model.Items.FirstOrDefault().Id };

@@ -194,13 +194,13 @@ namespace MWT.Tax.FixedOrByCountryStateZip
             if (!taxTotalRequest.IsCustomorder)
             {
                 //order sub total (items + checkout attributes)
-                #region Custom updates Need to shift with Upgrade
+               
                 var (_, _, _, subTotalWithDiscountBase, _, _) = await _orderTotalCalculationService.GetCustomShoppingCartSubTotalAsync(taxTotalRequest.ShoppingCart, false);
-                #endregion
+          
                 //subtotal with discount
                 subtotalBase = subTotalWithDiscountBase;
 
-                #region Custom updates Need to shift with Upgrade
+               
 
                 decimal membershipfee = 0;
                 decimal membershipfeeDiscount = 0;
@@ -215,7 +215,7 @@ namespace MWT.Tax.FixedOrByCountryStateZip
                 total = subtotalBase;
 
                 #endregion
-                #endregion
+             
             }
             else
             {

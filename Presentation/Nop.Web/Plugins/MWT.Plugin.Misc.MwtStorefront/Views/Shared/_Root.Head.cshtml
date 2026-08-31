@@ -144,10 +144,12 @@
     <link rel="preload" href="~/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-800.woff2" as="font" type="font/woff2" crossorigin="anonymous">
 </head>
 <body>
-    <nop-antiforgery-token />
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://load.sgtm.sierralivingconcepts.com/ns.html?id=GTM-W6HNFNNM" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
+
+    <nop-antiforgery-token />
+    
     @RenderBody()
     
     @NopHtml.GenerateScripts(ResourceLocation.Footer)

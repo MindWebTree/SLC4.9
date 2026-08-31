@@ -185,18 +185,16 @@ namespace MWT.Plugin.Shipping.FixedByWeightByTotal
 
                 else
                 {
-                    #region Custom updates Need to shift with Upgrade
 
                     getShippingOptionRequest.IsSurchargeApplicable = await _shoppingCartService.IsSurchargeApplicable(await _shoppingCartService.GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart));
 
 
                     subTotal = await _orderTotalCalculationService.GetCustomShoppingCartSubTotalAsync(getShippingOptionRequest.Items.Select(I => I.ShoppingCartItem).ToList());
 
-                    #endregion
+          
 
 
 
-                    //#region Custom updates Need to shift with Upgrade
 
                     //decimal membershipfee = 0;
                     //decimal membershipfeeDiscount = 0;
@@ -206,7 +204,6 @@ namespace MWT.Plugin.Shipping.FixedByWeightByTotal
 
                     //subTotal = (subTotal + membershipfee + (offerDiscountDefault - offerDiscount)) - buyMoreDiscount - membershipDiscount - membershipfeeDiscount - productItemsDiscount;
 
-                    //#endregion
 
                 }
 

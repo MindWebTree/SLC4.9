@@ -946,14 +946,14 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
 
                         // membershipprice
 
-                        // Need to confirm
-                        //(var memberShipPrice, _) = await _shoppingcartService.MemberShipPriceOfProduct(product.Id, variantMsrp, variantOldPrice, variantPrice);
-                        //if (memberShipPrice > decimal.Zero)
-                        //{
-                        //    memberShipPrice = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(memberShipPrice, await _workContext.GetWorkingCurrencyAsync());
-                        //    model.MembershipPrice = await _priceFormatter.FormatPriceAsync(memberShipPrice);
-                        //    model.MembershipPriceValue = memberShipPrice;
-                        //}
+
+                        (var memberShipPrice, _) = await _customShoppingCartService.MemberShipPriceOfProduct(product.Id, variantMsrp, variantOldPrice, variantPrice);
+                        if (memberShipPrice > decimal.Zero)
+                        {
+                            memberShipPrice = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(memberShipPrice, await _workContext.GetWorkingCurrencyAsync());
+                            model.MembershipPrice = await _priceFormatter.FormatPriceAsync(memberShipPrice);
+                            model.MembershipPriceValue = memberShipPrice;
+                        }
 
                         // end
 
@@ -1117,14 +1117,14 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
 
                     // memberShipPrice
 
-                    // Need to confirm
-                    //(var memberShipPrice, _) = await _shoppingcartService.MemberShipPriceOfProduct(product.Id, product.Msrp, product.OldPrice, product.Price);
-                    //if (memberShipPrice > decimal.Zero)
-                    //{
-                    //    memberShipPrice = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(memberShipPrice, await _workContext.GetWorkingCurrencyAsync());
-                    //    priceModel.MembershipPrice = await _priceFormatter.FormatPriceAsync(memberShipPrice);
-                    //    priceModel.MembershipPriceValue = memberShipPrice;
-                    //}
+
+                    (var memberShipPrice, _) = await _customShoppingCartService.MemberShipPriceOfProduct(product.Id, product.Msrp, product.OldPrice, product.Price);
+                    if (memberShipPrice > decimal.Zero)
+                    {
+                        memberShipPrice = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(memberShipPrice, await _workContext.GetWorkingCurrencyAsync());
+                        priceModel.MembershipPrice = await _priceFormatter.FormatPriceAsync(memberShipPrice);
+                        priceModel.MembershipPriceValue = memberShipPrice;
+                    }
 
                     // end
 
@@ -1177,18 +1177,18 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
                         var maxPrice = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(maxPriceBase, await _workContext.GetWorkingCurrencyAsync());
 
                         // Need to confirm
-                        //(var minMembershipPriceValue, _) = await _shoppingcartService.MemberShipPriceOfProduct(product.Id, product.MinMsrp, product.MinOldprice, product.MinPrice);
-                        //(var maxMembershipPriceValue, _) = await _shoppingcartService.MemberShipPriceOfProduct(product.Id, product.MaxMsrp, product.MaxOldPrice, product.MaxPrice);
-                        //if (minMembershipPriceValue > decimal.Zero && maxMembershipPriceValue > decimal.Zero)
-                        //{
-                        //    minMembershipPriceValue = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(minMembershipPriceValue, await _workContext.GetWorkingCurrencyAsync());
-                        //    priceModel.MinMembershipPrice = await _priceFormatter.FormatPriceAsync(minMembershipPriceValue);
-                        //    priceModel.MinMembershipPriceValue = minMembershipPriceValue;
+                        (var minMembershipPriceValue, _) = await _customShoppingCartService.MemberShipPriceOfProduct(product.Id, product.MinMsrp, product.MinOldprice, product.MinPrice);
+                        (var maxMembershipPriceValue, _) = await _customShoppingCartService.MemberShipPriceOfProduct(product.Id, product.MaxMsrp, product.MaxOldPrice, product.MaxPrice);
+                        if (minMembershipPriceValue > decimal.Zero && maxMembershipPriceValue > decimal.Zero)
+                        {
+                            minMembershipPriceValue = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(minMembershipPriceValue, await _workContext.GetWorkingCurrencyAsync());
+                            priceModel.MinMembershipPrice = await _priceFormatter.FormatPriceAsync(minMembershipPriceValue);
+                            priceModel.MinMembershipPriceValue = minMembershipPriceValue;
 
-                        //    maxMembershipPriceValue = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(maxMembershipPriceValue, await _workContext.GetWorkingCurrencyAsync());
-                        //    priceModel.MaxMembershipPrice = await _priceFormatter.FormatPriceAsync(maxMembershipPriceValue);
-                        //    priceModel.MaxMembershipPriceValue = maxMembershipPriceValue;
-                        //}
+                            maxMembershipPriceValue = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(maxMembershipPriceValue, await _workContext.GetWorkingCurrencyAsync());
+                            priceModel.MaxMembershipPrice = await _priceFormatter.FormatPriceAsync(maxMembershipPriceValue);
+                            priceModel.MaxMembershipPriceValue = maxMembershipPriceValue;
+                        }
 
 
                         strikeThroughPrice = minOldPrice;
@@ -1394,15 +1394,14 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
                         var msrp = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(msrpBase, await _workContext.GetWorkingCurrencyAsync());
                         var price = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(priceBase, await _workContext.GetWorkingCurrencyAsync());
 
-                        // Need to confirm
-                        //(var memberShipPrice, _) = await _shoppingcartService.MemberShipPriceOfProduct(product.Id, variantMsrp, variantOldPrice, variantPrice);
+                        (var memberShipPrice, _) = await _customShoppingCartService.MemberShipPriceOfProduct(product.Id, variantMsrp, variantOldPrice, variantPrice);
 
-                        //if (memberShipPrice > decimal.Zero)
-                        //{
-                        //    memberShipPrice = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(memberShipPrice, await _workContext.GetWorkingCurrencyAsync());
-                        //    model.MembershipPrice = await _priceFormatter.FormatPriceAsync(memberShipPrice);
-                        //    model.MembershipPriceValue = memberShipPrice;
-                        //}
+                        if (memberShipPrice > decimal.Zero)
+                        {
+                            memberShipPrice = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(memberShipPrice, await _workContext.GetWorkingCurrencyAsync());
+                            model.MembershipPrice = await _priceFormatter.FormatPriceAsync(memberShipPrice);
+                            model.MembershipPriceValue = memberShipPrice;
+                        }
 
 
                         //When there is just one tier price (with  qty 1), there are no actual savings in the list.
@@ -1447,19 +1446,18 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
                             var minPrice = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(minPriceBase, await _workContext.GetWorkingCurrencyAsync());
                             var maxPrice = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(maxPriceBase, await _workContext.GetWorkingCurrencyAsync());
 
-                            // Need to confirm
-                            //(var minMembershipPriceValue, _) = await _shoppingcartService.MemberShipPriceOfProduct(product.Id, product.MinMsrp, product.MinOldprice, product.MinPrice);
-                            //(var maxMembershipPriceValue, _) = await _shoppingcartService.MemberShipPriceOfProduct(product.Id, product.MaxMsrp, product.MaxOldPrice, product.MaxPrice);
-                            //if (minMembershipPriceValue > decimal.Zero && maxMembershipPriceValue > decimal.Zero)
-                            //{
-                            //    minMembershipPriceValue = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(minMembershipPriceValue, await _workContext.GetWorkingCurrencyAsync());
-                            //    model.MinMembershipPrice = await _priceFormatter.FormatPriceAsync(minMembershipPriceValue);
-                            //    model.MinMembershipPriceValue = minMembershipPriceValue;
+                            (var minMembershipPriceValue, _) = await _customShoppingCartService.MemberShipPriceOfProduct(product.Id, product.MinMsrp, product.MinOldprice, product.MinPrice);
+                            (var maxMembershipPriceValue, _) = await _customShoppingCartService.MemberShipPriceOfProduct(product.Id, product.MaxMsrp, product.MaxOldPrice, product.MaxPrice);
+                            if (minMembershipPriceValue > decimal.Zero && maxMembershipPriceValue > decimal.Zero)
+                            {
+                                minMembershipPriceValue = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(minMembershipPriceValue, await _workContext.GetWorkingCurrencyAsync());
+                                model.MinMembershipPrice = await _priceFormatter.FormatPriceAsync(minMembershipPriceValue);
+                                model.MinMembershipPriceValue = minMembershipPriceValue;
 
-                            //    maxMembershipPriceValue = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(maxMembershipPriceValue, await _workContext.GetWorkingCurrencyAsync());
-                            //    model.MaxMembershipPrice = await _priceFormatter.FormatPriceAsync(maxMembershipPriceValue);
-                            //    model.MaxMembershipPriceValue = maxMembershipPriceValue;
-                            //}
+                                maxMembershipPriceValue = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(maxMembershipPriceValue, await _workContext.GetWorkingCurrencyAsync());
+                                model.MaxMembershipPrice = await _priceFormatter.FormatPriceAsync(maxMembershipPriceValue);
+                                model.MaxMembershipPriceValue = maxMembershipPriceValue;
+                            }
 
 
                             strikeThroughPrice = minOldPrice;

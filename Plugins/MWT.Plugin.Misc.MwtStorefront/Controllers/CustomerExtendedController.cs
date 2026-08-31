@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using MWT.Nop.Core.Infrastructure;
 using MWT.Nop.Core.Services.Message;
+using MWT.Plugin.Misc.MwtStorefront.Infrastructure.Filters;
 using MWT.Plugin.Misc.MwtStorefront.Infrastructure.Mapping;
 using MWT.Plugin.Misc.MwtStorefront.Models.Common;
 using MWT.Plugin.Misc.MwtStorefront.Models.Customer;
@@ -315,7 +316,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
         #region AJAX sign-in sign-up
 
         [HttpPost]
-        [ValidateCaptcha]
+        [ValidateCaptchaExtended]
         [CheckAccessClosedStore(true)]
         [CheckAccessPublicStore(true)]
         public async Task<IActionResult> CustomSignIn(LoginModel model, string returnUrl, bool captchaValid)
@@ -373,7 +374,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
         }
 
         [HttpPost]
-        [ValidateCaptcha]
+        [ValidateCaptchaExtended]
         [CheckAccessClosedStore(true)]
         [CheckAccessPublicStore(true)]
         public async Task<IActionResult> CustomRegister(RegisterModel model, string returnUrl, IFormCollection form, bool captchaValid)
@@ -684,7 +685,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                 redirectUrl = redirectUrl
             });
         }
-        [ValidateCaptcha]
+        [ValidateCaptchaExtended]
         [HttpPost]
         [ValidateAntiForgeryToken]
         //available even when navigation is not allowed

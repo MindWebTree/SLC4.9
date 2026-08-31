@@ -9,6 +9,7 @@ using MWT.Nop.Core.Services.MailChimp;
 using MWT.Nop.Core.Services.Message;
 using MWT.Nop.Core.Services.Zoho;
 using MWT.Plugin.Misc.MwtStorefront.Factories;
+using MWT.Plugin.Misc.MwtStorefront.Infrastructure.Filters;
 using MWT.Plugin.Misc.MwtStorefront.Models.Catalog;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
@@ -135,7 +136,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
         }
 
         [HttpPost]
-        [ValidateCaptcha]
+        [ValidateCaptchaExtended]
         public virtual async Task<IActionResult> CustomizationForm(CustomizationFormModel model, IFormCollection form, bool captchaValid)
         {
             var _settingService = EngineContext.Current.Resolve<ISettingService>();

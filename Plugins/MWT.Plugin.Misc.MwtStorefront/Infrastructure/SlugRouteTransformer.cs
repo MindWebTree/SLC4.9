@@ -119,7 +119,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Infrastructure
               
 
                 case var name when name.Equals(nameof(Manufacturer), StringComparison.InvariantCultureIgnoreCase):
-                    RouteToAction(values, "Catalog", "Manufacturer", slug, (NopRoutingDefaults.RouteValue.ManufacturerId, urlRecord.EntityId));
+                    RouteToAction(values, "Catalog", "CustomManufacturer", slug, (NopRoutingDefaults.RouteValue.ManufacturerId, urlRecord.EntityId));
                     return;
 
                 case var name when name.Equals(nameof(Vendor), StringComparison.InvariantCultureIgnoreCase):
@@ -135,7 +135,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Infrastructure
                     return;
 
                 case var name when name.Equals(nameof(Topic), StringComparison.InvariantCultureIgnoreCase):
-                    RouteToAction(values, "CustomTopic", "TopicDetails", slug, (NopRoutingDefaults.RouteValue.TopicId, urlRecord.EntityId));
+                    RouteToAction(values, "TopicExtended", "TopicDetails", slug, (NopRoutingDefaults.RouteValue.TopicId, urlRecord.EntityId));
                     return;
             }
         }

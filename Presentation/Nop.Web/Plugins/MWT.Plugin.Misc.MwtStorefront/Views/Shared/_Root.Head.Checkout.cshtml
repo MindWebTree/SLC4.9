@@ -1,5 +1,4 @@
-﻿
-@using Nop.Core.Configuration
+﻿@using Nop.Core.Configuration
 @using Nop.Core.Domain.Common
 @using Nop.Core.Domain.Seo
 @using Nop.Services.Events
@@ -82,8 +81,8 @@
     @await Component.InvokeAsync(typeof(BlogRssHeaderLinkViewComponent))
     @*Insert favicon and app icons head code*@
     @await Component.InvokeAsync(typeof(FaviconViewComponent))
-    
-	  <script>
+
+    <script>
          function generateUUID() {
             const bytes = new Uint8Array(16);
             crypto.getRandomValues(bytes);
@@ -111,10 +110,11 @@
     <!--Powered by nopCommerce - https://www.nopCommerce.com-->
 </head>
 <body>
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://load.sgtm.sierralivingconcepts.com/ns.html?id=GTM-W6HNFNNM" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <nop-antiforgery-token />
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://load.sgtm.sierralivingconcepts.com/ns.html?id=GTM-W6HNFNNM" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
     @RenderBody()
     @NopHtml.GenerateScripts(ResourceLocation.Footer)
     @NopHtml.GenerateInlineScripts(ResourceLocation.Footer)

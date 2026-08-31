@@ -194,7 +194,7 @@ public partial class NopUrlHelper : INopUrlHelper
     /// <param name="values">An object that contains route values</param>
     /// <param name="protocol">The protocol for the URL, such as "http" or "https"</param>
     /// <param name="host">The host name for the URL</param>
-    /// <param name="fragment">The fragment for the URL</param>
+    /// <param name="fragment">The fragment for thes URL</param>
     /// <returns>
     /// The generated URL
     /// </returns>

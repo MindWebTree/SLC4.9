@@ -1,0 +1,31 @@
+﻿@model CustomProductOverviewModel
+@using Nop.Core
+@using Nop.Core.Domain.Catalog
+@using Nop.Core.Domain.Orders
+@using Nop.Core.Domain.Tax
+@inject CatalogSettings catalogSettings
+@inject IWorkContext workContext
+@inject Nop.Services.Catalog.ISpecificationAttributeService _specificationAttributeService
+
+<div data-productid="@Model.Id" data-main-catid="@await _specificationAttributeService.GetMainCategoryOfProduct(Model.Id)"
+     class="row d-flex justify-content-evenly">
+    <div class="col-lg-6 col-md-6 col-12 px-4">
+        <a href="@Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName, source = "POF" })">
+            <img alt="@Model.DefaultPictureModel.AlternateText" src="/images/pixel.png"
+                 data-src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" class="lazy w-100" />
+        </a>
+
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 align-self-center mt-sm-3 explore_now">
+        <h6 class="fw-bold">   <a href="@Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName, source = "POF" })">@Model.Name</a></h6>
+
+        @await Html.PartialAsync("_ListingPrice", Model)
+        <a class="p-2" href="@Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName, source = "POF" })">Explore Now</a>
+    </div>
+</div>
+
+
+
+@*@if (ViewBag.Type == null)
+    {*@
+

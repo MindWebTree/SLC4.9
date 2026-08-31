@@ -2255,7 +2255,7 @@ namespace MWT.Nop.Core.Service.Catalog
 
             return attributesXml;
         }
-        protected async Task<(decimal DiscountAmount, decimal DiscountPercentage)> GetMaxDiscountAsync(Product product, decimal? oldPrice, decimal? price)
+        private async Task<(decimal DiscountAmount, decimal DiscountPercentage)> GetMaxDiscountAsync(Product product, decimal? oldPrice, decimal? price)
         {
             decimal maxDiscountAmount = 0;
             decimal maxDiscountPercentage = 0;
@@ -2816,6 +2816,7 @@ namespace MWT.Nop.Core.Service.Catalog
         }
         public async Task<(string offerText, string offerPlaceHolder, string discountAmount, decimal discountPercentage, DateTime? saleStartDate, DateTime? saleEndDate)> GetProductSaleOfferInfo(Product product, decimal? oldPrice, decimal? price)
         {
+            var _storeWideDiscountService = EngineContext.Current.Resolve<IStoreWideDiscountService>();
             var productOfferInfo = await _storeWideDiscountService.GetStoreWideProductDiscountInfoByProductIdAsync(product.Id);
 
             if (productOfferInfo == null)
@@ -2829,9 +2830,10 @@ namespace MWT.Nop.Core.Service.Catalog
 
             string offerText = productOfferInfo?.InfoText ?? "";
             (decimal discountAmount, decimal discountPercentage) = await GetMaxDiscountAsync(product, oldPrice, price);
+            var _priceFormatter = EngineContext.Current.Resolve<IPriceFormatter>();
 
             return (offerText, await _localizationService.GetResourceAsync("label.limitedoffer.v2.placeholder"),
-    await _priceFormatter.FormatPriceAsync(discountAmount), discountPercentage,
+ await _priceFormatter.FormatPriceAsync(discountAmount), discountPercentage,
                     offerInfo.StartDate, offerInfo.EndDate);
         }
         public virtual async Task<IList<Product>> GetNewArrivalProductsAsync(int pageIndex, int pageSize)

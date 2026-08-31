@@ -57,7 +57,7 @@
 
 
     string refFormId = addtoCartFormId.Replace("#", "").Replace("-", "_").Split('?')[0];
-    <div class="attributes">
+    <div class="attributes @(Model.IsBundleProduct && Model.DisplayBundleConfiguration ? "bundleproduct" : string.Empty)">
         <dl>
 
             @{
@@ -1053,28 +1053,30 @@
                 var $carousel = $(`${carouselRef} .jcarousel`);
 
                 if ($carousel.length && $carousel.data('jcarousel')) {
-                    var $items = $carousel.find('li'); // All items
-                    var $visible = $carousel.jcarousel().jcarousel('visible');
-
-                    var $firstVisible = $visible.first();
-                    var $lastVisible = $visible.last();
-                    var $firstItem = $items.first();
-                    var $lastItem = $items.last();
+                    var $carousel = $(`${carouselRef} .jcarousel`);
+                    if (!$carousel.length || !$carousel.data('jcarousel')) {
+                        return;
+                    }
 
                     var $prev = $(`${carouselRef} .jcarousel-control-prev`);
                     var $next = $(`${carouselRef} .jcarousel-control-next`);
 
-                    // Hide prev if first visible is first item
-                    if ($firstVisible.get(0) === $firstItem.get(0)) {
-                        $prev.hide();
-                    } else {
-                        $prev.show();
-                    }
+                    var $allItems = $carousel.jcarousel('items');
+                    var totalItems = $allItems.length;
 
-                    // Hide next if last visible is last item
-                    if ($lastVisible.get(0) === $lastItem.get(0)) {
+                    if (!totalItems) {
+                        $prev.hide();
                         $next.hide();
-                    } else {
+                        return;
+                    }
+                    var $fullyVisible = $carousel.jcarousel('fullyvisible');
+                    if ($fullyVisible.length >= totalItems) {
+                        $prev.hide();
+                        $next.hide();
+                        return;
+                    }
+                    else {
+                        $prev.show();
                         $next.show();
                     }
                 } else {
@@ -1127,26 +1129,6 @@
                 });
                 $('.attributes .attribute_value_wrapper').each(function () {
                     hidNextPreviousCraouselButtons('#' + $(this).attr('id'));
-                    var $carousel2 = $(this).find('.jcarousel');
-
-
-                    $carousel2.on('jcarousel:reload jcarousel:scrollend', function () {
-
-                        totalItems = $carousel2.find('li').length;
-                        var currentIndex = $carousel2.jcarousel('items').index($carousel2.jcarousel('visible').first());
-                        visibleItems = $carousel2.jcarousel('visible').length;
-                        var $prevBtn = $carousel2.closest('.attribute_value_wrapper').find('.jcarousel-control-prev');
-                        var $nextBtn = $carousel2.closest('.attribute_value_wrapper').find('.jcarousel-control-next');
-                        function updateButtonVisibility() {
-                            var totalItem = $carousel2.jcarousel('items').length;
-                            var currentIndex = $carousel2.jcarousel('items').index($carousel2.jcarousel('visible').first());
-                            var visibleItem = $carousel2.jcarousel('visible').length;
-
-                            $prevBtn.toggle(currentIndex > 0);
-                            $nextBtn.toggle(currentIndex + visibleItem < totalItem);
-                        }
-                        updateButtonVisibility(totalItems, currentIndex, visibleItems);
-                    });
                 });
             });
             $('.accordion-header').on('click', function () {
@@ -1506,11 +1488,17 @@
 
                       var prdName = 'Picture of ' + $("h1[itemprop=\"name\"]").text().trim();
 
-                      var show_image_length = $('.product-sub-images').jcarousel('visible').length;
+
 
                       function change_gallery_img(imageObjects, FullSizeImageUrl, DefaultSize, dimensionPictureFullSizeUrl, dimensionPictureDefaultSizeUrl, dimensionPictureThumbImageUrl, defaultGallery) {
                           $("#product-magiczoom .overlay-text").removeClass("show");
-                          $('.product-sub-images').find('ul').empty();
+                          var $slider = $('.product-sub-images .subimagescontainer'); // same element you called .slick() on originally
+
+                          // 1. Tear down slick if it's currently active, so we're appending to plain markup
+                          if ($slider.hasClass('slick-initialized')) {
+                              $slider.slick('unslick');
+                          }
+                          $slider.empty();
 
                           if (dimensionPictureFullSizeUrl !== null && dimensionPictureFullSizeUrl !== undefined && dimensionPictureFullSizeUrl !== '') {
                               var galleryItem = {
@@ -1550,11 +1538,11 @@
                           }
 
                           imageObjects.forEach(function (imageObj, index) {
-                              var newLi;
+                              var $item ;
 
                               if (imageObj.IsVideo && imageObj.VideoUrl) {
 
-                                  newLi = $('<li>').append(
+                                        $item = $('<div>', { 'class': 'image-block' }).append(
                                       $('<a>', {
                                           'class': 'thumb-Video',
                                           'data-zoom-id': 'product-video-magiczoom',
@@ -1575,7 +1563,7 @@
                                               'alt': imageObj.AlternateText,
                                               'data-video': imageObj.VideoUrl
                                           }),
-                                          $('<div>', { 'class': 'video-play-overlay' }).append(
+                                                $('<div>', { 'class': 'video-play-overlay' }).append(
                                               $(document.createElementNS(svgNS, "svg"))
                                                   .attr({
                                                       width: 24,
@@ -1592,7 +1580,7 @@
                                   );
                               }
                               else {
-                                  newLi = $('<li>').append(
+                                        $item = $('<div>', { 'class': 'image-block' }).append(
                                       $('<a>', {
                                           'data-zoom-id': 'product-magiczoom',
                                           'href': imageObj.FullSizeImageUrl,
@@ -1616,7 +1604,7 @@
                                       )
                                   );
                               }
-                              $('.product-sub-images').find('ul').append(newLi); // Append the new <li> to the carousel
+                             $slider.append($item);
 
 
                           });
@@ -1650,26 +1638,13 @@
                           MagicZoom.start("product-magiczoom");
                           //  MagicZoom.update("product-magiczoom", imageObjects[0].FullSizeImageUrl,  imageObjects[0].ImageUrl, 'show-title: false');
                           // Reinitialize the jCarousel
-                          $(".jcarousel").jcarousel("destroy"); // Destroy previous instance
-                          $(".jcarousel").jcarousel();
 
-                          // Reinitialize jCarousel control functionality
-                          $(".jcarousel-control-prev").jcarouselControl({
-                              target: '-=1'
-                          });
+                          $slider.slick(getGallerySlickSettings());
 
-                          $(".jcarousel-control-next").jcarouselControl({
-                              target: '+=1'
-                          });
-                          console.log(show_image_length);
 
-                          if (imageObjects.length >= show_image_length) {
-                              $(".product-gallery .jcarousel-control-prev,.product-gallery .jcarousel-control-next").show();
-                          } else {
-                              $(".product-gallery .jcarousel-control-prev,.product-gallery .jcarousel-control-next").hide();
-                          }
 
-                      } $(document).trigger({
+                      }
+                      $(document).trigger({
                           type: "attribute_changed",
                           changedData: { attrId: attrId }
                       });
@@ -1723,8 +1698,7 @@
 
                                       $('@addtoCartFormId .price-value-sticky-@Model.Id').html(content);
                                       $('@addtoCartFormId .price-value-sticky-@Model.Id').show();
-
-                                         if (typeof updatePriceAriaLabel === "function") {
+                                      if (typeof updatePriceAriaLabel === "function") {
                                           updatePriceAriaLabel('@addtoCartFormId .price-value-@Model.Id', data.price, data.oldPrice);
                                           updatePriceAriaLabel('@addtoCartFormId .price-value-withoutoffer-@Model.Id', data.price, data.oldPrice);
                                           updatePriceAriaLabel('@addtoCartFormId .price-value-sticky-@Model.Id', data.price, data.oldPrice);
@@ -1739,7 +1713,6 @@
                                       $('@addtoCartFormId .price-value-@Model.Id').show();
                                       $('@addtoCartFormId .limited-offer-@Model.Id').show();
                                       $('@addtoCartFormId .limited-offer-@Model.Id').html(data.offerText);
-
                                         if (typeof updatePriceAriaLabel === "function") {
                                           updatePriceAriaLabel('@addtoCartFormId .price-value-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
                                           updatePriceAriaLabel('@addtoCartFormId .price-value-withoutoffer-@Model.Id', data.oldPrice ? data.oldPrice : data.price);
@@ -1790,7 +1763,7 @@
                                   }
                               }
                               var isMainProduct = '@Model.IsMainProduct';
-                              var $carousel = $('.product-sub-images');
+
 
 
                               if (isMainProduct != 'False') {
@@ -1803,7 +1776,9 @@
 
 
                                       if (default_img.length < 1) {
-                                          $('.product-sub-images li').each(function (index) {
+
+                                          $('.product-sub-images .subimagescontainer .image-block').each(function (index) {
+
                                               var $a = $(this).find('a');
                                               var isDimensionImage = $(this).find('a').hasClass("dimension-image");
                                               var $img = $(this).find('img');
@@ -1856,8 +1831,9 @@
                                       $("#product-magiczoom .overlay-text").removeClass("show");
                                       $("#sticky-img-@Model.Id img").attr("src", data.pictureDefaultSizeUrl);
                                       if (data.attrName?.toLowerCase().indexOf("configuration") >= 0) {
+                                          var $slider = $('.product-sub-images .subimagescontainer');
                                           if ($(".custom-thumbnail").length == 0) {
-                                              var thumbRef = '<li class="custom-thumbnail"> <a  class="thumb-item" data-zoom-id="product-magiczoom" href="' + data.pictureFullSizeUrl + '" data-image="' + data.pictureDefaultSizeUrl + '" alt="' + prdName + '" title="' + prdName + '"><img data-index="1" class="img_fadeIn" data-defaultsize="' + data.pictureDefaultSizeUrl + '" src="' + data.pictureThumbImageUrl + '"  alt="' + prdName + '" title="' + prdName + '" data-fullsize="' + data.pictureFullSizeUrl + '"></a></li>';
+                                              var thumbRef = '<div class="custom-thumbnail image-block"> <a  class="thumb-item" data-zoom-id="product-magiczoom" href="' + data.pictureFullSizeUrl + '" data-image="' + data.pictureDefaultSizeUrl + '" alt="' + prdName + '" title="' + prdName + '"><img data-index="1" class="img_fadeIn" data-defaultsize="' + data.pictureDefaultSizeUrl + '" src="' + data.pictureThumbImageUrl + '"  alt="' + prdName + '" title="' + prdName + '" data-fullsize="' + data.pictureFullSizeUrl + '"></a></div>';
                                           }
                                           else {
                                               $(".custom-thumbnail a").attr("href", data.pictureFullSizeUrl);
@@ -1866,12 +1842,12 @@
                                               $(".custom-thumbnail img").attr("data-fullsize", data.pictureFullSizeUrl);
                                               $(".custom-thumbnail img").attr("data-defaultsize", data.pictureDefaultSizeUrl);
                                           }
-                                          $(".product-sub-images ul li:first").after(thumbRef);
+                                          $(".product-sub-images .subimagescontainer .image-block:first").after(thumbRef);
 
                                           if (!isGalleryFunctioncalled) {
                                               if (data.dimensionPictureFullSizeUrl !== null && data.dimensionPictureFullSizeUrl !== undefined && data.dimensionPictureFullSizeUrl !== '') {
-                                                  var dimensionRef = '<li class="custom-thumbnail"> <a  class="thumb-item" data-zoom-id="product-magiczoom" href="' + data.dimensionPictureFullSizeUrl + '" data-image="' + data.dimensionPictureDefaultSizeUrl + '" alt="' + prdName + '" title="' + prdName + '"><img data-index="1" class="img_fadeIn" data-defaultsize="' + data.dimensionPictureDefaultSizeUrl + '" src="' + data.dimensionPictureThumbImageUrl + '"  alt="' + prdName + '" title="' + prdName + '" data-fullsize="' + data.pictureFullSizeUrl + '"></a></li>';
-                                                  $(".product-sub-images ul li:third").after(dimensionRef);
+                                                  var dimensionRef = '<div class="custom-thumbnail image-block"> <a  class="thumb-item" data-zoom-id="product-magiczoom" href="' + data.dimensionPictureFullSizeUrl + '" data-image="' + data.dimensionPictureDefaultSizeUrl + '" alt="' + prdName + '" title="' + prdName + '"><img data-index="1" class="img_fadeIn" data-defaultsize="' + data.dimensionPictureDefaultSizeUrl + '" src="' + data.dimensionPictureThumbImageUrl + '"  alt="' + prdName + '" title="' + prdName + '" data-fullsize="' + data.pictureFullSizeUrl + '"></a></div>';
+                                                  $(".product-sub-images .subimagescontainer .image-block:third").after(dimensionRef);
                                               }
 
                                           }
@@ -1899,8 +1875,10 @@
                                           MagicZoom.start("product-magiczoom");
 
 
-                                          $(".product-sub-images").jcarousel("destroy");
-                                          $(".product-sub-images").jcarousel({ wrap: null });
+                                          if ($slider.hasClass('slick-initialized')) {
+                                              $slider.slick('unslick');
+                                          }
+                                          $slider.slick(getGallerySlickSettings());
                                           //$(".product-sub-images ul li a").removeClass("mz-thumb-selected");
                                           //$(".product-sub-images ul li[class=\"custom-thumbnail\"] a").addClass("mz-thumb-selected");
 
@@ -1919,11 +1897,14 @@
 
                                                   }
                                                   else {
+                                                      var $slider = $('.product-sub-images .subimagescontainer');
+                                                      var dimensionRef = '<div class="image-block"> <a  class="thumb-item dimension-image" data-zoom-id="product-magiczoom" href="' + data.dimensionPictureFullSizeUrl + '" data-image="' + data.dimensionPictureDefaultSizeUrl + '" alt="' + prdName + '" title="' + prdName + '"><img data-index="1" class="img_fadeIn" data-defaultsize="' + data.dimensionPictureDefaultSizeUrl + '" src="' + data.dimensionPictureThumbImageUrl + '"  alt="' + prdName + '" title="' + prdName + '" data-fullsize="' + data.pictureFullSizeUrl + '"></a></div>';
+                                                      $(".product-sub-images .subimagescontainer .image-block:nth-child(3)").after(dimensionRef);
 
-                                                      var dimensionRef = '<li> <a  class="thumb-item dimension-image" data-zoom-id="product-magiczoom" href="' + data.dimensionPictureFullSizeUrl + '" data-image="' + data.dimensionPictureDefaultSizeUrl + '" alt="' + prdName + '" title="' + prdName + '"><img data-index="1" class="img_fadeIn" data-defaultsize="' + data.dimensionPictureDefaultSizeUrl + '" src="' + data.dimensionPictureThumbImageUrl + '"  alt="' + prdName + '" title="' + prdName + '" data-fullsize="' + data.pictureFullSizeUrl + '"></a></li>';
-                                                      $(".product-sub-images ul li:nth-child(3)").after(dimensionRef);
-                                                      $(".product-sub-images").jcarousel("destroy");
-                                                      $(".product-sub-images").jcarousel({ wrap: null });
+                                                      if ($slider.hasClass('slick-initialized')) {
+                                                          $slider.slick('unslick');
+                                                      }
+                                                      $slider.slick(getGallerySlickSettings());
                                                   }
 
                                               }
@@ -2000,11 +1981,14 @@
 
                                               }
                                               else {
+                                                  var $slider = $('.product-sub-images .subimagescontainer');
+                                                  var dimensionRef = '<div class="image-block"> <a  class="thumb-item dimension-image" data-zoom-id="product-magiczoom" href="' + data.dimensionPictureFullSizeUrl + '" data-image="' + data.dimensionPictureDefaultSizeUrl + '" alt="' + prdName + '" title="' + prdName + '"><img data-index="1" class="img_fadeIn" data-defaultsize="' + data.dimensionPictureDefaultSizeUrl + '" src="' + data.dimensionPictureThumbImageUrl + '"  alt="' + prdName + '" title="' + prdName + '" data-fullsize="' + data.pictureFullSizeUrl + '"></a></div>';
+                                                  $(".product-sub-images .subimagescontainer .image-block:nth-child(3)").after(dimensionRef);
 
-                                                  var dimensionRef = '<li> <a  class="thumb-item dimension-image" data-zoom-id="product-magiczoom" href="' + data.dimensionPictureFullSizeUrl + '" data-image="' + data.dimensionPictureDefaultSizeUrl + '" alt="' + prdName + '" title="' + prdName + '"><img data-index="1" class="img_fadeIn" data-defaultsize="' + data.dimensionPictureDefaultSizeUrl + '" src="' + data.dimensionPictureThumbImageUrl + '"  alt="' + prdName + '" title="' + prdName + '" data-fullsize="' + data.pictureFullSizeUrl + '"></a></li>';
-                                                  $(".product-sub-images ul li:nth-child(3)").after(dimensionRef);
-                                                  $(".product-sub-images").jcarousel("destroy");
-                                                  $(".product-sub-images").jcarousel({ wrap: null });
+                                                  if ($slider.hasClass('slick-initialized')) {
+                                                      $slider.slick('unslick');
+                                                  }
+                                                  $slider.slick(getGallerySlickSettings());
                                               }
                                               MagicZoom.stop("product-magiczoom");
                                               MagicZoom.start("product-magiczoom");
@@ -2119,7 +2103,7 @@
                       // 2. UI Update Loop
                       attributeContainers.each(function (index) {
                           var $container = $(this);
-                                var $parentRow = $container.closest('.attribute-row');
+                          var $parentRow = $container.closest('.attribute-row');
                           var currentContainerId = $container.attr('id');
 
                           var otherSelectedIds = [];

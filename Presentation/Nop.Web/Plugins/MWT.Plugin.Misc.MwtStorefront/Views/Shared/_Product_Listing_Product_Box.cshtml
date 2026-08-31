@@ -1,0 +1,26 @@
+﻿@model CustomProductOverviewModel
+@using Nop.Core
+@using Nop.Core.Domain.Catalog
+@using Nop.Core.Domain.Orders
+@using Nop.Core.Domain.Tax
+@inject CatalogSettings catalogSettings
+@inject IWorkContext workContext
+@inject Nop.Services.Catalog.ISpecificationAttributeService _specificationAttributeService
+
+<div data-productid="@Model.Id" data-main-catid="@await _specificationAttributeService.GetMainCategoryOfProduct(Model.Id)">
+    <a href="@Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName, source = "POF" })">
+        <img alt="@Model.DefaultPictureModel.AlternateText" src="/images/pixel.png"
+             data-src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" class="lazy" />
+    </a>
+    <p class="pt-3 view-details">
+        <strong> <a href="@Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName, source = "POF" })">@Model.Name</a></strong> <br>
+        <a href="@Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName, source = "POF" })">
+            See Details <img src="/images/right-arrow.png" />
+        </a>
+    </p>
+</div>
+
+
+
+
+

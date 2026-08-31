@@ -15,22 +15,13 @@ using Nop.Core;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Logging;
-using Nop.Core.Infrastructure;
-using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Customers;
 using Nop.Services.Localization;
 using Nop.Services.Logging;
-using Nop.Services.Messages;
-using Nop.Services.Orders;
 using Nop.Services.Payments;
 using Nop.Web.Controllers;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Controllers
 {
@@ -549,7 +540,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
         {
             var orderEntity = await _orderService.GetOrderByIdAsync(liveOrderNumber);
             var order = await _customOrderService.GetById(orderId);
-            if (orderEntity == null || order == null || order.CustomerId != orderEntity.CustomerId || (orderEntity.CaptureTransactionId != transactionId && orderEntity.AuthorizationTransactionId != transactionId && (order.AlreadyFee ?? 0) == 0))
+            if (orderEntity == null || order == null || order.CustomerId != orderEntity.CustomerId ||
+                (orderEntity.CaptureTransactionId != transactionId && orderEntity.AuthorizationTransactionId != transactionId 
+                && (order.AlreadyFee ?? 0) == 0))
             {
                 return RedirectToRoute("Homepage");
             }

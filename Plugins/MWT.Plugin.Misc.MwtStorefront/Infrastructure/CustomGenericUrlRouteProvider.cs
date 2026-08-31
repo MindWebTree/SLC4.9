@@ -70,7 +70,7 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Infrastructure
 
             endpointRouteBuilder.MapControllerRoute(name: NopRoutingDefaults.RouteName.Generic.Topic,
                 pattern: genericPattern,
-                defaults: new { controller = "CustomTopic", action = "CustomTopicDetails" });
+                defaults: new { controller = "TopicExtended", action = "TopicDetails" });
 
             endpointRouteBuilder.MapControllerRoute(name: "ProductsByTag",
                 pattern: genericPattern,

@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using MWT.Plugin.Misc.MwtStorefront.Infrastructure;
-using Nop.Services.Installation;
 using Nop.Web.Framework.Mvc.Routing;
 using Nop.Web.Infrastructure;
-using NpRoutName = Nop.Core.Http.NopRouteNames;
 
 namespace MWT.Nop.Plugin.Widgets.Catalog.Infrastructure
 {
@@ -22,6 +20,10 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Infrastructure
         public void RegisterRoutes(IEndpointRouteBuilder endpointRouteBuilder)
         {
             var lang = GetLanguageRoutePattern();
+
+            endpointRouteBuilder.MapControllerRoute(name: "ManufacturerList",
+          pattern: $"{lang}/manufacturer/all/",
+          defaults: new { controller = "Catalog", action = "CustomManufacturer" });
 
             endpointRouteBuilder.MapControllerRoute(name: "GetCustomCategoryProducts",
               pattern: $"category/products/",
