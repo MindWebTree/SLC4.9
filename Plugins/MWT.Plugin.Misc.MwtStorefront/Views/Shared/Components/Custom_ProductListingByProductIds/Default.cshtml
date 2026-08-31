@@ -3,38 +3,39 @@
 {
 
 
-    @if (ViewBag.Type == "_product_listing"  || ViewBag.Type == "_product_listing_version1" ||
-	ViewBag.Type == "_product_listing_version2" ||
-	ViewBag.Type == "_product_listing_version3" ||
-	ViewBag.Type == "_product_listing_version4" ||
-	ViewBag.Type == "_product_listing_version5"  ||
-	ViewBag.Type == "_product_listing_version6" ||	ViewBag.Type == "_product_listing_version7"  )
+    @if (ViewBag.Type == "_product_listing" || ViewBag.Type == "_product_listing_version1" ||
+        ViewBag.Type == "_product_listing_version2" ||
+        ViewBag.Type == "_product_listing_version3" ||
+        ViewBag.Type == "_product_listing_version4" ||
+        ViewBag.Type == "_product_listing_version5" ||
+        ViewBag.Type == "_product_listing_version6" || ViewBag.Type == "_product_listing_version7" || ViewBag.Type == "_product_listing_without_utm")
     {
         <div class="landing-page-slider mt-3">
 
             @foreach (var item in Model)
             {
                 var partialViewData = new ViewDataDictionary(ViewData)
-{
-        { 
-		
-		"Utm",ViewBag.Type=="_product_listing" ||ViewBag.Type== "_product_listing_version1" ? "vida_niko":ViewBag.Type=="_product_listing_version2"?"mollie_frager":
-		ViewBag.Type=="_product_listing_version3"?"jessica_gahan":ViewBag.Type=="_product_listing_version4"?"studio_hanego":ViewBag.Type=="_product_listing_version5"?"brittney_gutierrez":"lauren_andresky"
-		},
-		{
+        {
+        {
+
+        "Utm",ViewBag.Type=="_product_listing" ||ViewBag.Type== "_product_listing_version1" ? "vida_niko":ViewBag.Type=="_product_listing_version2"?"mollie_frager":
+        ViewBag.Type=="_product_listing_version3"?"jessica_gahan":ViewBag.Type=="_product_listing_version4"?"studio_hanego":ViewBag.Type==
+        "_product_listing_version5"?"brittney_gutierrez":ViewBag.Type=="_product_listing_without_utm"?"":"lauren_andresky"
+        },
+        {
         "target",
         ViewBag.Type == "_product_listing_version7" ? "_blank" : "_self"
-    }
-    };
-@await Html.PartialAsync("_Topic_ProductBox", item, partialViewData)
-}
+        }
+        };
+                @await Html.PartialAsync("_Topic_ProductBox", item, partialViewData)
+            }
         </div>
         <script>
             document.addEventListener("DOMContentLoaded", function () {
 
                 $('.landing-page-slider').slick({
                     infinite: false,
-                    slidesToShow: @(ViewBag.Type == "_product_listing_version1" ||ViewBag.Type == "_product_listing_version7" ? 4 : 3),
+                    slidesToShow: @(ViewBag.Type == "_product_listing_version1" || ViewBag.Type == "_product_listing_version7" || ViewBag.Type == "_product_listing_without_utm" ? 4 : 3),
                     slidesToScroll: 1,
                     arrows: true,
                     dots: true,
@@ -73,19 +74,19 @@
         </div>
 
         <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            $('.@(ViewBag.sectionId)').slick({
-                dots: true,
+                    document.addEventListener("DOMContentLoaded", function () {
+                        $('.@(ViewBag.sectionId)').slick({
+                            dots: true,
 
-				slidesToShow: 1,
-                slidesToScroll: 1,
-                arrows: '@ViewBag.Type' == "product_without_price_info" ? false: true,
-            });
-if($('body').width()>767){
-            $(".single-item .slick-next").appendTo(".slick-dots");
-            $(".single-item .slick-prev").appendTo(".slick-dots");
-			}
-        });
+                            slidesToShow: 1,
+                            slidesToScroll: 1,
+                            arrows: '@ViewBag.Type' == "product_without_price_info" ? false: true,
+                        });
+            if($('body').width()>767){
+                        $(".single-item .slick-next").appendTo(".slick-dots");
+                        $(".single-item .slick-prev").appendTo(".slick-dots");
+                        }
+                    });
         </script>
     }
 }

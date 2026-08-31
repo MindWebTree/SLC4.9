@@ -1,10 +1,7 @@
 ﻿
 using iTextSharp.text;
 using iTextSharp.text.pdf;
-
 using Microsoft.AspNetCore.Mvc.Rendering;
-
-
 using MWT.Nop.Core.Domain.CustomOrders;
 using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Core.Services.Catalog;
@@ -14,7 +11,6 @@ using MWT.Nop.Core.Services.Orders;
 using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories;
 using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Orders;
 using MWT.Plugin.Misc.MwtStorefront.Models.Api;
-using MWT.Plugin.Misc.MwtStorefront.Models.Common;
 using MWT.Plugin.Misc.MwtStorefront.Models.Order;
 using Nop.Core;
 using Nop.Core.Caching;
@@ -27,18 +23,15 @@ using Nop.Core.Domain.Localization;
 using Nop.Core.Domain.Media;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Shipping;
-using Nop.Core.Domain.Stores;
 using Nop.Core.Domain.Tax;
 using Nop.Core.Domain.Vendors;
 using Nop.Core.Infrastructure;
-using Nop.Services.Affiliates;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Common.Pdf;
 using Nop.Services.Configuration;
 using Nop.Services.Customers;
 using Nop.Services.Directory;
-using Nop.Services.Discounts;
 using Nop.Services.Gdpr;
 using Nop.Services.Helpers;
 using Nop.Services.Localization;
@@ -49,7 +42,6 @@ using Nop.Services.Payments;
 using Nop.Services.Security;
 using Nop.Services.Seo;
 using Nop.Services.Shipping;
-using Nop.Services.Stores;
 using Nop.Services.Tax;
 using Nop.Services.Vendors;
 using Nop.Web.Factories;
@@ -57,7 +49,6 @@ using Nop.Web.Models.Common;
 using Nop.Web.Models.Media;
 using Nop.Web.Models.Order;
 using System.Dynamic;
-using System.Text;
 using System.Text.RegularExpressions;
 using static MWT.Plugin.Misc.MwtStorefront.Models.Api.ProductModel;
 using NopHttp = Nop.Core.Http;

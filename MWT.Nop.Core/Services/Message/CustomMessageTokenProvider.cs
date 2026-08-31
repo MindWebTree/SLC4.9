@@ -509,7 +509,7 @@ namespace MWT.Nop.Core.Services.Message
                 var match = paymentRequest.CustomValues
                     .FirstOrDefault(kvp => string.Equals(kvp.Name, "transactionid", StringComparison.OrdinalIgnoreCase));
 
-                if (!match.Equals(default(KeyValuePair<string, object>)))
+                if (match!=null)
                 {
                     transactionid = match.Value?.ToString() ?? string.Empty;
                 }
@@ -1282,8 +1282,8 @@ namespace MWT.Nop.Core.Services.Message
                 productName += $"<br/><b>SKU</b> : ({product.Sku})</p>";
 
                 //attributes
-                
-                var attributeDescription = string.IsNullOrEmpty(orderItem.AttributesXml) ? orderItem.AttributeDescription : await _productAttributeFormatter.CustomFormatAttributesAsync(product, orderItem.AttributesXml);
+                var shadeAttr = await _settingService.GetSettingByKeyAsync<string>("catalog.product.attribute.shade.name");
+                var attributeDescription = orderItem.AttributeDescription;
                 Dictionary<string, string> attrs = new Dictionary<string, string>();
                 if (!string.IsNullOrEmpty(attributeDescription))
                 {
@@ -1292,7 +1292,17 @@ namespace MWT.Nop.Core.Services.Message
                         if (attribute.Split(":").Length > 1)
                             try
                             {
-                                attrs.Add(attribute.Split(":")[0], System.Net.WebUtility.HtmlDecode(string.Join(':', attribute.Split(":").Skip(1))));
+                                if (string.Equals(attribute.Split(":")[0], shadeAttr, StringComparison.CurrentCultureIgnoreCase))
+                                {
+
+                                    attrs.Add(attribute.Split(":")[0], System.Net.WebUtility.HtmlDecode(CustomCommonHelper.StripUnwantedPrefixFromShade(
+                                        string.Join(':', attribute.Split(":").Skip(1)))));
+                                }
+                                else
+                                {
+
+                                    attrs.Add(attribute.Split(":")[0], System.Net.WebUtility.HtmlDecode(string.Join(':', attribute.Split(":").Skip(1))));
+                                }
                             }
                             catch { }
                     }

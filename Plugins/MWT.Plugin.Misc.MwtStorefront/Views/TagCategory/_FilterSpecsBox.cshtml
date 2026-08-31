@@ -55,11 +55,11 @@
     }
 
 </div>
-@if (Model.CustomProperties.TryGetValue("ExploreMoreLinks", out var exploreLinks) && !string.IsNullOrEmpty(exploreLinks))
+@if (Model.CustomProperties.Where(k => k.Key == "ExploreMoreLinks").Any() && !string.IsNullOrEmpty((string)Model.CustomProperties.Where(k => k.Key == "ExploreMoreLinks").First().Value))
 {
     <div class="explore-links">
         <h3>@T("Admin.TagPages.ExploreMoreLinks")</h3>
-        @Html.Raw(exploreLinks)
+        @Html.Raw(Model.CustomProperties.Where(k => k.Key == "ExploreMoreLinks").First().Value)
     </div>
 }
 

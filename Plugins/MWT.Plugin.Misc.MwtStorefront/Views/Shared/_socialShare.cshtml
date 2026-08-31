@@ -1,16 +1,16 @@
 @model CustomProductDetailsModel
-@inject Nop.Core.IStoreContext  _storeContext
+@inject Nop.Core.IStoreContext _storeContext
 @{
     var storeUrl = (await _storeContext.GetCurrentStoreAsync()).Url;
     storeUrl = storeUrl.Substring(0, storeUrl.Length - 1);
-    var url =storeUrl + Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName });
-
+    var url = storeUrl + Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName });
 }
-<style>div#a-popover-content-3 {
+<style>
+    div.a-popover-content {
         overflow: hidden;
         border: 1px solid #BBBFBF;
         border-color: #BBBFBF;
-        height: 100%;   
+        height: 100%;
         width: 144px;
         border-radius: 8px;
         box-shadow: 0 2px 5px rgba(15,17,17,.15);
@@ -44,21 +44,20 @@
         }
 
     .ssf-background {
-      border: 1px solid #ddd;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    top: 10px;
-    right: 10px;
-    z-index: 1;
-    background-color: #fff;
-    width: calc(24px* 1.4);
-    height: calc(24px* 1.4);
-    border: aliceblue;
-    gap: 5px;
+        border: 1px solid #ddd;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        top: 10px;
+        right: 10px;
+        z-index: 1;
+        background-color: #fff;
+        width: calc(24px* 1.4);
+        height: calc(24px* 1.4);
+        border: aliceblue;
+        gap: 5px;
     }
-
 
     /* Initially hide the popover content */
     .a-popover-content {
@@ -69,103 +68,97 @@
         .a-popover-content.show {
             display: block;
         }
-
 </style>
+
 <div class="ssf-outer">
-<div class="ssf-background ssf-bg-count">
-    <i class="ssf-share-trigger ssf-multi-08c5s9yquvy6 a-declarative"  role="img" aria-label="Share"
-    tabindex="0" data-share="{&quot;background&quot;:true}"
-       style="height: 24px; width: 24px; background-image: url(&quot;/images/icons/share-std.svg&quot;);"> <span class="hidden-xs">Share</span></i>
-</div>
-<div class="a-popover-content" id="a-popover-content-3">
-    <div class="ssf-channel-v">
-        <a target="_blank" class="ssf-channel email a-color-base" href="mailto:?subject=I wanted you to see this site&amp;body=Check out this site @url" title="Share via e-mail" data-key="email">
-            <span class="a-spinner a-spinner-small a-align-center aok-hidden"></span>
-            <i role="img" aria-label="Email" style="background-image: url(/images/icons/email-circular.svg)"></i>
-            <span class="email-label">Email</span>
-        </a>
-    </div><div class="ssf-channel-v">
-        <a target="_blank" class="ssf-channel pi a-color-base" href="https://www.pinterest.com/pin/create/button/?url=@(url)&description=@(Model.Name)&media=@(Model.PictureModels.Count>0?Model.PictureModels.FirstOrDefault().FullSizeImageUrl:"")&method=button" title="Pin it on Pinterest" data-key="pi">
-            <span class="a-spinner a-spinner-small a-align-center aok-hidden"></span>
-            <i role="img" aria-label="Pinterest" style="background-image: url(/images/icons/pinterest-circular.svg)"></i>
-            <span class="pi-label">Pinterest</span>
-        </a>
-    </div><div class="ssf-channel-v">
-        <a target="_blank"  class="ssf-channel fb a-color-base" href="https://www.facebook.com/sharer/sharer.php?u=@(url)" target="target_blank" title="Share on Facebook" data-key="fb">
-            <span class="a-spinner a-spinner-small a-align-center aok-hidden"></span>
-            <i role="img" aria-label="Facebook" style="background-image: url(&quot;/images/icons/facebook-circular.svg&quot;); display: inline-block;"></i>
-            <span class="fb-label">Facebook</span>
-        </a>
-    </div><div class="ssf-channel-v">
-        <a target="_blank"  class="ssf-channel tw a-color-base" href="https://twitter.com/intent/tweet?text=@(url)&keywords=@(Model.MetaKeywords)&sr=8-2&th=1" target="target_blank" title="Share on Twitter" data-key="tw">
-            <span class="a-spinner a-spinner-small a-align-center aok-hidden"></span>
-            <i role="img" aria-label="Twitter" style="background-image: url(/images/icons/icon-twitter-circle-1.png)"></i>
-            <span class="tw-label">Twitter</span>
-        </a>
-    </div><div class="ssf-channel-v">
-        <a target="#"  class="ssf-channel copy a-color-base" id="copyLink"   data-key="copy" data-attr="@(url)">
-            <span class="a-spinner a-spinner-small a-align-center aok-hidden"></span>
-            <i role="img" aria-label="Copy Link" style="background-image: url(/images/icons/link-circular.svg)"></i>
-            <span class="copy-label">Copy Link</span>
-        </a>
+    <div class="ssf-background ssf-bg-count">
+        <i class="ssf-share-trigger a-declarative" title="Share" role="img" aria-label="Share"
+           tabindex="0" data-share="{&quot;background&quot;:true}"
+           style="height: 24px; width: 24px; background-image: url(&quot;/images/icons/share-std.svg&quot;);"> <span class="hidden-xs">Share</span></i>
     </div>
-	 </div>
-
+    <div class="a-popover-content">
+        <div class="ssf-channel-v">
+            <a target="_blank" class="ssf-channel email a-color-base" href="mailto:?subject=I wanted you to see this site&amp;body=Check out this site @url" title="Share via e-mail" data-key="email">
+                <span class="a-spinner a-spinner-small a-align-center aok-hidden"></span>
+                <i role="img" aria-label="Email" style="background-image: url(/images/icons/email-circular.svg)"></i>
+                <span class="email-label">Email</span>
+            </a>
+        </div>
+        <div class="ssf-channel-v">
+            <a target="_blank" class="ssf-channel pi a-color-base" href="https://www.pinterest.com/pin/create/button/?url=@(url)&description=@(Model.Name)&media=@(Model.PictureModels.Count > 0 ? Model.PictureModels.FirstOrDefault().FullSizeImageUrl : "")&method=button" title="Pin it on Pinterest" data-key="pi">
+                <span class="a-spinner a-spinner-small a-align-center aok-hidden"></span>
+                <i role="img" aria-label="Pinterest" style="background-image: url(/images/icons/pinterest-circular.svg)"></i>
+                <span class="pi-label">Pinterest</span>
+            </a>
+        </div>
+        <div class="ssf-channel-v">
+            <a target="_blank" class="ssf-channel fb a-color-base" href="https://www.facebook.com/sharer/sharer.php?u=@(url)" title="Share on Facebook" data-key="fb">
+                <span class="a-spinner a-spinner-small a-align-center aok-hidden"></span>
+                <i role="img" aria-label="Facebook" style="background-image: url(&quot;/images/icons/facebook-circular.svg&quot;); display: inline-block;"></i>
+                <span class="fb-label">Facebook</span>
+            </a>
+        </div>
+        <div class="ssf-channel-v">
+            <a target="_blank" class="ssf-channel tw a-color-base" href="https://twitter.com/intent/tweet?text=@(url)&keywords=@(Model.MetaKeywords)&sr=8-2&th=1" title="Share on Twitter" data-key="tw">
+                <span class="a-spinner a-spinner-small a-align-center aok-hidden"></span>
+                <i role="img" aria-label="Twitter" style="background-image: url(/images/icons/icon-twitter-circle-1.png)"></i>
+                <span class="tw-label">Twitter</span>
+            </a>
+        </div>
+        <div class="ssf-channel-v">
+            <a target="_blank" class="ssf-channel copy a-color-base" title="Copy Link" data-key="copy" data-attr="@(url)">
+                <span class="a-spinner a-spinner-small a-align-center aok-hidden"></span>
+                <i role="img" aria-label="Copy Link" style="background-image: url(/images/icons/link-circular.svg)"></i>
+                <span class="copy-label">Copy Link</span>
+            </a>
+        </div>
+    </div>
 </div>
+
 <script asp-location="Footer">
+    (function () {
+        // This block is emitted once per _socialShare instance on the page (e.g. mobile + desktop),
+        // so guard against attaching the same delegated handlers more than once.
+        if (window.ssfShareInitialized) {
+            return;
+        }
+        window.ssfShareInitialized = true;
 
-
-
-
-
-    document.addEventListener("DOMContentLoaded", function () {
-        var copyLink = document.getElementById("copyLink");
-
-        copyLink.addEventListener("click", function (e) {
-            var attributeValue = copyLink.getAttribute("data-attr");
-            if (attributeValue) {
-                copyToClipboard(attributeValue);
-               
-            }
-            e.preventDefault();
+        // Toggle only the popover that belongs to the trigger that was clicked
+        $(document).on("click", ".ssf-share-trigger", function (e) {
+            e.stopPropagation();
+            var $popover = $(this).closest(".ssf-outer").find(".a-popover-content");
+            $(".a-popover-content.show").not($popover).removeClass("show");
+            $popover.toggleClass("show");
         });
-    });
 
-    // Function to copy text to clipboard
-    function copyToClipboard(text) {
-        var textArea = document.createElement("textarea");
-        textArea.value = text;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textArea);
-    }
-    $(document).mouseup(function (e) {
-        var container = $("#a-popover-content-3");
-        var container1 = $(".ssf-share-trigger");
-        // if the target of the click isn't the container nor a descendant of the container
-        if (!container.is(e.target) && container.has(e.target).length === 0 && !container1.is(e.target) && container1.has(e.target).length === 0) {
-           
-            container.removeClass("show");
-        }
-    });
-    $("body").on("click", "#a-popover-content-3 a", function () {
-   
-        $("#a-popover-content-3").removeClass("show");
-    })
+        // Click outside any share widget closes whichever popover is open
+        $(document).on("click", function (e) {
+            if (!$(e.target).closest(".ssf-outer").length) {
+                $(".a-popover-content.show").removeClass("show");
+            }
+        });
 
-    $("body").on("click", ".ssf-share-trigger", function () {
-       
-        if ($("#a-popover-content-3").hasClass("show")) {
-            $("#a-popover-content-3").removeClass("show");
-        }
-        else
-            $("#a-popover-content-3").addClass("show");
-    })
-      $("body").on("keydown", ".ssf-share-trigger", function (e) {
-        if (e.key === "Enter" || e.key === " ") {
+        // Clicking a share link closes that instance's popover
+        $(document).on("click", ".a-popover-content a:not(.copy)", function () {
+            $(this).closest(".a-popover-content").removeClass("show");
+        });
+
+        // Copy Link, scoped to the instance clicked
+        $(document).on("click", ".ssf-channel.copy", function (e) {
             e.preventDefault();
-            $(this).trigger("click");
+            var text = $(this).data("attr");
+            copyToClipboard(text);
+            $(this).closest(".a-popover-content").removeClass("show");
+        });
+
+        function copyToClipboard(text) {
+            var textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textArea);
         }
-    });
+    })();
 </script>

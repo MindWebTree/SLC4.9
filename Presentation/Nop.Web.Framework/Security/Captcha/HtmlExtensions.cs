@@ -139,32 +139,74 @@ public static class HtmlExtensions
         //prepare reCAPTCHA script
         if (string.IsNullOrEmpty(actionName))
             actionName = helper.ViewContext.RouteData.Values["action"].ToString();
-
+        #region custom Updates
         var scriptCallback = $@"
                 var onloadCallback{id} = function() {{
                     var form = $('input[id=""g-recaptcha-response_{id}""]').closest('form');
                     var btn = $(form.find(':submit')[0]);
-
-                    var actionBtn = btn.data('action');
+ var actionBtn = btn.data('action');
                     if (actionBtn == null) {{
                         actionBtn = '{actionName}';
                     }}
 
                     var loaded = false;
-                    var isBusy = false;
+                    var isBusy_{id} = false;
+                    var captchaToken='';
+                     function resetToken{id}() {{
+                     
+                      isBusy_{id} = false;
+loaded=false;
+captchaToken='';
+                      }}
+
+
+                   
                     btn.on('click', function (e) {{
-                        if (!isBusy) {{
-                            isBusy = true;
+                        if (!isBusy_{id}) {{
+                            isBusy_{id} = true;
                             grecaptcha.execute('{publicKey}', {{ 'action': actionBtn }}).then(function(token) {{
                                 $('#g-recaptcha-response_{id}', form).val(token);
+captchaToken=token;
                                 loaded = true;
-                                btn.trigger('click');
+                                btn.click();
                             }});
                         }}
                         return loaded;
                     }});
+
+               
+              $(document).ajaxComplete(function(event, xhr, settings) {{
+  
+ if (settings.data && captchaToken !== '')
+{{
+if (settings.data instanceof FormData) {{
+        const values = [...settings.data.values()];
+        if (values.includes(captchaToken)) {{
+
+        resetToken{id}();
+      
+
+    }}
+
+  }}
+else{{
+  if( settings.data.indexOf(captchaToken)>-1){{
+
+        resetToken{id}();
+}}
+}}
+
+                }}
+
+
+
+     
+             
+              
+        }});
                 }}
             ";
+        #endregion
         var scriptCallbackTag = new TagBuilder("script") { TagRenderMode = TagRenderMode.Normal };
         scriptCallbackTag.InnerHtml.AppendHtml(scriptCallback);
 

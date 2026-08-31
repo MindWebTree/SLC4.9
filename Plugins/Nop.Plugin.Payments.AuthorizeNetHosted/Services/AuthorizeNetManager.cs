@@ -502,11 +502,11 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
             };
             if (customer?.ShippingAddressId != null)
             {
-                #region Custom updates Need to shift with Upgrade
+       
 
                 var shipTo = await GetTransactionRequestAddressAsync(customer.ShippingAddressId.Value, customer);
 
-                #endregion
+       
                 transactionRequest.shipTo = shipTo;
             }
 
@@ -783,11 +783,10 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
         //    };
         //    if (customer?.ShippingAddressId != null)
         //    {
-        //        #region Custom updates Need to shift with Upgrade
 
         //        var shipTo = await GetTransactionRequestAddressAsync(customer.ShippingAddressId.Value, customer);
 
-        //        #endregion
+  
         //        transactionRequest.shipTo = shipTo;
         //    }
 
@@ -945,12 +944,12 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
                 firstName = CommonHelper.EnsureMaximumLength(address.FirstName, 50),
                 lastName = CommonHelper.EnsureMaximumLength(address.LastName, 50),
 
-                #region Custom updates Need to shift with Upgrade
+        
 
                 email = CommonHelper.EnsureMaximumLength(
                     string.IsNullOrEmpty(address.Email) ? await _customerService.GetCustomerEmail(customer) : address.Email, 50),
                 phoneNumber = CommonHelper.EnsureMaximumLength(address.PhoneNumber, 15),
-                #endregion
+      
 
                 address = CommonHelper.EnsureMaximumLength(address.Address1, 60),
                 city = CommonHelper.EnsureMaximumLength(address.City, 40),

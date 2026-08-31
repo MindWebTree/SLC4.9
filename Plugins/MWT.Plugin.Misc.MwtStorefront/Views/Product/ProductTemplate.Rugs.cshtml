@@ -147,10 +147,9 @@
                 <div class="row mx-0">
                     <div class="col-sm-8 product-image">
                         <div class="product-gallery">
-                            @if (_customWorkContext.IsMobileDevice())
-                            {
+                          
 
-                                <div class="producttags">
+                                <div class="producttags mobile">
                                     @if (Model.ProductTags != null)
                                     {
                                         foreach (var tag in Model.ProductTags)
@@ -169,14 +168,14 @@
                                         }
                                     }
                                 </div>
-                                <h1 itemprop="name" title="@T("Common.CopyContent.Help")">
+                                <h1 itemprop="name" title="@T("Common.CopyContent.Help")" class="mobile">
                                     @name
                                 </h1>
 
 
                                 @if (!string.IsNullOrEmpty(Model.Sku))
                                 {
-                                    <h2 class="allow-copy-content">
+                                    <h2 class="allow-copy-content mobile">
                                         <span>@T("Products.Sku") # @Model.Sku<span class="allow-copy-content-h1 allow-copy-content" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" aria-label="Copy SKU" aria-hidden="true" data-bs-original-title="@T("Common.CopyContent.sku.Help")"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 115.77 122.88" style="enable-background:new 0 0 115.77 122.88" xml:space="preserve"><g><path class="st0" d="M89.62,13.96v7.73h12.19h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02v0.02 v73.27v0.01h-0.02c-0.01,3.84-1.57,7.33-4.1,9.86c-2.51,2.5-5.98,4.06-9.82,4.07v0.02h-0.02h-61.7H40.1v-0.02 c-3.84-0.01-7.34-1.57-9.86-4.1c-2.5-2.51-4.06-5.98-4.07-9.82h-0.02v-0.02V92.51H13.96h-0.01v-0.02c-3.84-0.01-7.34-1.57-9.86-4.1 c-2.5-2.51-4.06-5.98-4.07-9.82H0v-0.02V13.96v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07V0h0.02h61.7 h0.01v0.02c3.85,0.01,7.34,1.57,9.86,4.1c2.5,2.51,4.06,5.98,4.07,9.82h0.02V13.96L89.62,13.96z M79.04,21.69v-7.73v-0.02h0.02 c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v64.59v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h12.19V35.65 v-0.01h0.02c0.01-3.85,1.58-7.34,4.1-9.86c2.51-2.5,5.98-4.06,9.82-4.07v-0.02h0.02H79.04L79.04,21.69z M105.18,108.92V35.65v-0.02 h0.02c0-0.91-0.39-1.75-1.01-2.37c-0.61-0.61-1.46-1-2.37-1v0.02h-0.01h-61.7h-0.02v-0.02c-0.91,0-1.75,0.39-2.37,1.01 c-0.61,0.61-1,1.46-1,2.37h0.02v0.01v73.27v0.02h-0.02c0,0.91,0.39,1.75,1.01,2.37c0.61,0.61,1.46,1,2.37,1v-0.02h0.01h61.7h0.02 v0.02c0.91,0,1.75-0.39,2.37-1.01c0.61-0.61,1-1.46,1-2.37h-0.02V108.92L105.18,108.92z" /></g></svg></span></span>
                                         @if (isAdmin)
                                         {
@@ -186,28 +185,27 @@
                                 }
                                 @if (isAdmin && !string.IsNullOrEmpty(Model.EstimatedDeliveryDate))
                                 {
-                                    <h2>
+                                    <h2  class="estimated-delivery-date mobile">
                                         @T("Products.Estimated.DeliveryDate")  @Model.EstimatedDeliveryDate
                                     </h2>
                                 }
 
-                                ViewData["isAttributePreselected"] = isAttributePreselected;
+                                 @{ViewData["isAttributePreselected"] = isAttributePreselected;}
                                 @await Html.PartialAsync("_ProductPrice", Model.ProductPrice, dataDictPrice)
 
                                 <div class="mobile-share-btn">
                                     @await Html.PartialAsync("_socialShare", Model)
                                 </div>
-                            }
+                           
                             @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsEssentialTop, additionalData = Model })
                             <!--product pictures-->
-                            @await Html.PartialAsync(!_customWorkContext.IsMobileDevice() ? "_ProductDetailsPictures_VerticalLayout" : "_ProductDetailsPictures", Model)
+                            @await Html.PartialAsync("_ProductDetailsPictures_VerticalLayout", Model)
                         </div>
                     </div>
                     <div class="col-sm-4 product-details">
 
                         @await Html.PartialAsync("_Discontinued", Model)
-                        @if (!_customWorkContext.IsMobileDevice())
-                        {
+                       
 
                             <div class="producttags">
                                 @if (Model.ProductTags != null)
@@ -234,7 +232,7 @@
                             </h1>
 
 
-                        }
+                      
                         @if (!string.IsNullOrEmpty(Model.Sku))
                         {
                             <h2>
@@ -255,13 +253,13 @@
 
                         @*price section*@
                         <br />
-                        @if (!_customWorkContext.IsMobileDevice())
-                        {
+                        <div class="desktop price-section">
+                        @{
                             ViewData["isAttributePreselected"] = isAttributePreselected;
 
                             @await Html.PartialAsync("_ProductPrice", Model.ProductPrice, dataDictPrice)
                         }
-
+                        </div>
                         @*color and size*@
 
 
@@ -302,7 +300,7 @@
 
                             ViewData["IsThanksGivingProduct"] = Model.IsThanksGivingProduct;
                         }
-                        @await Html.PartialAsync("_productPrice_without_offer", Model.ProductPrice, dataDictPrice)
+                       @*  @await Html.PartialAsync("_productPrice_without_offer", Model.ProductPrice, dataDictPrice) *@
                         @*// end*@
 
                         @*old price was here*@
@@ -314,7 +312,6 @@
 
 
                         @await Html.PartialAsync("_ProductTierPrices", Model.TierPrices)
-                        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsOverviewTop, additionalData = Model })
                         @*@if (!string.IsNullOrEmpty(Model.ShortDescription))
                             {
                             <div class="short-description">
@@ -349,24 +346,40 @@
                             dataDictRental.TemplateInfo.HtmlFieldPrefix = $"rental_{Model.Id}";
                             @await Html.PartialAsync("_RentalInfo", Model, dataDictRental)
                         }
-                        <!--price & add to cart & estimate shipping-->
                         @{
                             if (Model.TotalInventory > 0 || Model.ManageInventoryMethod == Nop.Core.Domain.Catalog.ManageInventoryMethod.DontManageStock)
                             {
 
-                                var dataDictAddToCart = new ViewDataDictionary(ViewData);
-                                dataDictAddToCart.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
-                                dataDictAddToCart.Add("variantId", Model.DefaultVariantId);
-                                ViewData["isAttributePreselected"] = isAttributePreselected;
-                                @await Html.PartialAsync("_AddToCart", Model.AddToCart, dataDictAddToCart)
-                                ViewData["isAttributePreselected"] = isAttributePreselected;
-                                @await Html.PartialAsync("_AddToCart_Sticky", Model)
-                                ViewData["isAttributePreselected"] = null;
+
+                                @if (Model.IsBundleProduct && Model.DisplayBundleConfiguration)
+                                {
+                                    var dataDictAddToCart = new ViewDataDictionary(ViewData);
+                                    dataDictAddToCart.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
+                                    dataDictAddToCart.Add("variantId", Model.DefaultVariantId);
+                                    dataDictAddToCart.Add("IsBundleProduct", Model.IsBundleProduct);
+                                    dataDictAddToCart.Add("DisplayBundleConfiguration", Model.DisplayBundleConfiguration);
+                                    @await Html.PartialAsync("_AddToCart", Model.AddToCart, dataDictAddToCart)
+                                    ViewData["isAttributePreselected"] = isAttributePreselected;
+                                    @await Html.PartialAsync("_AddToCart_Sticky", Model)
+                                    ViewData["isAttributePreselected"] = null;
+                                }
+                                else
+                                {
+                                    ViewData["isAttributePreselected"] = isAttributePreselected;
+                                    var dataDictAddToCart = new ViewDataDictionary(ViewData);
+                                    dataDictAddToCart.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
+                                    dataDictAddToCart.Add("variantId", Model.DefaultVariantId);
+                                    dataDictAddToCart.Add("priceModel", Model.ProductPrice);
+                                    @await Html.PartialAsync("_MainAddToCart", Model.AddToCart, dataDictAddToCart)
+                                    @await Html.PartialAsync("_AddToCart_Sticky", Model)
+                                    ViewData["isAttributePreselected"] = null;
+                                }
                             }
                             else
                             {
                                 @await Component.InvokeAsync("BackInStockSubscriptionBlock", new { productId = Model.Id })
-                            } @*@await Html.PartialAsync("_ProductEstimateShipping", Model.ProductEstimateShipping)*@
+                            }
+
                         }
 
                         @*@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsInsideOverviewButtonsBefore, additionalData = Model })
@@ -387,6 +400,7 @@
 
 
                         @*Coupon section*@
+                           @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsOverviewTop, additionalData = Model })
                         @if (Model.IsThanksGivingProduct)
                         {
                             @await Html.PartialAsync("_ThanksGivingTextSection")

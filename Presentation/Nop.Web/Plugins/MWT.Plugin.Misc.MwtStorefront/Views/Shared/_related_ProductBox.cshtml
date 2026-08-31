@@ -1,0 +1,28 @@
+﻿@model CustomProductOverviewModel
+@using Nop.Core
+@using Nop.Core.Domain.Catalog
+@using Nop.Core.Domain.Orders
+@using Nop.Core.Domain.Tax
+@inject CatalogSettings catalogSettings
+@inject IWorkContext workContext
+
+<div data-productid="@Model.Id">
+    @*Tags*@
+    <div class="Tags">
+        @if (Model.Tags != null)
+        {
+            foreach (var tag in Model.Tags)
+            {
+                <div class="@tag.Name">@tag.Name</div>
+                break;
+            }
+        }
+    </div>
+    <a href="@Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName })" title="@Model.DefaultPictureModel.Title">
+        <img alt="@Model.DefaultPictureModel.AlternateText" src="/images/pixel.png" data-src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" class="lazy" />
+    </a>
+
+</div>
+
+
+
