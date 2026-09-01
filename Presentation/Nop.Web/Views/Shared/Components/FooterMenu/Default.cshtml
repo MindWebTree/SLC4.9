@@ -1,6 +1,6 @@
 ﻿@model List<MenuModel>
 
-@* <nav class="footer-navigation">
+<nav class="footer-navigation">
     @foreach (var menu in Model)
     {
         <div class="footer-menu @menu.CssClass" role="none">
@@ -17,41 +17,6 @@
         </div>
     }
 </nav>
-
- *@ 
-@foreach (var menu in Model)
-{
- 
-    var blockClass = "information display-2-column";
-    if (menu.Name.ToLower().Contains("contact")) { blockClass = "follow-us"; }
-
-    <div class="footer-block @blockClass col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 @menu.CssClass">
-
-        <div id="footer-menu-@menu.Id" class="title footer-menu__toggle">
-            <strong>@menu.Name.ToUpper()</strong>
-        </div>
-
-        <ul class="list nav flex-column" aria-labelledby="footer-menu-@menu.Id" role="group">
-            @foreach (var menuItem in menu.Items)
-            {
-                @await Html.PartialAsync("_FooterItem.cshtml", menuItem)
-            }
-
-            @* Inject Social Icons inside the Contact Us block exactly like your static HTML *@
-            @if (menu.Name.ToLower().Contains("contact"))
-            {
-                <li class="nav-item mt-3">
-                    <div class="social">
-                        @await Component.InvokeAsync(typeof(SocialButtonsViewComponent))
-                    </div>
-                </li>
-            }
-        </ul>
-
-    </div>
-}
-
-
 
 <script src="~/js/public.menu.js" asp-location="Footer"></script>
 <script asp-location="Footer">
