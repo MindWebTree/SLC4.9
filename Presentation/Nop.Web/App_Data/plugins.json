@@ -130,6 +130,10 @@
     {
       "SystemName": "MWT.Shipping.FixedByWeightByTotal",
       "Version": "2.28"
+    },
+    {
+      "SystemName": "MWT.Misc",
+      "Version": "1.00"
     }
   ],
   "PluginNamesToUninstall": [],

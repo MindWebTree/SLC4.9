@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using MWT.Plugin.Misc.Domain;
 using Nop.Services.Common;
 using Nop.Services.Configuration;

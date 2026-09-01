@@ -5,24 +5,43 @@
 @using Nop.Core.Domain.Catalog;
 @using Nop.Services
 @using Nop.Services.Stores
+@inject ICustomizationFormSerivce _customizationFormService
+@using Nop.Services.Security
+@inject IPermissionService _permissionService
 
 @{
+    var customizationFormTemplates = await _customizationFormService.GetAllProductCustomizationFormTemplatesAsync();
+    var availableCustomizationFormTemplates = new List<SelectListItem>();
+    availableCustomizationFormTemplates.Add(new SelectListItem()
+    {
+        Value = "0",
+        Text = "Please select"
+    });
+    foreach (var customizationFormTemplate in customizationFormTemplates)
+    {
+        availableCustomizationFormTemplates.Add(new SelectListItem()
+        {
+            Text = customizationFormTemplate.Name,
+            Value = customizationFormTemplate.Id.ToString()
+        });
+    }
+
     var stores = await storeService.GetAllStoresAsync();
 }
-    @* resources for product tags input *@
-    <script src="~/lib_npm/jquery-tageditor/jquery.caret.min.js"></script>
-    <script src="~/lib_npm/jquery-tageditor/jquery.tag-editor.min.js"></script>
-    <link rel="stylesheet" href="~/lib_npm/jquery-tageditor/jquery.tag-editor.css">
+@* resources for product tags input *@
+<script src="~/lib_npm/jquery-tageditor/jquery.caret.min.js"></script>
+<script src="~/lib_npm/jquery-tageditor/jquery.tag-editor.min.js"></script>
+<link rel="stylesheet" href="~/lib_npm/jquery-tageditor/jquery.tag-editor.css">
 
 
-    <script asp-location="Footer">
+<script asp-location="Footer">
     $(function() {
         @if (!Model.IsLoggedInAsVendor)
         {
-            <text>
-            $("#@Html.IdFor(model => model.ShowOnHomepage)").click(toggleShowOnHomepage);
-            toggleShowOnHomepage();
-            </text>
+                    <text>
+                    $("#@Html.IdFor(model => model.ShowOnHomepage)").click(toggleShowOnHomepage);
+                    toggleShowOnHomepage();
+                    </text>
         }
         $("#@Html.IdFor(model => model.ProductTypeId)").change(toggleProductType);
         toggleProductType();
@@ -61,11 +80,11 @@
 
             @if (Model.Id > 0)
             {
-                <text>updateTableWidth('#associatedproducts-grid');</text>
+                        <text>updateTableWidth('#associatedproducts-grid');</text>
             }
 
             $('#@Html.IdFor(model => model.VisibleIndividually)').prop('checked', true);
-            
+
 
             $('[data-card-name=product-price]').hideElement();
             $('[data-card-name=product-shipping]').hideElement();
@@ -80,11 +99,11 @@
         var productTypeSupportedValues = {};
         @foreach (var kvp in Model.ProductsTypesSupportedByProductTemplates)
         {
-            <text>productTypeSupportedValues['@(kvp.Key)'] = {};</text>
-            foreach (var item in kvp.Value)
-            {
-                <text>productTypeSupportedValues['@(kvp.Key)']['@(item.Value)'] = '@Html.Raw(JavaScriptEncoder.Default.Encode((item.Text)))';</text>
-            }
+                    <text>productTypeSupportedValues['@(kvp.Key)'] = {};</text>
+                    foreach (var item in kvp.Value)
+                    {
+                                <text>productTypeSupportedValues['@(kvp.Key)']['@(item.Value)'] = '@Html.Raw(JavaScriptEncoder.Default.Encode((item.Text)))';</text>
+                    }
         }
         var productTemplateDropddown = $("#@Html.IdFor(model => model.ProductTemplateId)");
         var productTemplateSelectedValue = productTemplateDropddown.val();
@@ -161,84 +180,100 @@
             warningValidation('@Url.Action("SkuReservedWarning")', '@Html.NameFor(model => model.Sku)', { productId: @Model.Id, sku: $(this).val() });
         });
     });
-    </script>
+</script>
 
 
 <div class="card-body">
     <div id="product-details-area">
         @(await Html.LocalizedEditorAsync<ProductModel, ProductLocalizedModel>("product-info-localized",
-    @<div>
-        <div class="form-group row">
-            <div class="col-md-3">
-                <nop-label asp-for="@Model.Locales[item].Name" />
+                @<div>
+            @if (await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_INFO_NAME) || !await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_SEO))
+            {
+                <div class="form-group row" @(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_INFO_NAME)) ? "card-hide" : "")">
+                    <div class="col-md-3">
+                        <nop-label asp-for="@Model.Locales[item].Name" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="@Model.Locales[item].Name" />
+                        <span asp-validation-for="@Model.Locales[item].Name"></span>
+                    </div>
+                </div>
+            }
+            <div class="form-group row" @(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_INFO_DESCRIPTION)) ? "card-hide" : "")">
+                <div class="col-md-3">
+                    <nop-label asp-for="@Model.Locales[item].ShortDescription" />
+                </div>
+                <div class="col-md-9">
+                    <nop-textarea asp-for="@Model.Locales[item].ShortDescription" />
+                    <span asp-validation-for="@Model.Locales[item].ShortDescription"></span>
+                </div>
             </div>
-            <div class="col-md-9">
-                <nop-editor asp-for="@Model.Locales[item].Name" />
-                <span asp-validation-for="@Model.Locales[item].Name"></span>
+            <div class="form-group row" @(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_INFO_DESCRIPTION)) ? "card-hide" : "")">
+                <div class="col-md-3">
+                    <nop-label asp-for="@Model.Locales[item].FullDescription" />
+                </div>
+                <div class="col-md-9">
+                    <nop-editor asp-for="@Model.Locales[item].FullDescription" asp-template="RichEditor" />
+                    <span asp-validation-for="@Model.Locales[item].FullDescription"></span>
+                    @await Component.InvokeAsync(typeof(FullDescriptionGeneratorViewComponent), new FullDescriptionGeneratorModel
+                    {
+                        LanguageId = Model.Locales[item].LanguageId,
+                                        ProductNameElementId = Html.IdFor(p => p.Locales[item].Name)
+                                        })
+                </div>
             </div>
+            <input type="hidden" asp-for="@Model.Locales[item].LanguageId" />
+            <input type="hidden" id="lang-@Model.Locales[item].LanguageId" value="@item" />
         </div>
-        <div class="form-group row">
-            <div class="col-md-3">
-                <nop-label asp-for="@Model.Locales[item].ShortDescription" />
+                ,
+                @<div>
+            @if (await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_INFO) || !await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_SEO))
+            {
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="Name" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="Name" asp-required="true" />
+                        <span asp-validation-for="Name"></span>
+                    </div>
+                </div>
+            }
+            <div class="form-group row" @(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_INFO_DESCRIPTION)) ? "card-hide" : "")">
+                <div class="col-md-3">
+                    <nop-label asp-for="ShortDescription" />
+                </div>
+                <div class="col-md-9">
+                    <nop-textarea asp-for="ShortDescription" />
+                    <span asp-validation-for="ShortDescription"></span>
+                </div>
             </div>
-            <div class="col-md-9">
-                <nop-textarea asp-for="@Model.Locales[item].ShortDescription" />
-                <span asp-validation-for="@Model.Locales[item].ShortDescription"></span>
+            <div class="form-group row" @(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_INFO_DESCRIPTION)) ? "card-hide" : "")">
+                <div class="col-md-3">
+                    <nop-label asp-for="FullDescription" />
+                </div>
+                <div class="col-md-9">
+                    <nop-editor asp-for="FullDescription" asp-template="RichEditor" />
+                    <span asp-validation-for="FullDescription"></span>
+                    <input type="hidden" id="ai-generated-description" onclick="update_description()" />
+                    <input type="hidden" id="ai-lang-id" />
+                    @await Component.InvokeAsync(typeof(FullDescriptionGeneratorViewComponent), new FullDescriptionGeneratorModel
+                    {
+                        LanguageId = 0,
+                                        ProductNameElementId = Html.IdFor(p => p.Name)
+                                        })
+                </div>
             </div>
-        </div>
-        <div class="form-group row">
-            <div class="col-md-3">
-                <nop-label asp-for="@Model.Locales[item].FullDescription" />
+            <div class="form-group row">
+                <div class="col-md-3">
+                    <nop-label asp-for="Notes" />
+                </div>
+                <div class="col-md-9">
+                    <nop-editor asp-for="Notes" asp-template="RichEditor" />
+                    <span asp-validation-for="Notes"></span>
+                </div>
+
             </div>
-            <div class="col-md-9">
-                <nop-editor asp-for="@Model.Locales[item].FullDescription" asp-template="RichEditor" />
-                <span asp-validation-for="@Model.Locales[item].FullDescription"></span>
-                @await Component.InvokeAsync(typeof(FullDescriptionGeneratorViewComponent), new FullDescriptionGeneratorModel
-                {
-                    LanguageId = Model.Locales[item].LanguageId,
-                    ProductNameElementId = Html.IdFor(p=>p.Locales[item].Name)
-                })
-            </div>
-        </div>
-        <input type="hidden" asp-for="@Model.Locales[item].LanguageId" />
-        <input type="hidden" id="lang-@Model.Locales[item].LanguageId" value="@item" />
-    </div>
-    ,
-    @<div>
-        <div class="form-group row">
-            <div class="col-md-3">
-                <nop-label asp-for="Name" />
-            </div>
-            <div class="col-md-9">
-                <nop-editor asp-for="Name" asp-required="true" />
-                <span asp-validation-for="Name"></span>
-            </div>
-        </div>
-        <div class="form-group row">
-            <div class="col-md-3">
-                <nop-label asp-for="ShortDescription" />
-            </div>
-            <div class="col-md-9">
-                <nop-textarea asp-for="ShortDescription" />
-                <span asp-validation-for="ShortDescription"></span>
-            </div>
-        </div>
-        <div class="form-group row">
-            <div class="col-md-3">
-                <nop-label asp-for="FullDescription" />
-            </div>
-            <div class="col-md-9">
-                <nop-editor asp-for="FullDescription" asp-template="RichEditor" />
-                <span asp-validation-for="FullDescription"></span>
-                <input type="hidden" id="ai-generated-description" onclick="update_description()" />
-                <input type="hidden" id="ai-lang-id" />
-                @await Component.InvokeAsync(typeof(FullDescriptionGeneratorViewComponent), new FullDescriptionGeneratorModel
-                {
-                    LanguageId = 0,
-                    ProductNameElementId = Html.IdFor(p=>p.Name)
-                })
-            </div>
-        </div>
         </div>))
 
         <div class="form-group row">
@@ -263,14 +298,14 @@
             </div>
             <script>
                 $(function() {
-					var categoryIdsInput = $('#@Html.IdFor(model => model.SelectedCategoryIds)').select2({
+                    var categoryIdsInput = $('#@Html.IdFor(model => model.SelectedCategoryIds)').select2({
                         closeOnSelect: false,
                         @if (!Model.AvailableCategories.Any())
                         {
-                        <text>
-                        disabled: true,
-                        placeholder: '@T("Admin.Catalog.Products.Fields.Categories.NoCategoriesAvailable")',
-                        </text>
+                                <text>
+                                disabled: true,
+                                placeholder: '@T("Admin.Catalog.Products.Fields.Categories.NoCategoriesAvailable")',
+                                </text>
                         }
                     });
                 });
@@ -289,10 +324,10 @@
                         closeOnSelect: false,
                         @if (!Model.AvailableManufacturers.Any())
                         {
-                        <text>
-                        disabled: true,
-                        placeholder: '@T("Admin.Catalog.Products.Fields.Manufacturers.NoManufacturersAvailable")',
-                        </text>
+                                <text>
+                                disabled: true,
+                                placeholder: '@T("Admin.Catalog.Products.Fields.Manufacturers.NoManufacturersAvailable")',
+                                </text>
                         }
                     });
                 });
@@ -335,7 +370,7 @@
             <span asp-validation-for="ManufacturerPartNumber"></span>
         </div>
     </div>
-    <div class="form-group row @(Model.ProductEditorSettingsModel.ShowOnHomepage ? null : "advanced-setting")" @(Model.IsLoggedInAsVendor ? Html.Raw("style='display: none;'") : null)>
+    <div class="form-group row @(Model.ProductEditorSettingsModel.ShowOnHomepage ? null : "advanced-setting")" @(Model.IsLoggedInAsVendor? Html.Raw("style='display: none;'") : null)>
         <div class="col-md-3">
             <nop-label asp-for="ShowOnHomepage" />
         </div>
@@ -345,7 +380,7 @@
         </div>
     </div>
     <nop-nested-setting asp-for="ShowOnHomepage" disable-auto-generation="true">
-        <div class="form-group row @(Model.ProductEditorSettingsModel.ShowOnHomepage  ? null : "advanced-setting")" id="pnlDisplayOrder" @(Model.IsLoggedInAsVendor ? Html.Raw("style='display: none;'") : null)>
+        <div class="form-group row @(Model.ProductEditorSettingsModel.ShowOnHomepage ? null : "advanced-setting")" id="pnlDisplayOrder" @(Model.IsLoggedInAsVendor? Html.Raw("style='display: none;'") : null)>
             <div class="col-md-3">
                 <nop-label asp-for="DisplayOrder" />
             </div>
@@ -382,80 +417,89 @@
         </div>
         @if (Model.Id > 0)
         {
-            <div class="card-body">                
-            <ul class="common-list">
-                <li>
-                    @T("Admin.Catalog.Products.AssociatedProducts.Note1")
-                </li>
-                <li>
-                    @T("Admin.Catalog.Products.AssociatedProducts.Note2")
-                </li>
-            </ul>
+            <div class="card-body">
+                <ul class="common-list">
+                    <li>
+                        @T("Admin.Catalog.Products.AssociatedProducts.Note1")
+                    </li>
+                    <li>
+                        @T("Admin.Catalog.Products.AssociatedProducts.Note2")
+                    </li>
+                </ul>
 
-            @await Html.PartialAsync("Table", new DataTablesModel
-            {
-                Name = "associatedproducts-grid",
-                UrlRead = new DataUrl("AssociatedProductList", "Product", new RouteValueDictionary { [nameof(Model.AssociatedProductSearchModel.ProductId)] = Model.AssociatedProductSearchModel.ProductId }),
-                UrlDelete = new DataUrl("AssociatedProductDelete", "Product", null),
-                UrlUpdate = new DataUrl("AssociatedProductUpdate", "Product", null),
-                Length = Model.AssociatedProductSearchModel.PageSize,
-                LengthMenu = Model.AssociatedProductSearchModel.AvailablePageSizes,
-                ColumnCollection = new List<ColumnProperty>
-                    {
-					new ColumnProperty(nameof(AssociatedProductModel.ProductName))
+                @await Html.PartialAsync("Table", new DataTablesModel
+                {
+                    Name = "associatedproducts-grid",
+                        UrlRead = new DataUrl("AssociatedProductList", "Product", new RouteValueDictionary { [nameof(Model.AssociatedProductSearchModel.ProductId)] = Model.AssociatedProductSearchModel.ProductId }),
+                        UrlDelete = new DataUrl("AssociatedProductDelete", "Product", null),
+                        UrlUpdate = new DataUrl("AssociatedProductUpdate", "Product", null),
+                        Length = Model.AssociatedProductSearchModel.PageSize,
+                        LengthMenu = Model.AssociatedProductSearchModel.AvailablePageSizes,
+                        ColumnCollection = new List<ColumnProperty>
                         {
-                            Title = T("Admin.Catalog.Products.AssociatedProducts.Fields.Product").Text
+
+                        new ColumnProperty(nameof(AssociatedProductModel.Id))
+                        {
+                        Title = T("Admin.Catalog.Products.Fields.Id").Text,
+
+                        },
+                        new ColumnProperty(nameof(AssociatedProductModel.ProductName))
+                        {
+                        Title = T("Admin.Catalog.Products.AssociatedProducts.Fields.Product").Text
                         },
                         new ColumnProperty(nameof(AssociatedProductModel.DisplayOrder))
                         {
-                            Title = T("Admin.Catalog.Products.AssociatedProducts.Fields.DisplayOrder").Text,
-                            Width = "150",
-                            ClassName = NopColumnClassDefaults.CenterAll,
-                            Editable = true,
-                            EditType = EditType.Number
+                        Title = T("Admin.Catalog.Products.AssociatedProducts.Fields.DisplayOrder").Text,
+                        Width = "150",
+                        ClassName = NopColumnClassDefaults.CenterAll,
+                        Editable = true,
+                        EditType = EditType.Number
                         },
                         new ColumnProperty(nameof(AssociatedProductModel.Id))
                         {
-                            Title = T("Admin.Common.View").Text,
-                            Width = "150",
-                            ClassName = NopColumnClassDefaults.Button,
-                            Render = new RenderButtonView(new DataUrl("~/Admin/Product/Edit/", nameof(AssociatedProductModel.Id)))
+                        Title = T("Admin.Common.View").Text,
+                        Width = "150",
+                        ClassName = NopColumnClassDefaults.Button,
+                        Render = new RenderButtonView(new DataUrl("~/Admin/Product/Edit/", nameof(AssociatedProductModel.Id)))
                         },
                         new ColumnProperty(nameof(AssociatedProductModel.Id))
                         {
-                            Title = T("Admin.Common.Edit").Text,
-                            Width = "200",
-                            ClassName =  NopColumnClassDefaults.Button,
-                            Render = new RenderButtonsInlineEdit()
+                        Title = T("Admin.Common.Edit").Text,
+                        Width = "200",
+                        ClassName =  NopColumnClassDefaults.Button,
+                        Render = new RenderButtonsInlineEdit()
                         },
                         new ColumnProperty(nameof(AssociatedProductModel.Id))
                         {
-                            Title = T("Admin.Common.Delete").Text,
-                            Width = "100",
-                            Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
-                            ClassName = NopColumnClassDefaults.Button
-                        }                               
-                    }
-                })
-            </div>
-            <div class="card-footer">
-                <button type="submit" id="btnAddNewAssociatedProduct" onclick="javascript:OpenWindow('@(Url.Action("AssociatedProductAddPopup", "Product", new {productId = Model.Id, btnId = "btnRefreshAssociatedProducts", formId = "product-form"}))', 800, 800, true); return false;" class="btn btn-primary">
-                    @T("Admin.Catalog.Products.AssociatedProducts.AddNew")
-                </button>
-                <button type="submit" id="btnRefreshAssociatedProducts" style="display: none"></button>
-                <script>
-                    $(function() {
-                        $('#btnRefreshAssociatedProducts').click(function () {
-                            //refresh grid
-                            updateTable('#associatedproducts-grid');
+                        Title = T("Admin.Common.Delete").Text,
+                        Width = "100",
+                        Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+                        ClassName = NopColumnClassDefaults.Button
+                        }
+                        }
+                        })
+        </div>
+        <div class="card-footer">
+            <button type="submit" id="btnAddNewAssociatedProduct" onclick="javascript:OpenWindow('@(Url.Action("AssociatedProductAddPopup", "Product", new { productId = Model.Id, btnId = "btnRefreshAssociatedProducts", formId = "product-form" }))', 800, 800, true); return false;" class="btn btn-primary">
+                @T("Admin.Catalog.Products.AssociatedProducts.AddNew")
+            </button>
+            <button type="submit" id="btnAddNewFBTProduct" class="btn btn-primary" onclick="javascript:OpenWindow('@(Url.Action("GroupedProductConfigurationList", "Product", new { productId = Model.Id }))', 1000, 1000, true); return false;">
+                @T("admin.catalog.products.associatedproducts.configuration")
+            </button>
+            <button type="submit" id="btnRefreshAssociatedProducts" style="display: none"></button>
+            <script>
+                $(function() {
+                    $('#btnRefreshAssociatedProducts').click(function () {
+                        //refresh grid
+                        updateTable('#associatedproducts-grid');
 
-                            //return false to don't reload a page
-                            return false;
-                        });
+                        //return false to don't reload a page
+                        return false;
                     });
-                </script>
-            </div>
-        }
+                });
+            </script>
+        </div>
+                }
         else
         {
             <div class="card-body">
@@ -515,7 +559,7 @@
             </div>
         </div>
     </nop-nested-setting>
-@await Component.InvokeAsync(typeof(AclCustomerRolesViewComponent), Model)
+    @await Component.InvokeAsync(typeof(AclCustomerRolesViewComponent), Model)
     <div class="form-group row @(Model.ProductEditorSettingsModel.Stores ? null : "advanced-setting")">
         <div class="col-md-3">
             <nop-label asp-for="SelectedStoreIds" />
@@ -530,10 +574,10 @@
                                 closeOnSelect: false,
                                 @if (!Model.AvailableStores.Any())
                                 {
-                                <text>
-                                disabled: true,
-                                placeholder: 'No stores available',
-                                </text>
+                                        <text>
+                                        disabled: true,
+                                        placeholder: 'No stores available',
+                                        </text>
                                 }
                             });
                         });
@@ -545,7 +589,7 @@
             </div>
         </div>
     </div>
-    <div class="form-group row @(Model.ProductEditorSettingsModel.Vendor ? null : "advanced-setting")" @(Model.IsLoggedInAsVendor ? Html.Raw("style='display: none;'") : null)>
+    <div class="form-group row @(Model.ProductEditorSettingsModel.Vendor ? null : "advanced-setting")" @(Model.IsLoggedInAsVendor? Html.Raw("style='display: none;'") : null)>
         <div class="col-md-3">
             <nop-label asp-for="VendorId" />
         </div>
@@ -587,7 +631,7 @@
                                 });
                             });
                         </script>
-                        <button type="submit" id="btnAddNewRequiredProduct" onclick="javascript:OpenWindow('@(Url.Action("RequiredProductAddPopup", "Product", new {btnId = "btnRefreshRequiredProducts", productIdsInput = "RequiredProductIds"}))', 800, 850, true); return false;" class="btn btn-info">
+                        <button type="submit" id="btnAddNewRequiredProduct" onclick="javascript:OpenWindow('@(Url.Action("RequiredProductAddPopup", "Product", new { btnId = "btnRefreshRequiredProducts", productIdsInput = "RequiredProductIds" }))', 800, 850, true); return false;" class="btn btn-info">
                             @T("Admin.Catalog.Products.Fields.RequiredProductIds.AddNew")
                         </button>
                     </div>
@@ -643,7 +687,7 @@
         </div>
     </div>
     <nop-nested-setting asp-for="MarkAsNew">
-        <div class="form-group row @(Model.ProductEditorSettingsModel.MarkAsNew  ? null : "advanced-setting")">
+        <div class="form-group row @(Model.ProductEditorSettingsModel.MarkAsNew ? null : "advanced-setting")">
             <div class="col-md-3">
                 <nop-label asp-for="MarkAsNewStartDateTimeUtc" />
             </div>
@@ -652,7 +696,7 @@
                 <span asp-validation-for="MarkAsNewStartDateTimeUtc"></span>
             </div>
         </div>
-        <div class="form-group row @(Model.ProductEditorSettingsModel.MarkAsNew  ? null : "advanced-setting")">
+        <div class="form-group row @(Model.ProductEditorSettingsModel.MarkAsNew ? null : "advanced-setting")">
             <div class="col-md-3">
                 <nop-label asp-for="MarkAsNewEndDateTimeUtc" />
             </div>

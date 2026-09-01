@@ -2,12 +2,10 @@
 
 @inject IStoreService storeService
 
-@using Nop.Core.Domain.Catalog;
-@using Nop.Services
-@using Nop.Services.Stores
-@inject Nop.Services.Catalog.IProductService _productService
+ 
+@inject ICustomizationFormSerivce _customizationFormService
 @{
-    var customizationFormTemplates = await _productService.GetAllProductCustomizationFormTemplatesAsync();
+    var customizationFormTemplates = await _customizationFormService.GetAllProductCustomizationFormTemplatesAsync();
     var availableCustomizationFormTemplates = new List<SelectListItem>();
     availableCustomizationFormTemplates.Add(new SelectListItem()
     {
@@ -25,9 +23,9 @@
     var stores = await storeService.GetAllStoresAsync();
 
     //resources for product tags input
-    Html.AppendCssFileParts("~/lib_npm/jquery-tageditor/jquery.tag-editor.css");
-    Html.AppendScriptParts("~/lib_npm/jquery-tageditor/jquery.tag-editor.min.js");
-    Html.AppendScriptParts("~/lib_npm/jquery-tageditor/jquery.caret.min.js");
+    NopHtml.AppendCssFileParts("~/lib_npm/jquery-tageditor/jquery.tag-editor.css");
+    NopHtml.AppendScriptParts(ResourceLocation.Head,"~/lib_npm/jquery-tageditor/jquery.tag-editor.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Head,"~/lib_npm/jquery-tageditor/jquery.caret.min.js");
 }
 
 

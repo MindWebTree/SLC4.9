@@ -1,13 +1,11 @@
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using MWT.Nop.Core.Domain.Customers;
 using MWT.Plugin.Misc.Domain;
 using Nop.Core;
 using Nop.Core.Domain.Customers;
 using Nop.Services.Common;
 using Nop.Services.Configuration;
-using Nop.Services.Customers;
 
 namespace MWT.Plugin.Misc.Middleware
 {
@@ -19,10 +17,10 @@ namespace MWT.Plugin.Misc.Middleware
        
         private static readonly (string QueryParam, string AttributeKey)[] TrackedParams =
         {
-            ("gclid", NopCustomerDefaults.GCLID),
-            ("gad_campaignid", NopCustomerDefaults.Campaign),
-              ("utm_campaign", NopCustomerDefaults.Campaign),
-            ("utm_term", NopCustomerDefaults.Term)
+            ("gclid", CustomNopCustomerDefaults.GCLID),
+            ("gad_campaignid", CustomNopCustomerDefaults.Campaign),
+              ("utm_campaign", CustomNopCustomerDefaults.Campaign),
+            ("utm_term", CustomNopCustomerDefaults.Term)
         };
 
         public UtmCaptureMiddleware(RequestDelegate next)
