@@ -159,8 +159,8 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Services
             string shippingState = shipStateProvince?.Abbreviation;
             string shippingZipCode = shippingAddress?.ZipPostalCode ?? string.Empty;
             string shippingCountry = shipCountry?.Name ?? string.Empty;
-            string shippingEmail = shippingAddress?.Email ?? await _customerService.GetCustomerEmail(customer) ?? string.Empty;
-            string shippingPhonenumber = shippingAddress?.PhoneNumber ?? await _customerService.GetCustomerPhone(customer) ?? string.Empty;
+            string shippingEmail = shippingAddress?.Email ?? await _customerService.GetCustomerEmailAsync(customer,false,true) ?? string.Empty;
+            string shippingPhonenumber = shippingAddress?.PhoneNumber ?? await _customerService.GetCustomerPhoneAsync(customer,false,true) ?? string.Empty;
 
 
             string billingFirstName = billingAddress?.FirstName ?? customer.FirstName ?? string.Empty;
@@ -171,9 +171,9 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Services
             string billingState = billStateProvince?.Abbreviation ?? shipStateProvince?.Abbreviation ?? string.Empty;
             string billingZipCode = billingAddress?.ZipPostalCode ?? shippingAddress?.ZipPostalCode ?? string.Empty;
             string billingCountry = billCountry?.Name ?? shipCountry?.Name ?? string.Empty;
-            string billingEmail = billingAddress?.Email ?? await _customerService.GetCustomerEmail(customer) ?? string.Empty;
+            string billingEmail = billingAddress?.Email ?? await _customerService.GetCustomerEmailAsync(customer, true, false) ?? string.Empty;
 
-            string billingPhonenumber = billingAddress?.PhoneNumber ?? await _customerService.GetCustomerPhone(customer) ?? string.Empty;
+            string billingPhonenumber = billingAddress?.PhoneNumber ?? await _customerService.GetCustomerPhoneAsync(customer,true,false) ?? string.Empty;
             var shoppingCart = (await _shoppingCartService
                .GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart, store.Id))
                .ToList();

@@ -53,7 +53,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.PostDelievery
                     PostDeliveryQueueEmailModel.IsActive = queuedEmail.IsActive;
                     PostDeliveryQueueEmailModel.DeactivatedRemarks = queuedEmail.DeactivatedRemarks;
                     PostDeliveryQueueEmailModel.ReminderNumber = queuedEmail.ReminderNumber;
-                    PostDeliveryQueueEmailModel.Email = customer == null ? queuedEmail.Email : await _customerService.GetCustomerEmail(customer);
+                    PostDeliveryQueueEmailModel.Email = customer == null ? queuedEmail.Email : await _customerService.GetCustomerEmailAsync(customer);
                     return PostDeliveryQueueEmailModel;
                 });
             });

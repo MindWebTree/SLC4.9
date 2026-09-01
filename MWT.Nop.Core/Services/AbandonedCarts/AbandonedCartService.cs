@@ -149,10 +149,6 @@ namespace MWT.Nop.Core.Services.AbandonedCarts
                 if (invoice != null)
                 {
                     var customer = await this._customerService.GetCustomerByIdAsync(customerId);
-                    string email = await this._customerService.GetCustomerEmail(customer);
-                    string phone = await this._customerService.GetCustomerPhone(customer);
-                    string name = await this._customerService.GetCustomerFullNameAsync(customer);
-;
                     var items = await this._abandonedShoppingCartRepository.Table.Where(a => a.CartInvoiceID == invoice.Id).ToListAsync();
                     foreach (var item in items)
                     {
@@ -198,9 +194,7 @@ namespace MWT.Nop.Core.Services.AbandonedCarts
                 foreach (var customerid in items.Select(a => a.CustomerID).Distinct())
                 {
 
-                    string email = await this._customerService.GetCustomerEmail(customer);
-                    string phone = await this._customerService.GetCustomerPhone(customer);
-                    string name = await this._customerService.GetCustomerFullNameAsync(customer);
+                    string email = await this._customerService.GetCustomerEmailAsync(customer);
                     if (customer != null && !string.IsNullOrEmpty(email))
                     {
                         var item = items.Where(i => i.CustomerID == customerid).FirstOrDefault();

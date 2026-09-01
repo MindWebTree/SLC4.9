@@ -17,6 +17,7 @@ using Nop.Data;
 using Nop.Services.Common;
 using Nop.Services.Configuration;
 using Nop.Services.Customers;
+using Nop.Services.Localization;
 using Nop.Services.Logging;
 
 namespace MWT.Nop.Core.Services.Customers
@@ -26,14 +27,14 @@ namespace MWT.Nop.Core.Services.Customers
     /// </summary>
     public partial class CustomerExtendedService : CustomerService, ICustomerExtendedService
     {
-        public CustomerExtendedService(CustomerSettings customerSettings, IEventPublisher eventPublisher, IGenericAttributeService genericAttributeService, INopDataProvider dataProvider, IRepository<Address> customerAddressRepository, IRepository<BlogComment> blogCommentRepository, IRepository<Customer> customerRepository, 
-            IRepository<CustomerAddressMapping> customerAddressMappingRepository, IRepository<CustomerCustomerRoleMapping> 
+        public CustomerExtendedService(CustomerSettings customerSettings, IEventPublisher eventPublisher, IGenericAttributeService genericAttributeService, INopDataProvider dataProvider, IRepository<Address> customerAddressRepository, IRepository<BlogComment> blogCommentRepository, IRepository<Customer> customerRepository,
+            IRepository<CustomerAddressMapping> customerAddressMappingRepository, IRepository<CustomerCustomerRoleMapping>
             customerCustomerRoleMappingRepository, IRepository<CustomerPassword> customerPasswordRepository,
-            IRepository<CustomerRole> customerRoleRepository, IRepository<ForumPost> forumPostRepository, 
+            IRepository<CustomerRole> customerRoleRepository, IRepository<ForumPost> forumPostRepository,
             IRepository<ForumTopic> forumTopicRepository, IRepository<GenericAttribute> gaRepository, IRepository<NewsComment>
             newsCommentRepository, IRepository<Order> orderRepository, IRepository<ProductReview> productReviewRepository,
             IRepository<ProductReviewHelpfulness> productReviewHelpfulnessRepository, IRepository<PollVotingRecord> pollVotingRecordRepository,
-            IRepository<ShoppingCartItem> shoppingCartRepository, IShortTermCacheManager shortTermCacheManager, 
+            IRepository<ShoppingCartItem> shoppingCartRepository, IShortTermCacheManager shortTermCacheManager,
             IStaticCacheManager staticCacheManager, IStoreContext storeContext, ShoppingCartSettings shoppingCartSettings, TaxSettings taxSettings) : base(customerSettings, eventPublisher, genericAttributeService, dataProvider, customerAddressRepository, blogCommentRepository, customerRepository, customerAddressMappingRepository, customerCustomerRoleMappingRepository, customerPasswordRepository, customerRoleRepository, forumPostRepository, forumTopicRepository, gaRepository, newsCommentRepository, orderRepository, productReviewRepository, productReviewHelpfulnessRepository, pollVotingRecordRepository, shoppingCartRepository, shortTermCacheManager, staticCacheManager, storeContext, shoppingCartSettings, taxSettings)
         {
         }
@@ -181,58 +182,224 @@ namespace MWT.Nop.Core.Services.Customers
 
             return customers;
         }
-        public virtual async Task<string> GetCustomerEmail(Customer customer)
+
+
+        public virtual async Task<string> GetCustomerEmailAsync(
+     Customer customer,
+     bool isBillingEmail = false,
+     bool isShippingEmail = false)
         {
-            string email = customer.Email;
-            if (string.IsNullOrEmpty(email))
+            var addressService = EngineContext.Current.Resolve<IAddressService>();
+
+            string email = null;
+
+            // Billing email requested - Billing Address has first priority
+            if (isBillingEmail && customer.BillingAddressId.HasValue)
             {
-                var _addressService = EngineContext.Current.Resolve<IAddressService>();
-                if (customer.BillingAddressId.HasValue)
-                {
-                    var address = await _addressService.GetAddressByIdAsync(Convert.ToInt32(customer.BillingAddressId));
-                    email = address.Email;
-                }
-                if (customer.ShippingAddressId.HasValue && string.IsNullOrEmpty(email))
-                {
-                    var address = await _addressService.GetAddressByIdAsync(Convert.ToInt32(customer.ShippingAddressId));
-                    email = address.Email;
-                }
+                var address = await addressService.GetAddressByIdAsync(customer.BillingAddressId.Value);
+                email = address?.Email;
+            }
+
+            // Shipping email requested - Shipping Address has first priority
+            if (isShippingEmail && string.IsNullOrEmpty(email) && customer.ShippingAddressId.HasValue)
+            {
+                var address = await addressService.GetAddressByIdAsync(customer.ShippingAddressId.Value);
+                email = address?.Email;
+            }
+
+            // Default priority when neither billing nor shipping is explicitly requested
+            if (!isBillingEmail && !isShippingEmail)
+            {
+                // Customer email
+                email = customer.Email;
+
+                // Generic attribute
                 if (string.IsNullOrEmpty(email))
                 {
-                    email = await _genericAttributeService.GetAttributeAsync<string>(customer, "Email");
+                    email = await _genericAttributeService.GetAttributeAsync<string>(
+                        customer, "Email");
+                }
+
+                // Shipping address
+                if (string.IsNullOrEmpty(email) && customer.ShippingAddressId.HasValue)
+                {
+                    var address = await addressService.GetAddressByIdAsync(
+                        customer.ShippingAddressId.Value);
+
+                    email = address?.Email;
+                }
+
+                // Billing address
+                if (string.IsNullOrEmpty(email) && customer.BillingAddressId.HasValue)
+                {
+                    var address = await addressService.GetAddressByIdAsync(
+                        customer.BillingAddressId.Value);
+
+                    email = address?.Email;
+                }
+            }
+            else
+            {
+                // If billing/shipping email was requested but address email
+                // was not available, fall back to Customer Email.
+                if (string.IsNullOrEmpty(email))
+                    email = customer.Email;
+
+                // Then generic attribute
+                if (string.IsNullOrEmpty(email))
+                {
+                    email = await _genericAttributeService.GetAttributeAsync<string>(
+                        customer, "Email");
+                }
+
+                // Finally check the remaining address
+                if (string.IsNullOrEmpty(email))
+                {
+                    if (isBillingEmail && customer.ShippingAddressId.HasValue)
+                    {
+                        var address = await addressService.GetAddressByIdAsync(
+                            customer.ShippingAddressId.Value);
+
+                        email = address?.Email;
+                    }
+                    else if (isShippingEmail && customer.BillingAddressId.HasValue)
+                    {
+                        var address = await addressService.GetAddressByIdAsync(
+                            customer.BillingAddressId.Value);
+
+                        email = address?.Email;
+                    }
                 }
             }
 
             return email;
         }
 
-        public virtual async Task<string> GetCustomerPhone(Customer customer)
+        public virtual async Task<string> GetCustomerPhoneAsync(
+      Customer customer,
+      bool isBillingPhone = false,
+      bool isShippingPhone = false)
         {
+            var addressService = EngineContext.Current.Resolve<IAddressService>();
 
-            string phonenumber =customer.Phone;
+            string phoneNumber = null;
 
-            if (string.IsNullOrEmpty(phonenumber))
+            // Billing phone requested - Billing Address has first priority
+            if (isBillingPhone && customer.BillingAddressId.HasValue)
+            {
+                var address = await addressService.GetAddressByIdAsync(
+                    customer.BillingAddressId.Value);
+
+                phoneNumber = address?.PhoneNumber;
+            }
+
+            // Shipping phone requested - Shipping Address has first priority
+            if (isShippingPhone && string.IsNullOrEmpty(phoneNumber) &&
+                customer.ShippingAddressId.HasValue)
+            {
+                var address = await addressService.GetAddressByIdAsync(
+                    customer.ShippingAddressId.Value);
+
+                phoneNumber = address?.PhoneNumber;
+            }
+
+            // Default priority:
+            // Customer → Shipping → Billing
+            if (!isBillingPhone && !isShippingPhone)
+            {
+                // Customer phone
+                phoneNumber = customer.Phone;
+
+                // Shipping address
+                if (string.IsNullOrEmpty(phoneNumber) &&
+                    customer.ShippingAddressId.HasValue)
+                {
+                    var address = await addressService.GetAddressByIdAsync(
+                        customer.ShippingAddressId.Value);
+
+                    phoneNumber = address?.PhoneNumber;
+                }
+
+                // Billing address
+                if (string.IsNullOrEmpty(phoneNumber) &&
+                    customer.BillingAddressId.HasValue)
+                {
+                    var address = await addressService.GetAddressByIdAsync(
+                        customer.BillingAddressId.Value);
+
+                    phoneNumber = address?.PhoneNumber;
+                }
+            }
+            else
+            {
+                // Customer phone as fallback
+                if (string.IsNullOrEmpty(phoneNumber))
+                    phoneNumber = customer.Phone;
+
+                // Remaining address as final fallback
+                if (string.IsNullOrEmpty(phoneNumber))
+                {
+                    if (isBillingPhone && customer.ShippingAddressId.HasValue)
+                    {
+                        var address = await addressService.GetAddressByIdAsync(
+                            customer.ShippingAddressId.Value);
+
+                        phoneNumber = address?.PhoneNumber;
+                    }
+                    else if (isShippingPhone && customer.BillingAddressId.HasValue)
+                    {
+                        var address = await addressService.GetAddressByIdAsync(
+                            customer.BillingAddressId.Value);
+
+                        phoneNumber = address?.PhoneNumber;
+                    }
+                }
+            }
+
+            return phoneNumber;
+        }
+        public virtual async Task<string> GetExtendedCustomerFullNameAsync(Customer customer)
+        {
+            ArgumentNullException.ThrowIfNull(customer);
+
+            var firstName = customer.FirstName;
+            var lastName = customer.LastName;
+
+            var fullName = string.Empty;
+            if (!string.IsNullOrWhiteSpace(firstName) && !string.IsNullOrWhiteSpace(lastName))
+            {
+                var format = await EngineContext.Current.Resolve<ILocalizationService>().GetResourceAsync("Customer.FullNameFormat");
+                fullName = string.Format(format, firstName, lastName);
+            }
+            else
             {
                 var _addressService = EngineContext.Current.Resolve<IAddressService>();
                 if (customer.BillingAddressId.HasValue)
                 {
                     var address = await _addressService.GetAddressByIdAsync(Convert.ToInt32(customer.BillingAddressId));
-                    phonenumber = address.PhoneNumber;
+                    firstName = address?.FirstName;
+                    lastName = address?.LastName;
                 }
-                if (customer.ShippingAddressId.HasValue && string.IsNullOrEmpty(phonenumber))
+                else if (customer.ShippingAddressId.HasValue)
                 {
                     var address = await _addressService.GetAddressByIdAsync(Convert.ToInt32(customer.ShippingAddressId));
-                    phonenumber = address.PhoneNumber;
+                    firstName = address?.FirstName;
+                    lastName = address?.LastName;
                 }
-                if (string.IsNullOrEmpty(phonenumber))
+                if (!string.IsNullOrWhiteSpace(firstName) && !string.IsNullOrWhiteSpace(lastName))
                 {
-                    phonenumber = await _genericAttributeService.GetAttributeAsync<string>(customer, "Phone");
+                    var format = await EngineContext.Current.Resolve<ILocalizationService>().GetResourceAsync("Customer.FullNameFormat");
+                    fullName = string.Format(format, firstName, lastName);
                 }
+                else if (!string.IsNullOrWhiteSpace(firstName))
+                    fullName = firstName;
+
+                else if (!string.IsNullOrWhiteSpace(lastName))
+                    fullName = lastName;
             }
-            return phonenumber;
 
+            return fullName;
         }
-
 
         public virtual async Task<IList<Customer>> GetAllCategoryManagers()
         {

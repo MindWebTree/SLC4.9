@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using MWT.Nop.Core.Domain.Address;
+using MWT.Nop.Core.Infrastructure;
 using MWT.Nop.Core.Services.Customers;
 using MWT.Nop.Core.Services.Message;
 using MWT.Nop.Core.Services.Orders;
@@ -135,7 +136,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                 ? customer.Email
                 : await _localizationService.GetResourceAsync("Admin.Customers.Guest");
 
-            customerModel.FullName = await _customerService.GetCustomerFullNameAsync(customer);
+            customerModel.FullName = await _customerService.GetExtendedCustomerFullNameAsync(customer);
             customerModel.Id = customer.Id;
             var shippingaddress = await _customerService.GetCustomerShippingAddressAsync(customer);
 
@@ -147,7 +148,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
             if (bindBillingAddress && billingaddress != null && billingaddress.Id != 0)
                 customerModel.DefaultBillingAddress = billingaddress.ToModel<AddressModel>();
 
-            if (shippingaddress==null || shippingaddress.Id == 0)
+            if (shippingaddress == null || shippingaddress.Id == 0)
                 shippingaddress = billingaddress;
 
             if (shippingaddress != null && shippingaddress.Id != 0)
@@ -164,7 +165,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
 
             // SUBSCRIPTION
 
-            var newsLetter =( await _newsLetterSubscriptionService.GetNewsLetterSubscriptionsByEmailAsync(customerModel.Email, _storeContext.GetCurrentStore().Id)).FirstOrDefault();
+            var newsLetter = (await _newsLetterSubscriptionService.GetNewsLetterSubscriptionsByEmailAsync(customerModel.Email, _storeContext.GetCurrentStore().Id)).FirstOrDefault();
             customerModel.IsSubscribedForEmail = newsLetter != null ? newsLetter.Active : false;
             customerModel.SubscribedOn = newsLetter != null ? newsLetter.UpdatedOnUtc : null;
 
@@ -216,10 +217,11 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
         public async Task<CustomerInfoModel> PrepareCustomerInfoModelAsync(Customer customer)
         {
             CustomerInfoModel model = new CustomerInfoModel();
-            model.FirstName = customer.FirstName;
-            model.LastName = customer.LastName;
-            model.Email = await this._customerService.GetCustomerEmail(customer);
-            model.Phone = await this._customerService.GetCustomerPhone(customer);
+            string fullName = await this._customerService.GetExtendedCustomerFullNameAsync(customer);
+            model.FirstName = CustomCommonHelper.GetCustomerFirstName(fullName);
+            model.LastName = CustomCommonHelper.GetCustomerLastName(fullName);
+            model.Email = await this._customerService.GetCustomerEmailAsync(customer);
+            model.Phone = await this._customerService.GetCustomerPhoneAsync(customer);
             return model;
         }
 
@@ -315,17 +317,22 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
             {
                 if (customer == null)
                     throw new Exception("Customer cannot be null when prepopulating an address");
-                model.Email = customer.Email;
+                model.Email = await this._customerService.GetCustomerEmailAsync(customer);
                 model.FirstName = customer.FirstName;
                 model.LastName = customer.LastName;
                 model.Company = customer.Company;
                 model.Address1 = customer.StreetAddress;
                 model.Address2 = customer.StreetAddress2;
-                model.ZipPostalCode =customer.ZipPostalCode;
+                model.ZipPostalCode = customer.ZipPostalCode;
                 model.City = customer.City;
                 model.County = customer.County;
-                model.PhoneNumber = customer.Phone;
+                model.PhoneNumber = await this._customerService.GetCustomerPhoneAsync(customer);
                 model.FaxNumber = customer.Fax;
+                model.CountryId = customer.CountryId;
+                model.CountryName = await _countryService.GetCountryByIdAsync(customer.CountryId) is Country country ? await _localizationService.GetLocalizedAsync(country, x => x.Name) : null;
+                model.StateProvinceId = customer.StateProvinceId;
+                model.StateProvinceName = await _stateProvinceService.GetStateProvinceByIdAsync(customer.StateProvinceId) is StateProvince stateProvince ? await _localizationService.GetLocalizedAsync(stateProvince, x => x.Name) : null;
+
             }
 
             //countries and states
@@ -454,7 +461,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
             {
                 if (customer != null)
                 {
-                        model.Email = await this._customerService.GetCustomerEmail(customer);
+                    model.Email = await this._customerService.GetCustomerEmailAsync(customer);
                     model.FirstName = customer.FirstName;
                     model.LastName = customer.LastName;
                     model.Company = customer.Company;
@@ -465,6 +472,11 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                     model.County = customer.County;
                     model.PhoneNumber = customer.Phone;
                     model.FaxNumber = customer.Fax;
+                    model.CountryId = customer.CountryId;
+                    model.CountryName = await _countryService.GetCountryByIdAsync(customer.CountryId) is Country country ? await _localizationService.GetLocalizedAsync(country, x => x.Name) : null;
+                    model.StateProvinceId = customer.StateProvinceId;
+                    model.StateProvinceName = await _stateProvinceService.GetStateProvinceByIdAsync(customer.StateProvinceId) is StateProvince stateProvince ? await _localizationService.GetLocalizedAsync(stateProvince, x => x.Name) : null;
+
                 }
             }
 
@@ -479,9 +491,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                 }
                 else
                 {
-                    if(model.CountryId == 0 || model.CountryId==null)
-                     model.CountryId = countries.Where(m => m.Name == "United States of America" || m.Name == "United States").FirstOrDefault()?.Id;
-                  
+                    if (model.CountryId == 0 || model.CountryId == null)
+                        model.CountryId = countries.Where(m => m.Name == "United States of America" || m.Name == "United States").FirstOrDefault()?.Id;
+
                     model.AvailableCountries.Add(new SelectListItem { Text = await _localizationService.GetResourceAsync("Address.SelectCountry"), Value = "0" });
                 }
 

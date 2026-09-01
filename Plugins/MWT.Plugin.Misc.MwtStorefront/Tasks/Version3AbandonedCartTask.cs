@@ -145,8 +145,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Tasks
                     var customer = await this._customerService.GetCustomerByIdAsync(reminder.CustomerId);
                     if (customer != null)
                     {
-                        string email = await this._customerService.GetCustomerEmail(customer);
-                        string phone = await this._customerService.GetCustomerPhone(customer);
+                        string email = await this._customerService.GetCustomerEmailAsync(customer);
+                        string phone = await this._customerService.GetCustomerPhoneAsync(customer);
                         string name = (await this._customerService.GetCustomerFullNameAsync(customer)) ?? "";
                         if (!string.IsNullOrEmpty(email))
                         {

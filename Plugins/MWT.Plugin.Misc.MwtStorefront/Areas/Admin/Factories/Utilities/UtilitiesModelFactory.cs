@@ -735,7 +735,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.Utilities
                     offerDiscountLogModel.InfoText = offerDiscountLog.InfoText;
                     offerDiscountLogModel.InfoHelpText = offerDiscountLog.InfoHelpText;
                     offerDiscountLogModel.CreatedOn = offerDiscountLog.CreatedOn;
-                    offerDiscountLogModel.UpdatedBy = await this._customerService.GetCustomerEmail(await _customerService.GetCustomerByIdAsync(offerDiscountLog.CustomerId));
+                    offerDiscountLogModel.UpdatedBy = await this._customerService.GetCustomerEmailAsync(await _customerService.GetCustomerByIdAsync(offerDiscountLog.CustomerId));
                     var customer = new Customer();
 
                     if (offerDiscountLog.CustomerId != 0)
@@ -745,7 +745,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.Utilities
 
                     if (customer != null)
                     {
-                        offerDiscountLogModel.UpdatedBy = await this._customerService.GetCustomerEmail(customer);
+                        offerDiscountLogModel.UpdatedBy = await this._customerService.GetCustomerEmailAsync(customer);
                     }
                     offerDiscountLogModel.Name = offerDiscountLog.StoreWideDiscountId == 0 ? "" : (await _storeWideDiscountService.GetStoreWideDiscountByIdAsync(offerDiscountLog.StoreWideDiscountId))?.Name ?? "";
                     return offerDiscountLogModel;
@@ -775,7 +775,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories.Utilities
                             if (customer != null)
                             {
                                 customerName = await _customerService.GetCustomerFullNameAsync(customer);
-                                customerEmail = await _customerService.GetCustomerEmail(customer);
+                                customerEmail = await _customerService.GetCustomerEmailAsync(customer);
                             }
 
 

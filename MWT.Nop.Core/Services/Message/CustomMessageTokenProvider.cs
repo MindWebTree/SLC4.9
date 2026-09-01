@@ -124,7 +124,7 @@ namespace MWT.Nop.Core.Services.Message
             tokens.Add(new Token("Order.BillingFirstName", billingAddress.FirstName));
             tokens.Add(new Token("Order.BillingLastName", billingAddress.LastName));
             tokens.Add(new Token("Order.BillingPhoneNumber", billingAddress.PhoneNumber));
-            tokens.Add(new Token("Order.BillingEmail", billingAddress.Email ?? await _customCustomerService.GetCustomerEmail(customer)));
+            tokens.Add(new Token("Order.BillingEmail", billingAddress.Email ?? await _customCustomerService.GetCustomerEmailAsync(customer,true)));
             tokens.Add(new Token("Order.BillingFaxNumber", billingAddress.FaxNumber));
             tokens.Add(new Token("Order.BillingCompany", billingAddress.Company));
             tokens.Add(new Token("Order.BillingAddress1", billingAddress.Address1));
@@ -144,7 +144,7 @@ namespace MWT.Nop.Core.Services.Message
             tokens.Add(new Token("Order.ShippingFirstName", (await orderAddress(order))?.FirstName ?? string.Empty));
             tokens.Add(new Token("Order.ShippingLastName", (await orderAddress(order))?.LastName ?? string.Empty));
             tokens.Add(new Token("Order.ShippingPhoneNumber", (await orderAddress(order))?.PhoneNumber ?? string.Empty));
-            tokens.Add(new Token("Order.ShippingEmail", (await orderAddress(order))?.Email ?? await _customCustomerService.GetCustomerEmail(customer)));
+            tokens.Add(new Token("Order.ShippingEmail", (await orderAddress(order))?.Email ?? await _customCustomerService.GetCustomerEmailAsync(customer,false,true)));
             tokens.Add(new Token("Order.ShippingFaxNumber", (await orderAddress(order))?.FaxNumber ?? string.Empty));
             tokens.Add(new Token("Order.ShippingCompany", (await orderAddress(order))?.Company ?? string.Empty));
             tokens.Add(new Token("Order.ShippingAddress1", (await orderAddress(order))?.Address1 ?? string.Empty));
@@ -342,7 +342,7 @@ namespace MWT.Nop.Core.Services.Message
             tokens.Add(new Token("Order.BillingFirstName", billingAddress?.FirstName));
             tokens.Add(new Token("Order.BillingLastName", billingAddress?.LastName));
             tokens.Add(new Token("Order.BillingPhoneNumber", billingAddress?.PhoneNumber));
-            tokens.Add(new Token("Order.BillingEmail", billingAddress?.Email ?? await _customCustomerService.GetCustomerEmail(customer)));
+            tokens.Add(new Token("Order.BillingEmail", billingAddress?.Email ?? await _customCustomerService.GetCustomerEmailAsync(customer,true)));
             tokens.Add(new Token("Order.BillingFaxNumber", billingAddress?.FaxNumber));
             tokens.Add(new Token("Order.BillingCompany", billingAddress?.Company));
             tokens.Add(new Token("Order.BillingAddress1", billingAddress?.Address1));
@@ -362,7 +362,7 @@ namespace MWT.Nop.Core.Services.Message
             tokens.Add(new Token("Order.ShippingFirstName", shippingAddress?.FirstName));
             tokens.Add(new Token("Order.ShippingLastName", shippingAddress?.LastName));
             tokens.Add(new Token("Order.ShippingPhoneNumber", shippingAddress?.PhoneNumber));
-            tokens.Add(new Token("Order.ShippingEmail", shippingAddress?.Email ?? await _customCustomerService.GetCustomerEmail(customer)));
+            tokens.Add(new Token("Order.ShippingEmail", shippingAddress?.Email ?? await _customCustomerService.GetCustomerEmailAsync(customer,false,true)));
             tokens.Add(new Token("Order.ShippingFaxNumber", shippingAddress?.FaxNumber));
             tokens.Add(new Token("Order.ShippingCompany", shippingAddress?.Company));
             tokens.Add(new Token("Order.ShippingAddress1", shippingAddress?.Address1));

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MWT.Nop.Core.Services.Customers;
 using MWT.Nop.Core.Services.Customizations.CustomOrders;
 using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Orders;
 using Nop.Services.Common;
@@ -12,14 +13,14 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Components
     {
         #region Fields
         private readonly ICustomOrderService _customOrderService;
-        private readonly ICustomerService _customerService;
+        private readonly ICustomerExtendedService _customerService;
         private readonly IAddressService _addressService;
         private readonly ILocalizationService _localizationService;
         #endregion
 
         #region Ctor
 
-        public CustomOrderNotesLogViewComponent(ICustomOrderService customOrderService, ICustomerService customerService,
+        public CustomOrderNotesLogViewComponent(ICustomOrderService customOrderService, ICustomerExtendedService customerService,
             IAddressService addressService, ILocalizationService localizationService)
         {
             this._customOrderService = customOrderService;
@@ -38,8 +39,6 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Components
         {
             List<CustomOrderNotesLogModel> lstLogsModel = new List<CustomOrderNotesLogModel>();
             var order = await _customOrderService.GetById(orderId);
-            string firstName = "";
-            string lastName = "";
             if (order != null)
             {
                 try
@@ -60,10 +59,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Components
                                 var customer = await _customerService.GetCustomerByIdAsync(log.UserId);
                                 if (customer != null)
                                 {
-                                    firstName = customer.FirstName;
-                                    lastName = customer.LastName;
-                                    customers.Add(log.UserId, firstName ?? "" + " " + lastName ?? "");
-                                    logModel.CustomerName = firstName ?? "" + " " + lastName ?? "";
+                                    string fullName= await _customerService.GetExtendedCustomerFullNameAsync(customer);
+                                    customers.Add(log.UserId, fullName);
+                                    logModel.CustomerName = fullName;
                                 }
 
                             }

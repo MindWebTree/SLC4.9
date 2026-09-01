@@ -192,30 +192,29 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                     if (ModelState.IsValid)
                     {
                         //username 
-                        if (_customerSettings.UsernamesEnabled && _customerSettings.AllowUsersToChangeUsernames && isRegistered)
+                        if (isRegistered)
                         {
-                            var userName = model.Email.Trim();
-                            if (string.IsNullOrEmpty(customer.Username) || !customer.Username.Equals(userName, StringComparison.InvariantCultureIgnoreCase))
-                                await _customerRegistrationService.SetUsernameAsync(customer, userName);
+                            if (_customerSettings.UsernamesEnabled && _customerSettings.AllowUsersToChangeUsernames)
+                            {
+                                var userName = model.Email.Trim();
+                                if (string.IsNullOrEmpty(customer.Username) || !customer.Username.Equals(userName, StringComparison.InvariantCultureIgnoreCase))
+                                    await _customerRegistrationService.SetUsernameAsync(customer, userName);
+                            }
+                            //email
+                            var email = model.Email.Trim();
+                            if ((string.IsNullOrEmpty(customer.Email) || !customer.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase)))
+                            {
+                                //change email
+                                var requireValidation = _customerSettings.UserRegistrationType == UserRegistrationType.EmailValidation;
+                                await _customerRegistrationService.SetEmailAsync(customer, email, requireValidation);
+                            }
                         }
-                        //email
-                        var email = model.Email.Trim();
-                        if ((string.IsNullOrEmpty(customer.Email) || !customer.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase)) && isRegistered)
+                        else
                         {
-                            //change email
-                            var requireValidation = _customerSettings.UserRegistrationType == UserRegistrationType.EmailValidation;
-                            await _customerRegistrationService.SetEmailAsync(customer, email, requireValidation);
+                            await _genericAttributeService.SaveAttributeAsync(customer, "Email", model.Email);
+
                         }
 
-                        if (!isRegistered)
-                        {
-                            customer.Email = email;
-           
-                            if (_customerSettings.UsernamesEnabled && _customerSettings.AllowUsersToChangeUsernames && isRegistered)
-                                customer.Username = email;
-                        }
-
-                        //form fields
                         if (_customerSettings.FirstNameEnabled)
                             customer.FirstName = model.FirstName;
                         if (_customerSettings.LastNameEnabled)
@@ -225,12 +224,10 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                         if (_customerSettings.PhoneEnabled)
                             customer.Phone = model.Phone;
 
-                        if (model.Id == 0)
-                        {
-                            var customerAttributesXml = await ParseCustomCustomerAttributesAsync(form);
-                            customer.CustomCustomerAttributesXML = customerAttributesXml;
-                        }
+                        var customerAttributesXml = await ParseCustomCustomerAttributesAsync(form);
+                        customer.CustomCustomerAttributesXML = customerAttributesXml;
                         await this._customerService.UpdateCustomerAsync(customer);
+
                         return Json(new
                         {
                             response = PrepareResponse(200,
@@ -383,8 +380,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                         customer.BillingAddressId = address.Id;
                     if (customer?.ShippingAddressId == null)
                         customer.ShippingAddressId = address.Id;
-                    if (customer?.BillingAddressId == null || customer?.ShippingAddressId == null)
-                        await _customerService.UpdateCustomerAsync(customer);
+
+                    await _customerService.UpdateCustomerAsync(customer);
                 }
                 else
                 {

@@ -24,6 +24,7 @@ using MWT.Nop.Core.Services.Orders;
 using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Core.Domain.CustomOrders;
 using MWT.Nop.Core.Services.Customizations.CustomOrders;
+using MWT.Nop.Core.Services.Customers;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 {
@@ -34,7 +35,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
         private readonly IPermissionService _permissionService;
         private readonly ICustomOrderModelFactory _customOrderModelFactory;
         private readonly ICustomOrderService _customOrderService;
-        private readonly ICustomerService _customerService;
+        private readonly ICustomerExtendedService _customerService;
         private readonly IOrderExtendedService _orderService;
         private readonly INotificationService _notificationService;
         private readonly ILocalizationService _localizationService;
@@ -60,7 +61,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
         public AdditionalServiceController(IPermissionService permissionService,
                                ICustomOrderModelFactory customOrderModelFactory,
                                ICustomOrderService customOrderService,
-                                ICustomerService customerService,
+                                ICustomerExtendedService customerService,
                          IOrderExtendedService orderService,
                          INotificationService notificationService,
                          ILocalizationService localizationService,
@@ -165,11 +166,11 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                         model.Email = order.CustomerCCEmail;
                     else
                     {
-                        if (order.CustomerId != null && order.CustomerId != 0)
+                        if ((order.CustomerId??0)>0)
                         {
                             var customer = await _customerService.GetCustomerByIdAsync(Convert.ToInt32(order.CustomerId));
                             if (customer != null)
-                                model.Email = customer.Email;
+                                model.Email = await this._customerService.GetCustomerEmailAsync(customer);
                         }
                     }
                     List<CustomOrderShoppingCartItem> customOrderShoppingCartItems = await _customOrderService.GetOrderItems(Convert.ToInt32(id));
@@ -406,9 +407,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
                     orderTotal = order.OrderTotal;
                     var customer = await _customerService.GetCustomerByIdAsync(Convert.ToInt32(order.CustomerId));
-                    email = customer.Email;
-                    if (email == null)
-                        email = customer.Email;
+                    email =await this._customerService.GetCustomerEmailAsync(customer);
+                   
                     MWT.Nop.Core.Domain.CustomOrders.CustomOrder customOrder = await _customOrderService.GetByOrderNumber(Id);
 
 

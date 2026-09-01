@@ -631,7 +631,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.EventConsumer
             string url = _httpContextAccessor.HttpContext?.Request.Headers["Referer"];
             string absoluteUrl = _httpContextAccessor.HttpContext?.Request.Headers["Referer"];
             string userAgent = _httpContextAccessor.HttpContext?.Request.Headers["User-Agent"];
-            string email = await _customerService.GetCustomerEmail(eventMessage.Customer);
+            string email = await _customerService.GetCustomerEmailAsync(eventMessage.Customer);
             string name = await _customerService.GetCustomerFullNameAsync(eventMessage.Customer);
             await _mailchimpService.CustomerSignup(email, name ?? "", new System.Collections.Generic.List<string>()
                 {
