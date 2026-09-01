@@ -107,6 +107,7 @@
                                 type: "POST",
                                 url: "@Url.Action("ClearRecentSearch","catalog")",
                                 dataType: "json",
+                                data: { __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() },
                                 success: function (data, textStatus, jqXHR) {
                                     fndefaultSearchSuggestions($(searchBoxContainerClass + '.search-box-text').val());
                                 },

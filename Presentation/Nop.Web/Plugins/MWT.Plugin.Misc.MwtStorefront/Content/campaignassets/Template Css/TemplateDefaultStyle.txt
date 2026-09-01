@@ -1,0 +1,72 @@
+<style>
+  .campaign-popup-wrapper-fixed{
+  display: block;
+  }
+  .close-campaign-popup,.campaign-popup-wrapper-fixed.hide-element{display:none!important;}
+.campaign-popup-body-html .element{
+min-width: 20px;
+    min-height: 20px;
+    text-align: center;
+    color: #696969;
+    position: absolute;
+    z-index: 1;
+    outline: none;
+}
+#close-campaign-popup{
+position: fixed;
+}
+.element #campaignformemail{
+margin: 0px;}
+.campaign-popup-body-html .element button, .element input{
+border: 0 transparent;
+    color: transparent;
+    font-size: 20px;
+    padding: 0;
+    background-color: transparent;
+    margin: 0;
+    text-shadow: none;
+    border-radius: 0;
+    box-shadow: none;
+    text-align: center;
+    outline: none;
+    display: block;
+    cursor: pointer;}
+#lbcampaignEmailError{
+line-height: 37px;
+    font-size: 14px;
+    color: red;}
+	@media screen and (max-width:767px) and (min-width:320px){
+	.FullWidthPopUp{
+	    position: fixed;
+    animation: fadein 0.9s;
+    box-shadow: none;
+    border: none;
+    left: 0;
+    z-index: 1050;
+    background: #fff;
+    width: 100%;
+	}
+	.FullWidthPopUp.Position1,.FullWidthPopUp.Position2,.FullWidthPopUp.Position3,.FullWidthPopUp.Position4{
+	top:0;
+	}
+	.FullWidthPopUp.Position5,.FullWidthPopUp.Position6,.FullWidthPopUp.Position7,.FullWidthPopUp.Position8{
+	bottom:0;
+	}
+	.FullWidthPopUp.Position9,.FullWidthPopUp.Position10,.FullWidthPopUp.Position11,.FullWidthPopUp.Position12,.FullWidthPopUp.Position13{
+	top:50%;
+	}
+	.campaign-popup-body-html  .FullWidthPopUp .modal-content{
+	position: relative !important;
+	margin: 0 auto;
+	}
+	.campaign-popup-body-html  .FullWidthPopUp  .campaignPopupClose{
+	    position: absolute !important;
+    top: -3px;
+    right: 10px;
+    font-size: 28px;
+	}
+	.campaign-popup-body-html .element input{
+	font-size:14px;
+	}
+	}
+    </style>
