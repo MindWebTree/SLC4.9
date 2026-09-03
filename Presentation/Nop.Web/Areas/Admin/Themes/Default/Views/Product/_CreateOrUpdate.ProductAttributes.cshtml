@@ -13,6 +13,11 @@
                 <nop-tabs id="productattribute-edit" asp-tab-name-to-select="tab-attributes" asp-render-selected-tab-input="false">
                     <nop-tab asp-name="tab-attributes" asp-title="@T("Admin.Catalog.Products.ProductAttributes.Attributes")" asp-default="true">@await Html.PartialAsync("_CreateOrUpdate.ProductAttributes.Info", Model)</nop-tab>
                     <nop-tab asp-name="tab-attribute-combinations" asp-title="@T("Admin.Catalog.Products.ProductAttributes.AttributeCombinations")">@await Html.PartialAsync("_CreateOrUpdate.ProductAttributes.Combinations", Model)</nop-tab>
+                    <nop-tab asp-name="tab-attribute-conditionalcombinations" asp-title="@T("Admin.Catalog.Products.ProductAttributes.ConditionalAttributeCombinations")">@await Html.PartialAsync("_CreateOrUpdate.ProductAttributes.ConditionalAttributeCombinations", Model)</nop-tab>
+                    @if (Model.IsBundleProduct)
+                    {
+                        <nop-tab asp-name="tab-attribute-Bundle" asp-title="@T("Admin.Catalog.Products.ProductAttributes.Bundle")">@await Html.PartialAsync("_CreateOrUpdate.ProductAttributes.Bundle", Model)</nop-tab>
+                    }
                 </nop-tabs>
 
                 <div class="form-group row advanced-setting">

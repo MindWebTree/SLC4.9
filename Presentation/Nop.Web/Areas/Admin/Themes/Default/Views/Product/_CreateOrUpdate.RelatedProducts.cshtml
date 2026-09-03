@@ -11,13 +11,23 @@
                 @await Html.PartialAsync("Table", new DataTablesModel
                 {
                     Name = "relatedproducts-grid",
-                    UrlRead = new DataUrl("RelatedProductList", "Product", new RouteValueDictionary { [nameof(Model.RelatedProductSearchModel.ProductId)] = Model.RelatedProductSearchModel.ProductId }),
+                        UrlRead = new DataUrl("CustomRelatedProductList", "Product", new RouteValueDictionary { [nameof(Model.RelatedProductSearchModel.ProductId)] = Model.RelatedProductSearchModel.ProductId }),
                     UrlDelete = new DataUrl("RelatedProductDelete", "Product", null),
                     UrlUpdate = new DataUrl("RelatedProductUpdate", "Product", null),
                     Length = Model.RelatedProductSearchModel.PageSize,
                     LengthMenu = Model.RelatedProductSearchModel.AvailablePageSizes,
                     ColumnCollection = new List<ColumnProperty>
                         {
+                        new ColumnProperty(nameof(RelatedProductModel.ProductId2))
+                        {
+                        Title = T("Admin.Catalog.Products.Fields.Id").Text,
+
+                        },     new ColumnProperty(nameof(RelatedProductModel.PictureThumbnailUrl))
+                        {
+                        Title = T("Admin.Catalog.Products.Fields.PictureThumbnailUrl").Text,
+                        Width = "100",
+                        Render = new RenderPicture()
+                        },
                             new ColumnProperty(nameof(RelatedProductModel.Product2Name))
                             {
                                 Title = T("Admin.Catalog.Products.RelatedProducts.Fields.Product").Text

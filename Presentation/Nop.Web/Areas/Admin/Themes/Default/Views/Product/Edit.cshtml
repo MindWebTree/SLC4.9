@@ -7,9 +7,13 @@
     ViewBag.PageTitle = T("Admin.Catalog.Products.EditProductDetails").Text;
     //active menu item (system name)
     NopHtml.SetActiveMenuItemSystemName("Products");
+    if (Model.CopyProductModel != null)
+    {
+        Model.CopyProductModel.Sku = Model.Sku;
+    }
 }
 
-<form asp-controller="Product" asp-action="Edit" method="post" id="product-form">
+<form asp-controller="Product" asp-action="CustomEdit" method="post" id="product-form">
     <div class="content-header clearfix">
         <h1 class="float-left">
             @T("Admin.Catalog.Products.EditProductDetails") - @Model.Name
@@ -36,6 +40,10 @@
                 <i class="far fa-clone"></i>
                 @T("Admin.Catalog.Products.Copy")
             </button>
+            <button type="submit" name="update-picture-sename" class="btn btn-primary bg-warning" style="color:white!important">
+                <i class="far fa-save"></i>
+                @T("Admin.Catalog.Product.UpdatePictures")
+            </button>
             <span id="product-delete" class="btn btn-danger">
                 <i class="far fa-trash-can"></i>
                 @T("Admin.Common.Delete")
@@ -61,10 +69,18 @@
                 <h4 class="modal-title" id="copyproduct-window-title">@T("Admin.Catalog.Products.Copy")</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
-            <form asp-controller="Product" asp-action="CopyProduct" method="post">
+            <form asp-controller="Product" asp-action="CustomCopyProduct" method="post">
                 <div class="form-horizontal">
                     <div class="modal-body">
                         <input asp-for="CopyProductModel.Id" type="hidden" />
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <nop-label asp-for="CopyProductModel.Sku" />
+                            </div>
+                            <div class="col-md-8">
+                                <nop-editor asp-for="CopyProductModel.Sku" />
+                            </div>
+                        </div>
                         <div class="form-group row">
                             <div class="col-md-4">
                                 <nop-label asp-for="CopyProductModel.Name" />

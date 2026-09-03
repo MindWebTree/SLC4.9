@@ -1,5 +1,7 @@
 ﻿using Nop.Core.Domain.Catalog;
 using Nop.Web.Areas.Admin.Models.Catalog;
+using Nop.Web.Areas.Admin.Models.Customization.Catalog;
+using Nop.Web.Areas.Admin.Models.Customization.Custom;
 
 namespace Nop.Web.Areas.Admin.Factories;
 
@@ -9,7 +11,7 @@ namespace Nop.Web.Areas.Admin.Factories;
 public partial interface IProductModelFactory
 {
     Task<ProductListModel> CustomPrepareProductListModelAsync(ProductSearchModel searchModel);
-   
+
     /// <summary>
     /// Prepare product model
     /// </summary>
@@ -22,14 +24,54 @@ public partial interface IProductModelFactory
     /// </returns>
     Task<ProductModel> CustomPrepareProductModelAsync(ProductModel model, Product product, bool excludeProperties = false);
 
-    /// <summary>
-    /// Prepare required product search model to add to the product
-    /// </summary>
-    /// <param name="searchModel">Required product search model to add to the product</param>
-    /// <returns>
-    /// A task that represents the asynchronous operation
-    /// The task result contains the required product search model to add to the product
-    /// </returns>
+    Task<CollectionProductListModel> PrepareCollectionProductListModelAsync(RelatedProductSearchModel searchModel, Product product);
+    Task<AddCollectionProductSearchModel> PrepareAddCollectionProductSearchModelAsync(AddCollectionProductSearchModel searchModel);
+    Task<AddCollectionProductListModel> PrepareAddCollectionProductListModelAsync(AddCollectionProductSearchModel searchModel);
+    Task<RelatedProductListModel> CustomPrepareRelatedProductListModelAsync(RelatedProductSearchModel searchModel, Product product);
+    #region PairWellWith
+
+    Task<PairWithProductListModel> PreparePairWithProductListModelAsync(RelatedProductSearchModel searchModel, Product product);
+    Task<AddPairWithProductSearchModel> PrepareAddPairWithProductSearchModelAsync(AddPairWithProductSearchModel searchModel);
+    Task<AddPairWithProductListModel> PrepareAddPairWithProductListModelAsync(AddPairWithProductSearchModel searchModel);
+    #endregion
+
+
+    #region Fbt Products
+    Task<FBTProductListModel> PrepareFBTProductListModelAsync(FBTProductSearchModel searchModel, Product product);
+    Task<AddFBTProductSearchModel> PrepareAddFBTProductSearchModelAsync(AddFBTProductSearchModel searchModel);
+    Task<AddFBTProductListModel> PrepareAddFBTProductListModelAsync(AddFBTProductSearchModel searchModel);
+    #endregion
+
+    #region GroupedProductConfiguration
+    Task<List<GroupedProductConfigurationModel>> PrepareGroupedProductConfiguration(int productId);
+    #endregion
+    #region Related product
+    Task<AddRelatedProductListModel> CustomPrepareAddRelatedProductListModelAsync(AddRelatedProductSearchModel searchModel);
+    #endregion
+
+
+    #region ProductAttributeMappings
+    Task<ProductAttributeMappingListModel> CustomPrepareProductAttributeMappingListModelAsync(ProductAttributeMappingSearchModel searchModel,
+        Product product);
+    #endregion
+
+
+    #region Product Attribute Value
+    Task<ProductAttributeValueModel> CustomPrepareProductAttributeValueModelAsync(ProductAttributeValueModel model,
+        ProductAttributeMapping productAttributeMapping, ProductAttributeValue productAttributeValue, bool excludeProperties = false);
+    #endregion
+
+    #region Product Suggested Keyword
+    Task<ProductSuggestedKeywordListModel> CustomPrepareSuggestedKeywordListModelAsync(ProductSuggestedKeywordSearchModel searchModel, int categoryid);
+    Task<ProductSuggestedKeywordModel> GetProductSuggestedKeywordById(int id);
+    Task CreateProductSuggestedKeyword(ProductSuggestedKeywordModel productSuggestedKeywordModel);
+    Task DeleteProductSuggestedKeyword(ProductSuggestedKeywordModel productSuggestedKeywordModel);
+    Task<bool> IsProductKeywordExist(int keywordId, string keyword, int productId);
+    #endregion
+    #region Variant
+    Task<VariantSearchListModel> PrepareVariantListModelAsync(VariantSearchModel searchModel, Product product);
+    Task<VariantModel> PrepareVariantModelAsync(int id);
+    #endregion
     //Task<AddRequiredProductSearchModel> PrepareAddRequiredProductSearchModelAsync(AddRequiredProductSearchModel searchModel);
 
     ///// <summary>
@@ -82,7 +124,7 @@ public partial interface IProductModelFactory
     ///// A task that represents the asynchronous operation
     ///// The task result contains the cross-sell product list model
     ///// </returns>
-    //Task<CrossSellProductListModel> PrepareCrossSellProductListModelAsync(CrossSellProductSearchModel searchModel, Product product);
+    Task<CrossSellProductListModel> CustomPrepareCrossSellProductListModelAsync(CrossSellProductSearchModel searchModel, Product product);
 
     ///// <summary>
     ///// Prepare paged filter level value list model
@@ -113,7 +155,7 @@ public partial interface IProductModelFactory
     ///// A task that represents the asynchronous operation
     ///// The task result contains the cross-sell product list model to add to the product
     ///// </returns>
-    //Task<AddCrossSellProductListModel> PrepareAddCrossSellProductListModelAsync(AddCrossSellProductSearchModel searchModel);
+    Task<AddCrossSellProductListModel> CustomPrepareAddCrossSellProductListModelAsync(AddCrossSellProductSearchModel searchModel);
 
     ///// <summary>
     ///// Prepare paged associated product list model
@@ -155,7 +197,7 @@ public partial interface IProductModelFactory
     ///// A task that represents the asynchronous operation
     ///// The task result contains the product picture list model
     ///// </returns>
-    //Task<ProductPictureListModel> PrepareProductPictureListModelAsync(ProductPictureSearchModel searchModel, Product product);
+    Task<LogProductPictureListModel> PrepareProductPictureListModelAsync(LogProductPictureSearchModel searchModel, Product product);
 
     ///// <summary>
     ///// Prepare paged product video list model
@@ -363,8 +405,9 @@ public partial interface IProductModelFactory
     ///// A task that represents the asynchronous operation
     ///// The task result contains the product attribute combination list model
     ///// </returns>
-    //Task<ProductAttributeCombinationListModel> PrepareProductAttributeCombinationListModelAsync(
-    //    ProductAttributeCombinationSearchModel searchModel, Product product);
+    Task<ProductAttributeCombinationListModel> CustomPrepareProductAttributeCombinationListModelAsync(
+        ProductAttributeCombinationSearchModel searchModel, Product product,
+   List<int> filterIds = null);
 
     ///// <summary>
     ///// Prepare product attribute combination model
@@ -377,6 +420,8 @@ public partial interface IProductModelFactory
     ///// A task that represents the asynchronous operation
     ///// The task result contains the product attribute combination model
     ///// </returns>
-    //Task<ProductAttributeCombinationModel> PrepareProductAttributeCombinationModelAsync(ProductAttributeCombinationModel model,
-    //    Product product, ProductAttributeCombination productAttributeCombination, bool excludeProperties = false);
+    Task<ProductAttributeCombinationModel> PrepareCustomProductAttributeCombinationModelAsync(ProductAttributeCombinationModel model,
+        Product product, ProductAttributeCombination productAttributeCombination, bool excludeProperties = false);
+    Task SyncAttributeCombinations(Product product, ProductAttributeMapping productAttributeMapping, ProductAttributeValue pav);
+    Task PrepareSmartInjectionDataAsync(ProductModel model, Product product);
 }

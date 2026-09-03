@@ -1516,7 +1516,7 @@ public partial class ShoppingCartController : BasePublicController
 
                 string fullSizeImageUrl, imageUrl, thumbImageUrl;
 
-                var combimationPictures = (await _productAttributeService.GetProductAttributeCombinationPicturesAsync(combination.Id)).ToList().Skip(0);
+                var combimationPictures = (await _productAttributeService.GetProductAttributeCombinationPicturesAsync(combination.Id)).ToList().Skip(1);
 
                 List<Picture> pictures = new List<Picture>();
                 foreach (var combinationPicture in combimationPictures)
@@ -1585,7 +1585,7 @@ public partial class ShoppingCartController : BasePublicController
 
                     string fullSizeImageUrl, imageUrl, thumbImageUrl;
 
-                    var attrValuePictures = (await _productAttributeService.GetProductAttributeValuePicturesAsync(attrid)).ToList().Skip(0);
+                    var attrValuePictures = (await _productAttributeService.GetProductAttributeValuePicturesAsync(attrid)).ToList().Skip(1);
 
                     List<Picture> pictures = new List<Picture>();
                     foreach (var attrValuePicture in attrValuePictures)
@@ -1916,7 +1916,7 @@ public partial class ShoppingCartController : BasePublicController
 
                 string fullSizeImageUrl, imageUrl, thumbImageUrl;
 
-                var combinationPictures = (await _productAttributeService.GetProductAttributeCombinationPicturesAsync(combination.Id)).ToList().Skip(0);
+                var combinationPictures = (await _productAttributeService.GetProductAttributeCombinationPicturesAsync(combination.Id)).ToList().Skip(1);
 
                 List<Picture> pictures = new List<Picture>();
                 foreach (var combinationPicture in combinationPictures)
@@ -1984,7 +1984,7 @@ public partial class ShoppingCartController : BasePublicController
 
                     string fullSizeImageUrl, imageUrl, thumbImageUrl;
 
-                    var attrValuePictures = (await _productAttributeService.GetProductAttributeValuePicturesAsync(attrid)).ToList().Skip(0);
+                    var attrValuePictures = (await _productAttributeService.GetProductAttributeValuePicturesAsync(attrid)).ToList().Skip(1);
 
                     List<Picture> pictures = new List<Picture>();
                     foreach (var attrValuePicture in attrValuePictures)

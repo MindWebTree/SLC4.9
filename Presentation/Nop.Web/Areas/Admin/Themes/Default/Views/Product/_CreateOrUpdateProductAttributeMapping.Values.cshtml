@@ -22,6 +22,21 @@
                     Title = T("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.Name").Text,
                     Width = "200"
                 },
+        new ColumnProperty(nameof(ProductAttributeValueModel.VariantId))
+        {
+        Title = T("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.VariantId").Text,
+        Width = "200"
+        },
+        new ColumnProperty(nameof(ProductAttributeValueModel.VariantTitle))
+        {
+        Title = T("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.VariantTitle").Text,
+        Width = "200"
+        },
+        new ColumnProperty(nameof(ProductAttributeValueModel.ManufacturerPartNumber))
+        {
+        Title = T("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.ManufacturerPartNumber").Text,
+        Width = "200"
+        },
                 new ColumnProperty(nameof(ProductAttributeValueModel.AssociatedProductName))
                 {
                     Title = T("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.AssociatedProduct").Text,
@@ -43,7 +58,12 @@
                     Width = "150",
                     ClassName = NopColumnClassDefaults.CenterAll,
                     Render = new RenderBoolean()
-                },
+        }, new ColumnProperty(nameof(ProductAttributeValueModel.Published))
+        {
+        Title = T("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.Published").Text,
+        Width = "150",
+        Render = new RenderBoolean()
+        },
                 new ColumnProperty(nameof(ProductAttributeValueModel.PictureThumbnailUrl))
                 {
                     Title = T("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.Picture").Text,
@@ -75,12 +95,12 @@
     
         <script>
             function renderProductAttributeMappingValuesColumnEdit(data, type, row, meta) {
-                return '<button onclick=\"javascript:OpenWindow(\'@Url.Content("~/Admin/Product/ProductAttributeValueEditPopup/")' + data + '?btnId=btnRefresh&formId=productattribute-form\', 800, 750, true); return false;\" class="btn btn-default"><i class="fas fa-pencil"></i>@T("Admin.Common.Edit").Text</button>';
+            return '<button onclick=\"javascript:OpenWindow(\'@Url.Content("~/Admin/Product/CustomProductAttributeValueEditPopup/")' + data + '?btnId=btnRefresh&formId=productattribute-form\', 800, 750, true); return false;\" class="btn btn-default"><i class="fas fa-pencil"></i>@T("Admin.Common.Edit").Text</button>';
             }
         </script>
     </div>
     <div class="card-footer">
-        <button type="submit" id="btnAddNewValue" onclick="javascript:OpenWindow('@(Url.Action("ProductAttributeValueCreatePopup", "Product", new { productAttributeMappingId = Model.Id, btnId = "btnRefresh", formId = "productattribute-form" }))', 800, 750, true);return false;" class="btn btn-primary">
+    <button type="submit" id="btnAddNewValue" onclick="javascript:OpenWindow('@(Url.Action("CustomProductAttributeValueCreatePopup", "Product", new { productAttributeMappingId = Model.Id, btnId = "btnRefresh", formId = "productattribute-form" }))', 800, 750, true);return false;" class="btn btn-primary">
             @T("Admin.Catalog.Products.ProductAttributes.Attributes.Values.AddNew")
         </button>
         <button type="submit" id="btnRefresh" style="display: none"></button>

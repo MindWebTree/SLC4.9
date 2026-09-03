@@ -105,7 +105,7 @@ else
                             @await Html.PartialAsync("Table", new DataTablesModel
                             {
                                 Name = "products-grid",
-                                UrlRead = new DataUrl("RelatedProductAddPopupList", "Product", null),
+                                UrlRead = new DataUrl("CustomRelatedProductAddPopupList", "Product", null),
                                 SearchButtonId = "search-products",
                                 Length = Model.PageSize,
                                 LengthMenu = Model.AvailablePageSizes,
@@ -127,6 +127,17 @@ else
                                         ClassName =  NopColumnClassDefaults.CenterAll,
                                         Width = "50"
                                     },
+                                                        new ColumnProperty(nameof(ProductModel.Id))
+                                                        {
+                                                        Title = T("Admin.Catalog.Products.Fields.Id").Text
+
+                                                        },
+                                                        new ColumnProperty(nameof(ProductModel.PictureThumbnailUrl))
+                                                        {
+                                                        Title = T("Admin.Catalog.Products.Fields.PictureThumbnailUrl").Text,
+                                                        Width = "100",
+                                                        Render = new RenderPicture()
+                                                        },
                                     new ColumnProperty(nameof(ProductModel.Name))
                                     {
                                         Title = T("Admin.Catalog.Products.Fields.Name").Text

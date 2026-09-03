@@ -19,6 +19,7 @@ namespace Nop.Web.Areas.Admin.Infrastructure.Customizations
             services.AddScoped<IQuickFilterModelFactory, QuickFilterModelFactory>();
             services.AddScoped<IFaqModelFactory, FaqModelFactory>();
             services.AddScoped<IKwTermModelFactory, KwTermModelFactory>();
+            services.AddScoped<IRelatedSearchModelFactory, RelatedSearchModelFactory>();
         }
     }
 }

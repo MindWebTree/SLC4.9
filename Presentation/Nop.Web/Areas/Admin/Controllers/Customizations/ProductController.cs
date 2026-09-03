@@ -1,55 +1,31 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
+﻿using DocumentFormat.OpenXml.EMMA;
+using Microsoft.AspNetCore.Mvc;
+using MWT.Nop.Core.Domain;
+using MWT.Nop.Core.Domain.Catalog;
 using MWT.Nop.Core.Service.Catalog;
+using MWT.Nop.Core.Services;
 using MWT.Nop.Core.Services.Catalog;
+using MWT.Nop.Core.Services.Configuration;
+using MWT.Nop.Core.Services.ExportImport;
+using Newtonsoft.Json;
 using Nop.Core;
 using Nop.Core.Caching;
-using Nop.Core.Domain.ArtificialIntelligence;
 using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Common;
-using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Customization.Catalog;
-using Nop.Core.Domain.Directory;
-using Nop.Core.Domain.Discounts;
-using Nop.Core.Domain.FilterLevels;
-using Nop.Core.Domain.Localization;
-using Nop.Core.Domain.Media;
 using Nop.Core.Domain.Orders;
-using Nop.Core.Domain.Tax;
-using Nop.Core.Domain.Vendors;
-using Nop.Core.Events;
-using Nop.Core.Http;
 using Nop.Core.Infrastructure;
-using Nop.Services.ArtificialIntelligence;
-using Nop.Services.Catalog;
-using Nop.Services.Common;
-using Nop.Services.Configuration;
-using Nop.Services.Directory;
-using Nop.Services.Discounts;
 using Nop.Services.ExportImport;
-using Nop.Services.FilterLevels;
-using Nop.Services.Localization;
-using Nop.Services.Logging;
-using Nop.Services.Media;
 using Nop.Services.Messages;
-using Nop.Services.Orders;
 using Nop.Services.Security;
-using Nop.Services.Seo;
-using Nop.Services.Shipping;
-using Nop.Services.Stores;
 using Nop.Web.Areas.Admin.Factories;
 using Nop.Web.Areas.Admin.Infrastructure.Mapper.Extensions;
 using Nop.Web.Areas.Admin.Models.Catalog;
+using Nop.Web.Areas.Admin.Models.Customization.Catalog;
+using Nop.Web.Areas.Admin.Models.Customization.Custom;
 using Nop.Web.Framework.Controllers;
-using Nop.Web.Framework.Factories;
-using Nop.Web.Framework.Models.Translation;
 using Nop.Web.Framework.Mvc;
 using Nop.Web.Framework.Mvc.Filters;
-using Nop.Web.Framework.Mvc.ModelBinding;
-using Nop.Web.Framework.Validators;
 using Nop.Web.Infrastructure.Cache;
-using System.Globalization;
-using System.Text;
 
 namespace Nop.Web.Areas.Admin.Controllers;
 
@@ -490,7 +466,376 @@ public partial class ProductController : BaseAdminController
         }
     }
 
-  
+    #region Collection products
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> CollectionProductList(RelatedProductSearchModel searchModel)
+    { 
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(searchModel.ProductId)
+            ?? throw new ArgumentException("No product found with the specified id");
+
+        //a vendor should have access only to his products
+        if (await _workContext.GetCurrentVendorAsync() != null && product.VendorId != (await _workContext.GetCurrentVendorAsync()).Id)
+            return Content("This is not your product");
+
+        //prepare model
+        var model = await _productModelFactory.PrepareCollectionProductListModelAsync(searchModel, product);
+
+        return Json(model);
+    }
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> CollectionProductUpdate(CollectionProductModel model)
+    {
+        var _productService = EngineContext.Current.Resolve<IProductExtendedService>();
+        //try to get a Collection product with the specified id
+        var CollectionProduct = await _productService.GetCollectionProductByIdAsync(model.Id)
+            ?? throw new ArgumentException("No Collection product found with the specified id");
+
+        //a vendor should have access only to his products
+        if (await _workContext.GetCurrentVendorAsync() != null)
+        {
+            var product = await _productService.GetProductByIdAsync(CollectionProduct.ProductId1);
+            if (product != null && product.VendorId != (await _workContext.GetCurrentVendorAsync()).Id)
+                return Content("This is not your product");
+        }
+
+        CollectionProduct.DisplayOrder = model.DisplayOrder;
+        await _productService.UpdateCollectionProductAsync(CollectionProduct);
+
+        return new NullJsonResult();
+    }
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> CollectionProductDelete(int id)
+    {
+        var _productService = EngineContext.Current.Resolve<IProductExtendedService>();
+        //try to get a Collection product with the specified id
+        var CollectionProduct = await _productService.GetCollectionProductByIdAsync(id)
+            ?? throw new ArgumentException("No Collection product found with the specified id");
+
+        var productId = CollectionProduct.ProductId1;
+
+        //a vendor should have access only to his products
+        if (await _workContext.GetCurrentVendorAsync() != null)
+        {
+            var product = await _productService.GetProductByIdAsync(productId);
+            if (product != null && product.VendorId != (await _workContext.GetCurrentVendorAsync()).Id)
+                return Content("This is not your product");
+        }
+
+        await _productService.DeleteCollectionProductAsync(CollectionProduct);
+
+        return new NullJsonResult();
+    }
+
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> CollectionProductAddPopup(int productId)
+    { 
+        //prepare model
+        var model = await _productModelFactory.PrepareAddCollectionProductSearchModelAsync(new AddCollectionProductSearchModel());
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> CollectionProductAddPopupList(AddCollectionProductSearchModel searchModel)
+    { 
+        //prepare model
+        var model = await _productModelFactory.PrepareAddCollectionProductListModelAsync(searchModel);
+
+        return Json(model);
+    }
+
+    [HttpPost]
+    [FormValueRequired("save")]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> CollectionProductAddPopup(AddCollectionProductModel model)
+    { 
+        var selectedProducts = await _productService.GetProductsByIdsAsync(model.SelectedProductIds.ToArray());
+        if (selectedProducts.Any())
+        {
+            var _productService = EngineContext.Current.Resolve<IProductExtendedService>();
+            var existingCollectionProducts = await _productService.GetCollectionProductsByProductId1ListAsync(model.ProductId, showHidden: true);
+            foreach (var product in selectedProducts)
+            {
+                //a vendor should have access only to his products
+                if (await _workContext.GetCurrentVendorAsync() != null && product.VendorId != (await _workContext.GetCurrentVendorAsync()).Id)
+                    continue;
+
+                if (_productService.FindCollectionProduct(existingCollectionProducts, model.ProductId, product.Id) != null)
+                    continue;
+
+                await _productService.InsertCollectionProductAsync(new CollectionProduct
+                {
+                    ProductId1 = model.ProductId,
+                    ProductId2 = product.Id,
+                    DisplayOrder = 1
+                });
+            }
+        }
+
+        ViewBag.RefreshPage = true;
+
+        return View(new AddCollectionProductSearchModel());
+    }
+
+    #endregion
+
+    #region RelatedSearchList
+
+    [HttpPost]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> RelatedSearchList(RelatedProductSearchModel searchModel)
+    {
+        if (!await _permissionService.AuthorizeAsync(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE) && !await _permissionService.AuthorizeAsync(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE))
+            return await AccessDeniedJsonAsync();
+
+        //try to get a product with the specified id
+        if (searchModel.EntityType == "Product")
+        {
+            var product = await _productService.GetProductByIdAsync(searchModel.ProductId)
+                ?? throw new ArgumentException("No product found with the specified id");
+        }
+        else if (searchModel.EntityType == "Category")
+        {
+            var category = await _categoryService.GetCategoryByIdAsync(searchModel.ProductId)
+  ?? throw new ArgumentException("No Category found with the specified id");
+        }
+        var _relatedSearchModelFactory = EngineContext.Current.Resolve<IRelatedSearchModelFactory>();
+
+        //prepare model
+        var model = await _relatedSearchModelFactory.PrepareRelatedSearchListModelAsync(searchModel, searchModel.ProductId, searchModel.EntityType);
+
+        return Json(model);
+    }
+    [HttpPost]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> RelatedSearchUpdate(RelatedSearchModel model)
+    {
+        if (!await _permissionService.AuthorizeAsync(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE) && !await _permissionService.AuthorizeAsync(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE))
+            return await AccessDeniedJsonAsync();
+
+        var _relatedSearchService = EngineContext.Current.Resolve<IRelatedSearchService>();
+
+        //try to get a Collection product with the specified id
+        var relatedSearch = await _relatedSearchService.GetById(model.Id)
+            ?? throw new ArgumentException("No Related search found with the specified id");
+
+        relatedSearch.DisplayOrder = model.DisplayOrder;
+        relatedSearch.TermName = model.TermName;
+        relatedSearch.Link = model.Link;
+        relatedSearch.UpdatedOnUtc = DateTime.UtcNow;
+        await _relatedSearchService.UpdateAsync(relatedSearch);
+        return new NullJsonResult();
+    }
+
+    [HttpPost]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> RelatedSearchDelete(int id)
+    {
+        if (!await _permissionService.AuthorizeAsync(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE) && !await _permissionService.AuthorizeAsync(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE))
+            return await AccessDeniedJsonAsync();
+        var _relatedSearchService = EngineContext.Current.Resolve<IRelatedSearchService>();
+
+        //try to get a Collection product with the specified id
+        var relatedSearch = await _relatedSearchService.GetById(id)
+            ?? throw new ArgumentException("No Related search found with the specified id");
+
+        await _relatedSearchService.DeleteAsync(relatedSearch);
+
+        return new NullJsonResult();
+    }
+
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> RelatedSearchAddPopup(int entityId, string entityType)
+    {
+        if (!await _permissionService.AuthorizeAsync(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE) && !await _permissionService.AuthorizeAsync(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE))
+            return await AccessDeniedJsonAsync();
+        RelatedSearchModel model = new RelatedSearchModel();
+        model.EntityId = entityId;
+        model.EntityType = entityType;
+
+        return View(model);
+    }
+
+
+
+    [HttpPost]
+    [FormValueRequired("save")]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> RelatedSearchInsert(RelatedSearchModel model)
+    {
+        if (ModelState.IsValid)
+        {
+            if (!await _permissionService.AuthorizeAsync(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE) && !await _permissionService.AuthorizeAsync(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE))
+                return await AccessDeniedJsonAsync();
+            var _relatedSearchService = EngineContext.Current.Resolve<IRelatedSearchService>();
+
+            RelatedSearch relatedSearch = new RelatedSearch();
+            relatedSearch.Link = model.Link;
+            relatedSearch.TermName = model.TermName;
+            relatedSearch.EntityType = model.EntityType;
+            relatedSearch.EntityId = model.EntityId;
+            relatedSearch.DisplayOrder = model.DisplayOrder;
+            relatedSearch.CreatedOnUtc = DateTime.UtcNow;
+            relatedSearch.UpdatedOnUtc = DateTime.UtcNow;
+
+            await _relatedSearchService.InsertAsync(relatedSearch);
+
+
+            ViewBag.RefreshPage = true;
+
+            RelatedSearchModel relatedSearchModel = new RelatedSearchModel();
+            relatedSearchModel.EntityType = model.EntityType;
+            relatedSearchModel.EntityId = model.EntityId;
+            return View("RelatedSearchAddPopup", relatedSearchModel);
+        }
+        else
+            return View(model);
+    }
+    #endregion
+
+    #region Fbq products
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> FBTProductList(FBTProductSearchModel searchModel)
+    { 
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(searchModel.ProductId)
+            ?? throw new ArgumentException("No product found with the specified id");
+
+        //a vendor should have access only to his products
+        if (await _workContext.GetCurrentVendorAsync() != null && product.VendorId != (await _workContext.GetCurrentVendorAsync()).Id)
+            return Content("This is not your product");
+
+        //prepare model
+        var model = await _productModelFactory.PrepareFBTProductListModelAsync(searchModel, product);
+
+        return Json(model);
+    }
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> FBTProductUpdate(FBTProductModel model)
+    {
+        //try to get a FBT product with the specified id
+        var _productService = EngineContext.Current.Resolve<IProductExtendedService>();
+        var FBTProduct = await _productService.GetFBTProductByIdAsync(model.Id)
+            ?? throw new ArgumentException("No FBT product found with the specified id");
+
+        //a vendor should have access only to his products
+        if (await _workContext.GetCurrentVendorAsync() != null)
+        {
+            var product = await _productService.GetProductByIdAsync(FBTProduct.ProductId1);
+            if (product != null && product.VendorId != (await _workContext.GetCurrentVendorAsync()).Id)
+                return Content("This is not your product");
+        }
+
+        FBTProduct.DisplayOrder = model.DisplayOrder;
+        FBTProduct.DefaultQuantity = model.DefaultQuantity;
+        await _productService.UpdateFBTProductAsync(FBTProduct);
+
+        return new NullJsonResult();
+    }
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> FBTProductDelete(int id)
+    { 
+        var _productService = EngineContext.Current.Resolve<IProductExtendedService>();
+        //try to get a FBT product with the specified id
+        var FBTProduct = await _productService.GetFBTProductByIdAsync(id)
+            ?? throw new ArgumentException("No FBT product found with the specified id");
+
+        var productId = FBTProduct.ProductId1;
+
+        //a vendor should have access only to his products
+        if (await _workContext.GetCurrentVendorAsync() != null)
+        {
+            var product = await _productService.GetProductByIdAsync(productId);
+            if (product != null && product.VendorId != (await _workContext.GetCurrentVendorAsync()).Id)
+                return Content("This is not your product");
+        }
+
+        await _productService.DeleteFBTProductAsync(FBTProduct);
+
+        return new NullJsonResult();
+    }
+
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> FBTProductAddPopup(int productId)
+    { 
+        //prepare model
+        var model = await _productModelFactory.PrepareAddFBTProductSearchModelAsync(new AddFBTProductSearchModel());
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> FBTProductAddPopupList(AddFBTProductSearchModel searchModel)
+    { 
+        //prepare model
+        var model = await _productModelFactory.PrepareAddFBTProductListModelAsync(searchModel);
+
+        return Json(model);
+    }
+
+    [HttpPost]
+    [FormValueRequired("save")]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> FBTProductAddPopup(AddFBTProductModel model)
+    { 
+        var selectedProducts = await _productService.GetProductsByIdsAsync(model.SelectedProductIds.ToArray());
+        if (selectedProducts.Any())
+        {
+            var _productService = EngineContext.Current.Resolve<IProductExtendedService>();
+            var existingFBTProducts = await _productService.GetFBTProductsByProductId1Async(model.ProductId, showHidden: true);
+            foreach (var product in selectedProducts)
+            {
+                //a vendor should have access only to his products
+                if (await _workContext.GetCurrentVendorAsync() != null && product.VendorId != (await _workContext.GetCurrentVendorAsync()).Id)
+                    continue;
+
+                if (_productService.FindFBTProduct(existingFBTProducts, model.ProductId, product.Id) != null)
+                    continue;
+
+                await _productService.InsertFBTProductAsync(new FBTProduct
+                {
+                    ProductId1 = model.ProductId,
+                    ProductId2 = product.Id,
+                    DefaultQuantity = 1,
+                    DisplayOrder = 1
+                });
+            }
+        }
+
+        ViewBag.RefreshPage = true;
+
+        return View(new AddFBTProductSearchModel());
+    }
+
+    #endregion
 
     #endregion
 
@@ -549,26 +894,26 @@ public partial class ProductController : BaseAdminController
 
     //#endregion
 
-    //#region Related products
+ 
 
-    //[HttpPost]
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)]
-    //public virtual async Task<IActionResult> RelatedProductList(RelatedProductSearchModel searchModel)
-    //{
-    //    //try to get a product with the specified id
-    //    var product = await _productService.GetProductByIdAsync(searchModel.ProductId)
-    //        ?? throw new ArgumentException("No product found with the specified id");
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)]
+    public virtual async Task<IActionResult> CustomRelatedProductList(RelatedProductSearchModel searchModel)
+    {
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(searchModel.ProductId)
+            ?? throw new ArgumentException("No product found with the specified id");
 
-    //    //a vendor should have access only to his products
-    //    var currentVendor = await _workContext.GetCurrentVendorAsync();
-    //    if (currentVendor != null && product.VendorId != currentVendor.Id)
-    //        return Content("This is not your product");
+        //a vendor should have access only to his products
+        var currentVendor = await _workContext.GetCurrentVendorAsync();
+        if (currentVendor != null && product.VendorId != currentVendor.Id)
+            return Content("This is not your product");
 
-    //    //prepare model
-    //    var model = await _productModelFactory.PrepareRelatedProductListModelAsync(searchModel, product);
+        //prepare model
+        var model = await _productModelFactory.CustomPrepareRelatedProductListModelAsync(searchModel, product);
 
-    //    return Json(model);
-    //}
+        return Json(model);
+    }
 
     //[HttpPost]
     //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
@@ -626,15 +971,15 @@ public partial class ProductController : BaseAdminController
     //    return View(model);
     //}
 
-    //[HttpPost]
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
-    //public virtual async Task<IActionResult> RelatedProductAddPopupList(AddRelatedProductSearchModel searchModel)
-    //{
-    //    //prepare model
-    //    var model = await _productModelFactory.PrepareAddRelatedProductListModelAsync(searchModel);
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    public virtual async Task<IActionResult> CustomRelatedProductAddPopupList(AddRelatedProductSearchModel searchModel)
+    {
+        //prepare model
+        var model = await _productModelFactory.CustomPrepareAddRelatedProductListModelAsync(searchModel);
 
-    //    return Json(model);
-    //}
+        return Json(model);
+    }
 
     //[HttpPost]
     //[FormValueRequired("save")]
@@ -673,24 +1018,24 @@ public partial class ProductController : BaseAdminController
 
     //#region Cross-sell products
 
-    //[HttpPost]
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)]
-    //public virtual async Task<IActionResult> CrossSellProductList(CrossSellProductSearchModel searchModel)
-    //{
-    //    //try to get a product with the specified id
-    //    var product = await _productService.GetProductByIdAsync(searchModel.ProductId)
-    //        ?? throw new ArgumentException("No product found with the specified id");
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)]
+    public virtual async Task<IActionResult> CustomCrossSellProductList(CrossSellProductSearchModel searchModel)
+    {
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(searchModel.ProductId)
+            ?? throw new ArgumentException("No product found with the specified id");
 
-    //    //a vendor should have access only to his products
-    //    var currentVendor = await _workContext.GetCurrentVendorAsync();
-    //    if (currentVendor != null && product.VendorId != currentVendor.Id)
-    //        return Content("This is not your product");
+        //a vendor should have access only to his products
+        var currentVendor = await _workContext.GetCurrentVendorAsync();
+        if (currentVendor != null && product.VendorId != currentVendor.Id)
+            return Content("This is not your product");
 
-    //    //prepare model
-    //    var model = await _productModelFactory.PrepareCrossSellProductListModelAsync(searchModel, product);
+        //prepare model
+        var model = await _productModelFactory.CustomPrepareCrossSellProductListModelAsync(searchModel, product);
 
-    //    return Json(model);
-    //}
+        return Json(model);
+    }
 
     //[HttpPost]
     //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
@@ -723,16 +1068,271 @@ public partial class ProductController : BaseAdminController
     //    return View(model);
     //}
 
-    //[HttpPost]
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
-    //public virtual async Task<IActionResult> CrossSellProductAddPopupList(AddCrossSellProductSearchModel searchModel)
-    //{
-    //    //prepare model
-    //    var model = await _productModelFactory.PrepareAddCrossSellProductListModelAsync(searchModel);
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    public virtual async Task<IActionResult> CustomCrossSellProductAddPopupList(AddCrossSellProductSearchModel searchModel)
+    {
+        //prepare model
+        var model = await _productModelFactory.CustomPrepareAddCrossSellProductListModelAsync(searchModel);
 
-    //    return Json(model);
-    //}
+        return Json(model);
+    }
 
+    #region Dimension images
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> DimesionImagesList(ProductDimensionPictureSearchModel searchModel)
+    { 
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(searchModel.ProductId)
+            ?? throw new ArgumentException("No product found with the specified id");
+
+        //a vendor should have access only to his products
+        if (await _workContext.GetCurrentVendorAsync() != null && product.VendorId != (await _workContext.GetCurrentVendorAsync()).Id)
+            return Content("This is not your product");
+
+        //prepare model
+
+        string imagesPath = Path.Combine(_fileProvider.MapPath("/wwwroot/images/product/dimensionimages"));
+
+        DirectoryInfo info = new DirectoryInfo(imagesPath);
+        FileInfo[] files = info.GetFiles().Where(p => p.Name.StartsWith(searchModel.ProductId + "_")).OrderByDescending(p => p.CreationTime).ToArray();
+
+
+        // Generate URLs and creation dates for the images
+        List<ProductDimensionPictureModel> productDimensionImages = new List<ProductDimensionPictureModel>();
+        foreach (FileInfo file in files)
+        {
+
+            // Create an object with URL and creation date
+            var imageInfo = new ProductDimensionPictureModel()
+            {
+                Url = "/images/product/dimensionimages/" + file.Name,
+                CreatedOn = file.CreationTime
+            };
+
+            productDimensionImages.Add(imageInfo);
+        }
+
+        ProductDimensionPictureListModel model = new ProductDimensionPictureListModel();
+        model.Data = productDimensionImages;
+        model.Draw = searchModel.Draw;
+        model.RecordsFiltered = model.RecordsTotal = productDimensionImages.Count;
+        return Json(model);
+    }
+
+
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> DeleteDimensionImage(string id)
+    { 
+        // Validate the image URL
+        if (string.IsNullOrEmpty(id))
+        {
+            return BadRequest("Invalid image URL.");
+        }
+
+        string imagePath = Path.Combine(_fileProvider.MapPath("/wwwroot/images/product/dimensionimages"), Path.GetFileName(id));
+
+        if (System.IO.File.Exists(imagePath))
+        {
+            try
+            {
+                System.IO.File.Delete(imagePath);
+                return new NullJsonResult();
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.Message);
+            }
+        }
+        else
+        {
+            return Content("Not Found!!");
+        }
+    }
+
+    [HttpPost]
+    public virtual async Task<IActionResult> BulkUploadDimensionImages(int productId, string producyType, IFormCollection images)
+    {
+        string imagesPath = _fileProvider.MapPath("/wwwroot/images/product/dimensionimages");
+
+        if (images != null && images.Files.Count > 0)
+        {
+            foreach (var file in images.Files)
+            {
+                if (file != null && file.Length > 0)
+                {
+                    string uniqueFileName = productId + "_" + file.FileName;
+                    string filePath = Path.Combine(imagesPath, uniqueFileName);
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+                }
+            }
+        }
+        return Ok();
+    }
+
+
+    #region SuggestedKeyword
+
+    [HttpPost]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> SuggestedKeywordList(ProductSuggestedKeywordSearchModel model, int productId)
+    {
+        if (!await _permissionService.AuthorizeAsync(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE) && !await _permissionService.AuthorizeAsync(StandardPermission.Catalog.CATEGORIES_CREATE_EDIT_DELETE))
+            return await AccessDeniedJsonAsync();
+
+        //try to get a product with the specified id
+        if (productId != 0)
+        {
+            var categorySuggestedKeywords = await _productModelFactory.CustomPrepareSuggestedKeywordListModelAsync(model, productId);
+
+            return Json(categorySuggestedKeywords);
+
+        }
+        else
+            throw new ArgumentException("Please provide productId " + productId);
+    }
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> SuggestedKeywordDelete(int id)
+    { 
+        //try to get a Collection product with the specified id
+        var categorySuggestedKeyword = await _productModelFactory.GetProductSuggestedKeywordById(id)
+          ?? throw new ArgumentException("No Filter Mapping By Entity found with the specified id");
+        await _productModelFactory.DeleteProductSuggestedKeyword(categorySuggestedKeyword);
+        return new NullJsonResult();
+    }
+
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> SuggestedKeywordAddPopup(int productId)
+    { 
+        ProductSuggestedKeywordModel model = new ProductSuggestedKeywordModel();
+        return View(model);
+    }
+
+
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> SuggestedKeywordCreate(ProductSuggestedKeywordModel model)
+    {
+        if (ModelState.IsValid)
+        { 
+            if (await _productModelFactory.IsProductKeywordExist(model.SuggestedKeyWordId, model.KeyWord, model.ProductId))
+            {
+                ModelState.AddModelError("", "Suggested Keyword already exist");
+            }
+            else
+            {
+                ProductSuggestedKeywordModel productSuggestedKeyword = new ProductSuggestedKeywordModel();
+                productSuggestedKeyword.Id = model.Id;
+                productSuggestedKeyword.KeyWord = model.KeyWord;
+                productSuggestedKeyword.ProductId = model.ProductId;
+                productSuggestedKeyword.SuggestedKeyWordId = model.SuggestedKeyWordId;
+
+                await _productModelFactory.CreateProductSuggestedKeyword(productSuggestedKeyword);
+
+                ViewBag.RefreshPage = true;
+                return View("SuggestedKeywordAddPopup", productSuggestedKeyword);
+            }
+        }
+        return View("SuggestedKeywordAddPopup", model);
+    }
+    #endregion
+
+    #region Variants 
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> VariantList(VariantSearchModel searchModel)
+    { 
+        //try to get a product with the specified id
+
+        var product = await _productService.GetProductByIdAsync(searchModel.ProductId)
+            ?? throw new ArgumentException("No product found with the specified id");
+
+
+
+        //prepare model
+        var model = await _productModelFactory.PrepareVariantListModelAsync(searchModel, product);
+
+        return Json(model);
+    }
+
+
+    /// <returns>A task that represents the asynchronous operation</returns>
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    public virtual async Task<IActionResult> VariantEdit(int id)
+    { 
+        var variantModel = await _productModelFactory.PrepareVariantModelAsync(id);
+        return View(variantModel);
+    }
+
+    [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    public virtual async Task<IActionResult> VariantEdit(VariantModel model, bool continueEditing)
+    {
+        var _productService = EngineContext.Current.Resolve<IProductExtendedService>();
+        var variant = await _productService.GetVariantById(model.Id);
+        if (variant == null)
+            return RedirectToAction("Edit", new { id = model.ProductId });
+
+        var product = await _productService.GetProductByIdAsync(variant.ProductId);
+        if (!string.IsNullOrWhiteSpace(model.Title) && !model.Title.Trim().Equals(product.Name.Trim(), StringComparison.OrdinalIgnoreCase))
+        {
+            variant.SeName = await _urlRecordService.ValidateSeNameAsync(variant.VariantId, "VariantCombination", model.SeName, model.Title, false);
+
+        }
+        else if (!string.IsNullOrEmpty(model.SeName) && variant.SeName != model.SeName)
+        {
+            string prdSeName = await _urlRecordService.GetSeNameAsync(product, (await _workContext.GetWorkingLanguageAsync())?.Id ?? 0, false, false);
+            if (prdSeName != model.SeName.Trim())
+            {
+                model.SeName = variant.SeName = await _urlRecordService.ValidateSeNameAsync(variant.VariantId, "VariantCombination", model.SeName, model.Title, false);
+
+            }
+        }
+
+
+
+
+
+        variant.OldPrice = model.OldPrice;
+        variant.Price = model.Price;
+        variant.Msrp = model.Msrp;
+        variant.Title = model.Title;
+        variant.EnableSurcharge = model.EnableSurcharge;
+        variant.EstimatedDeliveryDate = model.EstimatedDeliveryDate;
+        variant.WgsRequired = model.WgsRequired;
+        variant.QueryParameter = model.QueryParameter;
+        variant.Weight = model.Weight;
+        variant.ManufacturerPartNumber = model.ManufacturerPartNumber;
+        variant.DimensionPictureId = model.DimensionPictureId;
+        await _productService.UpdateVariant(variant);
+        if (!continueEditing)
+            return RedirectToAction("Edit", new { id = model.ProductId });
+
+
+        return RedirectToAction("VariantEdit", new { id = model.Id });
+
+    }
+
+
+    #endregion
+    #endregion
     //[HttpPost]
     //[FormValueRequired("save")]
     //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
@@ -901,33 +1501,128 @@ public partial class ProductController : BaseAdminController
     //    return new NullJsonResult();
     //}
 
-    //[HttpPost]
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
-    //public virtual async Task<IActionResult> AssociatedProductDelete(int id)
-    //{
-    //    //try to get an associated product with the specified id
-    //    var product = await _productService.GetProductByIdAsync(id)
-    //        ?? throw new ArgumentException("No associated product found with the specified id");
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    public virtual async Task<IActionResult> CustomAssociatedProductDelete(int id)
+    {
+        //try to get an associated product with the specified id
+        var _productService = EngineContext.Current.Resolve<IProductExtendedService>();
+        var product = await _productService.GetProductByIdAsync(id)
+            ?? throw new ArgumentException("No associated product found with the specified id");
 
-    //    //a vendor should have access only to his products
-    //    var currentVendor = await _workContext.GetCurrentVendorAsync();
-    //    if (currentVendor != null && product.VendorId != currentVendor.Id)
-    //        return Content("This is not your product");
+        //a vendor should have access only to his products
+        var currentVendor = await _workContext.GetCurrentVendorAsync();
+        if (currentVendor != null && product.VendorId != currentVendor.Id)
+            return Content("This is not your product");
+        var parentGroupId = product.ParentGroupedProductId;
+        product.ParentGroupedProductId = 0;
+        await _productService.UpdateProductAsync(product);
+        await _productService.UpdateGroupProductPrice(parentGroupId);
+        return new NullJsonResult();
+    }
 
-    //    product.ParentGroupedProductId = 0;
-    //    await _productService.UpdateProductAsync(product);
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    public virtual async Task<IActionResult> CustomAssociatedProductAddPopup(AddAssociatedProductModel model)
+    {
+        var _productService = EngineContext.Current.Resolve<IProductExtendedService>();
+        var selectedProducts = await _productService.GetProductsByIdsAsync(model.SelectedProductIds.ToArray());
+        //prepare model
+        var tryToAddSelfGroupedProduct = selectedProducts
+               .Select(p => p.Id)
+               .Contains(model.ProductId);
 
-    //    return new NullJsonResult();
-    //}
+        if (selectedProducts.Any())
+        {
+            foreach (var product in selectedProducts)
+            {
+                if (product.Id == model.ProductId)
+                    continue;
 
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
-    //public virtual async Task<IActionResult> AssociatedProductAddPopup(int productId)
-    //{
-    //    //prepare model
-    //    var model = await _productModelFactory.PrepareAddAssociatedProductSearchModelAsync(new AddAssociatedProductSearchModel());
+                //a vendor should have access only to his products
+                if (await _workContext.GetCurrentVendorAsync() != null && product.VendorId != (await _workContext.GetCurrentVendorAsync()).Id)
+                    continue;
 
-    //    return View(model);
-    //}
+                product.ParentGroupedProductId = model.ProductId;
+                await _productService.UpdateProductAsync(product);
+            }
+        }
+
+        if (tryToAddSelfGroupedProduct)
+        {
+            _notificationService.WarningNotification(await _localizationService.GetResourceAsync("Admin.Catalog.Products.AssociatedProducts.TryToAddSelfGroupedProduct"));
+
+            var addAssociatedProductSearchModel = await _productModelFactory.PrepareAddAssociatedProductSearchModelAsync(new AddAssociatedProductSearchModel());
+            //set current product id
+            addAssociatedProductSearchModel.ProductId = model.ProductId;
+
+            ViewBag.RefreshPage = true;
+
+            return View("AssociatedProductAddPopup", addAssociatedProductSearchModel);
+        }
+
+        ViewBag.RefreshPage = true;
+
+        ViewBag.ClosePage = true;
+        await _productService.UpdateGroupProductPrice(model.ProductId);
+        return View("AssociatedProductAddPopup", new AddAssociatedProductSearchModel());
+
+    }
+
+    #region Grouped Products Configuration
+
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> GroupedProductConfigurationList(GroupedProductConfigurationSearchModel searchModel)
+    { 
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(searchModel.ProductId)
+            ?? throw new ArgumentException("No product found with the specified id");
+
+        //a vendor should have access only to his products
+        if (await _workContext.GetCurrentVendorAsync() != null && product.VendorId != (await _workContext.GetCurrentVendorAsync()).Id)
+            return Content("This is not your product");
+
+        //prepare model
+        var model = await _productModelFactory.PrepareGroupedProductConfiguration(searchModel.ProductId);
+
+        return View("_GroupedProductConfigurationList", model);
+    }
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> GroupedProductUpdate(List<GroupedProductConfigurationModel> model)
+    { 
+        //try to get a FBT product with the specified id
+        var _groupedProductConfigurationService = EngineContext.Current.Resolve<IGroupedProductConfigurationService>();
+
+        var configurations = await _groupedProductConfigurationService.GetConfigurationOfGroupedProduct(model.First().ProductId);
+
+        foreach (var configuration in model)
+        {
+            await _groupedProductConfigurationService.UpdateGroupProductConfiguration(new GroupedProductConfiguration()
+            {
+                ProductId = configuration.ProductId,
+                Id = configuration.Id,
+                ProductAttributeOptionId = configuration.ProductAttributeOptionId,
+                Raw = JsonConvert.SerializeObject(configuration.Configurations)
+
+            });
+        }
+
+        foreach (var configuration in configurations)
+        {
+            if (!model.Where(m => m.Id == configuration.Id).Any())
+                await _groupedProductConfigurationService.DeleteGroupProductConfiguration(configuration);
+        }
+
+        ViewBag.RefreshPage = true;
+        return View("_GroupedProductConfigurationList", await _productModelFactory.PrepareGroupedProductConfiguration(model.First().ProductId));
+    }
+
+
+
+    #endregion
 
     //[HttpPost]
     //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
@@ -2077,199 +2772,312 @@ public partial class ProductController : BaseAdminController
 
     //#region Product attributes
 
-    //[HttpPost]
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)]
-    //public virtual async Task<IActionResult> ProductAttributeMappingList(ProductAttributeMappingSearchModel searchModel)
-    //{
-    //    //try to get a product with the specified id
-    //    var product = await _productService.GetProductByIdAsync(searchModel.ProductId)
-    //        ?? throw new ArgumentException("No product found with the specified id");
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)]
+    public virtual async Task<IActionResult> CustomProductAttributeMappingList(ProductAttributeMappingSearchModel searchModel)
+    {
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(searchModel.ProductId)
+            ?? throw new ArgumentException("No product found with the specified id");
 
-    //    //a vendor should have access only to his products
-    //    var currentVendor = await _workContext.GetCurrentVendorAsync();
-    //    if (currentVendor != null && product.VendorId != currentVendor.Id)
-    //        return Content("This is not your product");
+        //a vendor should have access only to his products
+        var currentVendor = await _workContext.GetCurrentVendorAsync();
+        if (currentVendor != null && product.VendorId != currentVendor.Id)
+            return Content("This is not your product");
 
-    //    //prepare model
-    //    var model = await _productModelFactory.PrepareProductAttributeMappingListModelAsync(searchModel, product);
+        //prepare model
+        var model = await _productModelFactory.CustomPrepareProductAttributeMappingListModelAsync(searchModel, product);
 
-    //    return Json(model);
-    //}
+        return Json(model);
+    }
 
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
-    //public virtual async Task<IActionResult> ProductAttributeMappingCreate(int productId)
-    //{
-    //    //try to get a product with the specified id
-    //    var product = await _productService.GetProductByIdAsync(productId)
-    //        ?? throw new ArgumentException("No product found with the specified id");
+    [HttpPost]
+    public virtual async Task<IActionResult> ProductAttributeMappingPublishStatus(int productId, int mappingId, bool isPublished)
+    {
+        var _productService = EngineContext.Current.Resolve<IProductExtendedService>();
+        var product = await _productService.GetProductByIdAsync(productId);
+        if (product != null)
+        {
+            var mapping = (await _productAttributeService.GetProductAttributeMappingByIdAsync(mappingId));
+            if (mapping != null)
+            {
+                var attributeValues = await _productAttributeService.GetProductAttributeValuesAsync(mapping.Id);
+                foreach (var attributeValue in attributeValues)
+                {
+                    if (attributeValue.Published != isPublished)
+                    {
+                        attributeValue.Published = isPublished;
+                        await _productAttributeService.UpdateProductAttributeValueAsync(attributeValue);
+                        if (!isPublished)
+                            await this._productModelFactory.SyncAttributeCombinations(product, mapping, null);
+                    }
+                }
 
-    //    //a vendor should have access only to his products
-    //    var currentVendor = await _workContext.GetCurrentVendorAsync();
-    //    if (currentVendor != null && product.VendorId != currentVendor.Id)
-    //    {
-    //        _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("This is not your product"));
-    //        return RedirectToAction("List");
-    //    }
+            }
+        }
+        await _productService.GenerateVariantCombinations(product.Id);
+        return new NullJsonResult();
+    }
 
-    //    //prepare model
-    //    var model = await _productModelFactory.PrepareProductAttributeMappingModelAsync(new ProductAttributeMappingModel(), product, null);
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    public virtual async Task<IActionResult> CustomProductAttributeMappingCreate(int productId)
+    {
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(productId)
+            ?? throw new ArgumentException("No product found with the specified id");
 
-    //    return View(model);
-    //}
+        //a vendor should have access only to his products
+        var currentVendor = await _workContext.GetCurrentVendorAsync();
+        if (currentVendor != null && product.VendorId != currentVendor.Id)
+        {
+            _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("This is not your product"));
+            return RedirectToAction("List");
+        }
 
-    //[HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
-    //public virtual async Task<IActionResult> ProductAttributeMappingCreate(ProductAttributeMappingModel model, bool continueEditing)
-    //{
-    //    //try to get a product with the specified id
-    //    var product = await _productService.GetProductByIdAsync(model.ProductId)
-    //        ?? throw new ArgumentException("No product found with the specified id");
+        //prepare model
+        var model = await _productModelFactory.PrepareProductAttributeMappingModelAsync(new ProductAttributeMappingModel(), product, null);
 
-    //    //a vendor should have access only to his products
-    //    var currentVendor = await _workContext.GetCurrentVendorAsync();
-    //    if (currentVendor != null && product.VendorId != currentVendor.Id)
-    //    {
-    //        _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("This is not your product"));
-    //        return RedirectToAction("List");
-    //    }
+        return View(model);
+    }
 
-    //    //ensure this attribute is not mapped yet
-    //    if ((await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id))
-    //        .Any(x => x.ProductAttributeId == model.ProductAttributeId))
-    //    {
-    //        //redisplay form
-    //        _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.Attributes.AlreadyExists"));
+    [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    public virtual async Task<IActionResult> CustomProductAttributeMappingCreate(ProductAttributeMappingModel model, bool continueEditing)
+    {
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(model.ProductId)
+            ?? throw new ArgumentException("No product found with the specified id");
 
-    //        model = await _productModelFactory.PrepareProductAttributeMappingModelAsync(model, product, null, true);
+        //a vendor should have access only to his products
+        var currentVendor = await _workContext.GetCurrentVendorAsync();
+        if (currentVendor != null && product.VendorId != currentVendor.Id)
+        {
+            _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("This is not your product"));
+            return RedirectToAction("List");
+        }
 
-    //        return View(model);
-    //    }
+        //ensure this attribute is not mapped yet
+        if ((await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id))
+            .Any(x => x.ProductAttributeId == model.ProductAttributeId))
+        {
+            //redisplay form
+            _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.Attributes.AlreadyExists"));
 
-    //    //insert mapping
-    //    var productAttributeMapping = model.ToEntity<ProductAttributeMapping>();
+            model = await _productModelFactory.PrepareProductAttributeMappingModelAsync(model, product, null, true);
 
-    //    await _productAttributeService.InsertProductAttributeMappingAsync(productAttributeMapping);
-    //    await UpdateLocalesAsync(productAttributeMapping, model);
+            return View(model);
+        }
 
-    //    //predefined values
-    //    var predefinedValues = await _productAttributeService.GetPredefinedProductAttributeValuesAsync(model.ProductAttributeId);
-    //    foreach (var predefinedValue in predefinedValues)
-    //    {
-    //        var pav = new ProductAttributeValue
-    //        {
-    //            ProductAttributeMappingId = productAttributeMapping.Id,
-    //            AttributeValueType = AttributeValueType.Simple,
-    //            Name = predefinedValue.Name,
-    //            PriceAdjustment = predefinedValue.PriceAdjustment,
-    //            PriceAdjustmentUsePercentage = predefinedValue.PriceAdjustmentUsePercentage,
-    //            WeightAdjustment = predefinedValue.WeightAdjustment,
-    //            Cost = predefinedValue.Cost,
-    //            IsPreSelected = predefinedValue.IsPreSelected,
-    //            DisplayOrder = predefinedValue.DisplayOrder
-    //        };
-    //        await _productAttributeService.InsertProductAttributeValueAsync(pav);
+        //insert mapping
+        var productAttributeMapping = model.ToEntity<ProductAttributeMapping>();
 
-    //        //locales
-    //        var languages = await _languageService.GetAllLanguagesAsync(true);
+        await _productAttributeService.InsertProductAttributeMappingAsync(productAttributeMapping);
+        await UpdateLocalesAsync(productAttributeMapping, model);
 
-    //        //localization
-    //        foreach (var lang in languages)
-    //        {
-    //            var name = await _localizationService.GetLocalizedAsync(predefinedValue, x => x.Name, lang.Id, false, false);
-    //            if (!string.IsNullOrEmpty(name))
-    //                await _localizedEntityService.SaveLocalizedValueAsync(pav, x => x.Name, name, lang.Id);
-    //        }
-    //    }
+        //predefined values
+        //var predefinedValues = await _productAttributeService.GetPredefinedProductAttributeValuesAsync(model.ProductAttributeId);
+        //foreach (var predefinedValue in predefinedValues)
+        //{
+        //    var pav = new ProductAttributeValue
+        //    {
+        //        ProductAttributeMappingId = productAttributeMapping.Id,
+        //        AttributeValueType = AttributeValueType.Simple,
+        //        Name = predefinedValue.Name,
+        //        PriceAdjustment = predefinedValue.PriceAdjustment,
+        //        PriceAdjustmentUsePercentage = predefinedValue.PriceAdjustmentUsePercentage,
+        //        WeightAdjustment = predefinedValue.WeightAdjustment,
+        //        Cost = predefinedValue.Cost,
+        //        IsPreSelected = predefinedValue.IsPreSelected,
+        //        DisplayOrder = predefinedValue.DisplayOrder
+        //    };
+        //       await _productAttributeService.InsertProductAttributeValueAsync(pav);
 
-    //    _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.Attributes.Added"));
+        //    //locales
+        //    var languages = await _languageService.GetAllLanguagesAsync(true);
 
-    //    if (!continueEditing)
-    //    {
-    //        //select an appropriate card
-    //        SaveSelectedCardName("product-product-attributes");
-    //        return RedirectToAction("Edit", new { id = product.Id });
-    //    }
+        //    //localization
+        //    foreach (var lang in languages)
+        //    {
+        //        var name = await _localizationService.GetLocalizedAsync(predefinedValue, x => x.Name, lang.Id, false, false);
+        //        if (!string.IsNullOrEmpty(name))
+        //            await _localizedEntityService.SaveLocalizedValueAsync(pav, x => x.Name, name, lang.Id);
+        //    }
+        //}
 
-    //    return RedirectToAction("ProductAttributeMappingEdit", new { id = productAttributeMapping.Id });
-    //}
+        _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.Attributes.Added"));
 
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)]
-    //public virtual async Task<IActionResult> ProductAttributeMappingEdit(int id)
-    //{
-    //    //try to get a product attribute mapping with the specified id
-    //    var productAttributeMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(id)
-    //        ?? throw new ArgumentException("No product attribute mapping found with the specified id");
+        if (!continueEditing)
+        {
+            //select an appropriate card
+            SaveSelectedCardName("product-product-attributes");
+            return RedirectToAction("Edit", new { id = product.Id });
+        }
 
-    //    //try to get a product with the specified id
-    //    var product = await _productService.GetProductByIdAsync(productAttributeMapping.ProductId)
-    //        ?? throw new ArgumentException("No product found with the specified id");
+        return RedirectToAction("CustomProductAttributeMappingEdit", new { id = productAttributeMapping.Id });
+    }
 
-    //    //a vendor should have access only to his products
-    //    var currentVendor = await _workContext.GetCurrentVendorAsync();
-    //    if (currentVendor != null && product.VendorId != currentVendor.Id)
-    //    {
-    //        _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("This is not your product"));
-    //        return RedirectToAction("List");
-    //    }
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)]
+    public virtual async Task<IActionResult> CustomProductAttributeMappingEdit(int id)
+    {
+        //try to get a product attribute mapping with the specified id
+        var productAttributeMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(id)
+            ?? throw new ArgumentException("No product attribute mapping found with the specified id");
 
-    //    //prepare model
-    //    var model = await _productModelFactory.PrepareProductAttributeMappingModelAsync(null, product, productAttributeMapping);
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(productAttributeMapping.ProductId)
+            ?? throw new ArgumentException("No product found with the specified id");
 
-    //    return View(model);
-    //}
+        //a vendor should have access only to his products
+        var currentVendor = await _workContext.GetCurrentVendorAsync();
+        if (currentVendor != null && product.VendorId != currentVendor.Id)
+        {
+            _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("This is not your product"));
+            return RedirectToAction("List");
+        }
 
-    //[HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
-    //public virtual async Task<IActionResult> ProductAttributeMappingEdit(ProductAttributeMappingModel model, bool continueEditing, IFormCollection form)
-    //{
-    //    //try to get a product attribute mapping with the specified id
-    //    var productAttributeMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(model.Id)
-    //        ?? throw new ArgumentException("No product attribute mapping found with the specified id");
+        //prepare model
+        var model = await _productModelFactory.PrepareProductAttributeMappingModelAsync(null, product, productAttributeMapping);
+        model.IsExpanded = productAttributeMapping.IsExpanded;
+        model.EnableHoverImpact = productAttributeMapping.EnableHoverImpact;
 
-    //    //try to get a product with the specified id
-    //    var product = await _productService.GetProductByIdAsync(productAttributeMapping.ProductId)
-    //        ?? throw new ArgumentException("No product found with the specified id");
+        return View(model);
+    }
 
-    //    //a vendor should have access only to his products
-    //    var currentVendor = await _workContext.GetCurrentVendorAsync();
-    //    if (currentVendor != null && product.VendorId != currentVendor.Id)
-    //    {
-    //        _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("This is not your product"));
-    //        return RedirectToAction("List");
-    //    }
+    [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    public virtual async Task<IActionResult> CustomProductAttributeMappingEdit(ProductAttributeMappingModel model, bool continueEditing, IFormCollection form)
+    {
+        //try to get a product attribute mapping with the specified id
+        var productAttributeMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(model.Id)
+            ?? throw new ArgumentException("No product attribute mapping found with the specified id");
 
-    //    //ensure this attribute is not mapped yet
-    //    if ((await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id))
-    //        .Any(x => x.ProductAttributeId == model.ProductAttributeId && x.Id != productAttributeMapping.Id))
-    //    {
-    //        //redisplay form
-    //        _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.Attributes.AlreadyExists"));
+        //try to get a product with the specified id
+        var _productService = EngineContext.Current.Resolve<IProductExtendedService>();
+        var product = await _productService.GetProductByIdAsync(productAttributeMapping.ProductId)
+            ?? throw new ArgumentException("No product found with the specified id");
 
-    //        model = await _productModelFactory.PrepareProductAttributeMappingModelAsync(model, product, productAttributeMapping, true);
+        //a vendor should have access only to his products
+        var currentVendor = await _workContext.GetCurrentVendorAsync();
+        if (currentVendor != null && product.VendorId != currentVendor.Id)
+        {
+            _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("This is not your product"));
+            return RedirectToAction("List");
+        }
 
-    //        return View(model);
-    //    }
+        //ensure this attribute is not mapped yet
+        if ((await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id))
+            .Any(x => x.ProductAttributeId == model.ProductAttributeId && x.Id != productAttributeMapping.Id))
+        {
+            //redisplay form
+            _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.Attributes.AlreadyExists"));
 
-    //    //fill entity from model
-    //    productAttributeMapping = model.ToEntity(productAttributeMapping);
-    //    await _productAttributeService.UpdateProductAttributeMappingAsync(productAttributeMapping);
+            model = await _productModelFactory.PrepareProductAttributeMappingModelAsync(model, product, productAttributeMapping, true);
+            model.IsExpanded = productAttributeMapping.IsExpanded;
+            model.EnableHoverImpact = productAttributeMapping.EnableHoverImpact;
+            return View(model);
+        }
 
-    //    await UpdateLocalesAsync(productAttributeMapping, model);
+        //fill entity from model
+        productAttributeMapping = model.ToEntity(productAttributeMapping);
+        await _productAttributeService.UpdateProductAttributeMappingAsync(productAttributeMapping);
+        await this._productModelFactory.SyncAttributeCombinations(product, productAttributeMapping, null);
+  
+        await _productService.GenerateVariantCombinations(product.Id);
+        await UpdateLocalesAsync(productAttributeMapping, model);
 
-    //    await SaveConditionAttributesAsync(productAttributeMapping, model.ConditionModel, form);
+        await SaveConditionAttributesAsync(productAttributeMapping, model.ConditionModel, form);
 
-    //    _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.Attributes.Updated"));
+        _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.Attributes.Updated"));
 
-    //    if (!continueEditing)
-    //    {
-    //        //select an appropriate card
-    //        SaveSelectedCardName("product-product-attributes");
-    //        return RedirectToAction("Edit", new { id = product.Id });
-    //    }
+        if (!continueEditing)
+        {
+            //select an appropriate card
+            SaveSelectedCardName("product-product-attributes");
+            return RedirectToAction("Edit", new { id = product.Id });
+        }
 
-    //    return RedirectToAction("ProductAttributeMappingEdit", new { id = productAttributeMapping.Id });
-    //}
+        return RedirectToAction("CustomProductAttributeMappingEdit", new { id = productAttributeMapping.Id });
+    }
+    #region Product Attribute Combinations Import/Export
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> BulkDeleteCombinations(ICollection<int> ids)
+    { 
+        int productId = 0;
 
+
+        foreach (var id in ids)
+        {
+            await _productAttributeService.DeleteProductAttributeCombinationAsync(await _productAttributeService.GetProductAttributeCombinationByIdAsync(id));
+        }
+
+        return Json(new { Result = true });
+
+
+    }
+
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> ExportProductAttributeCombination(int productid)
+    {
+        var attributeCombinations = await _productAttributeService.GetAllProductAttributeCombinationsAsync(productid);
+
+        if (!attributeCombinations.Any())
+        {
+            return RedirectToAction("Edit", new { id = productid });
+        }
+        try
+        {
+            var product = await _productService.GetProductByIdAsync(productid);
+
+            if (product == null)
+            {
+                return RedirectToAction("Edit", new { id = productid });
+            }
+            var _productAttributeFormatter = EngineContext.Current.Resolve<ICustomProductAttributeFormatter>();
+            List<ExportProductAttributeCombinationFormat> exprtpacFormat = new List<ExportProductAttributeCombinationFormat>();
+            foreach (var combination in attributeCombinations)
+            {
+                ExportProductAttributeCombinationFormat epac = new ExportProductAttributeCombinationFormat();
+                epac.ProductId = combination.ProductId;
+                epac.AttributeXml = combination.AttributesXml;
+                epac.AttributeDescription = await _productAttributeFormatter.CustomFormatAttributesAsync(product, combination.AttributesXml);
+                epac.Msrp = combination.OverriddenMsrp;
+                epac.Price = combination.OverriddenOldPrice;
+                epac.SalePrice = combination.OverriddenPrice;
+                exprtpacFormat.Add(epac);
+            }
+            var _exportManager = EngineContext.Current.Resolve<IExportExtendedManager>();
+            var bytes = await _exportManager.ExportProductAttributeCombinationToXlsxAsync(exprtpacFormat);
+            return File(bytes, MimeTypes.TextXlsx, "product-attribute-combinations.xlsx");
+        }
+        catch (Exception exc)
+        {
+            await _notificationService.ErrorNotificationAsync(exc);
+            return RedirectToAction("Edit", new
+            {
+                id = productid
+            });
+        }
+    }
+
+
+    [HttpPost]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> ImportProductAttributeCombination(IFormFile importexcelfile, int id)
+    {
+        var _importManager = EngineContext.Current.Resolve<IImportExtendedManager>();
+        if (importexcelfile != null && importexcelfile.Length > 0)
+            await _importManager.ImportProductAttributeCombinationFromXlsxAsync(importexcelfile.OpenReadStream());
+        else
+            _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("Admin.Common.UploadFile"));
+        return RedirectToAction("Edit", new
+        {
+            id = id
+        });
+    }
+
+    #endregion
     //[HttpPost]
     //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
     //public virtual async Task<IActionResult> PreTranslateProductAttribute(int itemId)
@@ -2293,51 +3101,41 @@ public partial class ProductController : BaseAdminController
     //    return Json(translationModel);
     //}
 
-    //[HttpPost]
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
-    //public virtual async Task<IActionResult> ProductAttributeMappingDelete(int id)
-    //{
-    //    //try to get a product attribute mapping with the specified id
-    //    var productAttributeMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(id)
-    //        ?? throw new ArgumentException("No product attribute mapping found with the specified id");
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    public virtual async Task<IActionResult> CustomProductAttributeMappingDelete(int id)
+    {
+        //try to get a product attribute mapping with the specified id
+        var productAttributeMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(id)
+            ?? throw new ArgumentException("No product attribute mapping found with the specified id");
 
-    //    //try to get a product with the specified id
-    //    var product = await _productService.GetProductByIdAsync(productAttributeMapping.ProductId)
-    //        ?? throw new ArgumentException("No product found with the specified id");
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(productAttributeMapping.ProductId)
+            ?? throw new ArgumentException("No product found with the specified id");
 
-    //    //a vendor should have access only to his products
-    //    var currentVendor = await _workContext.GetCurrentVendorAsync();
-    //    if (currentVendor != null && product.VendorId != currentVendor.Id)
-    //        return Content("This is not your product");
+        //a vendor should have access only to his products
+        var currentVendor = await _workContext.GetCurrentVendorAsync();
+        if (currentVendor != null && product.VendorId != currentVendor.Id)
+            return Content("This is not your product");
 
-    //    //check if existed combinations contains the specified attribute
-    //    var existedCombinations = await _productAttributeService.GetAllProductAttributeCombinationsAsync(product.Id);
-    //    if (existedCombinations?.Any() == true)
-    //    {
-    //        foreach (var combination in existedCombinations)
-    //        {
-    //            var mappings = await _productAttributeParser
-    //                .ParseProductAttributeMappingsAsync(combination.AttributesXml);
+        //check if existed combinations contains the specified attribute
+        var existedCombinations = await _productAttributeService.GetAllProductAttributeCombinationsAsync(product.Id);
+        if (existedCombinations?.Any() == true)
+        {
+            foreach (var combination in existedCombinations)
+            {
+                await _productAttributeService.DeleteProductAttributeCombinationAsync(combination); 
+            }
+        }
 
-    //            if (mappings?.Any(m => m.Id == productAttributeMapping.Id) == true)
-    //            {
-    //                _notificationService.ErrorNotification(
-    //                    string.Format(await _localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.Attributes.AlreadyExistsInCombination"),
-    //                        await _productAttributeFormatter.FormatAttributesAsync(product, combination.AttributesXml, await _workContext.GetCurrentCustomerAsync(), await _storeContext.GetCurrentStoreAsync(), ", ")));
+        await _productAttributeService.DeleteProductAttributeMappingAsync(productAttributeMapping);
+        await GenerateAttributeCombinationsAsync(product);
+        _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.Attributes.Deleted"));
 
-    //                return RedirectToAction("ProductAttributeMappingEdit", new { id = productAttributeMapping.Id });
-    //            }
-    //        }
-    //    }
-
-    //    await _productAttributeService.DeleteProductAttributeMappingAsync(productAttributeMapping);
-
-    //    _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.Attributes.Deleted"));
-
-    //    //select an appropriate card
-    //    SaveSelectedCardName("product-product-attributes");
-    //    return RedirectToAction("Edit", new { id = productAttributeMapping.ProductId });
-    //}
+        //select an appropriate card
+        SaveSelectedCardName("product-product-attributes");
+        return RedirectToAction("Edit", new { id = productAttributeMapping.ProductId });
+    }
 
     //[HttpPost]
     //[CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)]
@@ -2362,227 +3160,333 @@ public partial class ProductController : BaseAdminController
     //    return Json(model);
     //}
 
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
-    //public virtual async Task<IActionResult> ProductAttributeValueCreatePopup(int productAttributeMappingId)
-    //{
-    //    //try to get a product attribute mapping with the specified id
-    //    var productAttributeMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(productAttributeMappingId)
-    //        ?? throw new ArgumentException("No product attribute mapping found with the specified id");
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    public virtual async Task<IActionResult> CustomProductAttributeValueCreatePopup(int productAttributeMappingId)
+    {
+        //try to get a product attribute mapping with the specified id
+        var productAttributeMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(productAttributeMappingId)
+            ?? throw new ArgumentException("No product attribute mapping found with the specified id");
 
-    //    //try to get a product with the specified id
-    //    var product = await _productService.GetProductByIdAsync(productAttributeMapping.ProductId)
-    //        ?? throw new ArgumentException("No product found with the specified id");
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(productAttributeMapping.ProductId)
+            ?? throw new ArgumentException("No product found with the specified id");
 
-    //    //a vendor should have access only to his products
-    //    var currentVendor = await _workContext.GetCurrentVendorAsync();
-    //    if (currentVendor != null && product.VendorId != currentVendor.Id)
-    //        return RedirectToAction("List", "Product");
+        //a vendor should have access only to his products
+        var currentVendor = await _workContext.GetCurrentVendorAsync();
+        if (currentVendor != null && product.VendorId != currentVendor.Id)
+            return RedirectToAction("List", "Product");
 
-    //    //prepare model
-    //    var model = await _productModelFactory.PrepareProductAttributeValueModelAsync(new ProductAttributeValueModel(), productAttributeMapping, null);
+        //prepare model
+        var model = await _productModelFactory.PrepareProductAttributeValueModelAsync(new ProductAttributeValueModel(), productAttributeMapping, null);
 
-    //    return View(model);
-    //}
+        var pv = await _productAttributeService.GetProductAttributeByIdAsync(productAttributeMapping.ProductAttributeId);
+        model.DisplayGallerySection = string.Equals(pv.Name, (await _localizationService.GetResourceAsync("product.attr.shades"))) ||
+            string.Equals(pv.Name, (await _localizationService.GetResourceAsync("product.attr.configuration"))); ;
 
-    //[HttpPost]
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
-    //public virtual async Task<IActionResult> ProductAttributeValueCreatePopup(ProductAttributeValueModel model)
-    //{
-    //    //try to get a product attribute mapping with the specified id
-    //    var productAttributeMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(model.ProductAttributeMappingId);
-    //    if (productAttributeMapping == null)
-    //        return RedirectToAction("List", "Product");
+        return View("ProductAttributeValueCreatePopup", model);
+    }
 
-    //    //try to get a product with the specified id
-    //    var product = await _productService.GetProductByIdAsync(productAttributeMapping.ProductId)
-    //        ?? throw new ArgumentException("No product found with the specified id");
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    public virtual async Task<IActionResult> CustomProductAttributeValueCreatePopup(ProductAttributeValueModel model)
+    {
+        //try to get a product attribute mapping with the specified id
+        var productAttributeMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(model.ProductAttributeMappingId);
+        if (productAttributeMapping == null)
+            return RedirectToAction("List", "Product");
 
-    //    //a vendor should have access only to his products
-    //    var currentVendor = await _workContext.GetCurrentVendorAsync();
-    //    if (currentVendor != null && product.VendorId != currentVendor.Id)
-    //        return RedirectToAction("List", "Product");
+        var _productService = EngineContext.Current.Resolve<IProductExtendedService>();
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(productAttributeMapping.ProductId)
+            ?? throw new ArgumentException("No product found with the specified id");
 
-    //    if (productAttributeMapping.AttributeControlType == AttributeControlType.ColorSquares)
-    //    {
-    //        //ensure valid color is chosen/entered
-    //        if (string.IsNullOrEmpty(model.ColorSquaresRgb))
-    //            ModelState.AddModelError(string.Empty, "Color is required");
-    //        try
-    //        {
-    //            //ensure color is valid (can be instantiated)
-    //            System.Drawing.ColorTranslator.FromHtml(model.ColorSquaresRgb);
-    //        }
-    //        catch (Exception exc)
-    //        {
-    //            ModelState.AddModelError(string.Empty, exc.Message);
-    //        }
-    //    }
+        //a vendor should have access only to his products
+        var currentVendor = await _workContext.GetCurrentVendorAsync();
+        if (currentVendor != null && product.VendorId != currentVendor.Id)
+            return RedirectToAction("List", "Product");
 
-    //    //ensure a picture is uploaded
-    //    if (productAttributeMapping.AttributeControlType == AttributeControlType.ImageSquares && model.ImageSquaresPictureId == 0)
-    //    {
-    //        ModelState.AddModelError(string.Empty, "Image is required");
-    //    }
+        if (productAttributeMapping.AttributeControlType == AttributeControlType.ColorSquares)
+        {
+            //ensure valid color is chosen/entered
+            if (string.IsNullOrEmpty(model.ColorSquaresRgb))
+                ModelState.AddModelError(string.Empty, "Color is required");
+            try
+            {
+                //ensure color is valid (can be instantiated)
+                System.Drawing.ColorTranslator.FromHtml(model.ColorSquaresRgb);
+            }
+            catch (Exception exc)
+            {
+                ModelState.AddModelError(string.Empty, exc.Message);
+            }
+        }
 
-    //    if (ModelState.IsValid)
-    //    {
-    //        //fill entity from model
-    //        var pav = model.ToEntity<ProductAttributeValue>();
+        //ensure a picture is uploaded
+        if (productAttributeMapping.AttributeControlType == AttributeControlType.ImageSquares && model.ImageSquaresPictureId == 0)
+        {
+            ModelState.AddModelError(string.Empty, "Image is required");
+        }
 
-    //        pav.Quantity = model.CustomerEntersQty ? 1 : model.Quantity;
+        if (ModelState.IsValid)
+        {
+            //fill entity from model
+            var pav = model.ToEntity<ProductAttributeValue>();
 
-    //        await _productAttributeService.InsertProductAttributeValueAsync(pav);
-    //        await UpdateLocalesAsync(pav, model);
-    //        await SaveAttributeValuePicturesAsync(product, pav, model);
+            pav.Quantity = model.CustomerEntersQty ? 1 : model.Quantity;
 
-    //        ViewBag.RefreshPage = true;
+            await _productAttributeService.InsertProductAttributeValueAsync(pav);
+            await this._productModelFactory.SyncAttributeCombinations(product, productAttributeMapping, pav);
 
-    //        return View(model);
-    //    }
+            int variantId = await _productService.GenerateVariantIdAsync(productAttributeMapping, pav.Id, pav.Name);
 
-    //    //prepare model
-    //    model = await _productModelFactory.PrepareProductAttributeValueModelAsync(model, productAttributeMapping, null, true);
+            if (variantId > 0)
+            {
+                pav.VariantId = variantId;
+                await _productAttributeService.UpdateProductAttributeValueAsync(pav);
+            }
 
-    //    //if we got this far, something failed, redisplay form
-    //    return View(model);
-    //}
+            //if (model.GalleryPictures != null && model.GalleryPictures.Count > 0)
+            //{
+            //    var count = 1;
+            //    foreach (var pictureId in model.GalleryPictures)
 
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)]
-    //public virtual async Task<IActionResult> ProductAttributeValueEditPopup(int id)
-    //{
-    //    //try to get a product attribute value with the specified id
-    //    var productAttributeValue = await _productAttributeService.GetProductAttributeValueByIdAsync(id);
-    //    if (productAttributeValue == null)
-    //        return RedirectToAction("List", "Product");
+            //    {
+            //        await _productAttributeService.CreateProductAttributeValueGalleryPictureMapping(pav.Id, pictureId, count);
 
-    //    //try to get a product attribute mapping with the specified id
-    //    var productAttributeMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(productAttributeValue.ProductAttributeMappingId);
-    //    if (productAttributeMapping == null)
-    //        return RedirectToAction("List", "Product");
+            //        count++;
+            //    }
+            //}
 
-    //    //try to get a product with the specified id
-    //    var product = await _productService.GetProductByIdAsync(productAttributeMapping.ProductId)
-    //        ?? throw new ArgumentException("No product found with the specified id");
+            await UpdateLocalesAsync(pav, model);
+            await SaveAttributeValuePicturesAsync(product, pav, model);
 
-    //    //a vendor should have access only to his products
-    //    var currentVendor = await _workContext.GetCurrentVendorAsync();
-    //    if (currentVendor != null && product.VendorId != currentVendor.Id)
-    //        return RedirectToAction("List", "Product");
+            ViewBag.RefreshPage = true;
 
-    //    //prepare model
-    //    var model = await _productModelFactory.PrepareProductAttributeValueModelAsync(null, productAttributeMapping, productAttributeValue);
+            return View("ProductAttributeValueCreatePopup", model);
+        }
 
-    //    return View(model);
-    //}
+        //prepare model
+        model = await _productModelFactory.CustomPrepareProductAttributeValueModelAsync(model, productAttributeMapping, null, true);
 
-    //[HttpPost]
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
-    //public virtual async Task<IActionResult> ProductAttributeValueEditPopup(ProductAttributeValueModel model)
-    //{
-    //    //try to get a product attribute value with the specified id
-    //    var productAttributeValue = await _productAttributeService.GetProductAttributeValueByIdAsync(model.Id);
-    //    if (productAttributeValue == null)
-    //        return RedirectToAction("List", "Product");
+        //if we got this far, something failed, redisplay form
+        return View("ProductAttributeValueCreatePopup", model);
+    }
 
-    //    //try to get a product attribute mapping with the specified id
-    //    var productAttributeMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(productAttributeValue.ProductAttributeMappingId);
-    //    if (productAttributeMapping == null)
-    //        return RedirectToAction("List", "Product");
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)]
+    public virtual async Task<IActionResult> CustomProductAttributeValueEditPopup(int id)
+    {
+        //try to get a product attribute value with the specified id
+        var productAttributeValue = await _productAttributeService.GetProductAttributeValueByIdAsync(id);
+        if (productAttributeValue == null)
+            return RedirectToAction("List", "Product");
 
-    //    //try to get a product with the specified id
-    //    var product = await _productService.GetProductByIdAsync(productAttributeMapping.ProductId)
-    //        ?? throw new ArgumentException("No product found with the specified id");
+        //try to get a product attribute mapping with the specified id
+        var productAttributeMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(productAttributeValue.ProductAttributeMappingId);
+        if (productAttributeMapping == null)
+            return RedirectToAction("List", "Product");
 
-    //    //a vendor should have access only to his products
-    //    var currentVendor = await _workContext.GetCurrentVendorAsync();
-    //    if (currentVendor != null && product.VendorId != currentVendor.Id)
-    //        return RedirectToAction("List", "Product");
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(productAttributeMapping.ProductId)
+            ?? throw new ArgumentException("No product found with the specified id");
 
-    //    if (productAttributeMapping.AttributeControlType == AttributeControlType.ColorSquares)
-    //    {
-    //        //ensure valid color is chosen/entered
-    //        if (string.IsNullOrEmpty(model.ColorSquaresRgb))
-    //            ModelState.AddModelError(string.Empty, "Color is required");
-    //        try
-    //        {
-    //            //ensure color is valid (can be instantiated)
-    //            System.Drawing.ColorTranslator.FromHtml(model.ColorSquaresRgb);
-    //        }
-    //        catch (Exception exc)
-    //        {
-    //            ModelState.AddModelError(string.Empty, exc.Message);
-    //        }
-    //    }
+        //a vendor should have access only to his products
+        var currentVendor = await _workContext.GetCurrentVendorAsync();
+        if (currentVendor != null && product.VendorId != currentVendor.Id)
+            return RedirectToAction("List", "Product");
 
-    //    //ensure a picture is uploaded
-    //    if (productAttributeMapping.AttributeControlType == AttributeControlType.ImageSquares && model.ImageSquaresPictureId == 0)
-    //    {
-    //        ModelState.AddModelError(string.Empty, "Image is required");
-    //    }
+        //prepare model
+        var model = await _productModelFactory.PrepareProductAttributeValueModelAsync(null, productAttributeMapping, productAttributeValue);
+        var pv = await _productAttributeService.GetProductAttributeByIdAsync(productAttributeMapping.ProductAttributeId);
+        model.DisplayGallerySection = string.Equals(pv.Name, (await _localizationService.GetResourceAsync("product.attr.shades"))) ||
+            string.Equals(pv.Name, await _localizationService.GetResourceAsync("product.attr.configuration"))
+            || string.Equals(pv.Name, await _localizationService.GetResourceAsync("product.attr.Size"));
+        //if (model.DisplayGallerySection)
+        //{
+        //    model.GalleryPictures = await _productAttributeService.GetProductAttributeValueGalleryPicturesByAttributeValueId(id);
+        //}
+        return View("ProductAttributeValueEditPopup", model);
+    }
 
-    //    if (ModelState.IsValid)
-    //    {
-    //        //fill entity from model
-    //        productAttributeValue = model.ToEntity(productAttributeValue);
-    //        productAttributeValue.Quantity = model.CustomerEntersQty ? 1 : model.Quantity;
-    //        await _productAttributeService.UpdateProductAttributeValueAsync(productAttributeValue);
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    public virtual async Task<IActionResult> CustomProductAttributeValueEditPopup(ProductAttributeValueModel model)
+    {
+        //try to get a product attribute value with the specified id
+        var productAttributeValue = await _productAttributeService.GetProductAttributeValueByIdAsync(model.Id);
+        if (productAttributeValue == null)
+            return RedirectToAction("List", "Product");
 
-    //        await UpdateLocalesAsync(productAttributeValue, model);
-    //        await SaveAttributeValuePicturesAsync(product, productAttributeValue, model);
+        //try to get a product attribute mapping with the specified id
+        var productAttributeMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(productAttributeValue.ProductAttributeMappingId);
+        if (productAttributeMapping == null)
+            return RedirectToAction("List", "Product");
 
-    //        ViewBag.RefreshPage = true;
+        var _productService = EngineContext.Current.Resolve<IProductExtendedService>(); 
 
-    //        return View(model);
-    //    }
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(productAttributeMapping.ProductId)
+            ?? throw new ArgumentException("No product found with the specified id");
 
-    //    //prepare model
-    //    model = await _productModelFactory.PrepareProductAttributeValueModelAsync(model, productAttributeMapping, productAttributeValue, true);
+        //a vendor should have access only to his products
+        var currentVendor = await _workContext.GetCurrentVendorAsync();
+        if (currentVendor != null && product.VendorId != currentVendor.Id)
+            return RedirectToAction("List", "Product");
 
-    //    //if we got this far, something failed, redisplay form
-    //    return View(model);
-    //}
+        if (productAttributeMapping.AttributeControlType == AttributeControlType.ColorSquares)
+        {
+            //ensure valid color is chosen/entered
+            if (string.IsNullOrEmpty(model.ColorSquaresRgb))
+                ModelState.AddModelError(string.Empty, "Color is required");
+            try
+            {
+                //ensure color is valid (can be instantiated)
+                System.Drawing.ColorTranslator.FromHtml(model.ColorSquaresRgb);
+            }
+            catch (Exception exc)
+            {
+                ModelState.AddModelError(string.Empty, exc.Message);
+            }
+        }
 
-    //[HttpPost]
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
-    //public virtual async Task<IActionResult> ProductAttributeValueDelete(int id)
-    //{
-    //    //try to get a product attribute value with the specified id
-    //    var productAttributeValue = await _productAttributeService.GetProductAttributeValueByIdAsync(id)
-    //        ?? throw new ArgumentException("No product attribute value found with the specified id");
+        //ensure a picture is uploaded
+        if (productAttributeMapping.AttributeControlType == AttributeControlType.ImageSquares && model.ImageSquaresPictureId == 0)
+        {
+            ModelState.AddModelError(string.Empty, "Image is required");
+        }
 
-    //    //try to get a product attribute mapping with the specified id
-    //    var productAttributeMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(productAttributeValue.ProductAttributeMappingId)
-    //        ?? throw new ArgumentException("No product attribute mapping found with the specified id");
+        if (ModelState.IsValid)
+        {
+            //fill entity from model
+            productAttributeValue = model.ToEntity(productAttributeValue);
+            productAttributeValue.Quantity = model.CustomerEntersQty ? 1 : model.Quantity;
+            await _productAttributeService.UpdateProductAttributeValueAsync(productAttributeValue);
 
-    //    //try to get a product with the specified id
-    //    var product = await _productService.GetProductByIdAsync(productAttributeMapping.ProductId)
-    //        ?? throw new ArgumentException("No product found with the specified id");
+            if (!model.Published)
+            {
+                var productAttributeValues = await _productAttributeService.GetProductAttributeValuesAsync(productAttributeValue.ProductAttributeMappingId);
+                if (productAttributeValues.All(x => !x.Published))
+                {
+                    productAttributeMapping.IsRequired = false;
+                    await _productAttributeService.UpdateProductAttributeMappingAsync(productAttributeMapping);
+                }
+                await this._productModelFactory.SyncAttributeCombinations(product, productAttributeMapping, null);
+            }
 
-    //    //a vendor should have access only to his products
-    //    var currentVendor = await _workContext.GetCurrentVendorAsync();
-    //    if (currentVendor != null && product.VendorId != currentVendor.Id)
-    //        return Content("This is not your product");
+            int variantId = await _productService.GenerateVariantIdAsync(productAttributeMapping, productAttributeValue.Id, productAttributeValue.Name);
 
-    //    //check if existed combinations contains the specified attribute value
-    //    var existedCombinations = await _productAttributeService.GetAllProductAttributeCombinationsAsync(product.Id);
-    //    if (existedCombinations?.Any() == true)
-    //    {
-    //        foreach (var combination in existedCombinations)
-    //        {
-    //            var attributeValues = await _productAttributeParser.ParseProductAttributeValuesAsync(combination.AttributesXml);
+            if (variantId != productAttributeValue.VariantId)
+            {
+                productAttributeValue.VariantId = variantId;
+                await _productAttributeService.UpdateProductAttributeValueAsync(productAttributeValue);
+            }
 
-    //            if (attributeValues.Where(attribute => attribute.Id == id).Any())
-    //            {
-    //                return Conflict(string.Format(await _localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.Attributes.Values.AlreadyExistsInCombination"),
-    //                    await _productAttributeFormatter.FormatAttributesAsync(product, combination.AttributesXml, await _workContext.GetCurrentCustomerAsync(), await _storeContext.GetCurrentStoreAsync(), ", ")));
-    //            }
-    //        }
-    //    }
 
-    //    await _productAttributeService.DeleteProductAttributeValueAsync(productAttributeValue);
 
-    //    return new NullJsonResult();
-    //}
+            //string attrName = (await _productAttributeService.GetProductAttributeByIdAsync(productAttributeMapping.ProductAttributeId)).Name;
+            //if (string.Equals(attrName, await _localizationService.GetResourceAsync("product.attr.shades")) ||
+            //    string.Equals(attrName, await _localizationService.GetResourceAsync("product.attr.configuration"))
+            //    || string.Equals(attrName, await _localizationService.GetResourceAsync("product.attr.Size"))
+            //    )
+
+            //{
+            //    var existingPictures = await _productAttributeService.GetProductAttributeValueGalleryPicturesByAttributeValueId(model.Id);
+            //    if (model.GalleryPictures == null)
+            //    {
+            //        model.GalleryPictures = new List<int>();
+            //    }
+            //    if (model.GalleryPictures.Count > 0 || existingPictures.Count > 0)
+            //    {
+            //        List<int> toRemove = new List<int>();
+
+            //        toRemove.AddRange(existingPictures.Except(model.GalleryPictures));
+            //        var count = 1;
+            //        foreach (var pictureId in model.GalleryPictures)
+            //        {
+            //            if (existingPictures.Contains(pictureId))
+            //            {
+            //                await _productAttributeService.UpdateProductAttributeValueGalleryPictureMapping(model.Id, pictureId, count);
+            //            }
+            //            else
+            //            {
+            //                await _productAttributeService.CreateProductAttributeValueGalleryPictureMapping(model.Id, pictureId, count);
+            //            }
+            //            count++;
+            //        }
+            //        if (toRemove.Count > 0)
+            //        {
+            //            foreach (var pictureId in toRemove)
+            //            {
+            //                await _productAttributeService.DeleteProductAttributeValueGalleryPictureMapping(model.Id, pictureId);
+            //            }
+            //        }
+            //    }
+            //}
+
+            await UpdateLocalesAsync(productAttributeValue, model);
+            await SaveAttributeValuePicturesAsync(product, productAttributeValue, model);
+
+            ViewBag.RefreshPage = true;
+
+            return View("ProductAttributeValueEditPopup", model);
+        }
+
+        //prepare model
+        model = await _productModelFactory.CustomPrepareProductAttributeValueModelAsync(model, productAttributeMapping, productAttributeValue, true);
+        var pv = await _productAttributeService.GetProductAttributeByIdAsync(productAttributeMapping.ProductAttributeId);
+        model.DisplayGallerySection = string.Equals(pv.Name, (await _localizationService.GetResourceAsync("product.attr.shades"))) || string.Equals(pv.Name, (await _localizationService.GetResourceAsync("product.attr.configuration")));
+        //if we got this far, something failed, redisplay form
+        return View("ProductAttributeValueEditPopup", model);
+    }
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    public virtual async Task<IActionResult> CustomProductAttributeValueDelete(int id)
+    {
+        //try to get a product attribute value with the specified id
+        var productAttributeValue = await _productAttributeService.GetProductAttributeValueByIdAsync(id)
+            ?? throw new ArgumentException("No product attribute value found with the specified id");
+
+        //try to get a product attribute mapping with the specified id
+        var productAttributeMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(productAttributeValue.ProductAttributeMappingId)
+            ?? throw new ArgumentException("No product attribute mapping found with the specified id");
+
+
+        var _productService = EngineContext.Current.Resolve<IProductExtendedService>();
+
+
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(productAttributeMapping.ProductId)
+            ?? throw new ArgumentException("No product found with the specified id");
+
+        //a vendor should have access only to his products
+        var currentVendor = await _workContext.GetCurrentVendorAsync();
+        if (currentVendor != null && product.VendorId != currentVendor.Id)
+            return Content("This is not your product");
+       // await _productAttributeService.DeleteAttributeValueGalleryPicturesByAttributeValueId(productAttributeValue.Id);
+        //check if existed combinations contains the specified attribute value
+        var existedCombinations = await _productAttributeService.GetAllProductAttributeCombinationsAsync(product.Id);
+        if (existedCombinations?.Any() == true)
+        {
+            foreach (var combination in existedCombinations)
+            {
+                var attributeValues = await _productAttributeParser.ParseProductAttributeValuesAsync(combination.AttributesXml);
+
+                if (attributeValues.Where(attribute => attribute.Id == id).Any())
+                {
+                    return Conflict(string.Format(await _localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.Attributes.Values.AlreadyExistsInCombination"),
+                        await _productAttributeFormatter.FormatAttributesAsync(product, combination.AttributesXml, await _workContext.GetCurrentCustomerAsync(), await _storeContext.GetCurrentStoreAsync(), ", ")));
+                }
+            }
+        }
+
+        await _productAttributeService.DeleteProductAttributeValueAsync(productAttributeValue);
+        await this._productModelFactory.SyncAttributeCombinations(product, productAttributeMapping, null);
+
+        await _productService.GenerateVariantCombinations(product.Id);
+
+         
+        return new NullJsonResult();
+    }
 
     //[CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)]
     //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
@@ -2663,24 +3567,47 @@ public partial class ProductController : BaseAdminController
 
     //#region Product attribute combinations
 
-    //[HttpPost]
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)]
-    //public virtual async Task<IActionResult> ProductAttributeCombinationList(ProductAttributeCombinationSearchModel searchModel)
-    //{
-    //    //try to get a product with the specified id
-    //    var product = await _productService.GetProductByIdAsync(searchModel.ProductId)
-    //        ?? throw new ArgumentException("No product found with the specified id");
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)]
+    public virtual async Task<IActionResult> CustomProductAttributeCombinationList(ProductAttributeCombinationSearchModel searchModel)
+    {
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(searchModel.ProductId)
+            ?? throw new ArgumentException("No product found with the specified id");
 
-    //    //a vendor should have access only to his products
-    //    var currentVendor = await _workContext.GetCurrentVendorAsync();
-    //    if (currentVendor != null && product.VendorId != currentVendor.Id)
-    //        return Content("This is not your product");
+        // 1. Get the Valid IDs from the form post sent by the JS Brain
+        var validIdsJson = Request.Form["validCombinationIds"].FirstOrDefault();
+        List<int> validIds = null;
 
-    //    //prepare model
-    //    var model = await _productModelFactory.PrepareProductAttributeCombinationListModelAsync(searchModel, product);
+        if (!string.IsNullOrEmpty(validIdsJson))
+        {
+            try
+            {
+                validIds = System.Text.Json.JsonSerializer.Deserialize<List<int>>(validIdsJson);
+            }
+            catch { /* Fallback to null if JSON is invalid */ }
+        }
+        // 2. Prepare the model using the factory, passing the filter IDs
+        var model = await _productModelFactory.CustomPrepareProductAttributeCombinationListModelAsync(searchModel, product, validIds);
+         
+        return Json(model);
+    }
 
-    //    return Json(model);
-    //}
+    [HttpGet]
+    public virtual async Task<IActionResult> GetLatestSmartInjectorData(int productId)
+    {
+        // Logic to rebuild the blueprint and master list
+        var product = await _productService.GetProductByIdAsync(productId);
+        ProductModel model = new ProductModel();
+        await _productModelFactory.PrepareSmartInjectionDataAsync(model, product);
+
+        return Json(new
+        {
+            logicMasterList = model.LogicMasterListJson,
+            fullAttributeDefinitions = model.FullAttributeDefinitionsJson,
+            availablePicturesJson = model.AvailablePicturesJson
+        });
+    }
 
     //[HttpPost]
     //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
@@ -2704,83 +3631,93 @@ public partial class ProductController : BaseAdminController
     //    return new NullJsonResult();
     //}
 
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
-    //public virtual async Task<IActionResult> ProductAttributeCombinationCreatePopup(int productId)
-    //{
-    //    //try to get a product with the specified id
-    //    var product = await _productService.GetProductByIdAsync(productId);
-    //    if (product == null)
-    //        return RedirectToAction("List", "Product");
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    public virtual async Task<IActionResult> ProductCustomAttributeCombinationCreatePopup(int productId)
+    {
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(productId);
+        if (product == null)
+            return RedirectToAction("List", "Product");
 
-    //    //a vendor should have access only to his products
-    //    var currentVendor = await _workContext.GetCurrentVendorAsync();
-    //    if (currentVendor != null && product.VendorId != currentVendor.Id)
-    //        return RedirectToAction("List", "Product");
+        //a vendor should have access only to his products
+        var currentVendor = await _workContext.GetCurrentVendorAsync();
+        if (currentVendor != null && product.VendorId != currentVendor.Id)
+            return RedirectToAction("List", "Product");
 
-    //    //prepare model
-    //    var model = await _productModelFactory.PrepareProductAttributeCombinationModelAsync(new ProductAttributeCombinationModel(), product, null);
+        //prepare model
+        var model = await _productModelFactory.PrepareProductAttributeCombinationModelAsync(new ProductAttributeCombinationModel(), product, null);
 
-    //    return View(model);
-    //}
+        return View("ProductAttributeCombinationCreatePopup", model);
+    }
 
-    //[HttpPost]
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
-    //public virtual async Task<IActionResult> ProductAttributeCombinationCreatePopup(int productId, ProductAttributeCombinationModel model, IFormCollection form)
-    //{
-    //    //try to get a product with the specified id
-    //    var product = await _productService.GetProductByIdAsync(productId);
-    //    if (product == null)
-    //        return RedirectToAction("List", "Product");
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    public virtual async Task<IActionResult> ProductCustomAttributeCombinationCreatePopup(int productId, ProductAttributeCombinationModel model, IFormCollection form)
+    {
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(productId);
+        if (product == null)
+            return RedirectToAction("List", "Product");
 
-    //    //a vendor should have access only to his products
-    //    var currentVendor = await _workContext.GetCurrentVendorAsync();
-    //    if (currentVendor != null && product.VendorId != currentVendor.Id)
-    //        return RedirectToAction("List", "Product");
+        //a vendor should have access only to his products
+        var currentVendor = await _workContext.GetCurrentVendorAsync();
+        if (currentVendor != null && product.VendorId != currentVendor.Id)
+            return RedirectToAction("List", "Product");
 
-    //    //attributes
-    //    var warnings = new List<string>();
-    //    var attributesXml = await GetAttributesXmlForProductAttributeCombinationAsync(form, warnings, product.Id);
+        //attributes
+        var warnings = new List<string>();
+        var attributesXml = await GetAttributesXmlForProductAttributeCombinationAsync(form, warnings, product.Id);
 
-    //    //check whether the attribute value is specified
-    //    if (string.IsNullOrEmpty(attributesXml))
-    //        warnings.Add(await _localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.Alert.FailedValue"));
+        //check whether the attribute value is specified
+        if (string.IsNullOrEmpty(attributesXml))
+            warnings.Add(await _localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.Alert.FailedValue"));
 
-    //    warnings.AddRange(await _shoppingCartService.GetShoppingCartItemAttributeWarningsAsync(await _workContext.GetCurrentCustomerAsync(),
-    //        ShoppingCartType.ShoppingCart, product, 1, attributesXml, true));
+        warnings.AddRange(await _shoppingCartService.GetShoppingCartItemAttributeWarningsAsync(await _workContext.GetCurrentCustomerAsync(),
+            ShoppingCartType.ShoppingCart, product, 1, attributesXml, true));
 
-    //    //check whether the same attribute combination already exists
-    //    var existingCombination = await _productAttributeParser.FindProductAttributeCombinationAsync(product, attributesXml);
-    //    if (existingCombination != null)
-    //        warnings.Add(await _localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.AlreadyExists"));
+        //check whether the same attribute combination already exists
+        var existingCombination = await _productAttributeParser.FindProductAttributeCombinationAsync(product, attributesXml);
+        if (existingCombination != null)
+            warnings.Add(await _localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.AlreadyExists"));
 
-    //    if (!warnings.Any())
-    //    {
-    //        //save combination
-    //        var combination = model.ToEntity<ProductAttributeCombination>();
+        if (!warnings.Any())
+        {
+            //save combination
+            var combination = model.ToEntity<ProductAttributeCombination>();
 
-    //        //fill attributes
-    //        combination.AttributesXml = attributesXml;
+            //fill attributes
+            combination.AttributesXml = attributesXml;
 
-    //        await _productAttributeService.InsertProductAttributeCombinationAsync(combination);
+            await _productAttributeService.InsertProductAttributeCombinationAsync(combination);
 
-    //        await SaveAttributeCombinationPicturesAsync(product, combination, model);
+            await SaveAttributeCombinationPicturesAsync(product, combination, model);
 
-    //        //quantity change history
-    //        await _productService.AddStockQuantityHistoryEntryAsync(product, combination.StockQuantity, combination.StockQuantity,
-    //            message: await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.Combination.Edit"), combinationId: combination.Id);
+            //quantity change history
+            await _productService.AddStockQuantityHistoryEntryAsync(product, combination.StockQuantity, combination.StockQuantity,
+                message: await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.Combination.Edit"), combinationId: combination.Id);
+            //if (model.GalleryPictures != null && model.GalleryPictures.Count > 0)
+            //{
+            //    var count = 1;
+            //    foreach (var pictureId in model.GalleryPictures)
 
-    //        ViewBag.RefreshPage = true;
+            //    {
+            //        await _productAttributeService.CreateProductAttributeCombinationGalleryPictureMapping(combination.Id, pictureId, count);
 
-    //        return View(model);
-    //    }
+            //        count++;
+            //    }
+            //}
+            ViewBag.RefreshPage = true;
 
-    //    //prepare model
-    //    model = await _productModelFactory.PrepareProductAttributeCombinationModelAsync(model, product, null, true);
-    //    model.Warnings = warnings;
+            return View("ProductAttributeCombinationCreatePopup", model);
+        }
 
-    //    //if we got this far, something failed, redisplay form
-    //    return View(model);
-    //}
+        //prepare model
+        model = await _productModelFactory.PrepareProductAttributeCombinationModelAsync(model, product, null, true);
+        model.Warnings = warnings;
+
+        //if we got this far, something failed, redisplay form
+        return View("ProductAttributeCombinationCreatePopup", model);
+    }
 
     //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
     //[CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)]
@@ -2850,97 +3787,297 @@ public partial class ProductController : BaseAdminController
     //    return View(new ProductAttributeCombinationModel());
     //}
 
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)]
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)]
-    //public virtual async Task<IActionResult> ProductAttributeCombinationEditPopup(int id)
-    //{
-    //    //try to get a combination with the specified id
-    //    var combination = await _productAttributeService.GetProductAttributeCombinationByIdAsync(id);
-    //    if (combination == null)
-    //        return RedirectToAction("List", "Product");
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)] 
+    public virtual async Task<IActionResult> ProductCustomAttributeCombinationEditPopup(int id)
+    {
+        //try to get a combination with the specified id
+        var combination = await _productAttributeService.GetProductAttributeCombinationByIdAsync(id);
+        if (combination == null)
+            return RedirectToAction("List", "Product");
 
-    //    //try to get a product with the specified id
-    //    var product = await _productService.GetProductByIdAsync(combination.ProductId);
-    //    if (product == null)
-    //        return RedirectToAction("List", "Product");
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(combination.ProductId);
+        if (product == null)
+            return RedirectToAction("List", "Product");
 
-    //    //a vendor should have access only to his products
-    //    var currentVendor = await _workContext.GetCurrentVendorAsync();
-    //    if (currentVendor != null && product.VendorId != currentVendor.Id)
-    //        return RedirectToAction("List", "Product");
+        //a vendor should have access only to his products
+        var currentVendor = await _workContext.GetCurrentVendorAsync();
+        if (currentVendor != null && product.VendorId != currentVendor.Id)
+            return RedirectToAction("List", "Product");
 
-    //    //prepare model
-    //    var model = await _productModelFactory.PrepareProductAttributeCombinationModelAsync(null, product, combination);
+        //prepare model
+        var model = await _productModelFactory.PrepareCustomProductAttributeCombinationModelAsync(null, product, combination);
 
-    //    return View(model);
-    //}
+        return View("ProductAttributeCombinationEditPopup", model);
+    }
 
-    //[HttpPost]
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
-    //[CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)]
-    //public virtual async Task<IActionResult> ProductAttributeCombinationEditPopup(ProductAttributeCombinationModel model, IFormCollection form)
-    //{
-    //    //try to get a combination with the specified id
-    //    var combination = await _productAttributeService.GetProductAttributeCombinationByIdAsync(model.Id);
-    //    if (combination == null)
-    //        return RedirectToAction("List", "Product");
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)]
+    public virtual async Task<IActionResult> ProductCustomAttributeCombinationEditPopup(ProductAttributeCombinationModel model, IFormCollection form)
+    {
+        //try to get a combination with the specified id
+        var combination = await _productAttributeService.GetProductAttributeCombinationByIdAsync(model.Id);
+        if (combination == null)
+            return RedirectToAction("List", "Product");
 
-    //    //try to get a product with the specified id
-    //    var product = await _productService.GetProductByIdAsync(combination.ProductId);
-    //    if (product == null)
-    //        return RedirectToAction("List", "Product");
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(combination.ProductId);
+        if (product == null)
+            return RedirectToAction("List", "Product");
 
-    //    //a vendor should have access only to his products
-    //    var currentVendor = await _workContext.GetCurrentVendorAsync();
-    //    if (currentVendor != null && product.VendorId != currentVendor.Id)
-    //        return RedirectToAction("List", "Product");
+        //a vendor should have access only to his products
+        var currentVendor = await _workContext.GetCurrentVendorAsync();
+        if (currentVendor != null && product.VendorId != currentVendor.Id)
+            return RedirectToAction("List", "Product");
 
-    //    //attributes
-    //    var warnings = new List<string>();
-    //    var attributesXml = await GetAttributesXmlForProductAttributeCombinationAsync(form, warnings, product.Id);
+        //attributes
+        var warnings = new List<string>();
+        var attributesXml = await GetAttributesXmlForProductAttributeCombinationAsync(form, warnings, product.Id);
 
-    //    //check whether the attribute value is specified
-    //    if (string.IsNullOrEmpty(attributesXml))
-    //        warnings.Add(await _localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.Alert.FailedValue"));
+        //check whether the attribute value is specified
+        if (string.IsNullOrEmpty(attributesXml))
+            warnings.Add(await _localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.Alert.FailedValue"));
 
-    //    warnings.AddRange(await _shoppingCartService.GetShoppingCartItemAttributeWarningsAsync(await _workContext.GetCurrentCustomerAsync(),
-    //        ShoppingCartType.ShoppingCart, product, 1, attributesXml, true));
+        warnings.AddRange(await _shoppingCartService.GetShoppingCartItemAttributeWarningsAsync(await _workContext.GetCurrentCustomerAsync(),
+            ShoppingCartType.ShoppingCart, product, 1, attributesXml, true));
 
-    //    //check whether the same attribute combination already exists
-    //    var existingCombination = await _productAttributeParser.FindProductAttributeCombinationAsync(product, attributesXml);
-    //    if (existingCombination != null && existingCombination.Id != model.Id && existingCombination.AttributesXml.Equals(attributesXml))
-    //        warnings.Add(await _localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.AlreadyExists"));
+        //check whether the same attribute combination already exists
+        var existingCombination = await _productAttributeParser.FindProductAttributeCombinationAsync(product, attributesXml);
+        if (existingCombination != null && existingCombination.Id != model.Id && existingCombination.AttributesXml.Equals(attributesXml))
+            warnings.Add(await _localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.AlreadyExists"));
 
-    //    if (!warnings.Any() && ModelState.IsValid)
-    //    {
-    //        var previousStockQuantity = combination.StockQuantity;
+        if (!warnings.Any() && ModelState.IsValid)
+        {
+            var previousStockQuantity = combination.StockQuantity;
 
-    //        //save combination
-    //        //fill entity from model
-    //        combination = model.ToEntity(combination);
-    //        combination.AttributesXml = attributesXml;
+            //save combination
+            //fill entity from model
+            combination = model.ToEntity(combination);
+            combination.AttributesXml = attributesXml;
 
-    //        await _productAttributeService.UpdateProductAttributeCombinationAsync(combination);
+            await _productAttributeService.UpdateProductAttributeCombinationAsync(combination);
 
-    //        await SaveAttributeCombinationPicturesAsync(product, combination, model);
+            await SaveAttributeCombinationPicturesAsync(product, combination, model);
 
-    //        //quantity change history
-    //        await _productService.AddStockQuantityHistoryEntryAsync(product, combination.StockQuantity - previousStockQuantity, combination.StockQuantity,
-    //            message: await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.Combination.Edit"), combinationId: combination.Id);
+            //quantity change history
+            await _productService.AddStockQuantityHistoryEntryAsync(product, combination.StockQuantity - previousStockQuantity, combination.StockQuantity,
+                message: await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.Combination.Edit"), combinationId: combination.Id);
 
-    //        ViewBag.RefreshPage = true;
+            //var existingPictures = await _productAttributeService.GetProductAttributeCombinationGalleryPicturesByProductAttributeCombinationId(model.Id);
+            //if (model.GalleryPictures == null)
+            //{
+            //    model.GalleryPictures = new List<int>();
+            //}
+            //if (model.GalleryPictures.Count > 0 || existingPictures.Count > 0)
+            //{
+            //    List<int> toRemove = new List<int>();
 
-    //        return View(model);
-    //    }
+            //    toRemove.AddRange(existingPictures.Except(model.GalleryPictures));
+            //    var count = 1;
+            //    foreach (var pictureId in model.GalleryPictures)
+            //    {
+            //        if (existingPictures.Contains(pictureId))
+            //        {
+            //            await _productAttributeService.UpdateProductAttributeCombinationGalleryPictureMapping(model.Id, pictureId, count);
+            //        }
+            //        else
+            //        {
+            //            await _productAttributeService.CreateProductAttributeCombinationGalleryPictureMapping(model.Id, pictureId, count);
+            //        }
+            //        count++;
+            //    }
+            //    if (toRemove.Count > 0)
+            //    {
+            //        foreach (var pictureId in toRemove)
+            //        {
+            //            await _productAttributeService.DeleteProductAttributeCombinationGalleryPictureMapping(model.Id, pictureId);
+            //        }
+            //    }
+            //}
 
-    //    //prepare model
-    //    model = await _productModelFactory.PrepareProductAttributeCombinationModelAsync(model, product, combination, true);
-    //    model.Warnings = warnings;
 
-    //    //if we got this far, something failed, redisplay form
-    //    return View(model);
-    //}
+            ViewBag.RefreshPage = true;
 
+            return View("ProductAttributeCombinationEditPopup", model);
+        }
+
+        //prepare model
+        model = await _productModelFactory.PrepareProductAttributeCombinationModelAsync(model, product, combination, true);
+        model.Warnings = warnings;
+
+        //if we got this far, something failed, redisplay form
+        return View("ProductAttributeCombinationEditPopup", model);
+    }
+    [HttpPost]
+    public virtual async Task<IActionResult> InjectAttributeValue(AttributeCombinationInjectionRequestModel model)
+    {
+        // 1. Check for nulls
+        if (model == null || model.TargetCombinationId == 0 || string.IsNullOrEmpty(model.AttributesToInjectJson))
+            return Json(new { success = false, message = "Invalid injection payload." });
+
+        // 2. Deserialize the JSON string back into our Dictionary
+        var attributesToInject = System.Text.Json.JsonSerializer.Deserialize<Dictionary<int, int>>(model.AttributesToInjectJson);
+
+        if (attributesToInject == null || !attributesToInject.Any())
+            return Json(new { success = false, message = "No attributes to inject." });
+
+        var combination = await _productAttributeService.GetProductAttributeCombinationByIdAsync(model.TargetCombinationId);
+        if (combination == null)
+            return Json(new { success = false, message = "Target combination not found." });
+
+        var existingXml = combination.AttributesXml;
+
+        // 3. Loop through our deserialized dictionary (Everything else stays the same!)
+        foreach (var injection in attributesToInject)
+        {
+            int mappingId = injection.Key;
+            int valueId = injection.Value;
+
+            var attributeMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(mappingId);
+            if (attributeMapping != null)
+            {
+                existingXml = _productAttributeParser.AddProductAttribute(
+                    existingXml,
+                    attributeMapping,
+                    valueId.ToString()
+                );
+            }
+        }
+
+        combination.AttributesXml = existingXml;
+        await _productAttributeService.UpdateProductAttributeCombinationAsync(combination);
+
+        return Json(new { success = true, message = "Attributes successfully injected." });
+    }
+
+    #region PairWithproducts
+
+    [HttpPost]
+
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> PairWithProductList(RelatedProductSearchModel searchModel)
+    { 
+
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(searchModel.ProductId)
+            ?? throw new ArgumentException("No product found with the specified id");
+
+        //a vendor should have access only to his products
+        if (await _workContext.GetCurrentVendorAsync() != null && product.VendorId != (await _workContext.GetCurrentVendorAsync()).Id)
+            return Content("This is not your product");
+
+        //prepare model
+        var model = await _productModelFactory.PreparePairWithProductListModelAsync(searchModel, product);
+
+        return Json(model);
+    }
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> PairWithProductUpdate(PairWithProductModel model)
+    {
+        var _productService = EngineContext.Current.Resolve<IProductExtendedService>();
+        //try to get a PairWith product with the specified id
+        var PairWithProduct = await _productService.GetPairWithProductByIdAsync(model.Id)
+            ?? throw new ArgumentException("No PairWith product found with the specified id");
+
+        //a vendor should have access only to his products
+        if (await _workContext.GetCurrentVendorAsync() != null)
+        {
+            var product = await _productService.GetProductByIdAsync(PairWithProduct.ProductId1);
+            if (product != null && product.VendorId != (await _workContext.GetCurrentVendorAsync()).Id)
+                return Content("This is not your product");
+        }
+
+        PairWithProduct.DisplayOrder = model.DisplayOrder;
+        await _productService.UpdatePairWithProductAsync(PairWithProduct);
+
+        return new NullJsonResult();
+    }
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> PairWithProductDelete(int id)
+    {
+        var _productService = EngineContext.Current.Resolve<IProductExtendedService>();
+        //try to get a PairWith product with the specified id
+        var PairWithProduct = await _productService.GetPairWithProductByIdAsync(id)
+            ?? throw new ArgumentException("No PairWith product found with the specified id");
+
+        var productId = PairWithProduct.ProductId1;
+
+        //a vendor should have access only to his products
+        if (await _workContext.GetCurrentVendorAsync() != null)
+        {
+            var product = await _productService.GetProductByIdAsync(productId);
+            if (product != null && product.VendorId != (await _workContext.GetCurrentVendorAsync()).Id)
+                return Content("This is not your product");
+        }
+
+        await _productService.DeletePairWithProductAsync(PairWithProduct);
+
+        return new NullJsonResult();
+    }
+
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> PairWithProductAddPopup(int productId)
+    { 
+        //prepare model
+        var model = await _productModelFactory.PrepareAddPairWithProductSearchModelAsync(new AddPairWithProductSearchModel());
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> PairWithProductAddPopupList(AddPairWithProductSearchModel searchModel)
+    { 
+        //prepare model
+        var model = await _productModelFactory.PrepareAddPairWithProductListModelAsync(searchModel);
+
+        return Json(model);
+    }
+
+    [HttpPost]
+    [FormValueRequired("save")]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> PairWithProductAddPopup(AddPairWithProductModel model)
+    {
+        var _productService = EngineContext.Current.Resolve<IProductExtendedService>();
+        var selectedProducts = await _productService.GetProductsByIdsAsync(model.SelectedProductIds.ToArray());
+        if (selectedProducts.Any())
+        {
+            var existingPairWithProducts = await _productService.GetPairWithProductsByProductId1ListAsync(model.ProductId, showHidden: true);
+            foreach (var product in selectedProducts)
+            {
+                //a vendor should have access only to his products
+                if (await _workContext.GetCurrentVendorAsync() != null && product.VendorId != (await _workContext.GetCurrentVendorAsync()).Id)
+                    continue;
+
+                if (_productService.FindPairWithProduct(existingPairWithProducts, model.ProductId, product.Id) != null)
+                    continue;
+
+                await _productService.InsertPairWithProductAsync(new PairWithProduct
+                {
+                    ProductId1 = model.ProductId,
+                    ProductId2 = product.Id,
+                    DisplayOrder = 1
+                });
+            }
+        }
+
+        ViewBag.RefreshPage = true;
+
+        return View(new AddPairWithProductSearchModel());
+    }
+
+    #endregion
     //[HttpPost]
     //[CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
     //[CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)]
@@ -3012,5 +4149,5 @@ public partial class ProductController : BaseAdminController
     //#endregion
 
     #endregion
-     
+
 }

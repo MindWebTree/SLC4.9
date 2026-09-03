@@ -46,15 +46,15 @@
                         </div>
                         <div class="row" style="margin-bottom: 15px;">
                             <div class="col-md-12">
-                                <label>Main Picture (Select One)</label>
+                                <label>Select Picture (Select Multiple)</label>
                                 <div id="smart-picture-gallery" style="display:flex; gap:20px; flex-wrap:wrap; padding: 10px; background: #f9f9f9; border: 1px solid #eee; border-radius: 4px; margin-bottom: 15px;">
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                          @*   <div class="col-md-12">
                                 <label>Gallery Pictures (Select Multiple)</label>
                                 <div id="smart-gallery-pictures" style="display:flex; gap:20px; flex-wrap:wrap; padding: 10px; background: #f9f9f9; border: 1px solid #eee; border-radius: 4px;">
                                 </div>
-                            </div>
+                            </div> *@
                         </div>
                     </div>
 
@@ -325,7 +325,7 @@
                     let picHtml = `
                     <div class="form-check" style="text-align: center;">
                         <label class="form-check-label" style="cursor: pointer;">
-                            <input class="form-check-input" type="radio" name="smart-picture-id" value="0" checked="checked">
+                                        <input class="form-check-input" type="checkbox" name="smart-picture-id" value="0" checked="checked">
                             <br/><span style="margin-top:5px; display:inline-block; font-weight:bold; color:#666;">No Picture</span>
                         </label>
                     </div>`;
@@ -337,25 +337,25 @@
                         picHtml += `
                         <div class="form-check" style="text-align: center;">
                             <label class="form-check-label" style="cursor: pointer;">
-                                <input class="form-check-input" type="radio" name="smart-picture-id" value="${p.PictureId}">
+                                            <input class="form-check-input" type="checkbox" name="smart-picture-id" value="${p.PictureId}">
                                 <br/>
                                 <img src="${p.ImageUrl}" width="75" style="border: 1px solid #ccc; padding: 2px; border-radius: 4px; background: #fff; margin-top: 5px;">
                             </label>
                         </div>`;
 
                         // 2. Gallery Pictures (Checkbox)
-                        galleryHtml += `
-                        <div class="form-check" style="text-align: center;">
-                            <label class="form-check-label" style="cursor: pointer;">
-                                <input class="form-check-input gallery-checkbox" type="checkbox" name="GalleryPictures" value="${p.PictureId}">
-                                <br/>
-                                <img src="${p.ImageUrl}" width="75" style="border: 1px solid #ccc; padding: 2px; border-radius: 4px; background: #fff; margin-top: 5px;">
-                            </label>
-                        </div>`;
+                        // galleryHtml += `
+                        // <div class="form-check" style="text-align: center;">
+                        //     <label class="form-check-label" style="cursor: pointer;">
+                        //         <input class="form-check-input gallery-checkbox" type="checkbox" name="GalleryPictures" value="${p.PictureId}">
+                        //         <br/>
+                        //         <img src="${p.ImageUrl}" width="75" style="border: 1px solid #ccc; padding: 2px; border-radius: 4px; background: #fff; margin-top: 5px;">
+                        //     </label>
+                        // </div>`;
                     });
 
                     $('#smart-picture-gallery').html(picHtml);
-                    $('#smart-gallery-pictures').html(galleryHtml); // Inject checkboxes
+                   // $('#smart-gallery-pictures').html(galleryHtml); // Inject checkboxes
                     // Render the Smart Swatches
                     renderSmartSwatches(blueprintData);
 
@@ -506,9 +506,14 @@ $('#btn-smart-submit').on('click', function() {
             // --- CREATE NEW MODE (Using EXISTING nopCommerce Endpoint!) ---
             // ================================================================
 
-            let selectedGalleryPics = [];
-            $('.gallery-checkbox:checked').each(function () {
-                selectedGalleryPics.push($(this).val());
+            // let selectedGalleryPics = [];
+            // $('.gallery-checkbox:checked').each(function () {
+            //     selectedGalleryPics.push($(this).val());
+            // });
+
+            let selectedPics = [];
+                $('input[name="smart-picture-id"]:checked').each(function () {
+                selectedPics.push($(this).val());
             });
 
             const postData = {
@@ -516,8 +521,8 @@ $('#btn-smart-submit').on('click', function() {
                 StockQuantity: $('#smart-stock').val(),
                 AllowOutOfStockOrders: $('#smart-allow-out-of-stock').val() === 'true',
                 NotifyAdminForQuantityBelow: $('#smart-notify-qty').val(),
-                PictureId: $('input[name="smart-picture-id"]:checked').val(),
-                GalleryPictures: selectedGalleryPics,
+                PictureIds: selectedPics,
+                // GalleryPictures: selectedGalleryPics,
                 Sku: $('#smart-sku').val(),
                 ManufacturerPartNumber: $('#smart-mpn').val(),
                 Gtin: $('#smart-gtin').val(),
@@ -594,37 +599,37 @@ $('#btn-smart-submit').on('click', function() {
                     let picHtml = `
         <div class="smart-pic-item">
             <label style="cursor: pointer; width: 100%;">
-                <input type="radio" name="smart-picture-id" value="0" checked="checked">
+                            <input type="checkbox" name="smart-picture-id" value="0" checked="checked">
                 <div style="margin-top:5px; font-weight:bold; color:#666; font-size: 11px;">No Picture</div>
             </label>
         </div>`;
 
-                    let galleryHtml = '';
+                   // let galleryHtml = '';
 
                     pictures.forEach(p => {
                         const imgTag = `<img src="${p.ImageUrl}" title="Click to select">`;
 
-                        // Main Picture Radio (Wraps at 5th item)
+                        // Main Picture checkbox (Wraps at 5th item)
                         picHtml += `
             <div class="smart-pic-item">
                 <label style="cursor: pointer; width: 100%;">
-                    <input type="radio" name="smart-picture-id" value="${p.PictureId}">
+                    <input type="checkbox" name="smart-picture-id" value="${p.PictureId}">
                     <br/>${imgTag}
                 </label>
             </div>`;
 
                         // Gallery Picture Checkbox (Wraps at 5th item)
-                        galleryHtml += `
-            <div class="smart-pic-item">
-                <label style="cursor: pointer; width: 100%;">
-                    <input type="checkbox" class="gallery-checkbox" value="${p.PictureId}">
-                    <br/>${imgTag}
-                </label>
-            </div>`;
+            //             galleryHtml += `
+            // <div class="smart-pic-item">
+            //     <label style="cursor: pointer; width: 100%;">
+            //         <input type="checkbox" class="gallery-checkbox" value="${p.PictureId}">
+            //         <br/>${imgTag}
+            //     </label>
+            // </div>`;
                     });
 
                     $('#smart-picture-gallery').html(picHtml);
-                    $('#smart-gallery-pictures').html(galleryHtml);
+                 //   $('#smart-gallery-pictures').html(galleryHtml);
                 }
 
 

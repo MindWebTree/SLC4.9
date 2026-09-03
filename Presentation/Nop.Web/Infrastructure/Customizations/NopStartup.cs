@@ -156,6 +156,7 @@ namespace Nop.Web.Infrastructure.Customizations
 
             #region ElasticSearch
             services.AddScoped<IElasticSearchHelpService, ElasticSearchHelpService>();
+            services.AddScoped<IElasticSearchService, ElasticSearchService>();
             services.AddScoped<ICustomBackInStockSubscriptionService, CustomBackInStockSubscriptionService>();
             services.AddScoped<ICustomCategoryService, CustomCategoryService>();
             services.AddScoped<ICustomizationFormSerivce, CustomizationFormSerivce>();

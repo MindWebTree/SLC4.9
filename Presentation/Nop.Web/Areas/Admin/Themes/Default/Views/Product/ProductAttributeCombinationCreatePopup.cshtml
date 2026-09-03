@@ -7,7 +7,7 @@
     ViewBag.PageTitle = T("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.AddTitle").Text;
 }
 
-<form asp-controller="Product" asp-action="ProductAttributeCombinationCreatePopup"
+<form asp-controller="Product" asp-action="ProductCustomAttributeCombinationCreatePopup"
       asp-route-productId="@Context.Request.Query["productId"]"
       asp-route-btnId="@Context.Request.Query["btnId"]"
       asp-route-formId="@Context.Request.Query["formId"]">

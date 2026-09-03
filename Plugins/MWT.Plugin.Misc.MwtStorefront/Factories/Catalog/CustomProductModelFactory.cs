@@ -4293,7 +4293,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
 
                             string fullSizeImageUrl, imageUrl, thumbImageUrl;
 
-                            var pictureIds = attributePictures.Skip(0);
+                            var pictureIds = attributePictures.Skip(1);
 
 
                             List<Picture> pictures = new List<Picture>();

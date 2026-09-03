@@ -1,5 +1,5 @@
-@model ProductAttributeCombinationModel
-
+﻿@model ProductAttributeCombinationModel
+@using Newtonsoft.Json
 @if (ViewBag.RefreshPage == true)
 {
     <script>
@@ -95,12 +95,32 @@
                                     <span asp-validation-for="Gtin"></span>
                                 </div>
                             </div>
+
+                            <div class="form-group row">
+                                <div class="col-sm-4">
+                                    <nop-label asp-for="OverriddenMsrp" />
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control text-box single-line" readonly id="OverriddenMsrp" name="OverriddenMsrp" value="@Model.OverriddenMsrp">
+                                    <span asp-validation-for="OverriddenMsrp"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-4">
+                                    <nop-label asp-for="OverriddenOldPrice" />
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control text-box single-line" readonly id="OverriddenOldPrice" name="OverriddenOldPrice" value="@Model.OverriddenOldPrice">
+
+                                    <span asp-validation-for="OverriddenOldPrice"></span>
+                                </div>
+                            </div> 
                             <div class="form-group row">
                                 <div class="col-sm-4">
                                     <nop-label asp-for="OverriddenPrice" />
                                 </div>
                                 <div class="col-sm-8">
-                                    <nop-editor asp-for="OverriddenPrice" />
+                                    <input type="text" class="form-control text-box single-line" readonly id="OverriddenPrice" name="OverriddenPrice" value="@Model.OverriddenPrice">
                                     <span asp-validation-for="OverriddenPrice"></span>
                                 </div>
                             </div>
@@ -132,6 +152,32 @@
                                     <span asp-validation-for="PictureIds"></span>
                                 </div>
                             </div>
+                            @* // need to confirm *@
+@*                             <div class="form-group row">
+                                <div class="col-sm-3">
+                                    <label a></label>
+                                </div>
+
+                                <div class="col-sm-9">
+                                    <label class="mb-2">Please Select Picture</label>
+                                    <div>
+                                        @foreach (var picture in Model.ProductPictureModels)
+                                        {
+                                            <div class="image-container all-gallery-picture">
+                                                <img src="@picture.PictureUrl" data-image-id="@picture.PictureId" width="75" class="selectable-image">
+                                                <div class="checkmark">✔</div>
+                                            </div>
+                                        }
+                                    </div>
+                                    <br />
+                                    <label class="mb-4">Gallery Pictures</label>
+                                    <div style="position: relative;" id="selected_image">
+                                        <img id="default-image" src="/images/thumbs/default-image_840.png" width="100" class="default-image" />
+                                    </div>
+                                    <span asp-validation-for="GalleryPictures"></span>
+                                </div>
+                            </div> *@
+
                         </div>
                     </div>
                     @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.ProductAttributeCombinationDetailsBottom, additionalData = Model })
@@ -140,3 +186,123 @@
         </div>
     </section>
 </div>
+
+
+
+<style>
+    .all-gallery-picture {
+        border: 1px solid #ced4da;
+        max-width: 12.3% !important;
+        display: inline-block;
+        margin: 35px;
+        margin-left: 0px;
+        margin-top: 0px;
+    }
+
+    .checkmark {
+        position: absolute;
+        right: 4px;
+        background: #fff;
+        display: none;
+        top: 4px;
+        border: 1px solid #ced4da;
+        border-radius: 100%;
+        font-size: 10px;
+    }
+
+    .image-container,
+    .uploaded-image {
+        position: relative;
+    }
+
+    .selected .checkmark {
+        display: block;
+    }
+
+    .delete-icon {
+        position: absolute;
+        right: -10px;
+        top: -10px;
+        border: 1px solid #ced4da;
+        border-radius: 100%;
+        width: 20px;
+        padding: 0;
+        height: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 20px;
+        line-height: 20px;
+        font-family: sans-serif;
+        background: #fff;
+        cursor: pointer;
+    }
+
+    #selected_image img.default-image {
+        display: block;
+    }
+
+    #selected_image img.selected-image {
+        display: none;
+    }
+</style>
+
+@* <script>
+    $(document).ready(function () {
+        var imageIds = @Html.Raw(JsonConvert.SerializeObject(Model.GalleryPictures));
+        if (imageIds) {
+            imageIds.forEach(function (imageId, index) {
+                var image = $('.image-container img').filter(function () {
+                    return $(this).data("image-id") === imageId;
+                });
+                if (image.length) {
+                    $(image).parent().addClass("selected");
+                    let clonedImage = $(image).clone();
+                    clonedImage.attr("data-image-id", imageId);
+                    clonedImage.removeClass("selected");
+                    $("#selected_image").append('<div class="col-lg-2 uploaded-image all-gallery-picture">' + clonedImage[0].outerHTML + '<i class="delete-icon">x</i></div>');
+                    $("#default-image").hide();
+                }
+
+            });
+        }
+        $(".selectable-image").on("click", function () {
+            if (!$(this).parent().hasClass("selected")) {
+                $(this).parent().addClass("selected");
+                let clonedImage = $(this).clone();
+                let imageId = $(this).data("image-id");
+                clonedImage.attr("data-image-id", imageId);
+                clonedImage.removeClass("selected");
+
+                $("#selected_image").append('<div class="col-lg-2 uploaded-image all-gallery-picture">' + clonedImage[0].outerHTML + '<i class="delete-icon">x</i></div>');
+                $("#default-image").hide();
+            }
+        });
+        $("#selected_image").on("click", ".delete-icon", function () {
+            let imageSrc = $(this).siblings("img").attr("src");
+            $(".selectable-image[src='" + imageSrc + "']").parent().removeClass("selected");
+            $(this).closest(".col-lg-2").remove();
+            if ($("#selected_image .uploaded-image").length === 0) {
+                $("#default-image").show();
+            }
+        });
+        $("body").on("click", 'button[name="save"]', function (e) {
+
+            if ($(".image_id")) {
+                $(".image_id").remove();
+            }
+            let uploadedImageIds = [];
+            $("#selected_image img").each(function () {
+                let imageId = $(this).data("image-id");
+                if (imageId) {
+                    uploadedImageIds.push(imageId);
+                }
+            });
+
+            $.each(uploadedImageIds, function (index, value) {
+                $('form').append('<input type="hidden" class="image_id" name="GalleryPictures[]" value="' + value + '">');
+            });
+            debugger;   return;
+        })
+    });
+</script> *@

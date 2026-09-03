@@ -11,7 +11,7 @@
                 @await Html.PartialAsync("Table", new DataTablesModel
                 {
                     Name = "crosssellproducts-grid",
-                        UrlRead = new DataUrl("CrossSellProductList", "Product", new RouteValueDictionary { [nameof(Model.CrossSellProductSearchModel.ProductId)] = Model.CrossSellProductSearchModel.ProductId }),
+                        UrlRead = new DataUrl("CustomCrossSellProductList", "Product", new RouteValueDictionary { [nameof(Model.CrossSellProductSearchModel.ProductId)] = Model.CrossSellProductSearchModel.ProductId }),
                         UrlDelete = new DataUrl("CrossSellProductDelete", "Product", null),
                         Length = Model.CrossSellProductSearchModel.PageSize,
                         LengthMenu = Model.CrossSellProductSearchModel.AvailablePageSizes,

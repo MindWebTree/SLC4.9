@@ -21,6 +21,6 @@ namespace Nop.Web.Areas.Admin.Models.Catalog
         [UIHint("DecimalNullable")]
         public decimal? OverriddenMsrp { get; set; }
 
-        public IList<int> GalleryPictures { get; set; }
+        //public IList<int> GalleryPictures { get; set; }
     }
 }

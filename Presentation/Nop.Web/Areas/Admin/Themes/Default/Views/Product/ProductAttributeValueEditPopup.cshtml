@@ -7,7 +7,7 @@
     ViewBag.PageTitle = T("Admin.Catalog.Products.ProductAttributes.Attributes.Values.EditValueDetails").Text;
 }
 
-<form asp-controller="Product" asp-action="ProductAttributeValueEditPopup"
+<form asp-controller="Product" asp-action="CustomProductAttributeValueEditPopup"
       asp-route-btnId="@Context.Request.Query["btnId"]"
       asp-route-formId="@Context.Request.Query["formId"]">
     <div class="content-header clearfix">
