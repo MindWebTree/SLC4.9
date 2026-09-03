@@ -26,7 +26,7 @@
     var customer = await _workcontext.GetCurrentCustomerAsync();
     if (customer != null && !await _customerService.IsRegisteredAsync(customer))
     {
-        string customerEmail = await _customerService.GetCustomerEmail(customer);
+        string customerEmail = await _customerService.GetCustomerEmailAsync(customer);
         <!-- Account signin -->
         @await Html.PartialAsync("_LoginPartial", new Nop.Web.Models.Customer.LoginModel())
         <!-- Account signin -->

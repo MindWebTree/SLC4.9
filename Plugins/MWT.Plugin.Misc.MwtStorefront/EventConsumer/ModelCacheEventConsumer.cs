@@ -434,26 +434,16 @@ namespace MWT.Plugin.Misc.MwtStorefront.EventConsumer
             await _staticCacheManager.RemoveAsync(CustomNopCatalogDefaults.CustomerRecentOrderCacheKey, eventMessage.Entity.CustomerId);
             if (customer != null)
             {
-                string email = "";
-                string name = "";
-
-                if (!string.IsNullOrEmpty(customer.Email))
-                    email = customer.Email;
-                else
-                    email = await _genericAttributeService.GetAttributeAsync<string>(customer, "Email");
-
+                string email = await this._customerService.GetCustomerEmailAsync(customer);
                 if (!string.IsNullOrEmpty(email))
                 {
                     var address = await this._customerService.GetCustomerShippingAddressAsync(customer);
-                    string firstName = address.FirstName??customer.FirstName;
-                    string lastName = address.LastName ?? customer.LastName;
-                    name = (firstName ?? "" + " " + lastName ?? "").Trim();
+                    string name = await this._customerService.GetExtendedCustomerFullNameAsync(customer);
                     string url = _httpContextAccessor.HttpContext?.Request.Headers["Referer"];
                     string absoluteUrl = _httpContextAccessor.HttpContext?.Request.Headers["Referer"];
                     string userAgent = _httpContextAccessor.HttpContext?.Request.Headers["User-Agent"];
                     if (string.IsNullOrEmpty(name))
-                        name = await _genericAttributeService.GetAttributeAsync<string>(eventMessage.Entity, "UserName");
-
+                        name = email;
                     await _mailchimpService.CustomerSignup(email, name ?? "", new System.Collections.Generic.List<string>()
                 {
                     "SiteCustomer"
@@ -631,7 +621,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.EventConsumer
             string url = _httpContextAccessor.HttpContext?.Request.Headers["Referer"];
             string absoluteUrl = _httpContextAccessor.HttpContext?.Request.Headers["Referer"];
             string userAgent = _httpContextAccessor.HttpContext?.Request.Headers["User-Agent"];
-            string email = await _customerService.GetCustomerEmail(eventMessage.Customer);
+            string email = await _customerService.GetCustomerEmailAsync(eventMessage.Customer);
             string name = await _customerService.GetCustomerFullNameAsync(eventMessage.Customer);
             await _mailchimpService.CustomerSignup(email, name ?? "", new System.Collections.Generic.List<string>()
                 {

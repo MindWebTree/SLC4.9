@@ -11,30 +11,41 @@
                   StringComparison.OrdinalIgnoreCase) == 0 ? true : false;
 
     var url = httpContextAccessor.HttpContext.Request.Scheme + "://" + httpContextAccessor.HttpContext.Request.Host.ToString() + httpContextAccessor.HttpContext.Request.Path.ToString();
+    bool ShouldRenderOnce(string key)
+    {
+        if (httpContextAccessor.HttpContext.Items.ContainsKey(key))
+        {
+            return false;
+        }
+        httpContextAccessor.HttpContext.Items[key] = true;
+        return true;
+    }
 }
 <div class="search-box store-search-box input-group">
-
-    <script>
+    @if (ShouldRenderOnce("SearchBox_DefaultSuggestionsScript"))
+    {
+        <script>
         var defaultSearchSuggestions =' @(await Component.InvokeAsync("SearchDefaultAutoComplete"))';
         defaultSearchSuggestions = defaultSearchSuggestions.replaceAll("\&quot;", "\"");
         defaultSearchSuggestions = defaultSearchSuggestions.replaceAll("double-quot", "\\\"");
         defaultSearchSuggestions = JSON.parse(defaultSearchSuggestions);
-    </script>
-    @if (isHome)
-    {
-        <script type="application/ld+json">
-            {
-              "@@context": "https://schema.org",
-              "@@type": "WebSite",
-              "@@id": "https://www.sierralivingconcepts.com/#website",
-              "url": "https://www.sierralivingconcepts.com/",
-              "potentialAction": {
-                "@@type": "SearchAction",
-                "target": "https://www.sierralivingconcepts.com/search?searchterm={searchterm}",
-                "query-input": "required name=searchterm"
-              }
-            }
         </script>
+        if (isHome)
+        {
+            <script type="application/ld+json">
+                {
+                  "@@context": "https://schema.org",
+                  "@@type": "WebSite",
+                  "@@id": "https://www.sierralivingconcepts.com/#website",
+                  "url": "https://www.sierralivingconcepts.com/",
+                  "potentialAction": {
+                    "@@type": "SearchAction",
+                    "target": "https://www.sierralivingconcepts.com/search?searchterm={searchterm}",
+                    "query-input": "required name=searchterm"
+                  }
+                }
+            </script>
+        }
     }
     <form asp-route="@NopRouteNames.General.SEARCH" method="get" id="small-search-box-form">
 
@@ -42,7 +53,7 @@
 
         @if (Model.ShowSearchBox)
         {
-            <input aria-label="search" placeholder="@T("Search.Placeholder")" type="text" class="search-box-text form-control" autocomplete="off" name="searchterm" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false"/>
+            <input aria-label="search" placeholder="@T("Search.Placeholder")" type="text" class="search-box-text form-control" autocomplete="off" name="searchterm" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false" />
             <button class="close-icon" style="display: none;" aria-label="Clear" type="button">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M9.99999 8.00001L15.2917 2.70833C15.9221 2.07794 15.9221 1.07794 15.2917 0.447552C14.6613 -0.183839 13.6613 -0.18384 13.0309 0.447552L7.73925 5.73922L2.44758 0.447552C1.81719 -0.183839 0.817185 -0.18384 0.186795 0.447552C-0.443595 1.07794 -0.443595 2.07794 0.186795 2.70833L5.47846 8.00001L0.186795 13.2917C-0.443595 13.9221 -0.443595 14.9221 0.186795 15.5525C0.451066 15.8168 0.774142 15.9479 1.09746 15.9479C1.42078 15.9479 1.74386 15.8168 2.00813 15.5525L7.29979 10.2608L12.5915 15.5525C12.8558 15.8168 13.1788 15.9479 13.5021 15.9479C13.8254 15.9479 14.1485 15.8168 14.4127 15.5525C15.0431 14.9221 15.0431 13.9221 14.4127 13.2917L9.99999 8.00001Z" fill="black" fill-opacity="0.5" />
@@ -54,47 +65,52 @@
                 </svg>
             </button>
 
-             
+
             //Seema : 13-01-2022 removed placeholder
             @await Component.InvokeAsync(typeof(WidgetViewComponent),
             new { widgetZone = PublicWidgetZones.SearchBoxBeforeSearchButton, additionalData = Model })
 
             <!--<button type="submit" class="button-1 btn btn-primary search-box-button">@T("Search.Button")</button>-->
-            @if (Model.SearchTermMinimumLength > 0)
-            {
 
-                <script asp-location="Footer">
-                    var searchBoxContainerClass = jQuery('body').width() < 992 ? ".m-search " : ".desktop-device ";
-                    $("#small-search-box-form").on("submit", function (event) {
-                        if ($(searchBoxContainerClass + ".search-box-text").val() == "") {
-                            $(searchBoxContainerClass + ".search-box-text").focus();
-                            event.preventDefault();
-                        }
-                    });
-                    $(document).ready(function () {
-                        $(searchBoxContainerClass + ".search-box-text").on("input", function () {
-                            if ($(this).val().length > 0) {
-                                $(".close-icon").css("display", "block");
-                            } else {
-                                $(".close-icon").css("display", "none");
-                            }
-                        });
+            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.SearchBox, additionalData = Model })
+        }
+    </form>
+</div>
+@if (Model.SearchTermMinimumLength > 0 && ShouldRenderOnce("SearchBox_SubmitScript"))
+{
 
-                        $(".close-icon").click(function () {
-                            $('.m-search').removeClass('display');
-                            $('.m-search').removeClass('fixed');
-                            $(searchBoxContainerClass + ".search-box-text").val("");
-                            $(this).css("display", "none");
-                            // Shift focus directly back to the magnifying glass icon in the header
-                            $('.search-trigger-icon').focus();
-                        });
-                    });
-                </script>
+    <script asp-location="Footer">
+        var searchBoxContainerClass = jQuery('body').width() < 992 ? ".m-search " : ".desktop-device ";
+        $("#small-search-box-form").on("submit", function (event) {
+            if ($(searchBoxContainerClass + ".search-box-text").val() == "") {
+                $(searchBoxContainerClass + ".search-box-text").focus();
+                event.preventDefault();
             }
-            @if (Model.AutoCompleteEnabled)
-            {
+        });
+        $(document).ready(function () {
+            $(searchBoxContainerClass + ".search-box-text").on("input", function () {
+                if ($(this).val().length > 0) {
+                    $(".close-icon").css("display", "block");
+                } else {
+                    $(".close-icon").css("display", "none");
+                }
+            });
 
-                <script asp-location="Footer">
+            $(".close-icon").click(function () {
+                $('.m-search').removeClass('display');
+                $('.m-search').removeClass('fixed');
+                $(searchBoxContainerClass + ".search-box-text").val("");
+                $(this).css("display", "none");
+                // Shift focus directly back to the magnifying glass icon in the header
+                $('.search-trigger-icon').focus();
+            });
+        });
+    </script>
+}
+@if (Model.AutoCompleteEnabled && ShouldRenderOnce("SearchBox_AutocompleteScript"))
+{
+
+    <script asp-location="Footer">
                     var header = "";
                     var bindRecentSearch = true;
                     var searchBoxContainerClass = jQuery('body').width() < 992 ? ".m-search " : ".desktop-device ";
@@ -107,7 +123,7 @@
                                 type: "POST",
                                 url: "@Url.Action("ClearRecentSearch","catalog")",
                                 dataType: "json",
-                                data: { __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() },
+								data: { __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() },
                                 success: function (data, textStatus, jqXHR) {
                                     fndefaultSearchSuggestions($(searchBoxContainerClass + '.search-box-text').val());
                                 },
@@ -116,10 +132,10 @@
                                 }
                             });
                     });
-$(document).on("keydown", ".search-box-text", function (e) { 
-    if (e.key !== "Enter") return; 
+$(document).on("keydown", ".search-box-text", function (e) {
+    if (e.key !== "Enter") return;
     const activeId = $(this).attr("aria-activedescendant");
-    if (!activeId) return; 
+    if (!activeId) return;
     const $btn = $("#" + activeId).find(".clear-recent-search");
 
     if ($btn.length) {
@@ -152,7 +168,7 @@ $(document).on("keydown", ".search-box-text", function (e) {
 				if(jQuery('body').width()  >992){
 				$(".ui-autocomplete").css("top","46px");
 				}
-                        var autocompleteElement = $("#small-search-box-form").next();
+                var autocompleteElement = $(`${searchBoxContainerClass}#small-search-box-form`).next();
                         $(autocompleteElement).html("");
                         $(autocompleteElement).addClass("d-suggestion");
                         var counter = 1;
@@ -166,7 +182,7 @@ $(document).on("keydown", ".search-box-text", function (e) {
                                 }
                             }
                             else {
-console.log("item",item)
+
                                 var i = "",
                                     a = String(searchText.replace(/[°"§%()^&*\[\]{}=\\?´`'#<>|,;.:+_-]+/g, "")),
                                     l = a.split(" ").join("|");
@@ -230,17 +246,18 @@ $(document).on('keydown', '.search-box-text', function (e) {
 });
                     // end
             $(document).ready(function () {
-console.log("console.log")
+
                         var showLinkToResultSearch;
                         var searchText;
+					
                         $(searchBoxContainerClass+'.search-box-text').autocomplete({
                             delay: 500,
                             minLength: @(Model.SearchTermMinimumLength.ToString()),
                             source: '@(Url.RouteUrl("ProductSearchAutoComplete"))',
-                            appendTo: '.search-box',
+                            appendTo: searchBoxContainerClass + '.search-box',
 							focus: function(event, ui) {
 								event.preventDefault();
-								
+
 								// Clear aria-selected from all options
 								$(this).autocomplete("widget").find("li[role='option']").attr("aria-selected", "false");
 								// Find the active LI item
@@ -254,7 +271,7 @@ console.log("console.log")
 								}
 								if (activeId) {
 									$(this).attr("aria-activedescendant", activeId);
-									$li.attr("aria-selected", "true"); 
+									$li.attr("aria-selected", "true");
 								}
 							},
                             select: function (event, ui) {
@@ -271,7 +288,7 @@ console.log("console.log")
                                 }
                                 else {
                                     event.preventDefault();
-                                    console.log("preventDefault");
+                       
                                 }
 
                                 return false;
@@ -293,7 +310,7 @@ console.log("console.log")
                         })
                             .data("ui-autocomplete")._renderItem = function (ul, item) {
                                 $("#small-search-box-form").next().removeClass("d-suggestion");
-                                // console.log(item);
+                                
                                 var t = item.label;
                                 showLinkToResultSearch = item.showlinktoresultsearch;
                                 //html encode
@@ -354,61 +371,60 @@ console.log("console.log")
                             };
 
                     });
-                </script>
+    </script>
+}
+@if (ShouldRenderOnce("SearchBox_KeyboardA11yScript"))
+{
+    <script>
+        let usingKeyboard = false;
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Tab") {
+                usingKeyboard = true;
+                document.body.classList.add("using-keyboard");
             }
-            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.SearchBox, additionalData = Model })
-        }
-    </form>
-</div>
-<script>
-let usingKeyboard = false;
-
-document.addEventListener("keydown", (e) => {
-  if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Tab") {
-    usingKeyboard = true;
-    document.body.classList.add("using-keyboard");
-  }
-});
-
-document.addEventListener("mousemove", () => {
-  usingKeyboard = false;
-  document.body.classList.remove("using-keyboard");
-});
-document.addEventListener("keydown", function (e) {
-    if (!["ArrowDown", "ArrowUp"].includes(e.key)) return;
-
-    setTimeout(() => {
-        const menu = document.querySelector(".ui-autocomplete");
-        if (!menu) return;
-
-        const activeId = document.querySelector(".search-box-text")
-            ?.getAttribute("aria-activedescendant");
-
-        if (!activeId) return;
-
-        menu.querySelectorAll(".ui-menu-item").forEach(item => {
-            item.setAttribute(
-                "aria-selected",
-                item.id === activeId ? "true" : "false"
-            );
         });
-    }, 0);
-});
 
-document.addEventListener("focusin", function (e) {
-    const menu = document.querySelector(".ui-autocomplete");
+        document.addEventListener("mousemove", () => {
+            usingKeyboard = false;
+            document.body.classList.remove("using-keyboard");
+        });
+        document.addEventListener("keydown", function (e) {
+            if (!["ArrowDown", "ArrowUp"].includes(e.key)) return;
 
-    if (!menu) return;
+            setTimeout(() => {
+                const menu = document.querySelector(".ui-autocomplete");
+                if (!menu) return;
 
-    // If focus moves outside the autocomplete menu
-    if (!menu.contains(e.target)) {
+                const activeId = document.querySelector(".search-box-text")
+                    ?.getAttribute("aria-activedescendant");
 
-        document.body.classList.remove("using-keyboard");
+                if (!activeId) return;
 
-        menu.querySelectorAll(".ui-menu-item[aria-selected='true']")
-            .forEach(item => {
-                item.setAttribute("aria-selected", "false");
-            });
-    }
-});
-</script>
+                menu.querySelectorAll(".ui-menu-item").forEach(item => {
+                    item.setAttribute(
+                        "aria-selected",
+                        item.id === activeId ? "true" : "false"
+                    );
+                });
+            }, 0);
+        });
+
+        document.addEventListener("focusin", function (e) {
+            const menu = document.querySelector(".ui-autocomplete");
+
+            if (!menu) return;
+
+            // If focus moves outside the autocomplete menu
+            if (!menu.contains(e.target)) {
+
+                document.body.classList.remove("using-keyboard");
+
+                menu.querySelectorAll(".ui-menu-item[aria-selected='true']")
+                    .forEach(item => {
+                        item.setAttribute("aria-selected", "false");
+                    });
+            }
+        });
+    </script>
+}

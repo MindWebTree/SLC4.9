@@ -250,7 +250,7 @@ namespace MWT.Nop.Core.Service.Zoho
                     var oZoho = new ZohoDto();
                     oZoho.GALeadID = new Random().Next(1, 100000).ToString();
                     oZoho.LeadSource = $"NEW STORE - Customer Registered";
-                    string email = await this._customerService.GetCustomerEmail(customer);
+                    string email = await this._customerService.GetCustomerEmailAsync(customer);
                     oZoho.Email = email;
                     oZoho.ZipCode = "-";
                     string name = "", zipcode = "", phone = "", countryCode = "", stateCode = "", streetAddress = "", state = "", country = "", city = "";
@@ -309,7 +309,7 @@ namespace MWT.Nop.Core.Service.Zoho
 
                         if (string.IsNullOrEmpty(phone))
                         {
-                            phone = await _genericAttributeService.GetAttributeAsync<string>(customer, "Phone");
+                            phone = await this._customerService.GetCustomerPhoneAsync(customer);
                             oZoho.Phone = phone;
                         }
                         var splitedName = name.Split(' ', '\t');
@@ -406,9 +406,9 @@ namespace MWT.Nop.Core.Service.Zoho
             try
             {
                 ZohoDto oZoho = new ZohoDto();
-                oZoho.Email = await _customerService.GetCustomerEmail(customer);
+                oZoho.Email = await _customerService.GetCustomerEmailAsync(customer);
                 var address = await _addressService.GetAddressByIdAsync((int)customer.ShippingAddressId);
-                oZoho.Phone = await _customerService.GetCustomerPhone(customer) ?? " - ";
+                oZoho.Phone = await _customerService.GetCustomerPhoneAsync(customer) ?? " - ";
                 oZoho.LastName = oZoho.FirstName = oZoho.FullName = (await _customerService.GetCustomerFullNameAsync(customer)) ?? "".Trim();
                 oZoho.ZipCode = address?.ZipPostalCode ?? " - ";
 

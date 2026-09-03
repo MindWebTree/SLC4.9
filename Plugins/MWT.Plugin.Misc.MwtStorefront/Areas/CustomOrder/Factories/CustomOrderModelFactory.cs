@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MWT.Nop.Core.Domain.CustomOrders;
+using MWT.Nop.Core.Infrastructure;
 using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Core.Service.Zoho;
 using MWT.Nop.Core.Services.Catalog;
@@ -400,11 +401,12 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
 
             if (customer != null && customer.Id != 0)
             {
-                model.FirstName = customer.FirstName;
-                model.LastName = customer.LastName;
+                string fullName = await this._customerService.GetExtendedCustomerFullNameAsync(customer);
+                model.FirstName = CustomCommonHelper.GetCustomerFirstName(fullName);
+                model.LastName = CustomCommonHelper.GetCustomerLastName(fullName);
                 string phone = "";
-                string email = customer.Email;
-                phone = customer.Phone;
+                string email = await this._customerService.GetCustomerEmailAsync(customer);
+                phone = await this._customerService.GetCustomerPhoneAsync(customer);
                 model.Email = string.IsNullOrEmpty(email) ? "" : email;
                 model.Id = customer.Id;
                 if (customer.ShippingAddressId != null && customer.ShippingAddressId != 0)
@@ -463,11 +465,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
             {
                 CustomerModel model = new CustomerModel();
                 model.Id = customer.Id;
-                string email = customer.Email;
 
-                model.Email = string.IsNullOrEmpty(email) ? "" : email;
-                model.FullName = await _customerService.GetCustomerFullNameAsync(customer);
-                model.FullName = model.FullName == null ? "" : model.FullName;
+                model.Email = await this._customerService.GetCustomerEmailAsync(customer);
+                model.FullName = (await _customerService.GetCustomerFullNameAsync(customer)) ?? String.Empty;
                 lstModel.Add(model);
             }
             return lstModel;
@@ -812,7 +812,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
             }
             return model;
         }
-        public async Task<CustomOrderSummaryModel>  PrepareOderSummaryModel(int orderId, bool isCustomerPaying = false)
+        public async Task<CustomOrderSummaryModel> PrepareOderSummaryModel(int orderId, bool isCustomerPaying = false)
         {
             CustomOrderSummaryModel model = new CustomOrderSummaryModel();
             var order = await _customOrderService.GetById(orderId);
@@ -1653,8 +1653,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
             var customer = await _customerService.GetCustomerByIdAsync(Convert.ToInt32(order.CustomerId));
             if (customer == null || customer.ShippingAddressId == null || customer.ShippingAddressId == 0)
                 return false;
-            string email = customer.Email;
-      
+            string email = await this._customerService.GetCustomerEmailAsync(customer);
+
             if (String.Compare(email.Trim(), emailAddress.Trim(), StringComparison.OrdinalIgnoreCase) != 0 && String.Compare((order.CustomerCCEmail ?? string.Empty).Trim(), emailAddress.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
                 return false;
             else
@@ -2062,14 +2062,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Factories
                     var customer = await _customerService.GetCustomerByIdAsync(Convert.ToInt32(order.CustomerId));
                     if (customer != null)
                     {
-                        var FirstName = customer.FirstName;
-                        var LastName = customer.LastName;
-                        var email = await _genericAttributeService.GetAttributeAsync<string>(customer, "Email");
-                        customOrderModel.CustomerName = (FirstName == null ? "" : FirstName) + " " +
-                            (LastName == null ? "" : LastName);
-
-
-                        customOrderModel.CustomerEmail = customer != null ? (customer.Email == null ? email == null ? "" : email : customer.Email) : "";
+                        customOrderModel.CustomerName = await this._customerService.GetExtendedCustomerFullNameAsync(customer);
+                        customOrderModel.CustomerEmail = await this._customerService.GetCustomerEmailAsync(customer);
                     }
                 }
                 else

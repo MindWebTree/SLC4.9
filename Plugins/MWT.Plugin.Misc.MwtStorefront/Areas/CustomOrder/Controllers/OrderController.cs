@@ -421,44 +421,50 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                             customer = await _customerService.InsertGuestCustomerAsync();
 
                         var isRegistered = await _customerService.IsRegisteredAsync(customer);
-                        if (_customerSettings.UsernamesEnabled && _customerSettings.AllowUsersToChangeUsernames && isRegistered)
+                        if (isRegistered)
                         {
-                            var userName = model.Email;
-                            if (string.IsNullOrEmpty(customer.Username) || !customer.Username.Equals(userName, StringComparison.InvariantCultureIgnoreCase))
-                                await _customerRegistrationService.SetUsernameAsync(customer, userName);
+                            if (_customerSettings.UsernamesEnabled && _customerSettings.AllowUsersToChangeUsernames)
+                            {
+                                var userName = model.Email;
+                                if (string.IsNullOrEmpty(customer.Username) || !customer.Username.Equals(userName, StringComparison.InvariantCultureIgnoreCase))
+                                    await _customerRegistrationService.SetUsernameAsync(customer, userName);
+                            }
+                            //email
+                            var email = model.Email;
+                            if ((string.IsNullOrEmpty(customer.Email) || !customer.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase)))
+                            {
+                                //change email
+                                var requireValidation = _customerSettings.UserRegistrationType == UserRegistrationType.EmailValidation;
+                                await _customerRegistrationService.SetEmailAsync(customer, email, requireValidation);
+                            }
+                            if (_customerSettings.PhoneEnabled)
+                                customer.Phone = model.ShippingAddress?.PhoneNumber;
+                            if (_customerSettings.FirstNameEnabled)
+                                customer.FirstName = model.FirstName;
+                            if (_customerSettings.LastNameEnabled)
+                                customer.LastName = model.LastName;
+                            if (_customerSettings.ZipPostalCodeEnabled)
+                                customer.ZipPostalCode = model.ShippingAddress?.ZipPostalCode;
+                            if (_customerSettings.StreetAddress2Enabled)
+                                customer.StreetAddress2 = model.ShippingAddress?.Address2;
+                            if (_customerSettings.StreetAddressEnabled)
+                                customer.StreetAddress = model.ShippingAddress?.Address1;
+                            if (_customerSettings.CityEnabled)
+                                customer.City = model.ShippingAddress?.City;
+                            if (_customerSettings.CountyEnabled)
+                                customer.County = model.ShippingAddress?.County;
+                            if (_customerSettings.CountryEnabled)
+                                customer.CountryId = model.ShippingAddress?.CountryId ?? 0;
+                            if (_customerSettings.StateProvinceEnabled)
+                                customer.StateProvinceId = model.ShippingAddress?.StateProvinceId ?? 0;
+                            if (_customerSettings.FaxEnabled)
+                                customer.Fax = model.ShippingAddress?.FaxNumber;
+                            if (_customerSettings.CompanyEnabled)
+                                customer.Company = model.ShippingAddress?.Company;
+
                         }
-                        //email
-                        var email = model.Email;
-                        if ((string.IsNullOrEmpty(customer.Email) || !customer.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase)) && isRegistered)
-                        {
-                            //change email
-                            var requireValidation = _customerSettings.UserRegistrationType == UserRegistrationType.EmailValidation;
-                            await _customerRegistrationService.SetEmailAsync(customer, email, requireValidation);
-                        }
-
-
-                        if (!isRegistered)
-                        {
-                            customer.Email = model.Email;
-
-                            if (_customerSettings.UsernamesEnabled && _customerSettings.AllowUsersToChangeUsernames && isRegistered)
-                                customer.Username = model.Email;
-
-                        }
-                        customer.Phone = model.ShippingAddress?.PhoneNumber;
-
-                        //form fields
-                        if (_customerSettings.FirstNameEnabled)
-                            customer.FirstName = model.FirstName;
-
-                        if (_customerSettings.LastNameEnabled)
-                            customer.LastName = model.LastName;
-
-                        if (_customerSettings.ZipPostalCodeEnabled)
-                            customer.ZipPostalCode = model.ShippingAddress?.ZipPostalCode;
-
-
-
+                        else
+                            await _genericAttributeService.SaveAttributeAsync(customer, "Email", model.Email);
                         // Save Shipping Address
                         if (model.ShippingAddress.Id > 0)
                         {
@@ -473,8 +479,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                             // Save Billing
                             if (customer?.ShippingAddressId == null)
                                 customer.ShippingAddressId = address.Id;
-                            if (customer?.BillingAddressId == null || customer?.ShippingAddressId == null)
-                                await _customerService.UpdateCustomerAsync(customer);
+
                         }
                         else
                         {
@@ -498,11 +503,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                                 await _customerService.InsertCustomerAddressAsync(customer, address);
                             }
                              (customer).ShippingAddressId = address.Id;
-
-                            await _customerService.UpdateCustomerAsync(customer);
-
                         }
-
+                        await _customerService.UpdateCustomerAsync(customer);
 
                         // Save Billing Address
                         if (model.BillingAddress.Id > 0)
@@ -1356,7 +1358,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
            await _localizationService.GetResourceAsync("CustomOrder.Message.OrderPlacedSuccessfully")
           )
                     });
-                   
+
                 }
                 else
                 {

@@ -477,7 +477,8 @@ public partial class ShoppingCartController : BasePublicController
 
     private async Task<IActionResult> ProcessCheckoutRequest(IFormCollection form, string buttonType)
     {
-        var cart = await _shoppingCartService.GetShoppingCartAsync(await _workContext.GetCurrentCustomerAsync(), ShoppingCartType.ShoppingCart, (await _storeContext.GetCurrentStoreAsync()).Id);
+        var customer = await _workContext.GetCurrentCustomerAsync();
+        var cart = await _shoppingCartService.GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart, (await _storeContext.GetCurrentStoreAsync()).Id);
 
         //parse and save checkout attributes
         await ParseAndSaveCheckoutAttributesAsync(cart, form);
@@ -486,7 +487,7 @@ public partial class ShoppingCartController : BasePublicController
 
 
         //validate attributes
-        var checkoutAttributes = await _genericAttributeService.GetAttributeAsync<string>(await _workContext.GetCurrentCustomerAsync(),
+        var checkoutAttributes = await _genericAttributeService.GetAttributeAsync<string>(customer,
             NopCustomerDefaults.CheckoutAttributes, (await _storeContext.GetCurrentStoreAsync()).Id);
         var checkoutAttributeWarnings = await _shoppingCartService.GetShoppingCartWarningsAsync(cart, checkoutAttributes, true);
         if (checkoutAttributeWarnings.Any())
@@ -510,19 +511,16 @@ public partial class ShoppingCartController : BasePublicController
         #endregion
 
 
-        var _isMemberShipAddedInCart = await _customerService.IsMemberShipAddedInCart(await _workContext.GetCurrentCustomerAsync());
+        var _isMemberShipAddedInCart = await _customerService.IsMemberShipAddedInCart(customer);
         var anonymousPermissed = _orderSettings.AnonymousCheckoutAllowed
                                  && _customerSettings.UserRegistrationType == UserRegistrationType.Disabled
                                  && !_isMemberShipAddedInCart;
 
-        if ((anonymousPermissed || !await _customerService.IsGuestAsync(await _workContext.GetCurrentCustomerAsync()) || (buttonType == "checkout-as-guest" && !_isMemberShipAddedInCart)) && buttonType != "checkout-signin")
+        if ((anonymousPermissed || !await _customerService.IsGuestAsync(customer) || (buttonType == "checkout-as-guest" && !_isMemberShipAddedInCart)) && buttonType != "checkout-signin")
         {
             if (form.ContainsKey("Email"))
             {
-                var customer = await _workContext.GetCurrentCustomerAsync();
                 await _genericAttributeService.SaveAttributeAsync(customer, "Email", form["Email"]);
-                if (_customerSettings.UsernamesEnabled && _customerSettings.AllowUsersToChangeUsernames)
-                    await _genericAttributeService.SaveAttributeAsync(customer, "UserName", form["Email"]);
             }
             return Redirect("/onepagecheckout");
         }

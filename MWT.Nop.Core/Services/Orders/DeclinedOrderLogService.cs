@@ -62,7 +62,7 @@ namespace MWT.Nop.Core.Services.Orders
                 {
                     CreatedOn = DateTime.UtcNow,
                     CustomerId = customer?.Id ?? 0,
-                    Email = await _customerService.GetCustomerEmail(customer),
+                    Email = await _customerService.GetCustomerEmailAsync(customer),
                     Message = error,
                     OrderTotal = subTotal,
                     PaymentMethod = paymentMethod,

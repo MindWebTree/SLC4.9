@@ -8,21 +8,24 @@ using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Orders;
 using Nop.Web.Framework.Components;
 using MWT.Nop.Core.Domain.CustomOrders;
 using MWT.Nop.Core.Services.Customizations.CustomOrders;
+using MWT.Nop.Core.Services.Customers;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Components
 {
     public class CustomOrderStatusLogViewComponent : NopViewComponent
     {
         #region Fields
+        
         private readonly ICustomOrderService _customOrderService;
-        private readonly ICustomerService _customerService;
+        private readonly ICustomerExtendedService _customerService;
         private readonly ILocalizationService _localizationService;
         private readonly IQueuedEmailService _queuedEmailService;
+
         #endregion
 
         #region Ctor
 
-        public CustomOrderStatusLogViewComponent(ICustomOrderService customOrderService, ICustomerService customerService,ILocalizationService localizationService,
+        public CustomOrderStatusLogViewComponent(ICustomOrderService customOrderService, ICustomerExtendedService customerService, ILocalizationService localizationService,
              IQueuedEmailService queuedEmailService)
         {
             this._customOrderService = customOrderService;
@@ -33,21 +36,15 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Components
 
         #endregion
 
-
         #region Methods
-
-        /// <returns>A task that represents the asynchronous operation</returns>
         public async Task<IViewComponentResult> InvokeAsync(int orderId)
         {
             OrderDetailSummarryModel model = new OrderDetailSummarryModel();
-
             List<CustomOrderStatusLogModel> lstLogsModel = new List<CustomOrderStatusLogModel>();
             var orderStauses = await _customOrderService.GetOrderStatuses();
             var types = await _customOrderService.GetOrderTypes();
             var order = await _customOrderService.GetById(orderId);
-            string firstName = "";
-            string lastName = "";
-            if (order != null)
+           if (order != null)
             {
                 string orderTypePrefix = "";
                 var orderType = types.Where(t => t.Id == order.OrderTypeId).FirstOrDefault();
@@ -96,10 +93,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Components
                                 var customer = await _customerService.GetCustomerByIdAsync(log.UserId);
                                 if (customer != null)
                                 {
-                                    firstName = customer.FirstName;
-                                    lastName = customer.LastName;
-                                    customers.Add(log.UserId, $"{firstName ?? string.Empty}  {lastName ?? string.Empty}");
-                                    logModel.CustomerName = $"{firstName ?? string.Empty}  {lastName ?? string.Empty}";
+                                    string fullName = await _customerService.GetExtendedCustomerFullNameAsync(customer);
+                                    customers.Add(log.UserId, fullName);
+                                    logModel.CustomerName = fullName;
                                 }
 
                             }

@@ -78,11 +78,11 @@ namespace MWT.Plugin.Misc.MwtStorefront.Tasks
             {
 
                 var customer = await this._customerService.GetCustomerByIdAsync(customerid);
-                string email = await this._customerService.GetCustomerEmail(customer);
+                string email = await this._customerService.GetCustomerEmailAsync(customer);
                 string name = await this._customerService.GetCustomerFullNameAsync(customer);
                 if (customer != null && !string.IsNullOrEmpty(email) && !CustomCommonHelper.IsFakeCustomer(fakeCustomerEmails, email))
                 {
-                    string phone = await this._customerService.GetCustomerPhone(customer);
+                    string phone = await this._customerService.GetCustomerPhoneAsync(customer);
                     List<string> tags = new List<string>();
                     tags.Add("Abandoned Cart");
                     await _mailchimpService.CartOperation(email, await this._customerService.GetCustomerFullNameAsync(customer), "", tags, "", "", "", "");

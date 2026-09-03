@@ -261,11 +261,11 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Services
             string shippingState = shipStateProvince?.Abbreviation;
             string shippingZipCode = shippingAddress?.ZipPostalCode ?? string.Empty;
             string shippingCountry = shipCountry?.Name ?? string.Empty;
-            string shippingEmail = shippingAddress?.Email ?? await _customerService.GetCustomerEmail(customer) ?? string.Empty;
-            string shippingPhonenumber = shippingAddress?.PhoneNumber ?? await _customerService.GetCustomerPhone(customer) ?? string.Empty;
+            string shippingEmail = shippingAddress?.Email ?? await _customerService.GetCustomerEmailAsync(customer, false, true) ?? string.Empty;
+            string shippingPhonenumber = shippingAddress?.PhoneNumber ?? await _customerService.GetCustomerPhoneAsync(customer, false, true) ?? string.Empty;
 
-            string billingFirstName = billingAddress.FirstName ?? shippingAddress.FirstName ?? customer.FirstName ?? string.Empty;
-            string billingLastName = billingAddress.LastName ?? shippingAddress.LastName ?? customer.LastName ?? string.Empty;
+            string billingFirstName = billingAddress.FirstName ?? customer.FirstName ?? shippingAddress.FirstName ?? string.Empty;
+            string billingLastName = billingAddress.LastName ?? customer.LastName ?? shippingAddress.LastName ?? string.Empty;
             billingLastName = string.IsNullOrEmpty(billingLastName) ? billingFirstName : billingLastName;
             string billingAddress1 = billingAddress.Address1 ?? shippingAddress.Address1 ?? string.Empty;
             string billingAddress2 = billingAddress.Address2 ?? shippingAddress.Address2 ?? string.Empty;
@@ -273,9 +273,9 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Services
             string billingState = billStateProvince?.Abbreviation ?? shipStateProvince?.Abbreviation ?? string.Empty;
             string billingZipCode = billingAddress?.ZipPostalCode ?? shippingAddress?.ZipPostalCode ?? string.Empty;
             string billingCountry = billCountry?.Name ?? shipCountry?.Name ?? string.Empty;
-            string billingEmail = billingAddress?.Email ?? await _customerService.GetCustomerEmail(customer) ?? string.Empty;
+            string billingEmail = billingAddress?.Email ?? await _customerService.GetCustomerEmailAsync(customer, true, false) ?? string.Empty;
 
-            string billingPhonenumber = billingAddress?.PhoneNumber ?? await _customerService.GetCustomerPhone(customer) ?? string.Empty;
+            string billingPhonenumber = billingAddress?.PhoneNumber ?? await _customerService.GetCustomerPhoneAsync(customer, true, false) ?? string.Empty;
 
             var itemTotal = decimal.Zero;
             var items = await _customOrderService.GetOrderItems(customOrder.Id);

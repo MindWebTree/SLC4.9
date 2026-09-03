@@ -130,7 +130,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
                     var cart = await _shoppingCartService.GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart, (await _storeContext.GetCurrentStoreAsync()).Id);
                     if (cart.Count > 0)
                     {
-                        customer.Email = await this._customerService.GetCustomerEmail(customer);
+                        customer.Email = await this._customerService.GetCustomerEmailAsync(customer);
                         if (!string.IsNullOrEmpty(customer.Email))
                         {
                             abandCartModels.Add(new AbandonedCartModel()

@@ -12,7 +12,7 @@
         email = customer.Email;
         if (string.IsNullOrEmpty(email))
         {
-            email = await _customerService.GetCustomerEmail(customer);
+            email = await _customerService.GetCustomerEmailAsync(customer);
         }
         if (!string.IsNullOrEmpty(email))
         {
@@ -23,7 +23,7 @@
                 lastName = CustomCommonHelper.GetCustomerLastName(name);
             }
         }
-        phoneNumber = await _customerService.GetCustomerPhone(customer);
+        phoneNumber = await _customerService.GetCustomerPhoneAsync(customer);
     }
 }
 

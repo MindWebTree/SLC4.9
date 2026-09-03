@@ -106,7 +106,7 @@ namespace MWT.Nop.Core.Services.Message
             var customer = await _customerService.GetCustomerByIdAsync(order.CustomerId);
             //lambda expression for choosing correct order address
             async Task<Address> orderAddress(Order o) => await _addressService.GetAddressByIdAsync((o.PickupInStore ? o.PickupAddressId : o.ShippingAddressId) ?? 0);
-          
+
             var taxRates = _orderService.ParseTaxRates(order, order.TaxRates);
 
             var taxPercentage = _priceFormatter.FormatTaxRate(taxRates.Count > 0 ?
@@ -124,7 +124,7 @@ namespace MWT.Nop.Core.Services.Message
             tokens.Add(new Token("Order.BillingFirstName", billingAddress.FirstName));
             tokens.Add(new Token("Order.BillingLastName", billingAddress.LastName));
             tokens.Add(new Token("Order.BillingPhoneNumber", billingAddress.PhoneNumber));
-            tokens.Add(new Token("Order.BillingEmail", billingAddress.Email ?? await _customCustomerService.GetCustomerEmail(customer)));
+            tokens.Add(new Token("Order.BillingEmail", billingAddress.Email ?? await _customCustomerService.GetCustomerEmailAsync(customer, true)));
             tokens.Add(new Token("Order.BillingFaxNumber", billingAddress.FaxNumber));
             tokens.Add(new Token("Order.BillingCompany", billingAddress.Company));
             tokens.Add(new Token("Order.BillingAddress1", billingAddress.Address1));
@@ -144,7 +144,7 @@ namespace MWT.Nop.Core.Services.Message
             tokens.Add(new Token("Order.ShippingFirstName", (await orderAddress(order))?.FirstName ?? string.Empty));
             tokens.Add(new Token("Order.ShippingLastName", (await orderAddress(order))?.LastName ?? string.Empty));
             tokens.Add(new Token("Order.ShippingPhoneNumber", (await orderAddress(order))?.PhoneNumber ?? string.Empty));
-            tokens.Add(new Token("Order.ShippingEmail", (await orderAddress(order))?.Email ?? await _customCustomerService.GetCustomerEmail(customer)));
+            tokens.Add(new Token("Order.ShippingEmail", (await orderAddress(order))?.Email ?? await _customCustomerService.GetCustomerEmailAsync(customer, false, true)));
             tokens.Add(new Token("Order.ShippingFaxNumber", (await orderAddress(order))?.FaxNumber ?? string.Empty));
             tokens.Add(new Token("Order.ShippingCompany", (await orderAddress(order))?.Company ?? string.Empty));
             tokens.Add(new Token("Order.ShippingAddress1", (await orderAddress(order))?.Address1 ?? string.Empty));
@@ -237,12 +237,13 @@ namespace MWT.Nop.Core.Services.Message
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task CustomAddCustomerTokensAsync(IList<Token> tokens, Customer customer)
         {
+            string fullName = await _customerService.GetCustomerFullNameAsync(customer);
             tokens.Add(new Token("Customer.CustomerId", customer.Id));
-            tokens.Add(new Token("Customer.Email", customer.Email));
+            tokens.Add(new Token("Customer.Email", await this._customCustomerService.GetCustomerEmailAsync(customer)));
             tokens.Add(new Token("Customer.Username", customer.Username));
-            tokens.Add(new Token("Customer.FullName", await _customerService.GetCustomerFullNameAsync(customer)));
-            tokens.Add(new Token("Customer.FirstName", customer.FirstName));
-            tokens.Add(new Token("Customer.LastName", customer.LastName));
+            tokens.Add(new Token("Customer.FullName", fullName));
+            tokens.Add(new Token("Customer.FirstName", CustomCommonHelper.GetCustomerFirstName(fullName)));
+            tokens.Add(new Token("Customer.LastName", CustomCommonHelper.GetCustomerLastName(fullName)));
             tokens.Add(new Token("Customer.VatNumber", customer.VatNumber));
             tokens.Add(new Token("Customer.VatNumberStatus", customer.VatNumberStatus));
 
@@ -266,7 +267,7 @@ namespace MWT.Nop.Core.Services.Message
 
         public async Task WgsAdditionalServiceAddTokenAsync(IList<Token> tokens, CustomOrder customOrder, int languageId, int vendorId = 0)
         {
-     
+
             List<CustomOrderShoppingCartItem> cartItems = await _customOrderService.GetOrderItems(Convert.ToInt32(customOrder.Id));
             bool hasDiscount = false;
             decimal totalWithoutDiscount = customOrder.OrderTotal ?? 0;
@@ -342,7 +343,7 @@ namespace MWT.Nop.Core.Services.Message
             tokens.Add(new Token("Order.BillingFirstName", billingAddress?.FirstName));
             tokens.Add(new Token("Order.BillingLastName", billingAddress?.LastName));
             tokens.Add(new Token("Order.BillingPhoneNumber", billingAddress?.PhoneNumber));
-            tokens.Add(new Token("Order.BillingEmail", billingAddress?.Email ?? await _customCustomerService.GetCustomerEmail(customer)));
+            tokens.Add(new Token("Order.BillingEmail", billingAddress?.Email ?? await _customCustomerService.GetCustomerEmailAsync(customer, true)));
             tokens.Add(new Token("Order.BillingFaxNumber", billingAddress?.FaxNumber));
             tokens.Add(new Token("Order.BillingCompany", billingAddress?.Company));
             tokens.Add(new Token("Order.BillingAddress1", billingAddress?.Address1));
@@ -362,7 +363,7 @@ namespace MWT.Nop.Core.Services.Message
             tokens.Add(new Token("Order.ShippingFirstName", shippingAddress?.FirstName));
             tokens.Add(new Token("Order.ShippingLastName", shippingAddress?.LastName));
             tokens.Add(new Token("Order.ShippingPhoneNumber", shippingAddress?.PhoneNumber));
-            tokens.Add(new Token("Order.ShippingEmail", shippingAddress?.Email ?? await _customCustomerService.GetCustomerEmail(customer)));
+            tokens.Add(new Token("Order.ShippingEmail", shippingAddress?.Email ?? await _customCustomerService.GetCustomerEmailAsync(customer, false, true)));
             tokens.Add(new Token("Order.ShippingFaxNumber", shippingAddress?.FaxNumber));
             tokens.Add(new Token("Order.ShippingCompany", shippingAddress?.Company));
             tokens.Add(new Token("Order.ShippingAddress1", shippingAddress?.Address1));
@@ -509,7 +510,7 @@ namespace MWT.Nop.Core.Services.Message
                 var match = paymentRequest.CustomValues
                     .FirstOrDefault(kvp => string.Equals(kvp.Name, "transactionid", StringComparison.OrdinalIgnoreCase));
 
-                if (match!=null)
+                if (match != null)
                 {
                     transactionid = match.Value?.ToString() ?? string.Empty;
                 }
@@ -565,7 +566,7 @@ namespace MWT.Nop.Core.Services.Message
                 decimal shoppingCartTotal = 0;
                 try
                 {
-       
+
                     (shoppingCartTotalBase, _, _, _, _, _) =
                                 await _orderTotalCalculationService.GetShoppingCartTotalAsync(cart);
                     shoppingCartTotal = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(shoppingCartTotalBase.Value, await _workContext.GetWorkingCurrencyAsync());
@@ -593,7 +594,7 @@ namespace MWT.Nop.Core.Services.Message
 
                         tokens.Add(new Token("Cart.Product.Link", prdurl));
                         tokens.Add(new Token("Cart.Product.Name", string.IsNullOrWhiteSpace(variant?.Title) ? product.Name : variant.Title));
-                      
+
                         var picture = (await _pictureService.CustomGetPicturesOfProducAsync(product.Id, 1)).FirstOrDefault();
                         string fullSizeImageUrl, imageUrl;
                         (imageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, _mediaSettings.CategoryThumbPictureSize);
@@ -730,33 +731,8 @@ namespace MWT.Nop.Core.Services.Message
         public async Task CustomSupportAddAbandonedCartTokensAsync(IList<Token> tokens, Customer customer, IList<ShoppingCartItem> cart, int languageId)
         {
             tokens.Add(new Token("Customer.FullName", await _customerService.GetCustomerFullNameAsync(customer)));
-            string email = customer.Email;
-            if (!string.IsNullOrEmpty(email))
-                tokens.Add(new Token("Email", customer.Email));
-
-
-            string phone = "";
-            if (customer.BillingAddressId.HasValue)
-            {
-                var address = await _addressService.GetAddressByIdAsync(Convert.ToInt32(customer.BillingAddressId));
-                if (string.IsNullOrEmpty(email))
-                    tokens.Add(new Token("Email", address.Email));
-                tokens.Add(new Token("Phone", address.PhoneNumber));
-            }
-            else if (customer.ShippingAddressId.HasValue)
-            {
-                var address = await _addressService.GetAddressByIdAsync(Convert.ToInt32(customer.ShippingAddressId));
-                if (string.IsNullOrEmpty(email))
-                    tokens.Add(new Token("Email", address.Email));
-                tokens.Add(new Token("Phone", address.PhoneNumber));
-            }
-            else
-            {
-                tokens.Add(new Token("Email", await _genericAttributeService.GetAttributeAsync<string>(customer, "Email", 0)));
-                tokens.Add(new Token("Phone", await _genericAttributeService.GetAttributeAsync<string>(customer, "Phone", 0)));
-            }
-
-
+            tokens.Add(new Token("Email", await this._customCustomerService.GetCustomerEmailAsync(customer)));
+            tokens.Add(new Token("Phone", await this._customCustomerService.GetCustomerPhoneAsync(customer)));
             tokens.Add(new Token("cartProducts", await this.CustomCartProductListToHtmlTableAsync(cart, languageId), true));
         }
 
@@ -884,7 +860,7 @@ namespace MWT.Nop.Core.Services.Message
                 products = await products.Take(3).ToListAsync();
             }
             string html = "";
-            
+
             StringBuilder productRows = new StringBuilder();
 
             for (int i = 0; i < products.Count; i++)
@@ -937,7 +913,7 @@ namespace MWT.Nop.Core.Services.Message
             }
 
             string html = "";
-            
+
             StringBuilder productRows = new StringBuilder();
 
 
@@ -990,7 +966,7 @@ namespace MWT.Nop.Core.Services.Message
                 products = await products.Take(6).ToListAsync();
             }
             string html = "";
-            
+
             StringBuilder productRows = new StringBuilder();
             for (int i = 0; i < products.Count; i += 3)
             {
@@ -1027,7 +1003,7 @@ namespace MWT.Nop.Core.Services.Message
         {
             var store = (await _storeService.GetAllStoresAsync()).OrderByDescending(s => s.DisplayOrder).FirstOrDefault();
             int storeId = store?.Id ?? 0;
-            
+
             var table = await _customOrderService.GetOrderItems(customOrder.Id);
 
             var language = await _languageService.GetLanguageByIdAsync(languageId);
@@ -2188,7 +2164,7 @@ namespace MWT.Nop.Core.Services.Message
         public async Task<string> CustomAddRelatedProductHtml(List<Product> relatedProducts, string utmSource)
         {
             string html = "";
-            
+
             foreach (var product in relatedProducts)
             {
                 var prdurl = await RouteUrlAsync(_storeContext.GetCurrentStore().Id, "product", new
@@ -2207,5 +2183,5 @@ namespace MWT.Nop.Core.Services.Message
 
         #endregion
     }
-   
+
 }

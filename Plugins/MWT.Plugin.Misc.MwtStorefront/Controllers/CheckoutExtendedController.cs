@@ -56,8 +56,8 @@ using System.Globalization;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Controllers
 {
-   [AutoValidateAntiforgeryToken]
- 
+    [AutoValidateAntiforgeryToken]
+
 
     public partial class CheckoutExtendedController : CheckoutController
     {
@@ -216,7 +216,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
         }
 
 
-   
+
         [HttpPost]
         public virtual async Task<IActionResult> OpcSaveCustomerInfo(CheckoutAddressModel model, IFormCollection form, bool saveData = true, bool moveToNextStep = true)
         {
@@ -481,7 +481,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                         if (shippingAddressModel != null)
                         {
                             if (string.IsNullOrEmpty(model.PhoneNumber))
-                                shippingAddressModel.PhoneNumber = customer.Phone;
+                                shippingAddressModel.PhoneNumber = await this._customerExtendedService.GetCustomerPhoneAsync(customer);
                         }
 
                         return Json(new
@@ -510,7 +510,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                     if (shippingAddressModel != null)
                     {
                         if (string.IsNullOrEmpty(model.PhoneNumber))
-                            shippingAddressModel.PhoneNumber = customer.Phone;
+                            shippingAddressModel.PhoneNumber = await this._customerExtendedService.GetCustomerPhoneAsync(customer);
                     }
 
                     return Json(new
@@ -523,19 +523,14 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
 
         #region Methods (one page checkout)
 
-       
+
         public virtual async Task<IActionResult> OpcCustomLoadBillingAddres()
         {
             var billingAddressModel = await _checkoutExtendedModelFactory.PrepareCustomBillingAddressModelAsync(null, null, prePopulateNewAddressWithCustomerFields: true);
             if (billingAddressModel != null)
             {
-
                 if (string.IsNullOrEmpty(billingAddressModel.PhoneNumber))
-                {
-                    var customer = await _workContext.GetCurrentCustomerAsync();
-                    billingAddressModel.PhoneNumber = customer.Phone;
-
-                }
+                    billingAddressModel.PhoneNumber = await this._customerExtendedService.GetCustomerPhoneAsync(await _workContext.GetCurrentCustomerAsync());
             }
             return Json(new
             {
@@ -549,7 +544,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
         /// 
 
         [HttpPost]
- 
+
         public virtual async Task<IActionResult> OpcCustomSaveBilling(CheckoutAddressModel model, IFormCollection form)
         {
             try
@@ -577,7 +572,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                         ModelState.AddModelError("", warning);
                 }
 
-             
+
                 int.TryParse(form["billing_address_id"], out var billingAddressId);
                 int shippingAddressId = (await _customerService.GetCustomerShippingAddressAsync(customer)).Id;
 
@@ -606,7 +601,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                         if (billingAddressModel != null)
                         {
                             if (string.IsNullOrEmpty(billingAddressModel.PhoneNumber))
-                                billingAddressModel.PhoneNumber = customer.Phone;
+                                billingAddressModel.PhoneNumber = await this._customerExtendedService.GetCustomerPhoneAsync(customer);
                         }
                         return Json(new
                         {
@@ -644,7 +639,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                         if (billingAddressModel != null)
                         {
                             if (string.IsNullOrEmpty(billingAddressModel.PhoneNumber))
-                                billingAddressModel.PhoneNumber = customer.Phone;
+                                billingAddressModel.PhoneNumber = await this._customerExtendedService.GetCustomerPhoneAsync(customer);
                         }
                         return Json(new
                         {
@@ -687,7 +682,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
         /// <returns>A task that represents the asynchronous operation</returns>
         /// 
         [HttpPost]
-     
+
         protected virtual async Task<JsonResult> OpcCustomSaveShipping(CheckoutAddressModel customaddressModel, IFormCollection form, bool moveToNextStep)
         {
             var model = customaddressModel.CheckoutAddressModelToAddressModel();
@@ -753,7 +748,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                         if (shippingAddressModel != null)
                         {
                             if (string.IsNullOrEmpty(shippingAddressModel.PhoneNumber))
-                                shippingAddressModel.PhoneNumber = customer.Phone;
+                                shippingAddressModel.PhoneNumber = await this._customerExtendedService.GetCustomerPhoneAsync(customer);
                         }
                         return Json(new
                         {
@@ -784,7 +779,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                         if (shippingAddressModel != null)
                         {
                             if (string.IsNullOrEmpty(shippingAddressModel.PhoneNumber))
-                                shippingAddressModel.PhoneNumber = customer.Phone;
+                                shippingAddressModel.PhoneNumber = await this._customerExtendedService.GetCustomerPhoneAsync(customer);
                         }
                         return Json(new
                         {
@@ -816,7 +811,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                         if (shippingAddressModel != null)
                         {
                             if (string.IsNullOrEmpty(shippingAddressModel.PhoneNumber))
-                                shippingAddressModel.PhoneNumber = customer.Phone;
+                                shippingAddressModel.PhoneNumber = await this._customerExtendedService.GetCustomerPhoneAsync(customer);
                         }
                         return Json(new
                         {
@@ -868,7 +863,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                         if (shippingAddressModel != null)
                         {
                             if (string.IsNullOrEmpty(shippingAddressModel.PhoneNumber))
-                                shippingAddressModel.PhoneNumber = customer.Phone;
+                                shippingAddressModel.PhoneNumber = await this._customerExtendedService.GetCustomerPhoneAsync(customer);
                         }
                         return Json(new
                         {
@@ -886,7 +881,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
         }
         /// <returns>A task that represents the asynchronous operation</returns>
         /// 
- 
+
         protected virtual async Task<JsonResult> OpcCustomLoadStepAfterShippingAddress(IList<ShoppingCartItem> cart)
         {
             var customer = await _workContext.GetCurrentCustomerAsync();
@@ -918,7 +913,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
         /// <returns>A task that represents the asynchronous operation</returns>
         /// 
         [HttpPost]
- 
+
         public virtual async Task<IActionResult> OpcCustomSaveShippingMethod(string shippingoption, IFormCollection form, bool moveToNextStep = true)
         {
             try
@@ -1016,7 +1011,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
 
         /// <returns>A task that represents the asynchronous operation</returns>
 
- 
+
         protected virtual async Task<JsonResult> OpcCustomLoadStepAfterShippingMethod(IList<ShoppingCartItem> cart, bool loadParent = false)
         {
             //Check whether payment workflow is required
@@ -1040,7 +1035,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                 if (shippingAddressModel != null)
                 {
                     if (string.IsNullOrEmpty(shippingAddressModel.PhoneNumber))
-                        shippingAddressModel.PhoneNumber = customer.Phone;
+                        shippingAddressModel.PhoneNumber = await this._customerExtendedService.GetCustomerPhoneAsync(customer);
+
                 }
 
                 ViewData["ShippingAddress"] = shippingAddressModel;
@@ -1058,7 +1054,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
 
         }
 
-   
+
         [HttpPost]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> OpcCustomSavePaymentInfo(string paymentMethod, IFormCollection form)
@@ -1138,7 +1134,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                     if (shippingAddressModel != null)
                     {
                         if (string.IsNullOrEmpty(shippingAddressModel.PhoneNumber))
-                            shippingAddressModel.PhoneNumber = customer.Phone;
+                            shippingAddressModel.PhoneNumber = await this._customerExtendedService.GetCustomerPhoneAsync(customer);
                     }
 
                     ViewData["ShippingAddress"] = shippingAddressModel;
@@ -1183,7 +1179,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
             }
         }
 
-    
+
         protected virtual async Task<JsonResult> OpcCustomLoadStepAfterPaymentMethod(IPaymentMethod paymentMethod, IList<ShoppingCartItem> cart)
         {
             if (paymentMethod.SkipPaymentInfo ||
@@ -1215,7 +1211,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                 goto_section = "payment_info"
             });
         }
-  
+
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> OpcCustomConfirmOrder(int filterByCountryId, IPaymentMethod paymentMethod)
         {
@@ -1315,7 +1311,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                     if (shippingAddressModel != null)
                     {
                         if (string.IsNullOrEmpty(shippingAddressModel.PhoneNumber))
-                            shippingAddressModel.PhoneNumber = customer.Phone;
+                            shippingAddressModel.PhoneNumber = await this._customerExtendedService.GetCustomerPhoneAsync(customer);
                     }
 
                     ViewData["ShippingAddress"] = shippingAddressModel;
@@ -1446,7 +1442,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                 if (shippingAddressModel != null)
                 {
                     if (string.IsNullOrEmpty(shippingAddressModel.PhoneNumber))
-                        shippingAddressModel.PhoneNumber = customer.Phone;
+                        shippingAddressModel.PhoneNumber = await this._customerExtendedService.GetCustomerPhoneAsync(customer);
                 }
 
                 model.ShippingAddress = await RenderPartialViewToStringAsync("OpcShippingAddress", shippingAddressModel);
