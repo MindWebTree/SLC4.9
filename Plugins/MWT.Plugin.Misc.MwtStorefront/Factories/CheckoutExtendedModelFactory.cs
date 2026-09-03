@@ -393,22 +393,23 @@ public partial class CheckoutExtendedModelFactory : CheckoutModelFactory, ICheck
         }
 
         #region Customer Fields
+
         if (string.IsNullOrEmpty(model.FirstName))
         {
-            model.FirstName = customer.FirstName;
+            model.FirstName = customer.FirstName ?? string.Empty;
         }
         if (string.IsNullOrEmpty(model.LastName))
         {
-            model.LastName = customer.LastName;
+            model.LastName = customer.LastName ?? string.Empty;
         }
+
+  
+
         model.FullName = CustomCommonHelper.GetCustomerFullName(model.FirstName, model.LastName);
         model.DisplayVatNumber = _taxSettings.EuVatEnabled;
         model.VatNumber = customer.VatNumber;
         model.GenderEnabled = _customerSettings.GenderEnabled;
-        if (string.IsNullOrEmpty(model.Gender))
-        {
-            model.Gender = customer.Gender;
-        }
+        model.Gender = customer.Gender;
         model.DateOfBirthEnabled = _customerSettings.DateOfBirthEnabled;
         model.DateOfBirthEnabled = _customerSettings.DateOfBirthEnabled;
         var dateOfBirth = customer.DateOfBirth;
@@ -420,13 +421,9 @@ public partial class CheckoutExtendedModelFactory : CheckoutModelFactory, ICheck
         }
 
         if (!(await _customerService.IsRegisteredAsync(customer)))
-        {
             model.Email = model.Username = await _genericAttributeService.GetAttributeAsync<string>(customer, "Email");
-        }
         else
-        {
             model.Email = model.Username = customer.Email;
-        }
 
         var newsletter = (await _newsLetterSubscriptionService.GetNewsLetterSubscriptionsByEmailAsync(model.Email, (await _storeContext.GetCurrentStoreAsync()).Id)).FirstOrDefault();
         model.Newsletter = newsletter != null && newsletter.Active;
@@ -436,7 +433,7 @@ public partial class CheckoutExtendedModelFactory : CheckoutModelFactory, ICheck
         model.AllowUsersToChangeUsernames = _customerSettings.AllowUsersToChangeUsernames;
         model.UsernamesEnabled = _customerSettings.UsernamesEnabled;
 
-        model.Fax = string.IsNullOrEmpty(model.Fax) ? customer.Fax : model.Fax;
+        model.Fax = customer.Fax;
         model.FaxEnabled = _customerSettings.FaxEnabled;
         if (_gdprSettings.GdprEnabled)
         {

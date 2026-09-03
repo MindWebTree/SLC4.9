@@ -309,7 +309,7 @@ namespace MWT.Nop.Core.Service.Zoho
 
                         if (string.IsNullOrEmpty(phone))
                         {
-                            phone = await _genericAttributeService.GetAttributeAsync<string>(customer, "Phone");
+                            phone = await this._customerService.GetCustomerPhoneAsync(customer);
                             oZoho.Phone = phone;
                         }
                         var splitedName = name.Split(' ', '\t');

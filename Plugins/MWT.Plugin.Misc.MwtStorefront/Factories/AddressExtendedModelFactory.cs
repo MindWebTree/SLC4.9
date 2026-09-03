@@ -71,6 +71,8 @@ string overrideAttributesXml = "")
             {
                 if (customer == null)
                     throw new Exception("Customer cannot be null when prepopulating an address");
+                var country = await _countryService.GetCountryByIdAsync(customer.CountryId);
+                var state = await _stateProvinceService.GetStateProvinceByIdAsync(customer.StateProvinceId);
                 model.Email = customer.Email;
                 model.FirstName = customer.FirstName;
                 model.LastName = customer.LastName;
@@ -82,6 +84,12 @@ string overrideAttributesXml = "")
                 model.County = customer.County;
                 model.PhoneNumber = customer.Phone;
                 model.FaxNumber = customer.Fax;
+                model.CountryId = customer.CountryId;
+                model.CountryName = country != null ? await _localizationService.GetLocalizedAsync(country, x => x.Name) : null;
+                model.CountryTwoLetterSeoCode = country?.TwoLetterIsoCode ?? "";
+                model.StateAbbreviation = state?.Abbreviation ?? "";
+                model.StateProvinceId = customer.StateProvinceId;
+                model.StateProvinceName = state != null ? await _localizationService.GetLocalizedAsync(state, x => x.Name) : null;
             }
 
             //countries and states

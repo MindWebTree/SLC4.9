@@ -473,7 +473,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
 
             var customer = await _customerService.GetCustomerByIdAsync(processPaymentRequest.CustomerId);
 
-            var billTo = await GetTransactionRequestAddressAsync((customer?.BillingAddressId ?? 0) != 0 ? (int)customer.BillingAddressId : customer.ShippingAddressId ?? 0,true,false, customer);
+            var billTo = await GetTransactionRequestAddressAsync((customer?.BillingAddressId ?? 0) != 0 ? (int)customer.BillingAddressId : customer.ShippingAddressId ?? 0, true, false, customer);
 
             var transactionRequest = new transactionRequestType
             {
@@ -502,11 +502,11 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
             };
             if (customer?.ShippingAddressId != null)
             {
-       
 
-                var shipTo = await GetTransactionRequestAddressAsync(customer.ShippingAddressId.Value,false,true, customer);
 
-       
+                var shipTo = await GetTransactionRequestAddressAsync(customer.ShippingAddressId.Value, false, true, customer);
+
+
                 transactionRequest.shipTo = shipTo;
             }
 
@@ -594,16 +594,16 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
                     paymentRequest = new ProcessPaymentRequest();
                 }
                 await this._orderProcessingService.SetProcessPaymentRequestAsync(paymentRequest, customer);
-               
+
 
 
                 var billToAddress = formatBillingAddress(
-                    await GetTransactionRequestAddressForTokenAsync((customer?.BillingAddressId ?? 0) != 0 ? (int)customer.BillingAddressId : customer.ShippingAddressId ?? 0,true,false, customer));
+                    await GetTransactionRequestAddressForTokenAsync((customer?.BillingAddressId ?? 0) != 0 ? (int)customer.BillingAddressId : customer.ShippingAddressId ?? 0, true, false, customer));
 
                 object shipToAddress = null;
                 if (customer?.ShippingAddressId != null)
                 {
-                    shipToAddress = formatShippingAddress(await GetTransactionRequestAddressForTokenAsync(customer.ShippingAddressId.Value, false, true,customer));
+                    shipToAddress = formatShippingAddress(await GetTransactionRequestAddressForTokenAsync(customer.ShippingAddressId.Value, false, true, customer));
                 }
 
                 // 1. Build an anonymous structure mapping strictly to the Authorize.Net REST endpoint.
@@ -786,7 +786,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
 
         //        var shipTo = await GetTransactionRequestAddressAsync(customer.ShippingAddressId.Value, customer);
 
-  
+
         //        transactionRequest.shipTo = shipTo;
         //    }
 
@@ -945,12 +945,12 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
                 firstName = CommonHelper.EnsureMaximumLength(address.FirstName, 50),
                 lastName = CommonHelper.EnsureMaximumLength(address.LastName, 50),
 
-        
+
 
                 email = CommonHelper.EnsureMaximumLength(
-                    string.IsNullOrEmpty(address.Email) ? await _customerService.GetCustomerEmailAsync(customer, isBillingEmail,isShippingEmail) : address.Email, 50),
+                    string.IsNullOrEmpty(address.Email) ? await _customerService.GetCustomerEmailAsync(customer, isBillingEmail, isShippingEmail) : address.Email, 50),
                 phoneNumber = CommonHelper.EnsureMaximumLength(address.PhoneNumber, 15),
-      
+
 
                 address = CommonHelper.EnsureMaximumLength(address.Address1, 60),
                 city = CommonHelper.EnsureMaximumLength(address.City, 40),
@@ -970,7 +970,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
         }
 
 
-        protected virtual async Task<object> GetTransactionRequestAddressForTokenAsync(int addressId, bool isBillingEmail = false,bool isShippingEmail = false, Customer customer)
+        protected virtual async Task<object> GetTransactionRequestAddressForTokenAsync(int addressId, bool isBillingEmail, bool isShippingEmail, Customer customer)
         {
             var address = await _addressService.GetAddressByIdAsync(addressId);
 

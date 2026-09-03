@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MWT.Nop.Core.Infrastructure;
+using MWT.Nop.Core.Services.Customers;
 using MWT.Nop.Core.Services.MailChimp;
 using Nop.Core;
 using Nop.Core.Domain.Customers;
@@ -22,15 +24,16 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
         #region Fields
         private readonly IWorkContext _workContext;
         private readonly IMailchimpService _mailchimpService;
-
+        private readonly ICustomerExtendedService _customerExtendedService;
         #endregion
 
         #region Ctor
 
-        public CommonController(IWorkContext workContext, IMailchimpService mailchimpService)
+        public CommonController(IWorkContext workContext, IMailchimpService mailchimpService, ICustomerExtendedService customerExtendedService)
         {
             _workContext = workContext;
             _mailchimpService = mailchimpService;
+            _customerExtendedService = customerExtendedService;
         }
 
         #endregion
@@ -62,28 +65,23 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> MailchimpEvents(string email, string fromwhere)
         {
-    
-
-            string name = "";
+            string name = string.Empty;
             var customer = await _workContext.GetCurrentCustomerAsync();
             if (string.IsNullOrEmpty(email) && customer != null)
-            {
-                if (!string.IsNullOrEmpty(customer.Email))
-                    email = customer.Email;
-                else
-                    email = customer.Email;
-            }
+                email = await this._customerExtendedService.GetCustomerEmailAsync(customer);
+
+
             if (!string.IsNullOrEmpty(email))
             {
-                string firstName = customer.FirstName;
-                string lastName = customer.LastName;
-                name = (firstName ?? "" + " " + lastName ?? "").Trim();
+                name = await this._customerExtendedService.GetExtendedCustomerFullNameAsync(customer);
+                string firstName = CustomCommonHelper.GetCustomerFirstName(name);
+                string lastName = CustomCommonHelper.GetCustomerLastName(name);
                 var _httpContextAccessor = EngineContext.Current.Resolve<IHttpContextAccessor>();
                 string url = _httpContextAccessor.HttpContext?.Request.Headers["Referer"];
                 string absoluteUrl = _httpContextAccessor.HttpContext?.Request.Headers["Referer"];
                 string userAgent = _httpContextAccessor.HttpContext?.Request.Headers["User-Agent"];
                 if (string.IsNullOrEmpty(name))
-                    name = customer.Username;
+                    name = email;
                 await _mailchimpService.CustomerSignup(email, name ?? "", new System.Collections.Generic.List<string>()
                 {
                    fromwhere

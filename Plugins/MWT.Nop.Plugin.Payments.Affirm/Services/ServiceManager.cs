@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
+﻿using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Net.Http.Headers;
 using MWT.Nop.Core.Services.Customers;
 using MWT.Nop.Core.Services.Orders;
 using MWT.Nop.Plugin.Payments.Affirm.Data.Domain;
@@ -25,13 +16,11 @@ using Nop.Data;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Configuration;
-using Nop.Services.Customers;
 using Nop.Services.Directory;
 using Nop.Services.Logging;
 using Nop.Services.Orders;
 using Nop.Services.Stores;
 using Nop.Services.Tax;
-using Nop.Web.Framework.Infrastructure;
 
 
 namespace MWT.Nop.Plugin.Payments.Affirm.Services
@@ -153,7 +142,8 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Services
 
             string shippingFirstName = shippingAddress?.FirstName ?? customer.FirstName ?? string.Empty;
             string shippingLastName = shippingAddress?.LastName ?? customer.LastName ?? string.Empty;
-            shippingLastName = string.IsNullOrEmpty(shippingLastName) ? shippingFirstName : shippingLastName; string shippingAddress1 = shippingAddress.Address1 ?? string.Empty;
+            shippingLastName = string.IsNullOrEmpty(shippingLastName) ? shippingFirstName : shippingLastName; 
+            string shippingAddress1 = shippingAddress.Address1 ?? string.Empty;
             string shippingAddress2 = shippingAddress.Address2 ?? string.Empty;
             string shippingCity = shippingAddress?.City ?? string.Empty;
             string shippingState = shipStateProvince?.Abbreviation;
@@ -163,8 +153,8 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Services
             string shippingPhonenumber = shippingAddress?.PhoneNumber ?? await _customerService.GetCustomerPhoneAsync(customer,false,true) ?? string.Empty;
 
 
-            string billingFirstName = billingAddress?.FirstName ?? customer.FirstName ?? string.Empty;
-            string billingLastName = billingAddress?.LastName ?? customer.LastName ?? string.Empty;
+            string billingFirstName = billingAddress.FirstName ?? customer.FirstName ?? shippingAddress.FirstName ?? string.Empty;
+            string billingLastName = billingAddress.LastName ?? customer.LastName ?? shippingAddress.LastName ?? string.Empty;
             billingLastName = string.IsNullOrEmpty(billingLastName) ? billingFirstName : billingLastName; string billingAddress1 = billingAddress.Address1 ?? shippingAddress.Address1 ?? string.Empty;
             string billingAddress2 = billingAddress.Address2 ?? shippingAddress.Address2 ?? string.Empty;
             string billingCity = billingAddress?.City ?? shippingAddress?.City ?? string.Empty;
