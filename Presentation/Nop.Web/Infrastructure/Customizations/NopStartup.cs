@@ -10,6 +10,7 @@ using MWT.Nop.Core.Services.AbandonedCarts;
 using MWT.Nop.Core.Services.BundleProduct;
 using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.CategoryCollection;
+using MWT.Nop.Core.Services.CloudFlare;
 using MWT.Nop.Core.Services.Configuration;
 using MWT.Nop.Core.Services.Custom;
 using MWT.Nop.Core.Services.Customers;
@@ -109,6 +110,7 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<IImportExtendedManager, ImportExtendedManager>();
             services.AddScoped<ICustomerExtendedService, CustomerExtendedService>();
             services.AddScoped<IPermissionExtendedService, PermissionExtendedService>();
+            services.AddScoped<ICloudflareService, CloudflareService>();
 
             #region Tag
             services.AddScoped<ITagSlugService, TagSlugService>();

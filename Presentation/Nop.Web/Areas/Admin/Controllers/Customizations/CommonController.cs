@@ -1,15 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using MWT.Nop.Core.Domain.Catalog;
+using MWT.Nop.Core.Domain.Media;
+using MWT.Nop.Core.Service.Catalog;
+using MWT.Nop.Core.Services.Media;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Infrastructure;
-using Nop.Services.Catalog;
-using Nop.Services.Media;
 using Nop.Services.Security;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+using Nop.Web.Framework.Mvc.Filters;
 
 
 namespace Nop.Web.Areas.Admin.Controllers
@@ -17,12 +14,11 @@ namespace Nop.Web.Areas.Admin.Controllers
     public partial class CommonController : BaseAdminController
     {
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> BulkUploadImages(int productId, string producyType, IFormCollection images)
-        {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
-                return AccessDeniedView();
-            var _pictureService = EngineContext.Current.Resolve<IPictureService>();
-            var _productService = EngineContext.Current.Resolve<IProductService>();
+        { 
+            var _pictureService = EngineContext.Current.Resolve<IPictureExtendedService>();
+            var _productService = EngineContext.Current.Resolve<IProductExtendedService>();
             switch (producyType)
             {
                 case "Product":
@@ -57,7 +53,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 
 
                                 #region Log Picture
-                                var pictureLog = new Core.Domain.Media.LogPicture()
+                                var pictureLog = new LogPicture()
                                 {
                                     AltAttribute = picture.AltAttribute,
                                     IsNew = picture.IsNew,

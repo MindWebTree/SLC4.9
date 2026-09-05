@@ -141,7 +141,7 @@
                 </div>
                 <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_MEDIA)) ? "card-hide" : "")">
                   @*   <nop-card asp-name="product-multimedia" asp-icon="fas fa-photo-film" asp-title="@T("Admin.Catalog.Products.Multimedia")" asp-hide-block-attribute-name="@hideMultimediaBlockAttributeName" asp-hide="@hideMultimediaBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Multimedia", Model)</nop-card> *@
-                    <nop-card asp-name="product-multimedia" asp-icon="fas fa-photo-film" asp-title="@T("Admin.Catalog.Products.Multimedia")" asp-hide-block-attribute-name="@hideMultimediaBlockAttributeName" asp-hide="@hideMultimediaBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Pictures.cshtml", Model)</nop-card>
+                    <nop-card asp-name="product-multimedia" asp-icon="fas fa-photo-film" asp-title="@T("Admin.Catalog.Products.Multimedia")" asp-hide-block-attribute-name="@hideMultimediaBlockAttributeName" asp-hide="@hideMultimediaBlock" asp-advanced="false">@await Html.PartialAsync("_Grid.Pictures.cshtml", Model)</nop-card>
                 </div>
                 <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_DIMENSION_PICTURES)) ? "card-hide" : "")">
                     <nop-card asp-name="product-pictures" asp-icon="far fa-images"

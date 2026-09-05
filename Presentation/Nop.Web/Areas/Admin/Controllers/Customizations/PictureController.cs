@@ -1,17 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+using Nop.Core.Infrastructure;
+using Nop.Services.Media;
 
 namespace Nop.Web.Areas.Admin.Controllers
 {
     public partial class PictureController : BaseAdminController
-    {
+    { 
         #region Methods
 
         [HttpPost]
@@ -51,8 +45,9 @@ namespace Nop.Web.Areas.Admin.Controllers
             }
             else
             {
-
-                var pictureupdated = await _pictureService.UpdatePictureAsync(pictureId, httpPostedFile, qqFileName);
+                var _downloadService = EngineContext.Current.Resolve<IDownloadService>();
+                var pictureBinary = await _downloadService.GetDownloadBitsAsync(httpPostedFile);
+                var pictureupdated = await _pictureService.UpdatePictureAsync(pictureId, pictureBinary, qqFileName,null);
                 return Json(new
                 {
                     success = true,
