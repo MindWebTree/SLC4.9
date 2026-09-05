@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MWT.Nop.Core.Domain.Catalog
 {
-    public partial class ExportProductAttributeCombinationFormat
+    public partial class ExportAttrCombination
     {
         public int ProductId { get; set; }
         public string AttributeXml { get; set; }

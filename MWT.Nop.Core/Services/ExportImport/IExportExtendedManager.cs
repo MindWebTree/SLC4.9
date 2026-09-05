@@ -9,7 +9,7 @@ namespace MWT.Nop.Core.Services.ExportImport
         Task<byte[]> ExportCategoryProductsToXlsxAsync(IList<ProductCategory> products);
         Task<byte[]> ExportSpecificationAttributeOptionProductsToXlsxAsync(IList<ExportProductSpecificationAttributeFormat> products);
         Task ExportProductsToCsvAsync(List<object> records, string folder, string fileName);
-        Task<byte[]> ExportProductAttributeCombinationToXlsxAsync(IList<ExportProductAttributeCombinationFormat> attributeCombinations);
+        Task<byte[]> ExportProductAttributeCombinationToXlsxAsync(IList<ExportAttrCombination> attributeCombinations);
 
     }
 

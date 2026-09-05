@@ -177,8 +177,7 @@
                 <div class="@(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_ATTRIBUTES)) ? "card-hide" : "")">
                <nop-card asp-name="product-related-products" asp-icon="fas fa-object-group" asp-title="@T("Admin.Catalog.Products.RelatedProducts")" asp-hide-block-attribute-name="@hideRelatedProductsBlockAttributeName" asp-hide="@hideRelatedProductsBlock" asp-advanced="@(!Model.ProductEditorSettingsModel.RelatedProducts)">@await Html.PartialAsync("_CreateOrUpdate.RelatedProducts", Model)</nop-card>
                </div> 
-               <nop-card asp-name="product-crosssells-products" asp-icon="fas fa-shuffle" asp-title="@T("Admin.Catalog.Products.CrossSells")" asp-hide-block-attribute-name="@hideCrossSellsProductsBlockAttributeName" asp-hide="@hideCrossSellsProductsBlock" asp-advanced="@(!Model.ProductEditorSettingsModel.CrossSellsProducts)">@await Html.PartialAsync("_CreateOrUpdate.CrossSellsProducts", Model)</nop-card>
-                @if (filterLevelEnabled)
+                 @if (filterLevelEnabled)
                 {
                     <nop-card asp-name="product-filter-level-values-products" asp-icon="fas fa-folder-tree" asp-title="@T("Admin.Catalog.Products.FilterLevelValues")" asp-hide-block-attribute-name="@hideFilterLevelValuesProductsBlockAttributeName" asp-hide="@hideFilterLevelValuesProductsBlock" asp-advanced="@(!Model.ProductEditorSettingsModel.FilterLevelValuesProducts)">@await Html.PartialAsync("_CreateOrUpdate.FilterLevelValuesProducts", Model)</nop-card>
                 } 

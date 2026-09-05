@@ -36,11 +36,21 @@ namespace Nop.Plugin.ExternalAuth.Google.Infrastructure
                     //in case of error, redirect the user to the specified URL
                     OnRemoteFailure = async context =>
                     {
+                            
                         context.HandleResponse();
+                        string errorUrl = "/";
+                        try
+                        {
+                            errorUrl = context.Properties.GetString(GoogleAuthenticationDefaults.ErrorCallback);
 
-                        var errorUrl = context.Properties.GetString(GoogleAuthenticationDefaults.ErrorCallback);
+                        }
+                        catch (Exception)
+                        {
 
-              
+                            
+                        }
+
+
 
                         var html = $@"
 <html>
@@ -56,8 +66,8 @@ namespace Nop.Plugin.ExternalAuth.Google.Infrastructure
 </html>";
 
                         context.Response.ContentType = "text/html";
-                     await context.Response.WriteAsync(html);
-                     
+                        await context.Response.WriteAsync(html);
+
                     }
                 };
             });

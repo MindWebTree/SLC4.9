@@ -73,7 +73,7 @@
     },
     {
       "SystemName": "NopAdvance.DiscountRules.CartSubTotal",
-      "Version": "1.05"
+      "Version": "1.2"
     },
     {
       "SystemName": "DiscountRequirement.MustBeAssignedToCustomerRole",
@@ -124,10 +124,6 @@
       "Version": "4.4"
     },
     {
-      "SystemName": "MWT.Plugin.Misc.MwtStorefront",
-      "Version": "1.0"
-    },
-    {
       "SystemName": "MWT.Shipping.FixedByWeightByTotal",
       "Version": "2.28"
     },
@@ -136,16 +132,11 @@
       "Version": "1.00"
     },
     {
-      "SystemName": "NopAdvance.Core",
-      "Version": "1.18"
+      "SystemName": "MWT.Plugin.Misc.MwtStorefront",
+      "Version": "1.0"
     }
   ],
   "PluginNamesToUninstall": [],
   "PluginNamesToDelete": [],
-  "PluginNamesToInstall": [
-    {
-      "Item1": "NopAdvance.Plugin.PermanentRedirect",
-      "Item2": "8d071561-3c02-4e75-9306-12edee011699"
-    }
-  ]
+  "PluginNamesToInstall": []
 }

@@ -522,7 +522,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
 
         }
 
-        [HttpPost]
+        [HttpPost] 
         public virtual async Task<IActionResult> ClearRecentSearch()
         {
             var _searchLogService = EngineContext.Current.Resolve<ISearchLogService>();

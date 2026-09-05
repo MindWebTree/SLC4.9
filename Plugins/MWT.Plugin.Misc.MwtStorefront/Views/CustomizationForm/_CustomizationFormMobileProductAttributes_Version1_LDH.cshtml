@@ -11,7 +11,7 @@
     Model.ProductAttributes = Model.ProductAttributes.Where(pa => pa.Name == T("Product.Attr.Size").Text || pa.Name == T("Product.Attr.Shades").Text).ToList();
     if (!Model.ProductAttributes.Where(p => p.Name == T("Product.Attr.Shades").Text).Any())
     {
-        Model.ProductAttributesProductAttributes.Add(new CustomProductDetailsModel.ProductAttributeModel()
+        Model.ProductAttributes.Add(new CustomProductDetailsModel.ProductAttributeModel()
         {
             Id = 1000,
             Name = T("Product.Attr.Shades").Text,

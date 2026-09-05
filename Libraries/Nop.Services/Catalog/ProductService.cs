@@ -2179,7 +2179,7 @@ public partial class ProductService : IProductService
             select pp;
 
         var productPictures = await query.ToListAsync();
-
+            
         return productPictures;
     }
 

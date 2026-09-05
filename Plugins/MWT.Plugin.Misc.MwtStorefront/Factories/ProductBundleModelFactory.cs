@@ -1,12 +1,11 @@
 ﻿
 using LinqToDB;
 using MWT.Nop.Core.Data.Discounts;
+using MWT.Nop.Core.Domain.ProductBundle;
 using MWT.Nop.Core.Infrastructure;
 using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Core.Services.BundleProduct;
-using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.Orders;
-using MWT.Nop.Plugin.Misc.ProductBundle.Domain;
 using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Models;
 using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Models.Variant;
 using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Variant;

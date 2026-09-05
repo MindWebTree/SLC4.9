@@ -6,7 +6,7 @@
     //page title
     ViewBag.PageTitle = T("Admin.Catalog.Products.ProductAttributes.Attributes.Values.AddNew").Text;
 }
-<form asp-controller="Product" asp-action="ProductAttributeValueCreatePopup"
+<form asp-controller="Product" asp-action="CustomProductAttributeValueCreatePopup"
       asp-route-productAttributeMappingId="@Context.Request.Query["productAttributeMappingId"]"
       asp-route-btnId="@Context.Request.Query["btnId"]"
       asp-route-formId="@Context.Request.Query["formId"]">

@@ -21,10 +21,7 @@ namespace Nop.Web.Areas.Admin.Models.Catalog
 
         public bool Published { get; set; }
        
-        public string QueryParameter { get; set; }
-        public IList<int> GalleryPictures { get; set; }
-
-        public bool DisplayGallerySection{ get; set; }
+        public string QueryParameter { get; set; } 
 
         public int FeaturedPictureId { get; set; }   
     }

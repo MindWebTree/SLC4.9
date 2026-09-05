@@ -1,8 +1,8 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
+using MWT.Nop.Core.Domain.ProductBundle;
 using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Core.Services.BundleProduct;
-using MWT.Nop.Plugin.Misc.ProductBundle.Domain;
 using MWT.Plugin.Misc.MwtStorefront.Area.Admin.BundleLogs;
 using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Models;
 using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Models.BundleLogs;
@@ -124,7 +124,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
         { 
 
             if (!ModelState.IsValid)
-                return View("BundleEdit.cshtml", model);
+                return View("BundleEdit", model);
 
             var bundle = await _bundleService.GetBundleByIdAsync(model.Id);
 
@@ -196,7 +196,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
                 }
             }
 
-            return PartialView("_NestedVariants.cshtml", model);
+            return PartialView("_NestedVariants", model);
         }
         #region Bundle Items List, Delete, Edit 
 
@@ -351,7 +351,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
             searchModel.VariantIds = variantIds;
             searchModel.CopyVariantId = copyvariantId;
             searchModel.SetPopupGridPageSize();
-            return View("BundleProductAddPopup.cshtml", searchModel);
+            return View("BundleProductAddPopup", searchModel);
         }
 
         [HttpPost]
@@ -446,7 +446,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
             ViewBag.btnId = model.btnId;
 
             var searchModel = new BundleItemProductSearchModel { BundleId = model.BundleId };
-            return View("BundleProductAddPopup.cshtml", searchModel);
+            return View("BundleProductAddPopup", searchModel);
         }
 
         [HttpPost] 
@@ -526,7 +526,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
                 DiscountPercentage = _productBundleSettings.DiscountPercentage
             };
 
-            return View("Configure.cshtml", model);
+            return View("Configure", model);
         }
         [HttpPost]
         [CheckPermission(StandardPermission.Configuration.MANAGE_PLUGINS)]
@@ -627,7 +627,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
 
             model.BundleItemSearchModel.BundleId = model.Id;
             model.BundleItemSearchModel.SetGridPageSize();
-            return View("Default.cshtml", model);
+            return View("Default", model);
         }
         //#endregion
 
@@ -694,7 +694,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
 
             model.SetGridPageSize();
 
-            return View("LogList.cshtml", model);
+            return View("LogList", model);
         }
 
         [HttpPost]

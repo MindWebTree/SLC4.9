@@ -44,7 +44,7 @@
     }
     else
     {
-        <div class="position-relative filterDesktopIcon @(displayFilters?"show":"")  @(hidefilter?"hide":"")">
+        <div tabindex="0" role="button" aria-label="Filters for @Model.CategoryName" class="position-relative filterDesktopIcon @(displayFilters ? "show" : "")  @(hidefilter ? "hide" : "")">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0 4.5H16H0Z" fill="black"></path>
                 <path d="M0 4.5H16" stroke="#222222"></path>
@@ -74,7 +74,7 @@
     <div class="sort-by  d-sm-block ">
         @if (!_workContext.IsMobileDevice())
         {
-            <div id="noofprdDisplay">
+            <div tabindex="0" id="noofprdDisplay">
                 @Html.Raw(string.Format(T("Label.Showing").Text, (Model.PageIndex + 1) * Model.PageSize > Model.TotalItems ? Model.TotalItems : (Model.PageIndex + 1) * Model.PageSize, Model.TotalItems))
             </div>
         }

@@ -1,11 +1,6 @@
 ﻿using Nop.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MWT.Nop.Plugin.Misc.ProductBundle.Domain
+namespace MWT.Nop.Core.Domain.ProductBundle
 {
     public class VariantPriceBackup: BaseEntity
     { 

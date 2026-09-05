@@ -133,6 +133,10 @@
                                                     OnClickFunctionName = "selectAssociatedProduct"
                                                 }
                                             },
+                                                                new ColumnProperty(nameof(ProductModel.Id))
+                                                                {
+                                                                Title = T("Admin.Catalog.Products.Fields.Id").Text
+                                                                },
                                             new ColumnProperty(nameof(ProductModel.Name))
                                             {
                                                 Title = T("Admin.Catalog.Products.Fields.Name").Text

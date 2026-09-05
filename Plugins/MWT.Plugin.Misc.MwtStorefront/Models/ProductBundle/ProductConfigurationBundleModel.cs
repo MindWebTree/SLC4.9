@@ -1,9 +1,6 @@
-﻿
-using MWT.Nop.Plugin.Misc.ProductBundle.Domain;
+﻿using MWT.Nop.Core.Domain.ProductBundle;
 using MWT.Plugin.Misc.MwtStorefront.Models.Catalog;
 using Nop.Web.Framework.Models;
-using Nop.Web.Models.Catalog;
-using System.Collections.Generic;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Models.ProductBundle
 {

@@ -66,6 +66,6 @@ namespace MWT.Nop.Plugin.Widgets.Catalog.Infrastructure
         /// <summary>
         /// Order of this dependency registrar implementation
         /// </summary>
-        public int Order => 1;
+        public int Order => int.MaxValue;
     }
 }

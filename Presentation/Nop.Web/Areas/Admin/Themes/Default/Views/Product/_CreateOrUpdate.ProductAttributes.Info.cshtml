@@ -7,7 +7,7 @@
             @await Html.PartialAsync("Table", new DataTablesModel
             {
                 Name = "productattributemappings-grid",
-                UrlRead = new DataUrl("ProductAttributeMappingList", "Product", new RouteValueDictionary { [nameof(Model.ProductAttributeMappingSearchModel.ProductId)] = Model.ProductAttributeMappingSearchModel.ProductId }),
+                        UrlRead = new DataUrl("CustomProductAttributeMappingList", "Product", new RouteValueDictionary { [nameof(Model.ProductAttributeMappingSearchModel.ProductId)] = Model.ProductAttributeMappingSearchModel.ProductId }),
                 Length = Model.ProductPictureSearchModel.PageSize,
                 LengthMenu = Model.ProductPictureSearchModel.AvailablePageSizes,
                 ColumnCollection = new List<ColumnProperty>
@@ -54,19 +54,33 @@
                         ClassName = NopColumnClassDefaults.CenterAll,
                         Encode = false
                     },
+                        new ColumnProperty(nameof(ProductAttributeMappingModel.Published))
+                        {
+                        Title = T("Admin.Catalog.Products.ProductAttributes.Attributes.Published").Text,
+                        Width = "150",
+                        ClassName = NopColumnClassDefaults.CenterAll,
+                        Render = new RenderBoolean()
+                        },
                     new ColumnProperty(nameof(ProductAttributeMappingModel.Id))
                     {
                         Title = T("Admin.Common.Edit").Text,
                         Width = "100",
                         ClassName =  NopColumnClassDefaults.Button,
-                        Render = new RenderButtonEdit(new DataUrl("~/Admin/Product/ProductAttributeMappingEdit/"))
-                    }
+                        Render = new RenderButtonEdit(new DataUrl("~/Admin/Product/CustomProductAttributeMappingEdit/"))
+                    },
+                        new ColumnProperty(nameof(RelatedSearchModel.Id))
+                        {
+                        Title = T("Admin.Common.Edit").Text,
+                        Width = "200",
+                        ClassName =  NopColumnClassDefaults.Button,
+                        Render = new RenderCustom("renderColumn_publish_status")
+                        }
                 }
             })
         </div>
 
         <div class="card-footer">
-            <a asp-action="ProductAttributeMappingCreate" asp-route-productId="@Model.Id" class="btn btn-primary">
+            <a asp-action="CustomProductAttributeMappingCreate" asp-route-productId="@Model.Id" class="btn btn-primary">
                 <i class="fas fa-square-plus"></i>
                 @T("Admin.Catalog.Products.ProductAttributes.Attributes.AddNew")
             </a>
@@ -74,3 +88,31 @@
     </div>
 </div>
 @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.ProductDetailsProductAttributesInfoBottom, additionalData = Model })
+<script>
+    var publishText ='@T("Admin.Common.Publish")';
+    var unPublishText='@T("Admin.Common.UnPublish")';
+    function renderColumn_publish_status(data, type, row, meta) {
+        return '<button type="button" class="btn btn-default" onclick="process(@Model.Id, ' + data + ', \'' + row.Published + '\')">'+ (row.Published ? unPublishText : publishText) + '</button>';
+
+    }
+    function process(productId, mappingId, isPublished) {
+         var postData = {
+             productId: productId,
+             mappingId: mappingId,
+             isPublished: isPublished=="true"?"false":"True",
+                                    };
+                                    addAntiForgeryToken(postData);
+                                    $.ajax({
+                                        cache: false,
+                                        type: "POST",
+                                        url: "@(Url.Action("ProductAttributeMappingPublishStatus", "Product"))",
+                                        data: postData,
+                                        error: function (jqXHR, textStatus, errorThrown) {
+
+                                        },
+                                        complete: function (jqXHR, textStatus) {
+                                            updateTable('#productattributemappings-grid');
+                                        }
+                                    });
+    }
+</script>

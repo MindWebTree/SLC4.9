@@ -1,4 +1,4 @@
-﻿@model CustomProductOverviewModel
+﻿@* @model CustomProductOverviewModel
 @using Nop.Services.Catalog
 @using Nop.Core.Domain.Catalog
 @using System.Text
@@ -16,24 +16,24 @@
 {
     <div class="bundle-attributes-wrapper" id="attr-container-@uniqueId">
         <table>
-            @foreach (var attribute in Model.ProductAttributes)
+            @foreach (var _attribute in Model.ProductAttributes)
             {
-                var controlId = $"{refFormId}{NopCatalogDefaults.ProductAttributePrefix}{attribute.Id}";
+                var controlId = $"{refFormId}{NopCatalogDefaults.ProductAttributePrefix}{_attribute.Id}";
                 <tr>
                     <td class="bundle-control-label accordion-header">
-                        <label>@attribute.Name :</label>
+                        <label>@_attribute.Name :</label>
                     </td>
                     <td class="bundle-value-column">
-                        @switch (attribute.AttributeControlType)
+                        @switch (_attribute.AttributeControlType)
                         {
                             case AttributeControlType.ColorSquares:
                             case AttributeControlType.ImageSquares:
-                                <ul class="option-list bundle-squares" id="squares-@attribute.Id">
-                                    @foreach (var val in attribute.Values)
+                                <ul class="option-list bundle-squares" id="squares-@_attribute.Id">
+                                    @foreach (var val in _attribute.Values)
                                     {
                                         <li data-attr-value="@val.Id" class="@(val.IsPreSelected ? "selected-value" : "")">
                                             <label class="bundle-swatch">
-                                                @if (attribute.AttributeControlType == AttributeControlType.ImageSquares)
+                                                @if (_attribute.AttributeControlType == AttributeControlType.ImageSquares)
                                                 {
                                                     <span class="attribute-square" style="background: url('@val.ImageSquaresPictureModel.FullSizeImageUrl') 50% 50% no-repeat; background-size:cover;">&nbsp;</span>
                                                 }
@@ -50,7 +50,7 @@
                             case AttributeControlType.DropdownList:
                                 <select name="@controlId" class="form-control" onchange="@(handlerName)(this)">
                                     <option value="0">Select...</option>
-                                    @foreach (var val in attribute.Values)
+                                    @foreach (var val in _attribute.Values)
                                     {
                                         <option value="@val.Id" selected="@val.IsPreSelected">@val.Name</option>
                                     }
@@ -95,4 +95,4 @@
             });
         }
     </script>
-}
+} *@

@@ -41,7 +41,7 @@
                         {
                             <div class="quantity-container">
                                 <label for="itemquantity@(Model.Id)" class="quantity-label">
-                                    Quantity
+                                    Qty
                                 </label>
                                 <span class="quantity-background"></span>
                                 <div class="quantity-box">
@@ -63,7 +63,7 @@
                             var quantityOptions = Enumerable.Range(1, 10).Select(i => new SelectListItem { Value = i.ToString(), Text = i.ToString(), Selected = (i == Model.Quantity) }).ToList();
                             <div class="quantity-container">
                                 <label for="itemquantity@(Model.Id)" class="quantity-label">
-                                    Quantity
+                                    Qty
                                 </label>
                                 <span class="quantity-background"></span>
                                 <div class="quantity-box">

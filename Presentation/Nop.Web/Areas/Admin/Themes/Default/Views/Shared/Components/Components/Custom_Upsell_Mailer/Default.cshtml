@@ -1,4 +1,4 @@
-﻿@* @using Nop.Web.Models.Catalog
+﻿@using Nop.Web.Models.Catalog
 @model IList<ProductOverviewModel>
 @if (Model.Count > 0)
 {
@@ -9,9 +9,9 @@
                 <tr>
                     <td align="center" style="padding: 10px;">
                         <a style="color: black;text-decoration: none;width:100%;float:left; margin-bottom: 10px;
-                                        padding:10px;"
-                           href="https://www.sierralivingconcepts.com@(Url.RouteUrl("Product", new {id=item.Id, SeName = item.SeName }))?utm_source=Mailer&amp;utm_medium=Email&amp;utm_campaign=backinstock">
-                            <img src="@item.DefaultPictureModel.ImageUrl" width="100%" style="border: 0;" />
+                                                        padding:10px;"
+                           href="https://www.sierralivingconcepts.com@(Url.RouteUrl("Product", new { id = item.Id, SeName = item.SeName }))?utm_source=Mailer&amp;utm_medium=Email&amp;utm_campaign=backinstock">
+                            <img src="@item.PictureModels.FirstOrDefault()?.ImageUrl" width="100%" style="border: 0;" />
                         </a>
                         <br />
                         <div style="margin-top:10px;margin-left:10px;">
@@ -21,55 +21,17 @@
                         </div>
                         <br />
                         <div style="margin-top:5px;margin-left:10px;">
-                        @if (item.ProductPrice.IsVariantProduct)
-                        {
-                            @if (!string.IsNullOrEmpty(item.ProductPrice.MinMembershipPrice))
-                            {
-                                    <h4 style="font-family:Arial, Helvetica, sans-serif;color: #626362;padding: 0px 0px 0 0;display: inline-block;font-size: 13px; font-weight:bold;">
-                                    @T("Label.RegularPrice")
-                                    @T("Price.Range",
-                    !string.IsNullOrEmpty(item.ProductPrice.MinOldPrice) ? item.ProductPrice.MinOldPrice : item.ProductPrice.MinPrice,
-                    !string.IsNullOrEmpty(item.ProductPrice.MaxOldPrice) ? item.ProductPrice.MaxOldPrice : item.ProductPrice.MaxPrice)
-                                </h4>
-                                    <h5 style="font-family:Arial, Helvetica, sans-serif;color: #626362;padding: 0px 0px 0 0;display: inline-block;font-size: 13px; font-weight:bold;">
-                                    @T("Label.MembershipPrice")
-                                    @T("Price.Range",item.ProductPrice.MinMembershipPrice,item.ProductPrice.MaxMembershipPrice)
-                                </h5>
-                            }
-                            else
-                            {
-                                @if (!string.IsNullOrEmpty(item.ProductPrice.MinMsrp))
-                                {
-                                        <h4 style="font-family:Arial, Helvetica, sans-serif;color: #626362;padding: 0px 0px 0 0;display: inline-block;font-size: 13px; font-weight:bold;">@T("Label.ListPrice") @T("Price.Range",item.ProductPrice.MinMsrp,item.ProductPrice.MaxMsrp)</h4>
-                                }
-                                    <h5 style="font-family:Arial, Helvetica, sans-serif;color: #626362;padding: 0px 0px 0 0;display: inline-block;font-size: 13px; font-weight:bold;">
-                                    @T("Label.RegularPrice")   @T("Price.Range",
-                    !string.IsNullOrEmpty(item.ProductPrice.MinOldPrice) ? item.ProductPrice.MinOldPrice : item.ProductPrice.MinPrice,
-                    !string.IsNullOrEmpty(item.ProductPrice.MaxOldPrice) ? item.ProductPrice.MaxOldPrice : item.ProductPrice.MaxPrice)
-                                </h5>
-                            }
-                        }
-                        else
-                        {
-                            @if (!string.IsNullOrEmpty(item.ProductPrice.MembershipPrice))
-                            {
-                                    <h4 style="font-family:Arial, Helvetica, sans-serif;color: #626362;padding: 0px 0px 0 0;display: inline-block;font-size: 13px; font-weight:bold;">@T("Label.RegularPrice")@(!string.IsNullOrEmpty(item.ProductPrice.OldPrice) ? item.ProductPrice.OldPrice : item.ProductPrice.Price)</h4>
-                                    <h5 style="font-family:Arial, Helvetica, sans-serif;color: #626362;padding: 0px 0px 0 0;display: inline-block;font-size: 13px; font-weight:bold;">@T("Label.MembershipPrice")@item.ProductPrice.MembershipPrice</h5>
-                            }
-                            else
-                            {
-                                @if (!string.IsNullOrEmpty(item.ProductPrice.Msrp))
-                                {
-                                        <h4 style="font-family:Arial, Helvetica, sans-serif;color: #626362;padding: 0px 0px 0 0;display: inline-block;font-size: 13px; font-weight:bold;">@T("Label.ListPrice")@item.ProductPrice.Msrp</h4>
-                                }
-                                    <h5 style="font-family:Arial, Helvetica, sans-serif;color: #626362;padding: 0px 0px 0 0;display: inline-block;font-size: 13px; font-weight:bold;">@T("Label.RegularPrice")@(!string.IsNullOrEmpty(item.ProductPrice.OldPrice) ? item.ProductPrice.OldPrice : item.ProductPrice.Price)</h5>
-                            }
-                            }
+
+                            <h4 style="font-family:Arial, Helvetica, sans-serif;color: #626362;padding: 0px 0px 0 0;display: inline-block;font-size: 13px; font-weight:bold;">
+                                @item.ProductPrice.Price
+                            </h4>
+
+
                         </div>
-                  
+
                         <br />
                         <div style="margin-top:10px;margin-left:10px;">
-                            <a href="https://www.sierralivingconcepts.com@(Url.RouteUrl("Product", new {id=item.Id, SeName = item.SeName }))?utm_source=Mailer&amp;utm_medium=Email&amp;utm_campaign=backinstock">
+                            <a href="https://www.sierralivingconcepts.com@(Url.RouteUrl("Product", new { id = item.Id, SeName = item.SeName }))?utm_source=Mailer&amp;utm_medium=Email&amp;utm_campaign=backinstock">
                                 <span style="background-color: #444444;color: #fff;padding: 7px 20px;display: inline-block;font-size: 13px;">SHOP NOW</span>
                             </a>
                         </div>
@@ -83,4 +45,3 @@
 
 }
 
- *@

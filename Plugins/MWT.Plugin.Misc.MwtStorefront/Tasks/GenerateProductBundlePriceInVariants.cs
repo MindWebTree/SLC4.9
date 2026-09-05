@@ -1,4 +1,4 @@
-﻿using MWT.Nop.Plugin.Misc.ProductBundle.Domain;
+﻿using MWT.Nop.Core.Domain.ProductBundle;
 using MWT.Plugin.Misc.MwtStorefront.Factories;
 using Nop.Core.Infrastructure;
 using Nop.Services.Catalog;
@@ -6,7 +6,7 @@ using Nop.Services.Configuration;
 using Nop.Services.Localization;
 using Nop.Services.ScheduleTasks;
 
-namespace NMWT.Plugin.Misc.MwtStorefront.Tasks
+namespace MWT.Plugin.Misc.MwtStorefront.Tasks
 {
     public class GenerateProductBundlePriceInVariants : IScheduleTask
     {

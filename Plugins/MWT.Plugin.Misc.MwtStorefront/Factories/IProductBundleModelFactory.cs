@@ -1,4 +1,4 @@
-﻿using MWT.Nop.Plugin.Misc.ProductBundle.Domain;
+﻿using MWT.Nop.Core.Domain.ProductBundle;
 using MWT.Plugin.Misc.MwtStorefront.Area.Admin.Models.Variant;
 using MWTNop.Core.Domain.Catalog;
 using Nop.Core;

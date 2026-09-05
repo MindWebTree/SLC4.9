@@ -1,3 +1,7 @@
-﻿@model ProductModel
+﻿@using MWT.Nop.Core.Infrastructure
+@model ProductModel
 
-@await Component.InvokeAsync("ProductAdminAttributeBundle", new { model = Model })
+@await Component.InvokeAsync( typeof(AdminWidgetViewComponent),
+    new { widgetZone = CustomPublicWidgetZones.ProductAdminConfigurationBundle, additionalData = Model }
+)
+ 

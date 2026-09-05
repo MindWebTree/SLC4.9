@@ -100,7 +100,17 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Controllers
                 string popname = model.Name;
                 int responsetemplateid = 0;
                 int templateid = 0;
-                var path = _fileProvider.GetAbsolutePath(@"\CampaignAssets/Template Css\TemplateDefaultStyle.txt");
+              //  var path = _fileProvider.GetAbsolutePath(@"Plugins/MWT.Plugin.Misc.MwtStorefront/Content/CampaignAssets/Template Css/TemplateDefaultStyle.txt");
+
+                var path = Path.Combine(
+    Directory.GetCurrentDirectory(),
+    "Plugins",
+    "MWT.Plugin.Misc.MwtStorefront",
+    "Content",
+    "CampaignAssets",
+    "Template Css",
+    "TemplateDefaultStyle.txt"
+);
                 string template_style = _fileProvider.ReadAllText(path, System.Text.Encoding.UTF8); // rading pre html
 
                 var template_data = model.TemplateDesign;
@@ -204,7 +214,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Controllers
                     path = _fileProvider.Combine(path, iconImage);
                     using var fileStream = new FileStream(path, FileMode.Create);
                     model.IconImage.CopyTo(fileStream);
-                    domain.IconImageSrc = "/campaignassets/Uploads/" + iconImage;
+                    domain.IconImageSrc = "/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/campaignassets/Uploads/" + iconImage;
                     domain.IconHtml = "";
                 }
                 else if (model.HaveIconImage && model.IconType == IconType.Html)
@@ -292,7 +302,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.Admin.Controllers
                     path = _fileProvider.Combine(path, iconImage);
                     using var fileStream = new FileStream(path, FileMode.Create);
                     model.IconImage.CopyTo(fileStream);
-                    targetDomain.IconImageSrc = "/campaignassets/Uploads/" + iconImage;
+                    targetDomain.IconImageSrc = "/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/campaignassets/Uploads/" + iconImage;
                     targetDomain.IconHtml = "";
                 }
                 else if (model.IconType == IconType.Html)

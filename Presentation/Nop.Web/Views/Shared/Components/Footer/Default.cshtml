@@ -3,86 +3,48 @@
 @using Nop.Core
 @using Nop.Core.Domain.Tax
 @using Nop.Core.Domain.Topics
-@using Nop.Services.Configuration
-@inject Nop.Services.Customers.ICustomerService _customerService;
-@inject IWorkContext _workContext
-@inject IStoreContext storeContext;
-@inject ISettingService settingService;
-@inject Nop.Services.Orders.IOrderService _orderService
-@{
-    var store = await storeContext.GetCurrentStoreAsync();
-    var storeEmail = await settingService.GetSettingByKeyAsync<string>("store.email");
-    var storeSupportEmail = await settingService.GetSettingByKeyAsync<string>("store.support.email");
 
-    bool isAuthenticated = false;
-    var customer = await _workContext.GetCurrentCustomerAsync();
-    isAuthenticated = await _customerService.IsRegisteredAsync(customer);
-    string trackUrl = $"https://customer.sierralivingconcepts.com/default.aspx?oid=&email=";
-    if (isAuthenticated)
-    {
-        // var order = await _orderService.GetRecentOrderOfCustomer((await _workContext.GetCurrentCustomerAsync())?.Id ?? 0);
-        // trackUrl = $"https://customer.sierralivingconcepts.com/default.aspx?oid={order?.Id ?? 0}&email={order?.CustomerEmail ?? ""}";
-    }
-}
+@inject IWorkContext workContext
 
-<footer id="footer">
-    <div class="footer-menu bg-primary">
-        <div class="container-fluid">
-            <div class="footer-upper">
-
-                <div class="row"> 
-                    <div class="col-lg-9">
-                        <div class="row">
-                            @await Component.InvokeAsync(typeof(FooterMenuViewComponent))
-                        </div>
-                    </div> 
-                    <div class="col-lg-3">
-                        @await Component.InvokeAsync(typeof(NewsLetterBoxViewComponent))
-                    </div>
-                </div>
-
+<footer class="footer">
+    <section class="footer-upper">
+        @await Component.InvokeAsync(typeof(FooterMenuViewComponent))
+        <div class="footer-block follow-us">
+            <div class="social">
+                <h2 class="title">
+                    @T("Footer.FollowUs")
+                </h2>
+                @await Component.InvokeAsync(typeof(SocialButtonsViewComponent))
             </div>
+            @await Component.InvokeAsync(typeof(NewsLetterBoxViewComponent))
         </div>
-    </div>
-    <script asp-location="Footer">
-                  $(document).ready(function () {
-                      $('.footer-block .title').on('click', function () {
-
-                              var parent = $(this).closest('.footer-block');
-
-                              // Toggle current smoothly (Independent behavior)
-                              parent.toggleClass('active');
-                              parent.find('.list').stop(true, true).slideToggle(0, function () {
-          if ($(this).is(':visible')) {
-            $(this).css('display', 'flex');
-          }
-        });
-
-                      });
-                  });
-    </script>
- 
-    <div class="address-footer">
-        <h4>@store.CompanyName</h4>
-        <p>@store.CompanyAddress</p>
-        <div class="fottertoolnumber">
-            <p>Toll Free : <a href="tel:@store.CompanyPhoneNumber">@store.CompanyPhoneNumber</a></p>
-            <p class="address-divider">|</p>
-            <p>Email : <a href="mailto:@storeEmail">@storeEmail</a></p>
+    </section>
+    <section class="footer-lower">
+        <div class="footer-info">
+            <span class="footer-disclaimer">@T("Content.CopyrightNotice", DateTime.Now.Year, Model.StoreName)</span>
+            @if (Model.DisplayTaxShippingInfoFooter)
+            {
+                var inclTax = await workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
+                <span class="footer-tax-shipping">
+                    @T(inclTax ? "Footer.TaxShipping.InclTax" : "Footer.TaxShipping.ExclTax", await NopUrl.RouteTopicUrlAsync("shippinginfo"))
+                </span>
+            }
         </div>
-    </div>
-
- 
-    <div class="footer-lower">
-        @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "Homepage.footer.lower" })
-    </div>
-
+        @if (!Model.HidePoweredByNopCommerce)
+        {
+            <div class="footer-powered-by">
+                @*Would you like to remove the "Powered by nopCommerce" link in the bottom of the footer?
+                    Please find more info at https://www.nopcommerce.com/nopcommerce-copyright-removal-key*@
+                Powered by <a href="@(OfficialSite.Main)" target="_blank" @(Model.IsHomePage ? string.Empty : "rel=nofollow")>nopCommerce</a>
+            </div>
+        }
+        @await Component.InvokeAsync(typeof(StoreThemeSelectorViewComponent))
+    </section>
     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.Footer, additionalData = Model })
 </footer>
 
- 
 <script asp-location="Footer">
-    $(document).ready(function () {
+    $(function() {
         $('.block .title').on('click', function () {
             var e = window, a = 'inner';
             if (!('innerWidth' in window)) {
@@ -90,55 +52,9 @@
                 e = document.documentElement || document.body;
             }
             var result = { width: e[a + 'Width'], height: e[a + 'Height'] };
-            if (result.width < 992) {
+            if (result.width < 1001) {
                 $(this).siblings('.listbox').slideToggle('slow');
             }
         });
-
-        $(".custom-cky-btn-customize").click(function () {
-            if ($(".cky-btn-do-not-sell").length > 0) {
-                $(".cky-btn-do-not-sell").click();
-            }
-            else if ($(".cky-btn-revisit").length > 0) {
-                $(".cky-btn-revisit").click();
-            }
-            else if ($(".cky-btn-customize").length > 0) {
-                $(".cky-btn-customize").click();
-            }
-
-        });
     });
-
 </script>
-<style>
-
-    .cky-btn-revisit-wrapper + .cky-consent-container, .cky-btn-revisit-wrapper, .video-placeholder-text-normal {
-        display: none !important;
-    }
-
-    .cky-btn-customize {
-        color: #444 !important;
-        border-color: #444 !important;
-        background-color: transparent !important;
-    }
-
-    .cky-btn-accept, .cky-btn-confirm, .cky-btn-preferences {
-        color: #FFFFFF;
-        border-color: #444 !important;
-        background-color: #444 !important;
-    }
-
-    .cky-show-desc-btn {
-        color: #444 !important;
-        text-decoration: underline !important;
-    }
-
-    .cky-switch input[type="checkbox"]:checked {
-        background-color: #444 !important;
-    }
-
-    .cky-opt-out-checkbox-wrapper input[type="checkbox"].cky-opt-out-checkbox:checked {
-        background-color: #444 !important;
-        border: none;
-    }
-</style>

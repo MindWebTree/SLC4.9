@@ -1,5 +1,5 @@
-﻿using MWT.Nop.Core.Service.Catalog;
-using MWT.Nop.Plugin.Misc.ProductBundle.Domain;
+﻿using MWT.Nop.Core.Domain.ProductBundle;
+using MWT.Nop.Core.Service.Catalog;
 using MWT.Plugin.Misc.MwtStorefront.Factories;
 using MWTNop.Core.Domain.Catalog;
 using Nop.Core.Caching;
