@@ -1,7 +1,6 @@
 ﻿using Nop.Core;
-using System;
 
-namespace MWT.Nop.Plugin.Misc.ProductBundle.Domain
+namespace MWT.Nop.Core.Domain.ProductBundle
 {
     public class BundleItem : BaseEntity
     {

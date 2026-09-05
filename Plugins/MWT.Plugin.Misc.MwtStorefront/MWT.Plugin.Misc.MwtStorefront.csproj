@@ -105,7 +105,6 @@
 
 	<ItemGroup>
 		<Folder Include="Areas\Admin\Models\ProductBundle\" />
-		<Folder Include="Areas\Admin\Views\ProductBundle\" />
 		<Folder Include="Models\CustomOrder\" />
 	</ItemGroup>
 

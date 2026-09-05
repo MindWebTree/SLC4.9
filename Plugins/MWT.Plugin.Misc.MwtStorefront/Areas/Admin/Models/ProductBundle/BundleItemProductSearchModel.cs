@@ -1,5 +1,4 @@
 ﻿using Nop.Web.Framework.Models;
-using Nop.Web.Framework.Mvc.ModelBinding;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Models
 {

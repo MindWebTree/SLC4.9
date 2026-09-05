@@ -68,220 +68,220 @@ else
                         <div class="card card-default">
                             <div class="card-body">
                                 @await Html.PartialAsync("Table", new DataTablesModel
-                           {
-                               Name = "add-products-grid",
-                               UrlRead = new DataUrl("BundleItemProductAddPopupList", "ProductBundle", new RouteValueDictionary { ["BundleId"] = Model.BundleId }),
-                               SearchButtonId = "search-products",
-                               Length = Model.PageSize,
-                               LengthMenu = Model.AvailablePageSizes,
-                               Filters = new List<FilterParameter>
-                                    {
-                                        new FilterParameter(nameof(Model.SearchProductName)),
-                                     new FilterParameter(nameof(Model.CopyVariantId))
-                                    },
-                               ColumnCollection = new List<ColumnProperty>
-                                    {
-                                        new ColumnProperty("ProductId")
-                                        {
-                                            Title = "",
-                                            Width = "50",
-                                            ClassName = "row-expand-toggle",
-                                            Render = new RenderCustom("renderExpandIcon")
-                                        },
-                                        new ColumnProperty(nameof(BundleItemProductModel.ProductId))
-                                        {
-                                            Title = T("Admin.Catalog.Products.Fields.Id").Text,
-                                            Width = "50"
-                                        },
-                                        new ColumnProperty(nameof(BundleItemProductModel.Picture))
-                                        {
-                                            Title = T("Admin.Catalog.Products.Fields.PictureThumbnailUrl").Text,
-                                            Width = "100",
-                                            Render = new RenderPicture()
-                                        },
-                                        new ColumnProperty(nameof(BundleItemProductModel.Name))
-                                        {
-                                            Title = T("Admin.Catalog.Products.Fields.Name").Text
-                                        },
-                                        new ColumnProperty(nameof(BundleItemProductModel.Published))
-                                        {
-                                            Title = T("Admin.Catalog.Products.Fields.Published").Text,
-                                            Width = "100",
-                                            ClassName = NopColumnClassDefaults.CenterAll,
-                                            Render = new RenderBoolean()
-                                        },
+                                {
+                                    Name = "add-products-grid",
+                                                        UrlRead = new DataUrl("BundleItemProductAddPopupList", "ProductBundle", new RouteValueDictionary { ["BundleId"] = Model.BundleId }),
+                                                        SearchButtonId = "search-products",
+                                                        Length = Model.PageSize,
+                                                        LengthMenu = Model.AvailablePageSizes,
+                                                        Filters = new List<FilterParameter>
+                                                        {
+                                                        new FilterParameter(nameof(Model.SearchProductName)),
+                                                        new FilterParameter(nameof(Model.CopyVariantId))
+                                                        },
+                                                        ColumnCollection = new List<ColumnProperty>
+                                                        {
+                                                        new ColumnProperty("ProductId")
+                                                        {
+                                                        Title = "",
+                                                        Width = "50",
+                                                        ClassName = "row-expand-toggle",
+                                                        Render = new RenderCustom("renderExpandIcon")
+                                                        },
+                                                        new ColumnProperty(nameof(BundleItemProductModel.ProductId))
+                                                        {
+                                                        Title = T("Admin.Catalog.Products.Fields.Id").Text,
+                                                        Width = "50"
+                                                        },
+                                                        new ColumnProperty(nameof(BundleItemProductModel.Picture))
+                                                        {
+                                                        Title = T("Admin.Catalog.Products.Fields.PictureThumbnailUrl").Text,
+                                                        Width = "100",
+                                                        Render = new RenderPicture()
+                                                        },
+                                                        new ColumnProperty(nameof(BundleItemProductModel.Name))
+                                                        {
+                                                        Title = T("Admin.Catalog.Products.Fields.Name").Text
+                                                        },
+                                                        new ColumnProperty(nameof(BundleItemProductModel.Published))
+                                                        {
+                                                        Title = T("Admin.Catalog.Products.Fields.Published").Text,
+                                                        Width = "100",
+                                                        ClassName = NopColumnClassDefaults.CenterAll,
+                                                        Render = new RenderBoolean()
+                                                        },
 
-                                    }
-                           })
-                            </div>
-                            <div class="card-footer">
-                                <button type="button" id="save-bundle-items" name="save" class="btn btn-primary">
-                                    <i class="far fa-save"></i>
-                                    @T("Admin.Common.Save")
-                                </button>
-                            </div>
+                                                        }
+                                                        })
+                        </div>
+                        <div class="card-footer">
+                            <button type="button" id="save-bundle-items" name="save" class="btn btn-primary">
+                                <i class="far fa-save"></i>
+                                @T("Admin.Common.Save")
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
-    </form>
+        </div>
+    </section>
+</form>
 
-    <script>
+<script>
 
-    function renderExpandIcon(data, type, row) {
-        return '<i class="fas fa-plus-circle text-primary" style="cursor:pointer; font-size: 1.2rem;"></i>';
-    }
-
-    $(document).ready(function () {
-
-        var table = $('#add-products-grid').DataTable();
-        table.on('draw', function () {
-
-            var prefillIdsString = $('#VariantIds').val();
-
-            if (prefillIdsString) {
-                $('#add-products-grid tbody tr').each(function () {
-                    var $row = $(this);
-                    var $toggle = $row.find('td.row-expand-toggle');
-                    if (!$row.hasClass('shown') && $toggle.length > 0) {
-                        $toggle.click();
-                    }
-                });
-            }
-        });
-
-
-
-$('#add-products-grid tbody').on('click', 'td.row-expand-toggle', function () {
-    var tr = $(this).closest('tr');
-    var row = table.row(tr);
-    var productId = row.data().ProductId;
-    var icon = $(this).find('i');
-
-    if (row.child.isShown()) {
-        row.child.hide();
-        tr.removeClass('shown');
-        icon.removeClass('fa-minus-circle text-danger').addClass('fa-plus-circle text-primary');
-    } else {
-        // This is the AJAX call that loads your variants
-        $.get('@Url.Action("GetNestedVariants", "ProductBundle")', { productId: productId }, function (html) {
-
-            row.child(html).show();
-            tr.addClass('shown');
-            icon.removeClass('fa-plus-circle text-primary').addClass('fa-minus-circle text-danger');
-            var prefillIdsString = $('#VariantIds').val();
-
-            if (prefillIdsString) {
-                var idArray = prefillIdsString.split(',');
-
-                row.child().find('.variant-radio').each(function() {
-                    var currentVariantId = $(this).val().toString();
-
-                    if (idArray.includes(currentVariantId)) {
-                        $(this).prop('checked', true);
-                        var pId = $(this).data('product-id');
-                        $('.variant-qty[data-product-id="' + pId + '"]').prop('disabled', true);
-                        $(this).closest('tr').find('.variant-qty').prop('disabled', false);
-                    }
-                });
-            }
-
-        });
-    }
-});
-        var table = $('#add-products-grid').DataTable();
-
-
-        $(document).on('change', '.variant-radio', function() {
-            var pId = $(this).data('product-id');
-            $('.variant-qty[data-product-id="' + pId + '"]').prop('disabled', true);
-            $(this).closest('tr').find('.variant-qty').prop('disabled', false);
-        });
-
-
-        $('#save-bundle-items').on('click', function (e) {
-            e.preventDefault();
-            var $btn = $(this);
-            var selectedProducts = [];
-
-            $('.variant-radio:checked').each(function () {
-                var $radio = $(this);
-                var vId = $radio.val();
-                var qty = $('#qty-' + vId).val();
-                var pId = $radio.data('product-id');
-
-                selectedProducts.push({
-                    ProductId: pId,
-                    VariantId: vId,
-                    Quantity: qty
-                });
-            });
-
-            if (selectedProducts.length === 0) {
-                alert("Please select at least one variant.");
-                return;
-            }
-
-            var postData = {
-                BundleId: '@Context.Request.Query["bundleId"]',
-                SelectedProducts: selectedProducts,
-                btnId: '@Context.Request.Query["btnId"]',
-            };
-
-            addAntiForgeryToken(postData);
-
-            $.ajax({
-                cache: false,
-                type: "POST",
-                url: "@(Url.Action("BundleItemProductAddPopup", "ProductBundle"))",
-                data: postData,
-                beforeSend: function () {
-                    $btn.prop('disabled', true);
-                    $btn.html('<i class="fas fa-spinner fa-spin"></i> Saving...');
-                },
-                success: function (data) {
-                    if (data && data.success === false) {
-                        alert(data.message);
-                        $btn.prop('disabled', false);
-                $btn.html('<i class="far fa-save"></i> @T("Admin.Common.Save")');
-                        return;
-                    }
-    if (data) {
-        try {
-
-            var formId = '@Context.Request.Query["formId"]';
-            var btnId = '@Context.Request.Query["btnId"]';
-
-            if (formId && btnId) {
-                window.opener.document.forms[formId].elements[btnId].click();
-            } else {
-                window.opener.$('#bundle-items-grid').DataTable().ajax.reload();
-            }
-        } catch (e) {
-            console.error("Failed to refresh parent grid:", e);
+        function renderExpandIcon(data, type, row) {
+            return '<i class="fas fa-plus-circle text-primary" style="cursor:pointer; font-size: 1.2rem;"></i>';
         }
 
-        // 2. Close the popup
-        window.close();
-    } else {
-        alert(data.message || "Error saving items.");
-    }
-},
-                error: function () {
-                    alert('Error saving items.');
-                    $btn.prop('disabled', false);
-            $btn.html('<i class="far fa-save"></i> @T("Admin.Common.Save")');
+        $(document).ready(function () {
+
+           $('#add-products-grid').on('draw.dt', function () {
+
+                var prefillIdsString = $('#VariantIds').val();
+
+                if (prefillIdsString) {
+                    $('#add-products-grid tbody tr').each(function () {
+                        var $row = $(this);
+                        var $toggle = $row.find('td.row-expand-toggle');
+                        if (!$row.hasClass('shown') && $toggle.length > 0) {
+                            $toggle.click();
+                        }
+                    });
                 }
             });
-        });
-        $('#btn-reset-prefill').click(function () {
-            $('#CopyVariantId').val('0');
-            $('#VariantIds').val('');
-            $(this).hide();
-            updateTable('#add-products-grid');
-        });
+
+
+
+    $('#add-products-grid').on('click', 'td.row-expand-toggle', function () {
+        var tr = $(this).closest('tr');
+            var table = $('#add-products-grid').DataTable();
+        var row = table.row(tr);
+        var productId = row.data().ProductId;
+        var icon = $(this).find('i');
+
+        if (row.child.isShown()) {
+            row.child.hide();
+            tr.removeClass('shown');
+            icon.removeClass('fa-minus-circle text-danger').addClass('fa-plus-circle text-primary');
+        } else {
+            // This is the AJAX call that loads your variants
+            $.get('@Url.Action("GetNestedVariants", "ProductBundle")', { productId: productId }, function (html) {
+
+                row.child(html).show();
+                tr.addClass('shown');
+                icon.removeClass('fa-plus-circle text-primary').addClass('fa-minus-circle text-danger');
+                var prefillIdsString = $('#VariantIds').val();
+
+                if (prefillIdsString) {
+                    var idArray = prefillIdsString.split(',');
+
+                    row.child().find('.variant-radio').each(function() {
+                        var currentVariantId = $(this).val().toString();
+
+                        if (idArray.includes(currentVariantId)) {
+                            $(this).prop('checked', true);
+                            var pId = $(this).data('product-id');
+                            $('.variant-qty[data-product-id="' + pId + '"]').prop('disabled', true);
+                            $(this).closest('tr').find('.variant-qty').prop('disabled', false);
+                        }
+                    });
+                }
+
+            });
+        }
     });
-    </script>
+
+
+
+            $(document).on('change', '.variant-radio', function() {
+                var pId = $(this).data('product-id');
+                $('.variant-qty[data-product-id="' + pId + '"]').prop('disabled', true);
+                $(this).closest('tr').find('.variant-qty').prop('disabled', false);
+            });
+
+
+            $('#save-bundle-items').on('click', function (e) {
+                e.preventDefault();
+                var $btn = $(this);
+                var selectedProducts = [];
+
+                $('.variant-radio:checked').each(function () {
+                    var $radio = $(this);
+                    var vId = $radio.val();
+                    var qty = $('#qty-' + vId).val();
+                    var pId = $radio.data('product-id');
+
+                    selectedProducts.push({
+                        ProductId: pId,
+                        VariantId: vId,
+                        Quantity: qty
+                    });
+                });
+
+                if (selectedProducts.length === 0) {
+                    alert("Please select at least one variant.");
+                    return;
+                }
+
+                var postData = {
+                    BundleId: '@Context.Request.Query["bundleId"]',
+                    SelectedProducts: selectedProducts,
+                    btnId: '@Context.Request.Query["btnId"]',
+                };
+
+                addAntiForgeryToken(postData);
+
+                $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url: "@(Url.Action("BundleItemProductAddPopup", "ProductBundle"))",
+                    data: postData,
+                    beforeSend: function () {
+                        $btn.prop('disabled', true);
+                        $btn.html('<i class="fas fa-spinner fa-spin"></i> Saving...');
+                    },
+                    success: function (data) {
+                        if (data && data.success === false) {
+                            alert(data.message);
+                            $btn.prop('disabled', false);
+                    $btn.html('<i class="far fa-save"></i> @T("Admin.Common.Save")');
+                            return;
+                        }
+        if (data) {
+            try {
+
+                var formId = '@Context.Request.Query["formId"]';
+                var btnId = '@Context.Request.Query["btnId"]';
+
+                if (formId && btnId) {
+                    window.opener.document.forms[formId].elements[btnId].click();
+                } else {
+                    window.opener.$('#bundle-items-grid').DataTable().ajax.reload();
+                }
+            } catch (e) {
+                console.error("Failed to refresh parent grid:", e);
+            }
+
+            // 2. Close the popup
+            window.close();
+        } else {
+            alert(data.message || "Error saving items.");
+        }
+    },
+                    error: function () {
+                        alert('Error saving items.');
+                        $btn.prop('disabled', false);
+                $btn.html('<i class="far fa-save"></i> @T("Admin.Common.Save")');
+                    }
+                });
+            });
+            $('#btn-reset-prefill').click(function () {
+                $('#CopyVariantId').val('0');
+                $('#VariantIds').val('');
+                $(this).hide();
+                updateTable('#add-products-grid');
+            });
+        });
+</script>
 
 }

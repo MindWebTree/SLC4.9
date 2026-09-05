@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using MWT.Nop.Core.Data.Discounts;
+using MWT.Nop.Core.Domain.ProductBundle;
 using MWT.Nop.Core.Service.Catalog;
-using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.Orders;
-using MWT.Nop.Plugin.Misc.ProductBundle.Domain;
 using MWT.Plugin.Misc.MwtStorefront.Factories;
 using MWT.Plugin.Misc.MwtStorefront.Models.Catalog;
 using MWT.Plugin.Misc.MwtStorefront.Models.ProductBundle;

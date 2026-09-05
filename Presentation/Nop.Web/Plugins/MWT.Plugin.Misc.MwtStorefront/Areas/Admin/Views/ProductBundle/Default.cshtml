@@ -1,0 +1,56 @@
+﻿@model BundleConfigurationModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, Nop.Web.Framework
+
+@{
+    Layout = "_AdminLayout";
+    ViewBag.PageTitle = "Configure Variant Bundle";
+    NopHtml.SetActiveMenuItemSystemName("Catalog.Products");
+}
+
+<form asp-controller="ProductBundle" asp-action="UpdateBundleName" method="post" id="bundle-form" enctype="multipart/form-data">
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            Configure Bundle
+            <small>
+                <i class="fas fa-arrow-circle-left"></i>
+                <a asp-controller="Product" asp-action="Edit" asp-route-id="@Model.ProductId">
+                    back to product details
+                </a>
+            </small>
+        </h1>
+        <div class="float-right">
+            <button type="submit" name="save" class="btn btn-primary">
+                <i class="far fa-save"></i> @T("Admin.Common.Save")
+            </button>
+            <button type="submit" name="save-continue" class="btn btn-primary">
+                <i class="far fa-save"></i> @T("Admin.Common.SaveContinue")
+            </button>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="form-horizontal">
+
+                @* HIDDEN FIELDS: Critical for 1:1 mapping *@
+                <input asp-for="BundleId" type="hidden" />
+                <input asp-for="ProductId" type="hidden" />
+                <input asp-for="VariantId" type="hidden" />
+
+                <div class="cards-group">
+
+                    @* 2. The Partial View we corrected earlier (Handles Name, Dates, etc.) *@
+                    @await Html.PartialAsync("_BundleInfo", Model)
+
+                    @* 3. Bundle Items Grid (Only show if the Bundle has been saved/created) *@
+                    @if (Model.Id > 0)
+                    {
+                        @await Html.PartialAsync("_BundleValues", Model)
+                    }
+
+                </div>
+            </div>
+        </div>
+    </section>
+</form>

@@ -145,7 +145,7 @@ namespace MWT.Nop.Core.Services.ExportImport
 
         }
 
-        public virtual async Task<byte[]> ExportProductAttributeCombinationToXlsxAsync(IList<ExportProductAttributeCombinationFormat> attributeCombinations)
+        public virtual async Task<byte[]> ExportProductAttributeCombinationToXlsxAsync(IList<ExportAttrCombination> attributeCombinations)
         {
             //a vendor should have access only to part of order information
             var ignore = await _workContext.GetCurrentVendorAsync() != null;
@@ -154,14 +154,14 @@ namespace MWT.Nop.Core.Services.ExportImport
 
 
             //property array
-            var manager = new PropertyManager<ExportProductAttributeCombinationFormat>(new[]
+            var manager = new PropertyManager<ExportAttrCombination>(new[]
            {
-                new PropertyByName<ExportProductAttributeCombinationFormat>("ProductId", (p, _) => p.ProductId),
-                new PropertyByName<ExportProductAttributeCombinationFormat>("AttributeXml", (p, _) => p.AttributeXml),
-                new PropertyByName<ExportProductAttributeCombinationFormat>("AttributeDescription", (p, _) => p.AttributeDescription),
-                new PropertyByName<ExportProductAttributeCombinationFormat>("Msrp", (p, _) => p.Msrp),
-                new PropertyByName<ExportProductAttributeCombinationFormat>("Price", (p, _) => p.Price),
-                new PropertyByName<ExportProductAttributeCombinationFormat>("SalePrice", (p, _) => p.SalePrice),
+                new PropertyByName<ExportAttrCombination>("ProductId", (p, _) => p.ProductId),
+                new PropertyByName<ExportAttrCombination>("AttributeXml", (p, _) => p.AttributeXml),
+                new PropertyByName<ExportAttrCombination>("AttributeDescription", (p, _) => p.AttributeDescription),
+                new PropertyByName<ExportAttrCombination>("Msrp", (p, _) => p.Msrp),
+                new PropertyByName<ExportAttrCombination>("Price", (p, _) => p.Price),
+                new PropertyByName<ExportAttrCombination>("SalePrice", (p, _) => p.SalePrice),
         }, _catalogSettings);
 
             return await manager.ExportToXlsxAsync(attributeCombinations);

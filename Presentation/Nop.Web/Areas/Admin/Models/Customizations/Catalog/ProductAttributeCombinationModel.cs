@@ -19,8 +19,6 @@ namespace Nop.Web.Areas.Admin.Models.Catalog
 
         [NopResourceDisplayName("Admin.Catalog.Products.ProductAttributes.AttributeCombinations.Fields.OverriddenMsrp")]
         [UIHint("DecimalNullable")]
-        public decimal? OverriddenMsrp { get; set; }
-
-        //public IList<int> GalleryPictures { get; set; }
+        public decimal? OverriddenMsrp { get; set; } 
     }
 }

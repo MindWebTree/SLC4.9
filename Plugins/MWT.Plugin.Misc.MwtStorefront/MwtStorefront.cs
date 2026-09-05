@@ -13,7 +13,10 @@ namespace MWT.Plugin.Misc.MwtStorefront
 {
     public class MwtStorefrontPlugin : BasePlugin, IWidgetPlugin
     {
-
+        public MwtStorefrontPlugin()
+        {
+            // 🔴 FIRST BREAKPOINT
+        }
 
         public override Task InstallAsync()
         {
