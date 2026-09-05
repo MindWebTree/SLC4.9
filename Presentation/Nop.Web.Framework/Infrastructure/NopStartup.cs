@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MWT.Nop.Core.Services.Orders;
 using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Configuration;
@@ -199,7 +200,9 @@ public partial class NopStartup : INopStartup
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IOrderReportService, OrderReportService>();
         services.AddScoped<IOrderProcessingService, OrderProcessingService>();
-        services.AddScoped<IOrderTotalCalculationService, OrderTotalCalculationService>();
+        #region Custom Updates
+        services.AddScoped<IOrderTotalCalculationService, OrderTotalCalculationExtendedService>();
+        #endregion Custom Updates
         services.AddScoped<IReturnRequestService, ReturnRequestService>();
         services.AddScoped<IRewardPointService, RewardPointService>();
         services.AddScoped<IShoppingCartService, ShoppingCartService>();

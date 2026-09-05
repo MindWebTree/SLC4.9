@@ -73,7 +73,7 @@
     },
     {
       "SystemName": "NopAdvance.DiscountRules.CartSubTotal",
-      "Version": "1.2"
+      "Version": "1.05"
     },
     {
       "SystemName": "DiscountRequirement.MustBeAssignedToCustomerRole",
@@ -134,15 +134,15 @@
     {
       "SystemName": "MWT.Misc",
       "Version": "1.00"
+    },
+    {
+      "SystemName": "NopAdvance.Core",
+      "Version": "1.18"
     }
   ],
   "PluginNamesToUninstall": [],
   "PluginNamesToDelete": [],
   "PluginNamesToInstall": [
-    {
-      "Item1": "NopAdvance.Core",
-      "Item2": "8d071561-3c02-4e75-9306-12edee011699"
-    },
     {
       "Item1": "NopAdvance.Plugin.PermanentRedirect",
       "Item2": "8d071561-3c02-4e75-9306-12edee011699"

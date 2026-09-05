@@ -105,17 +105,20 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
 
         public async Task<IActionResult> ConfirmCallbackHandler()
         {
+            var customer = await _workContext.GetCurrentCustomerAsync();
             try
             {
+
                 if (await _paymentPluginManager.LoadPluginBySystemNameAsync("Payments.Affirm") is not AffirmPaymentMethod processor || !_paymentPluginManager.IsPluginActive(processor))
                     throw new NopException("Affirm module cannot be loaded");
+
                 string token = _webHelper.QueryString<string>("checkout_token");
                 if (string.IsNullOrEmpty(token))
                 {
                     await _affirmLogRepository.InsertAsync(new AffirmLog()
                     {
                         CreatedOnUtc = DateTime.UtcNow,
-                        CustomerId = (await _workContext.GetCurrentCustomerAsync())?.Id ?? 0,
+                        CustomerId = customer?.Id ?? 0,
                         FullMessage = "Failed to read Checkout Token",
                         IpAddress = _webHelper.GetCurrentIpAddress(),
                         LogLevel = LogLevel.Error,
@@ -129,7 +132,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                 await _affirmLogRepository.InsertAsync(new AffirmLog()
                 {
                     CreatedOnUtc = DateTime.UtcNow,
-                    CustomerId = (await _workContext.GetCurrentCustomerAsync())?.Id ?? 0,
+                    CustomerId = customer?.Id ?? 0,
                     FullMessage = $"Checkout Token {token}",
                     IpAddress = _webHelper.GetCurrentIpAddress(),
                     LogLevel = LogLevel.Information,
@@ -144,7 +147,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                     await _affirmLogRepository.InsertAsync(new AffirmLog()
                     {
                         CreatedOnUtc = DateTime.UtcNow,
-                        CustomerId = (await _workContext.GetCurrentCustomerAsync())?.Id ?? 0,
+                        CustomerId = customer?.Id ?? 0,
                         FullMessage = $"Affirm Order Not Confirmed {responseModel?.meta?.tempOrderId ?? string.Empty} status {responseModel?.checkout_status ?? string.Empty}",
                         IpAddress = _webHelper.GetCurrentIpAddress(),
                         LogLevel = LogLevel.Error,
@@ -160,7 +163,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                 await _affirmLogRepository.InsertAsync(new AffirmLog()
                 {
                     CreatedOnUtc = DateTime.UtcNow,
-                    CustomerId = (await _workContext.GetCurrentCustomerAsync())?.Id ?? 0,
+                    CustomerId = customer?.Id ?? 0,
                     FullMessage = $"Affirm Order Status {responseModel?.meta?.tempOrderId ?? string.Empty}  {responseModel?.checkout_status ?? string.Empty}, Started Validation",
                     IpAddress = _webHelper.GetCurrentIpAddress(),
                     LogLevel = LogLevel.Information,
@@ -171,13 +174,13 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                 });
 
                 int.TryParse(responseModel.meta?.customerid ?? string.Empty, out int customerId);
-                if (customerId != (await _workContext.GetCurrentCustomerAsync()).Id)
+                if (customerId != customer.Id)
                 {
                     await _affirmLogRepository.InsertAsync(new AffirmLog()
                     {
                         CreatedOnUtc = DateTime.UtcNow,
-                        CustomerId = (await _workContext.GetCurrentCustomerAsync())?.Id ?? 0,
-                        FullMessage = $"Affirm Order, Affirm Checkout Details Customer Id {customerId} Current Customer ID {(await _workContext.GetCurrentCustomerAsync()).Id} -- Temp Order Id {responseModel?.meta?.tempOrderId ?? string.Empty} ",
+                        CustomerId = customer?.Id ?? 0,
+                        FullMessage = $"Affirm Order, Affirm Checkout Details Customer Id {customerId} Current Customer ID {customer.Id} -- Temp Order Id {responseModel?.meta?.tempOrderId ?? string.Empty} ",
                         IpAddress = _webHelper.GetCurrentIpAddress(),
                         LogLevel = LogLevel.Error,
                         ReferrerUrl = _webHelper.GetUrlReferrer(),
@@ -194,7 +197,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                     await _affirmLogRepository.InsertAsync(new AffirmLog()
                     {
                         CreatedOnUtc = DateTime.UtcNow,
-                        CustomerId = (await _workContext.GetCurrentCustomerAsync())?.Id ?? 0,
+                        CustomerId = customer?.Id ?? 0,
                         FullMessage = $"Affirm Order Failed to read Temp Order Id",
                         IpAddress = _webHelper.GetCurrentIpAddress(),
                         LogLevel = LogLevel.Error,
@@ -209,14 +212,14 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
 
                 var tempOrder = await _affirmSessionRepository.GetByIdAsync(tempOrderId);
 
-                ShippingOption shippingOption = await _genericAttributeService.GetAttributeAsync<ShippingOption>(await _workContext.GetCurrentCustomerAsync(), NopCustomerDefaults.SelectedShippingOptionAttribute, (await _storeContext.GetCurrentStoreAsync()).Id);
+                ShippingOption shippingOption = await _genericAttributeService.GetAttributeAsync<ShippingOption>(customer, NopCustomerDefaults.SelectedShippingOptionAttribute, (await _storeContext.GetCurrentStoreAsync()).Id);
 
                 if (tempOrder == null || tempOrder.Id == 0 || tempOrder.CustomerId != customerId)
                 {
                     await _affirmLogRepository.InsertAsync(new AffirmLog()
                     {
                         CreatedOnUtc = DateTime.UtcNow,
-                        CustomerId = (await _workContext.GetCurrentCustomerAsync())?.Id ?? 0,
+                        CustomerId = customer?.Id ?? 0,
                         FullMessage = $"Affirm Order Failed ,Temp Order Id invalid {tempOrder?.Id ?? 0} CustomerId {tempOrder?.CustomerId ?? 0} ",
                         IpAddress = _webHelper.GetCurrentIpAddress(),
                         LogLevel = LogLevel.Error,
@@ -238,7 +241,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
 
                 if (shippingOption == null)
                 {
-                    await _genericAttributeService.SaveAttributeAsync<ShippingOption>(await _workContext.GetCurrentCustomerAsync(), NopCustomerDefaults.SelectedShippingOptionAttribute, JsonConvert.DeserializeObject<ShippingOption>(tempOrder.ShippingMethod), (await _storeContext.GetCurrentStoreAsync()).Id);
+                    await _genericAttributeService.SaveAttributeAsync<ShippingOption>(customer, NopCustomerDefaults.SelectedShippingOptionAttribute, JsonConvert.DeserializeObject<ShippingOption>(tempOrder.ShippingMethod), (await _storeContext.GetCurrentStoreAsync()).Id);
                 }
                 tempOrder.Checkout_Token = token;
                 tempOrder.UpdatedOnUtc = DateTime.UtcNow;
@@ -249,7 +252,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
 
                 #region Validate Order Total
                 var shoppingCart = (await _shoppingCartService
-            .GetShoppingCartAsync(await _workContext.GetCurrentCustomerAsync(), ShoppingCartType.ShoppingCart, _storeContext.GetCurrentStore()?.Id ?? 0))
+            .GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart, _storeContext.GetCurrentStore()?.Id ?? 0))
               .ToList();
 
 
@@ -260,7 +263,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                     await _affirmLogRepository.InsertAsync(new AffirmLog()
                     {
                         CreatedOnUtc = DateTime.UtcNow,
-                        CustomerId = (await _workContext.GetCurrentCustomerAsync())?.Id ?? 0,
+                        CustomerId = customer?.Id ?? 0,
                         FullMessage = $"Affirm Order Failed Order Total not Matched {responseModel.total} -- Current Order Total {AffirmHelper.ConvertDecimalToCents(orderTotal)}",
                         IpAddress = _webHelper.GetCurrentIpAddress(),
                         LogLevel = LogLevel.Error,
@@ -293,7 +296,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                         await _affirmLogRepository.InsertAsync(new AffirmLog()
                         {
                             CreatedOnUtc = DateTime.UtcNow,
-                            CustomerId = (await _workContext.GetCurrentCustomerAsync())?.Id ?? 0,
+                            CustomerId = customer?.Id ?? 0,
                             FullMessage = $"Invalid Item {item.ProductId}",
                             IpAddress = _webHelper.GetCurrentIpAddress(),
                             LogLevel = LogLevel.Information,
@@ -311,14 +314,14 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                     if (!shoppingCart.Where(i => i.Id == item.Id).Any())
                     {
                         var product = await _productService.GetProductByIdAsync(item.Id);
-                        await _shoppingCartService.AddToCartAsync(await _workContext.GetCurrentCustomerAsync(), product, ShoppingCartType.ShoppingCart,
+                        await _shoppingCartService.AddToCartAsync(customer, product, ShoppingCartType.ShoppingCart,
                             _storeContext.GetCurrentStoreAsync().Id, item.AttributesXml);
 
 
                         await _affirmLogRepository.InsertAsync(new AffirmLog()
                         {
                             CreatedOnUtc = DateTime.UtcNow,
-                            CustomerId = (await _workContext.GetCurrentCustomerAsync())?.Id ?? 0,
+                            CustomerId = customer?.Id ?? 0,
                             FullMessage = $"Valid Item {item.ProductId}",
                             IpAddress = _webHelper.GetCurrentIpAddress(),
                             LogLevel = LogLevel.Information,
@@ -333,7 +336,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                 await _affirmLogRepository.InsertAsync(new AffirmLog()
                 {
                     CreatedOnUtc = DateTime.UtcNow,
-                    CustomerId = (await _workContext.GetCurrentCustomerAsync())?.Id ?? 0,
+                    CustomerId = customer?.Id ?? 0,
                     FullMessage = $"Validation Completed",
                     IpAddress = _webHelper.GetCurrentIpAddress(),
                     LogLevel = LogLevel.Information,
@@ -350,7 +353,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                     await _affirmLogRepository.InsertAsync(new AffirmLog()
                     {
                         CreatedOnUtc = DateTime.UtcNow,
-                        CustomerId = (await _workContext.GetCurrentCustomerAsync())?.Id ?? 0,
+                        CustomerId = customer?.Id ?? 0,
                         FullMessage = $"Invalid  OrderId",
                         IpAddress = _webHelper.GetCurrentIpAddress(),
                         LogLevel = LogLevel.Error,
@@ -377,7 +380,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                     await _affirmLogRepository.InsertAsync(new AffirmLog()
                     {
                         CreatedOnUtc = DateTime.UtcNow,
-                        CustomerId = (await _workContext.GetCurrentCustomerAsync())?.Id ?? 0,
+                        CustomerId = customer?.Id ?? 0,
                         FullMessage = $"{response}",
                         IpAddress = _webHelper.GetCurrentIpAddress(),
                         LogLevel = LogLevel.Error,
@@ -401,7 +404,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
 
                 processPaymentRequest.OrderGuid = orderGuid;
                 processPaymentRequest.StoreId = (await _storeContext.GetCurrentStoreAsync()).Id;
-                processPaymentRequest.CustomerId = (await _workContext.GetCurrentCustomerAsync()).Id;
+                processPaymentRequest.CustomerId = customer.Id;
                 processPaymentRequest.PaymentMethodSystemName = "Payments.Affirm";
 
                 processPaymentRequest.CustomValues.Add(new CustomValue("TransactionId", _affirmSettings.TransactMode == TransactMode.AuthorizeAndCapture ? captureTransactionId : authorizationTransactionId));
@@ -410,7 +413,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                 processPaymentRequest.CustomValues.Add(new CustomValue("CaptureTransactionId", captureTransactionId));
                 processPaymentRequest.CustomValues.Add(new CustomValue("CaptureTransactionResult", captureResponse));
 
-                await this._orderProcessingService.SetProcessPaymentRequestAsync(processPaymentRequest, await _workContext.GetCurrentCustomerAsync());
+                await this._orderProcessingService.SetProcessPaymentRequestAsync(processPaymentRequest, customer);
 
                 var placeOrderResult = await _orderProcessingService.PlaceOrderAsync(processPaymentRequest);
                 if (!placeOrderResult.Errors.Any())
@@ -426,7 +429,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                     await _affirmLogRepository.InsertAsync(new AffirmLog()
                     {
                         CreatedOnUtc = DateTime.UtcNow,
-                        CustomerId = (await _workContext.GetCurrentCustomerAsync())?.Id ?? 0,
+                        CustomerId = customer?.Id ?? 0,
                         FullMessage = string.Join(',', placeOrderResult.Errors.ToArray()),
                         IpAddress = _webHelper.GetCurrentIpAddress(),
                         LogLevel = LogLevel.Error,
@@ -435,6 +438,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                         ShortMessage = $"Failed to place Order {tempOrder.Id}"
 
                     });
+                    await this._orderProcessingService.SetProcessPaymentRequestAsync(null, customer);
                     TempData["Affirm.Error"] = await _localizationService.GetResourceAsync("Affirm.Error.Failed.Place.Order");
                     return RedirectToRoute("CheckoutOnePage");
                 }
@@ -444,7 +448,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                 await _affirmLogRepository.InsertAsync(new AffirmLog()
                 {
                     CreatedOnUtc = DateTime.UtcNow,
-                    CustomerId = (await _workContext.GetCurrentCustomerAsync())?.Id ?? 0,
+                    CustomerId = customer?.Id ?? 0,
                     FullMessage = ex.Message,
                     IpAddress = _webHelper.GetCurrentIpAddress(),
                     LogLevel = LogLevel.Error,
@@ -695,13 +699,13 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                 processPaymentRequest.StoreId = (await _storeContext.GetCurrentStoreAsync()).Id;
                 processPaymentRequest.CustomerId = (int)customOrder.CustomerId;
                 processPaymentRequest.PaymentMethodSystemName = "Payments.Affirm";
-                
+
                 processPaymentRequest.CustomValues.Add(new CustomValue("TransactionId", _affirmSettings.TransactMode == TransactMode.AuthorizeAndCapture ? captureTransactionId : authorizationTransactionId));
                 processPaymentRequest.CustomValues.Add(new CustomValue("AuthTransactionId", authorizationTransactionId));
                 processPaymentRequest.CustomValues.Add(new CustomValue("AuthTransactionResult", authResponse));
                 processPaymentRequest.CustomValues.Add(new CustomValue("CaptureTransactionId", captureTransactionId));
                 processPaymentRequest.CustomValues.Add(new CustomValue("CaptureTransactionResult", captureResponse));
-                await this._orderProcessingService.SetProcessPaymentRequestAsync(processPaymentRequest,customer);
+                await this._orderProcessingService.SetProcessPaymentRequestAsync(processPaymentRequest, customer);
                 int refOrderno = 0;
                 bool saveOrderDetails = true;
                 if (customOrder.LiveOrderNumber != null && customOrder.LiveOrderNumber != 0 && customOrder.AlreadyFee != null && customOrder.AlreadyFee > 0)

@@ -507,7 +507,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                         await _customerService.UpdateCustomerAsync(customer);
 
                         // Save Billing Address
-                        if (model.BillingAddress.Id > 0)
+                        if (model.BillingAddress.Id > 0 && model.ShippingAddress.Id != model.BillingAddress.Id)
                         {
                             //existing address
                             var billingAddress = model.BillingAddress;

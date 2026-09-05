@@ -70,6 +70,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Validators\Customizations\" />
     <Folder Include="wwwroot\images\customizationform\" />
     <Folder Include="wwwroot\images\shades\large\" />
   </ItemGroup>

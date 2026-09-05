@@ -8,7 +8,8 @@
 <form class="pb-4" method="post" id="CustomOrder_CustomerSection-form">
     <h4>Customer Details</h4>
     <input type="hidden" value="@Model.Id" name="Id" />
-
+    <input type="hidden" value="@(Model.ShippingAddress?.Id??0)" name="ShippingAddress.Id" />
+    <input type="hidden" value="@(Model.BillingAddress?.Id ?? 0)" name="BillingAddress.Id" />
     <div class="row">
         <div class="form-group col-md-6">
             <input asp-for="Email" class="form-control" placeholder="@Html.DisplayNameFor(m=>m.Email)" />

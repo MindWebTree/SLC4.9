@@ -342,10 +342,15 @@ public static class ServiceCollectionExtensions
         services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
 
         //register all available validators from Nop assemblies
+        #region Custom Updates
         var assemblies = mvcBuilder.PartManager.ApplicationParts
             .OfType<AssemblyPart>()
-            .Where(part => part.Name.StartsWith("Nop", StringComparison.InvariantCultureIgnoreCase))
+            .Where(part => part.Name.StartsWith("Nop", StringComparison.InvariantCultureIgnoreCase)
+            || part.Name.StartsWith("MWT", StringComparison.InvariantCultureIgnoreCase)
+            )
             .Select(part => part.Assembly);
+        #endregion Custom Updates
+
         services.AddValidatorsFromAssemblies(assemblies);
 
         //register controllers as services, it'll allow to override them
