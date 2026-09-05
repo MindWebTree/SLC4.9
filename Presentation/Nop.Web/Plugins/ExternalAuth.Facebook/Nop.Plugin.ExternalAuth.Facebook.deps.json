@@ -3785,6 +3785,22 @@
           "lib/netstandard2.0/WebMarkupMin.NUglify.dll": {}
         }
       },
+      "MWT.Nop.Core/1.0.0": {
+        "dependencies": {
+          "Nop.Core": "4.90.0",
+          "Nop.Data": "4.90.0",
+          "Nop.Services": "4.90.0"
+        },
+        "runtime": {
+          "MWT.Nop.Core.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        },
+        "compile": {
+          "MWT.Nop.Core.dll": {}
+        }
+      },
       "Nop.Core/4.90.0": {
         "dependencies": {
           "AutoMapper": "14.0.0",
@@ -3864,6 +3880,7 @@
           "FluentValidation.AspNetCore": "11.3.0",
           "Google.Cloud.Translation.V2": "3.4.0",
           "LigerShark.WebOptimizer.Core": "3.0.477",
+          "MWT.Nop.Core": "1.0.0",
           "Nop.Core": "4.90.0",
           "Nop.Data": "4.90.0",
           "Nop.Services": "4.90.0",
@@ -7631,6 +7648,11 @@
       "sha512": "sha512-icMDW4oCM3atzcn9V0pbZFtPBB2rj+uamANKbQIsbfFs3088dRi7Xg8l1amikveh3JPmm7F94uWI7VvD3Z3XjA==",
       "path": "webmarkupmin.nuglify/2.19.0",
       "hashPath": "webmarkupmin.nuglify.2.19.0.nupkg.sha512"
+    },
+    "MWT.Nop.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     },
     "Nop.Core/4.90.0": {
       "type": "project",

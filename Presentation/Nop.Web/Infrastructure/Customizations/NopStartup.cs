@@ -181,6 +181,10 @@ namespace Nop.Web.Infrastructure.Customizations
 
             #endregion
 
+            #region Order 
+            services.AddScoped<IDeclinedOrderLogService, DeclinedOrderLogService>();
+            #endregion
+
 
         }
 

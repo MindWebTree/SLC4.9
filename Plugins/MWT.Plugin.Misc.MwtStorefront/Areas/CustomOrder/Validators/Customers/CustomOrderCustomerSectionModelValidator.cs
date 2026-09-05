@@ -1,9 +1,11 @@
 ﻿using FluentValidation;
 using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Orders;
+using MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Validators.Common;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
 using Nop.Data;
 using Nop.Services.Customers;
+using Nop.Services.Directory;
 using Nop.Services.Localization;
 using Nop.Web.Framework.Validators;
 
@@ -11,8 +13,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.Validators.Customers
 {
     public partial class CustomOrderCustomerSectionModelValidator : BaseNopValidator<CustomOrderCustomerSectionModel>
     {
-        public CustomOrderCustomerSectionModelValidator(ILocalizationService localizationService,
-            INopDataProvider dataProvider, ICustomerService customerService, AddressSettings addressSettings)
+        public CustomOrderCustomerSectionModelValidator(ILocalizationService localizationService, IStateProvinceService stateProvinceService,
+            INopDataProvider dataProvider, ICustomerService customerService, AddressSettings addressSettings, CustomerSettings customerSettings)
         {
             RuleFor(x => x.Email).NotEmpty()
                 .EmailAddress()
@@ -30,13 +32,13 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.Validators.Customers
                  .WithMessageAwait(localizationService.GetResourceAsync("CustomOrder.Customers.Customers.Fields.FirstName.Required"));
 
 
-    //        RuleFor(model => model.ShippingAddress)
-    //.NotNull()
-    //.SetValidator(new AddressValidator(addressSettings, localizationService, dataProvider));
+            RuleFor(model => model.ShippingAddress)
+    .NotNull()
+    .SetValidator(new AddressValidator(localizationService, stateProvinceService, addressSettings, customerSettings));
 
-    //        RuleFor(model => model.ShippingAddress)
-    //     .NotNull()
-    //     .SetValidator(new AddressValidator());
+            RuleFor(model => model.BillingAddress)
+         .NotNull()
+         .SetValidator(new AddressValidator(localizationService, stateProvinceService, addressSettings, customerSettings));
 
         }
         private async Task<bool> IsRegisteredCustomerRoleCheckedAsync(CustomOrderCustomerSectionModel model, ICustomerService customerService)

@@ -1057,6 +1057,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
             if (!await _customerService.IsRegisteredAsync(await _workContext.GetCurrentCustomerAsync()))
                 return Challenge();
 
+
             var customer = await _workContext.GetCurrentCustomerAsync();
             //find address (ensure that it belongs to the current customer)
             var address = await _customerService.GetCustomerAddressAsync(customer.Id, addressId);
