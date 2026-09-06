@@ -1,4 +1,5 @@
 ﻿using Nop.Core.Domain.Logging;
+using Nop.Core.Http;
 using Nop.Services.Configuration;
 using Nop.Services.Logging;
 using System.Text;
@@ -10,7 +11,7 @@ namespace MWT.Nop.Core.Services.ElasticSearch
         #region Fields
 
         private readonly ISettingService _settingService;
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger _loggerService;
 
         #endregion
@@ -19,11 +20,11 @@ namespace MWT.Nop.Core.Services.ElasticSearch
 
         public ElasticSearchService
             (ISettingService settingService,
-             HttpClient httpClient,
+             IHttpClientFactory httpClientFactory,
              ILogger loggerService)
         {
             this._settingService = settingService;
-            this._httpClient = httpClient;
+            this._httpClientFactory = httpClientFactory;
             this._loggerService = loggerService;
         }
 
@@ -37,6 +38,8 @@ namespace MWT.Nop.Core.Services.ElasticSearch
             var result = string.Empty;
             try
             {
+
+                var _httpClient = _httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 var response = await _httpClient.PostAsync((await _settingService.GetSettingByKeyAsync<string>("Es_Host")) + index + "/" + ID, content);
                 response.EnsureSuccessStatusCode();
@@ -56,6 +59,8 @@ namespace MWT.Nop.Core.Services.ElasticSearch
             var result = string.Empty;
             try
             {
+
+                var _httpClient = _httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
                 var response = await _httpClient.DeleteAsync((await _settingService.GetSettingByKeyAsync<string>("Es_Host")) + index + "/" + ID);
                 response.EnsureSuccessStatusCode();
                 result = await response.Content.ReadAsStringAsync();

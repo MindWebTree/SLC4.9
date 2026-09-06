@@ -7,6 +7,7 @@ using MWT.Nop.Core.Service.FAQModule;
 using MWT.Nop.Core.Service.Zoho;
 using MWT.Nop.Core.Services;
 using MWT.Nop.Core.Services.AbandonedCarts;
+using MWT.Nop.Core.Services.Authentication;
 using MWT.Nop.Core.Services.BundleProduct;
 using MWT.Nop.Core.Services.Catalog;
 using MWT.Nop.Core.Services.CategoryCollection;
@@ -183,6 +184,9 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<IDeclinedOrderLogService, DeclinedOrderLogService>();
             #endregion
 
+            #region Customer
+            services.AddScoped<IExternalAuthenticationExtendedService, ExternalAuthenticationExtendedService>();
+            #endregion
 
         }
 

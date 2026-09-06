@@ -1,6 +1,7 @@
 ﻿using FluentMigrator.Infrastructure;
 using Newtonsoft.Json;
 using Nop.Core.Domain.Logging;
+using Nop.Core.Http;
 using Nop.Services.Configuration;
 using Nop.Services.Logging;
 using System;
@@ -17,7 +18,7 @@ namespace MWT.Nop.Core.Services.Manage
     {
         #region Fields
 
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger _logger;
         private readonly ISettingService _settingService;
 
@@ -25,9 +26,9 @@ namespace MWT.Nop.Core.Services.Manage
 
         #region Ctor
 
-        public ManageService(HttpClient httpClient, ILogger logger, ISettingService settingService)
+        public ManageService(IHttpClientFactory httpClientFactory, ILogger logger, ISettingService settingService)
         {
-            _httpClient = httpClient;
+            _httpClientFactory = httpClientFactory;
             _logger = logger;
             _settingService = settingService;
         }
@@ -43,6 +44,7 @@ namespace MWT.Nop.Core.Services.Manage
                 string manageApiLink = await _settingService.GetSettingByKeyAsync<string>("Manage.Api.EndPoint");
                 string manageApiKey = await _settingService.GetSettingByKeyAsync<string>("Manage.Api.ApiKey");
                 string manageToken = await _settingService.GetSettingByKeyAsync<string>("Manage.Api.Token");
+                var _httpClient = _httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
                 _httpClient.DefaultRequestHeaders.Add("apikey", manageApiKey);
                 if (!_httpClient.DefaultRequestHeaders.Contains("Authorization"))
                     _httpClient.DefaultRequestHeaders.Add("Authorization", $"Basic {manageToken}");
@@ -92,6 +94,8 @@ namespace MWT.Nop.Core.Services.Manage
                 string manageApiLink = await _settingService.GetSettingByKeyAsync<string>("Manage.Api.EndPoint");
                 string manageApiKey = await _settingService.GetSettingByKeyAsync<string>("Manage.Api.ApiKey");
                 string manageToken = await _settingService.GetSettingByKeyAsync<string>("Manage.Api.Token");
+
+                var _httpClient = _httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
                 _httpClient.DefaultRequestHeaders.Add("apikey", manageApiKey);
                 if (!_httpClient.DefaultRequestHeaders.Contains("Authorization"))
                     _httpClient.DefaultRequestHeaders.Add("Authorization", $"Basic {manageToken}");
@@ -127,6 +131,7 @@ namespace MWT.Nop.Core.Services.Manage
                 string manageApiLink = await _settingService.GetSettingByKeyAsync<string>("Manage.Api.EndPoint");
                 string manageApiKey = await _settingService.GetSettingByKeyAsync<string>("Manage.Api.ApiKey");
                 string manageToken = await _settingService.GetSettingByKeyAsync<string>("Manage.Api.Token");
+                var _httpClient = _httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
                 _httpClient.DefaultRequestHeaders.Add("apikey", manageApiKey);
                 if (!_httpClient.DefaultRequestHeaders.Contains("Authorization"))
                     _httpClient.DefaultRequestHeaders.Add("Authorization", $"Basic {manageToken}");
@@ -177,6 +182,7 @@ namespace MWT.Nop.Core.Services.Manage
             string errorMessage = string.Empty;
             try
             {
+                var _httpClient = _httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
                 string apiUrl = $"{manageApiLink}sierra/feedback/get_order_feedback/{orderId}/{email}";
                 _httpClient.DefaultRequestHeaders.Add("apikey", manageApiKey);
                 if (!_httpClient.DefaultRequestHeaders.Contains("Authorization"))
@@ -228,6 +234,7 @@ namespace MWT.Nop.Core.Services.Manage
             };
             try
             {
+                var _httpClient = _httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
                 _httpClient.DefaultRequestHeaders.Add("apikey", manageApiKey);
                 if (!_httpClient.DefaultRequestHeaders.Contains("Authorization"))
                     _httpClient.DefaultRequestHeaders.Add("Authorization", $"Basic {manageToken}");
@@ -253,7 +260,7 @@ namespace MWT.Nop.Core.Services.Manage
         public async Task SyncPendingOrderPartialPayment(int orderId, string transactionid, decimal total, DateTime paidOn, string paymentgateway)
         {
             string manageApiLink = await _settingService.GetSettingByKeyAsync<string>("Manage.Api.EndPoint");
-             string manageApiKey = await _settingService.GetSettingByKeyAsync<string>("Manage.Api.ApiKey");
+            string manageApiKey = await _settingService.GetSettingByKeyAsync<string>("Manage.Api.ApiKey");
             string manageToken = await _settingService.GetSettingByKeyAsync<string>("Manage.Api.Token");
             var payload = new
             {
@@ -266,7 +273,7 @@ namespace MWT.Nop.Core.Services.Manage
             string request = System.Text.Json.JsonSerializer.Serialize(payload);
             try
             {
-
+                var _httpClient = _httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
                 _httpClient.DefaultRequestHeaders.Add("apikey", manageApiKey);
                 if (!_httpClient.DefaultRequestHeaders.Contains("Authorization"))
                     _httpClient.DefaultRequestHeaders.Add("Authorization", $"Basic {manageToken}");

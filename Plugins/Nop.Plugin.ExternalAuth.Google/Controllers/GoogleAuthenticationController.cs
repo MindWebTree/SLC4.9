@@ -1,10 +1,8 @@
-﻿using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using MWT.Nop.Core.Services.Authentication;
 using Nop.Core;
 using Nop.Plugin.ExternalAuth.Google.Models;
 using Nop.Services.Authentication.External;
@@ -15,6 +13,9 @@ using Nop.Services.Security;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.ExternalAuth.Google.Controllers
 {
@@ -24,7 +25,7 @@ namespace Nop.Plugin.ExternalAuth.Google.Controllers
 
         private readonly GoogleExternalAuthSettings _googleExternalAuthSettings;
         private readonly IAuthenticationPluginManager _authenticationPluginManager;
-        private readonly IExternalAuthenticationService _externalAuthenticationService;
+        private readonly IExternalAuthenticationExtendedService _externalAuthenticationService;
         private readonly ILocalizationService _localizationService;
         private readonly INotificationService _notificationService;
         private readonly IOptionsMonitorCache<GoogleOptions> _optionsCache;
@@ -39,7 +40,7 @@ namespace Nop.Plugin.ExternalAuth.Google.Controllers
 
         public GoogleAuthenticationController(GoogleExternalAuthSettings googleExternalAuthSettings,
             IAuthenticationPluginManager authenticationPluginManager,
-            IExternalAuthenticationService externalAuthenticationService,
+            IExternalAuthenticationExtendedService externalAuthenticationService,
             ILocalizationService localizationService,
             INotificationService notificationService,
             IOptionsMonitorCache<GoogleOptions> optionsCache,
@@ -159,7 +160,7 @@ namespace Nop.Plugin.ExternalAuth.Google.Controllers
 
             if (returnUrl.Contains("/cart"))
             {
-                await _externalAuthenticationService.AuthenticateAsync(authenticationParameters, returnUrl);
+                await _externalAuthenticationService.CustomAuthenticateAsync(authenticationParameters, returnUrl);
 
                 return Content($@"<script>
             if (window.opener) {{
@@ -172,7 +173,7 @@ namespace Nop.Plugin.ExternalAuth.Google.Controllers
             }
             else
             {
-                var result = await _externalAuthenticationService.AuthenticateAsync(authenticationParameters, returnUrl);
+                var result = await _externalAuthenticationService.CustomAuthenticateAsync(authenticationParameters, returnUrl);
                 if (result is RedirectResult redirectResult)
                 {
                         return Content($@"<script>

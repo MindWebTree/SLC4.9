@@ -12,6 +12,7 @@ using Nop.Core;
 using Nop.Core.Domain.Directory;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Payments;
+using Nop.Core.Http;
 using Nop.Plugin.Payments.AuthorizeNetHosted.Helpers;
 using Nop.Plugin.Payments.AuthorizeNetHosted.Logging;
 using Nop.Plugin.Payments.AuthorizeNetHosted.Models;
@@ -53,7 +54,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
         private readonly IActionContextAccessor _actionContextAccessor;
         private readonly ICustomOrderService _customOrderService;
         private readonly PaymentLogger _paymentLogger;
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly IGenericAttributeService _genericAttributeService;
         public AuthorizeNetManager(
             IOrderExtendedService orderService,
@@ -78,7 +79,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
              IActionContextAccessor actionContextAccessor,
              ICustomOrderService customOrderService,
              PaymentLogger paymentLogger,
-             HttpClient httpClient,
+             IHttpClientFactory httpClientFactory,
              IGenericAttributeService genericAttributeService)
         {
             _orderService = orderService;
@@ -103,7 +104,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
             _actionContextAccessor = actionContextAccessor;
             _customOrderService = customOrderService;
             _paymentLogger = paymentLogger;
-            _httpClient = httpClient;
+            _httpClientFactory = httpClientFactory;
             _genericAttributeService = genericAttributeService;
         }
 
@@ -670,6 +671,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Services
                     ? "https://apitest.authorize.net/xml/v1/request.api"
                     : "https://api.authorize.net/xml/v1/request.api";
 
+                var _httpClient = _httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
                 var responseMessage = await _httpClient.PostAsync(endpoint, jsonContent);
                 var responseString = await responseMessage.Content.ReadAsStringAsync();
 

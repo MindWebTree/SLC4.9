@@ -1,16 +1,17 @@
 ﻿
-using Newtonsoft.Json;
 using MWT.Tax.FixedOrByCountryStateZip.Domain;
+using Newtonsoft.Json;
+using Nop.Core.Domain.Common;
+using Nop.Core.Http;
+using Nop.Services.Configuration;
+using Nop.Services.Directory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using System.Net.Http.Headers;
-using Nop.Core.Domain.Common;
-using Nop.Services.Configuration;
-using Nop.Services.Directory;
 
 namespace MWT.Tax.FixedOrByCountryStateZip.Services
 {
@@ -19,7 +20,7 @@ namespace MWT.Tax.FixedOrByCountryStateZip.Services
         #region Fields
         private readonly TaxZarSettings _taxZarSettings;
         private readonly ITaxLogService _transactionLogService;
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly ISettingService _settingService;
         private readonly IStateProvinceService _stateProvinceService;
         #endregion
@@ -27,11 +28,11 @@ namespace MWT.Tax.FixedOrByCountryStateZip.Services
         #region Ctor
 
         public ZipTaxService(TaxZarSettings taxZarSettings, ITaxLogService transactionLogService,
-            HttpClient httpClient, ISettingService settingService,
+            IHttpClientFactory httpClientFactory, ISettingService settingService,
             IStateProvinceService stateProvinceService)
         {
             this._transactionLogService = transactionLogService;
-            this._httpClient = httpClient;
+            this._httpClientFactory = httpClientFactory;
             this._taxZarSettings = taxZarSettings;
             this._settingService = settingService;
             this._stateProvinceService = stateProvinceService;
@@ -96,6 +97,7 @@ namespace MWT.Tax.FixedOrByCountryStateZip.Services
 
             try
             {
+                var _httpClient = _httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
                 response = await (await _httpClient.GetAsync(url)).Content.ReadAsStringAsync();
                 dynamic obj = JsonConvert.DeserializeObject(response);
                 statusCode = 200;

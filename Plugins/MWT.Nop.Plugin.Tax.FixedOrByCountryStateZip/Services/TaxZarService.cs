@@ -1,13 +1,14 @@
-﻿using Newtonsoft.Json;
-using MWT.Tax.FixedOrByCountryStateZip.Domain;
+﻿using MWT.Tax.FixedOrByCountryStateZip.Domain;
+using Newtonsoft.Json;
+using Nop.Core.Http;
+using Nop.Services.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using System.Net.Http.Headers;
-using Nop.Services.Configuration;
 
 namespace MWT.Tax.FixedOrByCountryStateZip.Services
 {
@@ -16,17 +17,17 @@ namespace MWT.Tax.FixedOrByCountryStateZip.Services
         #region Fields
         private readonly TaxZarSettings _taxZarSettings;
         private readonly ITaxLogService _transactionLogService;
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly ISettingService _settingService;
         #endregion
 
         #region Ctor
 
         public TaxZarService(TaxZarSettings taxZarSettings, ITaxLogService transactionLogService,
-            HttpClient httpClient, ISettingService settingService)
+            IHttpClientFactory httpClientFactory, ISettingService settingService)
         {
             this._transactionLogService = transactionLogService;
-            this._httpClient = httpClient;
+            this._httpClientFactory = httpClientFactory;
             this._taxZarSettings = taxZarSettings;
             this._settingService = settingService;
 
@@ -55,6 +56,7 @@ namespace MWT.Tax.FixedOrByCountryStateZip.Services
                         if (apiLink.Substring(0, apiLink.Length - 1) == "/")
                             apiLink = apiLink.Substring(0, apiLink.Length - 1);
                         url = apiLink + "/" + zipcode;
+                        var _httpClient = _httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
                         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _taxZarSettings.Token);
                         response = await _httpClient.GetStringAsync(url);
 

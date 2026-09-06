@@ -1,10 +1,8 @@
-﻿using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using AspNet.Security.OAuth.Apple;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using AspNet.Security.OAuth.Apple;
+using MWT.Nop.Core.Services.Authentication;
 using Nop.Core;
 using Nop.Plugin.ExternalAuth.Apple.Models;
 using Nop.Services.Authentication.External;
@@ -15,6 +13,9 @@ using Nop.Services.Security;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.ExternalAuth.Apple.Controllers
 {
@@ -24,7 +25,7 @@ namespace Nop.Plugin.ExternalAuth.Apple.Controllers
 
         private readonly AppleExternalAuthSettings _appleExternalAuthSettings;
         private readonly IAuthenticationPluginManager _authenticationPluginManager;
-        private readonly IExternalAuthenticationService _externalAuthenticationService;
+        private readonly IExternalAuthenticationExtendedService _externalAuthenticationService;
         private readonly ILocalizationService _localizationService;
         private readonly INotificationService _notificationService;
         private readonly IOptionsMonitorCache<Microsoft.AspNetCore.Authentication.OAuth.OAuthOptions> _optionsCache;
@@ -40,7 +41,7 @@ namespace Nop.Plugin.ExternalAuth.Apple.Controllers
         public AppleAuthenticationController(
             AppleExternalAuthSettings appleExternalAuthSettings,
             IAuthenticationPluginManager authenticationPluginManager,
-            IExternalAuthenticationService externalAuthenticationService,
+            IExternalAuthenticationExtendedService externalAuthenticationService,
             ILocalizationService localizationService,
             INotificationService notificationService,
             IOptionsMonitorCache<Microsoft.AspNetCore.Authentication.OAuth.OAuthOptions> optionsCache,
@@ -164,7 +165,7 @@ namespace Nop.Plugin.ExternalAuth.Apple.Controllers
 
             if (returnUrl.Contains("/cart"))
             {
-                await _externalAuthenticationService.AuthenticateAsync(authenticationParameters, returnUrl);
+                await _externalAuthenticationService.CustomAuthenticateAsync(authenticationParameters, returnUrl);
 
                 return Content($@"<script>
             if (window.opener) {{
@@ -177,7 +178,7 @@ namespace Nop.Plugin.ExternalAuth.Apple.Controllers
             }
             else
             {
-                var result = await _externalAuthenticationService.AuthenticateAsync(authenticationParameters, returnUrl);
+                var result = await _externalAuthenticationService.CustomAuthenticateAsync(authenticationParameters, returnUrl);
                 if (result is RedirectResult redirectResult)
                 {
                     return Content($@"<script>

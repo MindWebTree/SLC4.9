@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Nop.Core.Domain.Logging;
+using Nop.Core.Http;
 using Nop.Services.Logging;
 using Org.BouncyCastle.Crypto.Engines;
 using System;
@@ -16,7 +17,7 @@ namespace MWT.Nop.Core.Services.CloudFlare
     {
         #region fields
 
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger _loggerService;
         CloudflareSettings _cloudflareSettings;
 
@@ -24,9 +25,9 @@ namespace MWT.Nop.Core.Services.CloudFlare
 
         #region Ctor
 
-        public CloudflareService(HttpClient httpClient, ILogger loggerService, CloudflareSettings cloudflareSettings)
+        public CloudflareService(IHttpClientFactory httpClientFactory, ILogger loggerService, CloudflareSettings cloudflareSettings)
         {
-            _httpClient = httpClient;
+            _httpClientFactory = httpClientFactory;
             _loggerService = loggerService;
             _cloudflareSettings = cloudflareSettings;
         }
@@ -49,7 +50,8 @@ namespace MWT.Nop.Core.Services.CloudFlare
                     {
                         files = files
                     };
-         
+
+                    var _httpClient = _httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
                     var content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
                     _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer  " + _cloudflareSettings.Token);
                     var response = await _httpClient.PostAsync(_cloudflareSettings.EndPoint, content);

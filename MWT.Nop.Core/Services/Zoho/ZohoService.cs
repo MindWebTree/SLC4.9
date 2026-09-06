@@ -11,6 +11,7 @@ using Newtonsoft.Json.Linq;
 using Nop.Core;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Logging;
+using Nop.Core.Http;
 using Nop.Data;
 using Nop.Services.Common;
 using Nop.Services.Configuration;
@@ -27,7 +28,7 @@ namespace MWT.Nop.Core.Service.Zoho
     public partial class ZohoService : IZohoService
     {
         #region Fields
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         private static string _Token = "ac50b4678eb291e4b7df0d1d5e477acd";
         private static DateTime _ExpiryDate;
         private readonly ISettingService _settingService;
@@ -43,14 +44,14 @@ namespace MWT.Nop.Core.Service.Zoho
         private readonly IStateProvinceService _stateProvinceService;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IStoreContext _storeContext;
-       private readonly ICustomOrderService _customOrderService;
+        private readonly ICustomOrderService _customOrderService;
         private readonly IOrderService _orderService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         #endregion
 
         public ZohoService(ISettingService settingService, ILocalizationService localizationService,
-            HttpClient httpClient, ILogger logger, IWorkContext workContext, IIPLiteService iIPLiteService,
+            IHttpClientFactory httpClientFactory, ILogger logger, IWorkContext workContext, IIPLiteService iIPLiteService,
              IRepository<QueuedZohoCustomer> queuedZohoCustomerRepository, ICustomerExtendedService customerService,
              IAddressService addressService, ICountryService countryService,
         IStateProvinceService stateProvinceService, IGenericAttributeService genericAttributeService,
@@ -59,7 +60,7 @@ namespace MWT.Nop.Core.Service.Zoho
         {
             _settingService = settingService;
             _localizationService = localizationService;
-            _httpClient = httpClient;
+            _httpClientFactory = httpClientFactory;
             _logger = logger;
             _workContext = workContext;
             _iIPLiteService = iIPLiteService;
@@ -70,7 +71,7 @@ namespace MWT.Nop.Core.Service.Zoho
             _stateProvinceService = stateProvinceService;
             _genericAttributeService = genericAttributeService;
             _storeContext = storeContext;
-          _customOrderService = customOrderService;
+            _customOrderService = customOrderService;
             _orderService = orderService;
             _httpContextAccessor = httpContextAccessor;
         }
@@ -166,7 +167,7 @@ namespace MWT.Nop.Core.Service.Zoho
                 var requestContent = new StringContent(request,
                Encoding.UTF8, MimeTypes.ApplicationJson);
                 // end
-
+                var _httpClient = _httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
                 //oIPLite = null;
                 if (!_httpClient.DefaultRequestHeaders.Contains("Authorization"))
                 {
@@ -347,37 +348,36 @@ namespace MWT.Nop.Core.Service.Zoho
                             string authToken = _Token;
                             string crmUrl = "https://www.zohoapis.com/crm/v2/contacts" + (string.IsNullOrEmpty(zohoRefid) ? "" : ("/" + zohoRefid));
 
-                            using (HttpClient httpClient = new HttpClient())
+                            var _httpClient = _httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
+                            if (!_httpClient.DefaultRequestHeaders.Contains("Authorization"))
                             {
-                                if (!_httpClient.DefaultRequestHeaders.Contains("Authorization"))
-                                {
-                                    httpClient.DefaultRequestHeaders.Add("Authorization", $"Zoho-oauthtoken {authToken}");
-                                }
-                                HttpContent content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-                                HttpResponseMessage response = new HttpResponseMessage();
+                                _httpClient.DefaultRequestHeaders.Add("Authorization", $"Zoho-oauthtoken {authToken}");
+                            }
+                            HttpContent content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                            HttpResponseMessage response = new HttpResponseMessage();
 
-                                if (string.IsNullOrEmpty(zohoRefid))
+                            if (string.IsNullOrEmpty(zohoRefid))
+                            {
+                                response = await _httpClient.PostAsync(crmUrl, content);
+                            }
+                            else
+                            {
+                                response = await _httpClient.PutAsync(crmUrl, content);
+                            }
+                            if (!response.IsSuccessStatusCode)
+                            {
+                                isProcessed = false;
+                            }
+                            else
+                            {
+                                dynamic records = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync());
+                                foreach (var record in records.data)
                                 {
-                                    response = await httpClient.PostAsync(crmUrl, content);
-                                }
-                                else
-                                {
-                                    response = await httpClient.PutAsync(crmUrl, content);
-                                }
-                                if (!response.IsSuccessStatusCode)
-                                {
-                                    isProcessed = false;
-                                }
-                                else
-                                {
-                                    dynamic records = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync());
-                                    foreach (var record in records.data)
-                                    {
-                                        zohoRefid = record.details.id;
-                                    }
+                                    zohoRefid = record.details.id;
                                 }
                             }
                         }
+
                     }
 
                     //#region Save Lead
@@ -490,6 +490,7 @@ namespace MWT.Nop.Core.Service.Zoho
                  await _settingService.GetSettingByKeyAsync<string>("Zoho_ClientID"), await _settingService.GetSettingByKeyAsync<string>("Zoho_Secret"),
                  await _settingService.GetSettingByKeyAsync<string>("Zoho_refresh_token"), await _settingService.GetSettingByKeyAsync<string>("Zoho_redirect_uri")),
               Encoding.UTF8, MimeTypes.ApplicationXWwwFormUrlencoded);
+            var _httpClient = _httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
             var response = await _httpClient.PostAsync(url, requestContent);
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
@@ -505,6 +506,7 @@ namespace MWT.Nop.Core.Service.Zoho
             try
             {
                 string query = $"?criteria=({(string.IsNullOrEmpty(email.Trim()) ? "" : "(Email:equals:" + email.Trim() + ")") + (!string.IsNullOrEmpty(phone.Trim()) && !string.IsNullOrEmpty(email.Trim()) ? "or" : "") + (string.IsNullOrEmpty(phone.Trim()) ? "" : "(Phone:equals:" + phone.Trim() + ")")})";
+                var _httpClient = _httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
                 if (!_httpClient.DefaultRequestHeaders.Contains("Authorization"))
                 {
                     _httpClient.DefaultRequestHeaders.Add("Authorization", "Zoho-oauthtoken  " + _Token);
@@ -555,7 +557,7 @@ namespace MWT.Nop.Core.Service.Zoho
                 string leadCreationDate = null;
                 string leadClosingDate = null;
 
-         
+
                 if (!string.Equals(zohoObj.LeadStatus, "Paid"))
                 {
                     var customOrder = await _customOrderService.GetById(orderNumber);
@@ -705,6 +707,7 @@ namespace MWT.Nop.Core.Service.Zoho
                 // end
 
                 //oIPLite = null;
+                var _httpClient = _httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
                 if (!_httpClient.DefaultRequestHeaders.Contains("Authorization"))
                 {
                     _httpClient.DefaultRequestHeaders.Add("Authorization", "Zoho-oauthtoken  " + _Token);
@@ -831,6 +834,7 @@ namespace MWT.Nop.Core.Service.Zoho
                 // end
 
                 //oIPLite = null;
+                var _httpClient = _httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
                 if (!_httpClient.DefaultRequestHeaders.Contains("Authorization"))
                 {
                     _httpClient.DefaultRequestHeaders.Add("Authorization", "Zoho-oauthtoken  " + _Token);

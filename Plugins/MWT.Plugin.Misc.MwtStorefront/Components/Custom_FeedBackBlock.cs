@@ -13,16 +13,16 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
 {
     public class Custom_FeedBackBlockViewComponent : NopViewComponent
     {
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly IFeedbackService _feedbackService;
         private readonly ILogger _logger;
         private readonly IStaticCacheManager _staticCacheManager;
 
-        public Custom_FeedBackBlockViewComponent(HttpClient httpClient,
+        public Custom_FeedBackBlockViewComponent(IHttpClientFactory httpClientFactory,
             IFeedbackService feedbackService, ILogger logger,
             IStaticCacheManager staticCacheManager)
         {
-            this._httpClient = httpClient;
+            this._httpClientFactory = httpClientFactory;
             this._feedbackService = feedbackService;
             this._logger = logger;
             this._staticCacheManager = staticCacheManager;
