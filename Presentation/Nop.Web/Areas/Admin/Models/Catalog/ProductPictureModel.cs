@@ -13,14 +13,14 @@ public partial record ProductPictureModel : BaseNopEntityModel
 
     public int ProductId { get; set; }
 
-    [UIHint("MultiPicture")]
+    [UIHint("Picture")]
     [NopResourceDisplayName("Admin.Catalog.Products.Multimedia.Pictures.Fields.Picture")]
     public int PictureId { get; set; }
 
     [NopResourceDisplayName("Admin.Catalog.Products.Multimedia.Pictures.Fields.Picture")]
     public string PictureUrl { get; set; }
 
-    [NopResourceDisplayName("Admin.Catalog.Products.Multimedia.Pictures.Fields.DisplayOrder")]
+    [NopResourceDisplayName("Admin.Catalog.Products.Multimedia.Pictures.Fi elds.DisplayOrder")]
     public int DisplayOrder { get; set; }
 
     [NopResourceDisplayName("Admin.Catalog.Products.Multimedia.Pictures.Fields.OverrideAltAttribute")]

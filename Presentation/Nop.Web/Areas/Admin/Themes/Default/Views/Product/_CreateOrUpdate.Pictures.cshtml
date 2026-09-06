@@ -1,4 +1,4 @@
-@* @model ProductPictureModel
+@model ProductPictureModel
 @if (ViewBag.RefreshPage == true)
 {
     <script>
@@ -119,7 +119,6 @@ else
                 </div>
                 <div class="form-group row">
                     <div class="col-md-9 offset-md-3">
-                        S
                         <button type="submit" id="addProductPicture" class="btn btn-primary">
                             @if (Model.Id == 0)
                             {
@@ -145,4 +144,4 @@ else
             alert('Please select a picture.')
         }
     };
-</script> *@
+</script>

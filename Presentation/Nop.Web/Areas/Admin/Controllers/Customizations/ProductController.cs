@@ -2,11 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using MWT.Nop.Core.Domain;
 using MWT.Nop.Core.Domain.Catalog;
+using MWT.Nop.Core.Domain.Media;
 using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Core.Services;
 using MWT.Nop.Core.Services.Catalog;
+using MWT.Nop.Core.Services.CloudFlare;
 using MWT.Nop.Core.Services.Configuration;
 using MWT.Nop.Core.Services.ExportImport;
+using MWT.Nop.Core.Services.Media;
 using Newtonsoft.Json;
 using Nop.Core;
 using Nop.Core.Caching;
@@ -1654,7 +1657,7 @@ public partial class ProductController : BaseAdminController
         var model = await _productModelFactory.PrepareProductAttributeValueModelAsync(new ProductAttributeValueModel(), productAttributeMapping, null);
 
         var pv = await _productAttributeService.GetProductAttributeByIdAsync(productAttributeMapping.ProductAttributeId);
-         return View("ProductAttributeValueCreatePopup", model);
+        return View("ProductAttributeValueCreatePopup", model);
     }
 
     [HttpPost]
@@ -1768,7 +1771,7 @@ public partial class ProductController : BaseAdminController
         //prepare model
         var model = await _productModelFactory.CustomPrepareProductAttributeValueModelAsync(null, productAttributeMapping, productAttributeValue);
         var pv = await _productAttributeService.GetProductAttributeByIdAsync(productAttributeMapping.ProductAttributeId);
-      
+
         return View("ProductAttributeValueEditPopup", model);
     }
 
@@ -1898,7 +1901,7 @@ public partial class ProductController : BaseAdminController
         //prepare model
         model = await _productModelFactory.CustomPrepareProductAttributeValueModelAsync(model, productAttributeMapping, productAttributeValue, true);
         var pv = await _productAttributeService.GetProductAttributeByIdAsync(productAttributeMapping.ProductAttributeId);
-          //if we got this far, something failed, redisplay form
+        //if we got this far, something failed, redisplay form
         return View("ProductAttributeValueEditPopup", model);
     }
 
@@ -2377,7 +2380,514 @@ public partial class ProductController : BaseAdminController
         return View(new AddPairWithProductSearchModel());
     }
 
-    #endregion 
     #endregion
+
+    #region Picture
+
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    public virtual async Task<IActionResult> CustomProductPictureAdd(int pictureId, int displayOrder,
+  string overrideAltAttribute, string overrideTitleAttribute, int productId, bool displayOnListingModules = false, bool hideOnProductPage = false, bool displayOnCategoryPage = false, bool isDimensionImage = false)
+    { 
+        if (pictureId == 0)
+            throw new ArgumentException();
+
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(productId)
+            ?? throw new ArgumentException("No product found with the specified id");
+
+        //a vendor should have access only to his products
+        if (await _workContext.GetCurrentVendorAsync() != null && product.VendorId != (await _workContext.GetCurrentVendorAsync()).Id)
+            return RedirectToAction("List");
+
+        if ((await _productService.GetProductPicturesByProductIdAsync(productId)).Any(p => p.PictureId == pictureId))
+            return Json(new { Result = false });
+
+        //try to get a picture with the specified id
+        var _pictureService = EngineContext.Current.Resolve<IPictureExtendedService>();
+        var picture = await _pictureService.GetPictureByIdAsync(pictureId)
+            ?? throw new ArgumentException("No picture found with the specified id");
+
+        await _pictureService.UpdatePictureAsync(picture.Id,
+            await _pictureService.LoadPictureBinaryAsync(picture),
+            picture.MimeType,
+            picture.SeoFilename,
+            overrideAltAttribute,
+            overrideTitleAttribute);
+
+        await _pictureService.SetSeoFilenameAsync(pictureId, await _pictureService.GetPictureSeNameAsync(product.Name));
+
+        var productPicture = new ProductPicture
+        {
+            PictureId = pictureId,
+            ProductId = productId,
+            DisplayOrder = displayOrder,
+            DisplayOnListingModules = displayOnListingModules,
+            HideOnProductPage = hideOnProductPage,
+            DisplayOnCategoryPage = displayOnCategoryPage,
+            IsDimensionImage = isDimensionImage
+        };
+        await _productService.InsertProductPictureAsync(productPicture);
+
+        #region Product Picture Log
+
+
+
+
+        //if (logPictureIds.Count() > 1)
+        //{
+        //    logPictureIds = logPictureIds.Skip(logPictureIds.Count() - 1).ToList();
+
+        //    #region Delete Old Logs Except Latest one
+
+        //    foreach (var logPictureId in logPictureIds)
+        //    {
+        //        var logPicture = await _pictureService.GetPictureLogById(logPictureId);
+        //        if (logPicture != null)
+        //        {
+        //            await _pictureService.DeletePictureImagesAsync(new Core.Domain.Media.Picture()
+        //            {
+        //                AltAttribute = logPicture.AltAttribute,
+        //                Id = logPicture.ReferenceId,
+        //                IsNew = logPicture.IsNew,
+        //                MimeType = logPicture.MimeType,
+        //                SeoFilename = logPicture.SeoFilename,
+        //                TitleAttribute = logPicture.TitleAttribute,
+        //                VirtualPath = logPicture.VirtualPath
+        //            });
+        //        }
+
+        //        var pictureMappingLogsByPictureId= await 
+
+        //        foreach (var pictureMappingLog in pictureMappingLogs.Where(pl => pl.PictureId == logPictureId))
+        //        {
+        //            await _pictureService.DeletePictureMappingLog(pictureMappingLog);
+        //        }
+        //        if (logPicture != null)
+        //            await _pictureService.DeletePictureLog(logPicture);
+        //    }
+        //    #endregion
+        //}
+
+        var pictureLog = new  LogPicture()
+        {
+            AltAttribute = picture.AltAttribute,
+            IsNew = picture.IsNew,
+            MimeType = picture.MimeType,
+            ReferenceId = picture.Id,
+            SeoFilename = picture.SeoFilename,
+            TitleAttribute = picture.TitleAttribute,
+            VirtualPath = picture.VirtualPath
+        };
+        await _pictureService.InsertPictureLog(pictureLog);
+
+        await _pictureService.InsertPictureMappingLog(new LogProductPicture()
+        {
+            CreatedOn = DateTime.Now,
+            CustomerId = (await _workContext.GetCurrentCustomerAsync()).Id,
+            Action = "Add",
+            ReferenceId = productPicture.Id,
+            DisplayOnCategoryPage = displayOnCategoryPage,
+            DisplayOnListingModules = displayOnListingModules,
+            HideOnProductPage = hideOnProductPage,
+            ProductId = productId,
+            PictureId = pictureLog.Id,
+            DisplayOrder = displayOrder
+        });
+
+
+        #endregion
+
+
+        return Json(new { Result = true });
+    }
+
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    public virtual async Task<IActionResult> CustomProductPictureUpdate(ProductPictureModel model)
+    { 
+        //try to get a product picture with the specified id
+        var productPicture = await _productService.GetProductPictureByIdAsync(model.Id)
+            ?? throw new ArgumentException("No product picture found with the specified id");
+
+        //a vendor should have access only to his products
+        if (await _workContext.GetCurrentVendorAsync() != null)
+        {
+            var product = await _productService.GetProductByIdAsync(productPicture.ProductId);
+            if (product != null && product.VendorId != (await _workContext.GetCurrentVendorAsync()).Id)
+                return Content("This is not your product");
+        }
+
+        var _pictureService = EngineContext.Current.Resolve<IPictureExtendedService>();
+        //try to get a picture with the specified id
+        var picture = await _pictureService.GetPictureByIdAsync(productPicture.PictureId)
+            ?? throw new ArgumentException("No picture found with the specified id");
+
+
+
+        (string fullSizeImageUrl, _) = await _pictureService.GetPictureUrlAsync(picture);
+        if (!string.IsNullOrEmpty(fullSizeImageUrl))
+        {
+            var _cloudflareSettings = EngineContext.Current.Resolve<CloudflareSettings>();
+            List<string> images = new List<string>();
+            images.Add(fullSizeImageUrl);
+
+            foreach (var size in _cloudflareSettings.ImageSizes.Split(','))
+            {
+                int.TryParse(size, out int imageSize);
+                if (imageSize > 0)
+                {
+                    (string imageUrl, _) = await _pictureService.GetPictureUrlAsync(picture, imageSize);
+                    if (!string.IsNullOrEmpty(imageUrl))
+                    {
+                        images.Add(imageUrl);
+                    }
+                }
+            }
+            var _cloudflareService = EngineContext.Current.Resolve<ICloudflareService>();
+
+            await _cloudflareService.ClearCacheOfFiles(images);
+        }
+
+        await _pictureService.UpdatePictureAsync(picture.Id,
+            await _pictureService.LoadPictureBinaryAsync(picture),
+            picture.MimeType,
+            picture.SeoFilename,
+            model.OverrideAltAttribute,
+            model.OverrideTitleAttribute);
+
+        productPicture.DisplayOrder = model.DisplayOrder;
+        productPicture.DisplayOnCategoryPage = model.DisplayOnCategoryPage;
+        productPicture.HideOnProductPage = model.HideOnProductPage;
+        productPicture.DisplayOnListingModules = model.DisplayOnListingModules;
+        productPicture.IsDimensionImage = model.IsDimensionImage;
+        await _productService.UpdateProductPictureAsync(productPicture);
+
+
+
+        #region Product Picture Log
+
+        var pictureLog = (await _pictureService.GetPictureLogsByRefrenceId(picture.Id)).FirstOrDefault();
+
+        if (pictureLog != null)
+        {
+            await _pictureService.InsertPictureMappingLog(new LogProductPicture()
+            {
+                CreatedOn = DateTime.Now,
+                CustomerId = (await _workContext.GetCurrentCustomerAsync()).Id,
+                Action = "Update",
+                ReferenceId = productPicture.Id,
+                DisplayOnCategoryPage = model.DisplayOnCategoryPage,
+                DisplayOnListingModules = model.DisplayOnListingModules,
+                HideOnProductPage = model.HideOnProductPage,
+                ProductId = productPicture.ProductId,
+                PictureId = pictureLog.Id,
+                DisplayOrder = model.DisplayOrder
+            });
+
+        }
+        else
+        {
+            pictureLog = new  LogPicture()
+            {
+                AltAttribute = picture.AltAttribute,
+                IsNew = picture.IsNew,
+                MimeType = picture.MimeType,
+                ReferenceId = picture.Id,
+                SeoFilename = picture.SeoFilename,
+                TitleAttribute = picture.TitleAttribute,
+                VirtualPath = picture.VirtualPath
+            };
+            await _pictureService.InsertPictureLog(pictureLog);
+
+            await _pictureService.InsertPictureMappingLog(new LogProductPicture()
+            {
+                CreatedOn = DateTime.Now,
+                CustomerId = (await _workContext.GetCurrentCustomerAsync()).Id,
+                Action = "Update",
+                ReferenceId = productPicture.Id,
+                DisplayOnCategoryPage = model.DisplayOnCategoryPage,
+                DisplayOnListingModules = model.DisplayOnListingModules,
+                HideOnProductPage = model.HideOnProductPage,
+                ProductId = productPicture.ProductId,
+                PictureId = pictureLog.Id,
+                DisplayOrder = model.DisplayOrder
+            });
+        }
+
+
+        #endregion
+
+        return View("_CreateOrUpdate.Pictures", model);
+    }
+
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<IActionResult> CustomProductPictureDelete(int id)
+    {
+
+        //try to get a product picture with the specified id
+        var productPicture = await _productService.GetProductPictureByIdAsync(id)
+            ?? throw new ArgumentException("No product picture found with the specified id");
+        var _pictureService = EngineContext.Current.Resolve<IPictureExtendedService>();
+        //a vendor should have access only to his products
+        if (await _workContext.GetCurrentVendorAsync() != null)
+        {
+            var product = await _productService.GetProductByIdAsync(productPicture.ProductId);
+            if (product != null && product.VendorId != (await _workContext.GetCurrentVendorAsync()).Id)
+                return Content("This is not your product");
+        }
+
+        var pictureId = productPicture.PictureId;
+        await _productService.DeleteProductPictureAsync(productPicture);
+
+        //try to get a picture with the specified id
+        var picture = await _pictureService.GetPictureByIdAsync(pictureId)
+            ?? throw new ArgumentException("No picture found with the specified id");
+
+        await _pictureService.DeletePictureExcludeImagesAsync(picture);
+
+        #region Product Picture Log
+
+        var pictureLog = (await _pictureService.GetPictureLogsByRefrenceId(picture.Id)).FirstOrDefault();
+
+        //if (pictureLog != null)
+        //{
+        //    var pictureMappingLogs = await _pictureService.GetPictureMappingLogs(productPicture.ProductId, productPicture.DisplayOrder);
+        //    var logPictureIds = pictureMappingLogs.Select(pl => pl.PictureId).Distinct().OrderBy(p => p).ToList();
+        //    if (logPictureIds.Count() > 1)
+        //    {
+        //        logPictureIds = logPictureIds.Skip(logPictureIds.Count() - 1).ToList();
+
+        //        #region Delete Old Logs Except Latest one
+
+        //        foreach (var logPictureId in logPictureIds)
+        //        {
+        //            var logPicture = await _pictureService.GetPictureLogById(logPictureId);
+        //            if (logPicture != null)
+        //            {
+        //                await _pictureService.DeletePictureImagesAsync(new Core.Domain.Media.Picture()
+        //                {
+        //                    AltAttribute = logPicture.AltAttribute,
+        //                    Id = logPicture.ReferenceId,
+        //                    IsNew = logPicture.IsNew,
+        //                    MimeType = logPicture.MimeType,
+        //                    SeoFilename = logPicture.SeoFilename,
+        //                    TitleAttribute = logPicture.TitleAttribute,
+        //                    VirtualPath = logPicture.VirtualPath
+        //                });
+        //            }
+
+        //            foreach (var pictureMappingLog in pictureMappingLogs.Where(pl => pl.PictureId == logPictureId))
+        //            {
+        //                await _pictureService.DeletePictureMappingLog(pictureMappingLog);
+        //            }
+        //            if (logPicture != null)
+        //                await _pictureService.DeletePictureLog(logPicture);
+        //        }
+        //    }
+        //    #endregion
+
+        //}
+        //else
+        //{
+        if (pictureLog == null)
+        {
+            pictureLog = new LogPicture()
+            {
+                AltAttribute = picture.AltAttribute,
+                IsNew = picture.IsNew,
+                MimeType = picture.MimeType,
+                ReferenceId = picture.Id,
+                SeoFilename = picture.SeoFilename,
+                TitleAttribute = picture.TitleAttribute,
+                VirtualPath = picture.VirtualPath
+            };
+            await _pictureService.InsertPictureLog(pictureLog);
+        }
+        //  }
+
+        await _pictureService.InsertPictureMappingLog(new LogProductPicture()
+        {
+            CreatedOn = DateTime.Now,
+            CustomerId = (await _workContext.GetCurrentCustomerAsync()).Id,
+            Action = "Delete",
+            ReferenceId = productPicture.Id,
+            DisplayOnCategoryPage = productPicture.DisplayOnCategoryPage,
+            DisplayOnListingModules = productPicture.DisplayOnListingModules,
+            HideOnProductPage = productPicture.HideOnProductPage,
+            ProductId = productPicture.ProductId,
+            PictureId = pictureLog.Id,
+            DisplayOrder = productPicture.DisplayOrder
+        });
+
+
+        #endregion
+
+        return new NullJsonResult();
+    }
+    [HttpPost] 
+    [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
+
+    public virtual async Task<IActionResult> ProductPictureLogList(LogProductPictureSearchModel searchModel)
+    { 
+        //try to get a product with the specified id
+        var product = await _productService.GetProductByIdAsync(searchModel.ProductId)
+            ?? throw new ArgumentException("No product found with the specified id");
+
+        //a vendor should have access only to his products
+        if (await _workContext.GetCurrentVendorAsync() != null && product.VendorId != (await _workContext.GetCurrentVendorAsync()).Id)
+            return Content("This is not your product");
+
+        //prepare model
+        var model = await _productModelFactory.PrepareProductPictureListModelAsync(searchModel, product);
+
+        return Json(model);
+    }
+
+    public virtual async Task<IActionResult> PictureHistory(int productId)
+    {
+        return View(new LogProductPictureSearchModel()
+        {
+            ProductId = productId
+        });
+    }
+    public virtual async Task<IActionResult> ProductPictureAddUpdatePopup(ProductPictureModel? model)
+    {
+        if (model.Id != 0)
+        {
+            //try to get a product picture with the specified id
+            var productPicture = await _productService.GetProductPictureByIdAsync(model.Id)
+                ?? throw new ArgumentException("No product picture found with the specified id");
+
+            //try to get a picture with the specified id
+            var picture = await _pictureService.GetPictureByIdAsync(productPicture.PictureId)
+                ?? throw new ArgumentException("No picture found with the specified id");
+            model.Id = productPicture.Id;
+            model.PictureId = productPicture.PictureId;
+            model.ProductId = productPicture.ProductId;
+            model.DisplayOrder = productPicture.DisplayOrder;
+            model.DisplayOnListingModules = productPicture.DisplayOnListingModules ?? false;
+            model.HideOnProductPage = productPicture.HideOnProductPage ?? false;
+            model.DisplayOnCategoryPage = productPicture.DisplayOnCategoryPage ?? false;
+            model.OverrideAltAttribute = picture.AltAttribute;
+            model.OverrideTitleAttribute = picture.TitleAttribute;
+            model.PictureUrl = picture.VirtualPath;
+            model.IsDimensionImage = productPicture.IsDimensionImage;
+
+            return View("_CreateOrUpdate.Pictures", model);
+        }
+        else
+        {
+            return View("_CreateOrUpdate.Pictures", model);
+        }
+    }
+    [HttpPost]
+    public virtual async Task<IActionResult> CustomProductPictureAdd(int pictureId, int displayOrder,
+string overrideAltAttribute, string overrideTitleAttribute, int productId, bool displayOnListingModules = false, bool hideOnProductPage = false, bool displayOnCategoryPage = false, int id = 0, string? pictureUrl = "", bool isDimensionImage = false)
+    {
+        if (id != 0)
+        {
+            ProductPictureModel model = new ProductPictureModel()
+            {
+                Id = id,
+                PictureId = pictureId,
+                DisplayOrder = displayOrder,
+                OverrideAltAttribute = overrideAltAttribute,
+                OverrideTitleAttribute = overrideTitleAttribute,
+                ProductId = productId,
+                DisplayOnListingModules = displayOnListingModules,
+                HideOnProductPage = hideOnProductPage,
+                IsDimensionImage = isDimensionImage,
+                DisplayOnCategoryPage = displayOnCategoryPage,
+                PictureUrl = pictureUrl ?? "",
+            };
+            await CustomProductPictureUpdate(model);
+        }
+        else
+        {
+            if (!await _permissionService.AuthorizeAsync(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE))
+                return AccessDeniedView();
+
+            if (pictureId == 0)
+                throw new ArgumentException();
+
+            var _pictureService = EngineContext.Current.Resolve<IPictureExtendedService>();
+
+            //try to get a product with the specified id
+            var product = await _productService.GetProductByIdAsync(productId)
+                ?? throw new ArgumentException("No product found with the specified id");
+
+            //a vendor should have access only to his products
+            if (await _workContext.GetCurrentVendorAsync() != null && product.VendorId != (await _workContext.GetCurrentVendorAsync()).Id)
+                return RedirectToAction("List");
+
+            if ((await _productService.GetProductPicturesByProductIdAsync(productId)).Any(p => p.PictureId == pictureId))
+                return Json(new { Result = false });
+
+            //try to get a picture with the specified id
+            var picture = await _pictureService.GetPictureByIdAsync(pictureId)
+                ?? throw new ArgumentException("No picture found with the specified id");
+
+            await _pictureService.UpdatePictureAsync(picture.Id,
+                await _pictureService.LoadPictureBinaryAsync(picture),
+                picture.MimeType,
+                picture.SeoFilename,
+                overrideAltAttribute,
+                overrideTitleAttribute);
+
+            await _pictureService.SetSeoFilenameAsync(pictureId, await _pictureService.GetPictureSeNameAsync(product.Name));
+
+            var productPicture = new ProductPicture
+            {
+                PictureId = pictureId,
+                ProductId = productId,
+                DisplayOrder = displayOrder,
+                DisplayOnListingModules = displayOnListingModules,
+                HideOnProductPage = hideOnProductPage,
+                DisplayOnCategoryPage = displayOnCategoryPage,
+                IsDimensionImage = isDimensionImage
+            };
+            await _productService.InsertProductPictureAsync(productPicture);
+
+            #region Product Picture Log
+
+            var pictureLog = new  LogPicture()
+            {
+                AltAttribute = picture.AltAttribute,
+                IsNew = picture.IsNew,
+                MimeType = picture.MimeType,
+                ReferenceId = picture.Id,
+                SeoFilename = picture.SeoFilename,
+                TitleAttribute = picture.TitleAttribute,
+                VirtualPath = picture.VirtualPath
+            };
+            await _pictureService.InsertPictureLog(pictureLog);
+
+            await _pictureService.InsertPictureMappingLog(new LogProductPicture()
+            {
+                CreatedOn = DateTime.Now,
+                CustomerId = (await _workContext.GetCurrentCustomerAsync()).Id,
+                Action = "Add",
+                ReferenceId = productPicture.Id,
+                DisplayOnCategoryPage = displayOnCategoryPage,
+                DisplayOnListingModules = displayOnListingModules,
+                HideOnProductPage = hideOnProductPage,
+                ProductId = productId,
+                PictureId = pictureLog.Id,
+                DisplayOrder = displayOrder
+            });
+        }
+        #endregion
+        ViewBag.RefreshPage = true;
+        return View("_CreateOrUpdate.Pictures", new ProductPictureModel());
+    }
+
+    #endregion
+
+
+    #endregion
+
+ 
 
 }
