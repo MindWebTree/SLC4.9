@@ -1,0 +1,78 @@
+
+            @model SpecificationAttributeOptionModel
+
+@{
+    //page title
+    ViewBag.PageTitle = T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Options.EditOptionDetails").Text;
+    //active menu item (system name)
+    Html.SetActiveMenuItemSystemName("Specification attributes");
+}
+
+<div id="importexcel-product-mapping" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="importexcel-window-title">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="importexcel-window-title">@T("Admin.Common.ImportFromExcel")</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form asp-controller="SpecificationAttribute" asp-action="ImportProductMappingExcel" method="post" enctype="multipart/form-data">
+                <div class="form-horizontal">
+                    <div class="modal-body">
+                        <ul class="common-list">
+                            <li>
+                                <em>@T("Admin.Catalog.Category.ProductMapping.ImportFromExcelTip")</em>
+                            </li>
+                            <li>
+                                <em>@T("Admin.Catalog.Category.ProductMapping.ManyRecordsWarning")</em>
+                            </li>
+                        </ul>
+                        <div class="form-group row">
+                            <div class="col-md-2">
+                                <div class="label-wrapper">
+                                    <label class="col-form-label">
+                                        @T("Admin.Common.ExcelFile")
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-10">
+                                <input type="file" id="importexcelfile" name="importexcelfile" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <input asp-for="Id" type="hidden" />
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">
+                            @T("Admin.Common.ImportFromExcel")
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<form asp-controller="SpecificationAttribute" asp-action="EditSpecificationAttributeOption"
+      asp-route-specificationAttributeId="@Context.Request.Query["specificationAttributeId"]">
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            @T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Options.EditOptionDetails")
+            <small>
+                <i class="fas fa-arrow-circle-left"></i>
+                <a href="@(Url.Action("EditSpecificationAttribute","SpecificationAttribute"))/@Model.SpecificationAttributeId">@T("Admin.Catalog.Attributes.SpecificationAttribute.BackToList")</a>
+            </small>
+        </h1>
+        <div class="float-right">
+            <button type="submit" name="save" class="btn btn-primary">
+                <i class="far fa-save"></i>
+                @T("Admin.Common.Save")
+            </button>
+            <button type="submit" name="save-continue" class="btn btn-primary">
+                <i class="far fa-save"></i>
+                @T("Admin.Common.SaveContinue")
+            </button>
+            @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.SpecificationAttributeOptionDetailsButtons })
+        </div>
+    </div>
+    @await Html.PartialAsync("_CreateOrUpdateOption", Model)
+    @await Html.PartialAsync("_CreateOrUpdateSpecificationAttributeOption.UsedByProducts", Model)
+</form>

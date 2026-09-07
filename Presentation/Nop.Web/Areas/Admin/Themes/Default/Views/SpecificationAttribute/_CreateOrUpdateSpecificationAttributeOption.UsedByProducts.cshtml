@@ -1,0 +1,150 @@
+﻿@model SpecificationAttributeOptionModel
+<div class="content-header clearfix">
+    <div class="float-right">
+        <div class="btn-group">
+            <button type="submit" name="exportexcel-option-product" class="btn btn-success mr-3" formaction="@Url.ActionLink("ExportExcelOptionProductMapping","SpecificationAttribute")">
+                <i class="fas fa-download"></i>
+                @T("Admin.Common.Export")
+            </button>
+            <button type="button" name="importexcel" class="btn bg-olive" data-toggle="modal" data-target="#importexcel-product-mapping">
+                <i class="fas fa-upload"></i>
+                @T("Admin.Common.Import")
+            </button>
+        </div>
+    </div>
+</div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="card card-default card-search" >
+                <div class="card-body">
+                    <div class="row search-row" data-hideattribute="specificationoption.products.HideSearchBlock">
+                        <div class="search-text">@T("Admin.Common.Search")</div>
+                        <div class="icon-search"><i class="fas fa-search" aria-hidden="true"></i></div>
+                        <div class="icon-collapse"><i class="far fa-angle-up" aria-hidden="true"></i></div>
+                    </div>
+
+                    <div class="search-body">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <nop-label asp-for="SpecificationAttributeOptionProductSearchModel.Search" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <nop-editor asp-for="SpecificationAttributeOptionProductSearchModel.Search" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <nop-label asp-for="SpecificationAttributeOptionProductSearchModel.SearchCategoryId" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <nop-select asp-for="SpecificationAttributeOptionProductSearchModel.SearchCategoryId" asp-items="Model.SpecificationAttributeOptionProductSearchModel.AvailableCategories" />
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="text-center col-12">
+                                <button type="button" id="search-products" class="btn btn-primary btn-search">
+                                    <i class="fas fa-search"></i>
+                                    @T("Admin.Common.Search")
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="card-body">
+    @await Html.PartialAsync("Table", new DataTablesModel
+{
+    Name = "option-used-by-products-grid",
+    UrlRead = new DataUrl("OptionUsedByProducts", "SpecificationAttribute",
+    new RouteValueDictionary { [nameof(Model.SpecificationAttributeOptionProductSearchModel.SpecificationAttributeOptionId)] = Model.Id }),
+    UrlDelete = new DataUrl("ProductDelete", "SpecificationAttribute", null),
+    UrlUpdate = new DataUrl("SpecificationOptionProductUpdate", "SpecificationAttribute", null),
+    SearchButtonId = "search-products",
+    Length = Model.SpecificationAttributeOptionProductSearchModel.PageSize,
+    LengthMenu = Model.SpecificationAttributeOptionProductSearchModel.AvailablePageSizes,
+    Filters = new List<FilterParameter>
+                                  {
+                                      new FilterParameter(nameof(Model.SpecificationAttributeOptionProductSearchModel.Search)),
+                                      new FilterParameter(nameof(Model.SpecificationAttributeOptionProductSearchModel.SearchCategoryId))
+                                  },
+    ColumnCollection = new List<ColumnProperty>
+    {
+         new ColumnProperty(nameof(SpecificationAttributeOptionProductModel.ProductId))
+    {
+    Title = T("Admin.Catalog.Products.Fields.ProductId").Text,
+    Width = "100",
+
+    },
+    new ColumnProperty(nameof(SpecificationAttributeOptionProductModel.PictureThumbnailUrl))
+    {
+    Title = T("Admin.Catalog.Products.Fields.PictureThumbnailUrl").Text,
+    Width = "100",
+    Render = new RenderPicture()
+    },
+    new ColumnProperty(nameof(SpecificationAttributeOptionProductModel.ProductName))
+    {
+    Title = T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.UsedByProducts.Product").Text
+    },
+    new ColumnProperty(nameof(SpecificationAttributeOptionProductModel.DisplayOrder))
+    {
+    Title = T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.UsedByProducts.DisplayOrder").Text,
+    Editable = true,
+    EditType = EditType.Number
+    },new ColumnProperty(nameof(SpecificationAttributeOptionProductModel.MobileDisplayOrder))
+    {
+    Title = T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.UsedByProducts.MobileDisplayOrder").Text,
+    Editable = true,
+    EditType = EditType.Number
+    },
+    new ColumnProperty(nameof(CategoryProductModel.Id))
+    {
+    Title = T("Admin.Common.Edit").Text,
+    Width = "200",
+    ClassName =  NopColumnClassDefaults.Button,
+    Render = new RenderButtonsInlineEdit()
+    },
+    new ColumnProperty(nameof(SpecificationAttributeProductModel.ProductId))
+    {
+    Title = T("Admin.Common.View").Text,
+    Width = "100",
+    ClassName =  NopColumnClassDefaults.Button,
+    Render = new RenderButtonView(new DataUrl("~/Admin/Product/Edit/"))
+    },
+    new ColumnProperty(nameof(CategoryProductModel.Id))
+    {
+    Title = T("Admin.Common.Remove").Text,
+    Width = "100",
+    Render = new RenderButtonRemove(T("Admin.Common.Remove").Text),
+    ClassName = NopColumnClassDefaults.Button
+    }
+    }
+})
+</div>
+<script>
+    $(document).ready(function () {
+
+        // alert($("#HiddenField1").attr("name"));
+
+        $("#SpecificationAttributeOptionProductSearchModel_SearchCategoryId").attr("name", "SearchCategoryId");
+        $("#SpecificationAttributeOptionProductSearchModel_SearchCategoryId").attr("id", "SearchCategoryId");
+        $("#SpecificationAttributeOptionProductSearchModel_Search").attr("name", "Search");
+        $("#SpecificationAttributeOptionProductSearchModel_Search").attr("id", "Search");
+
+        // alert($("#HiddenField1").attr("name"));
+    });
+</script>
