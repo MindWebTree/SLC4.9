@@ -16,17 +16,18 @@ using Nop.Core;
 using Nop.Web.Framework.Mvc.Filters;
 using Nop.Core.Domain.Customization.Catalog;
 using System.Collections.Generic;
+using MWT.Nop.Core.Domain.Catalog;
+using MWT.Nop.Core.Services.Catalog;
+using MWT.Nop.Core.Services.ExportImport;
 
 namespace Nop.Web.Areas.Admin.Controllers
 {
     public partial class SpecificationAttributeController : BaseAdminController
     {
         #region Specification Mapped products
+        [CheckPermission(StandardPermission.Catalog.SPECIFICATION_ATTRIBUTES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> CustomSpecificationAttributeUsedByProducts(SpecificationAttributeProductSearchModel searchModel)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAttributes))
-                return await AccessDeniedDataTablesJson();
-
             //try to get a specification attribute with the specified id
             var specificationAttribute = await _specificationAttributeService.GetSpecificationAttributeByIdAsync(searchModel.SpecificationAttributeId)
                 ?? throw new ArgumentException("No specification attribute found with the specified id");
@@ -37,11 +38,9 @@ namespace Nop.Web.Areas.Admin.Controllers
             return Json(model);
         }
 
+        [CheckPermission(StandardPermission.Catalog.SPECIFICATION_ATTRIBUTES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> CustomEditSpecificationAttribute(int id)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAttributes))
-                return AccessDeniedView();
-
             //try to get a specification attribute with the specified id
             var specificationAttribute = await _specificationAttributeService.GetSpecificationAttributeByIdAsync(id);
             if (specificationAttribute == null)
@@ -50,16 +49,14 @@ namespace Nop.Web.Areas.Admin.Controllers
             //prepare model
             var model = await _specificationAttributeModelFactory.CustomPrepareSpecificationAttributeModelAsync(null, specificationAttribute);
 
-            return View("EditSpecificationAttribute",model);
+            return View("EditSpecificationAttribute", model);
         }
 
         [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
+        [CheckPermission(StandardPermission.Catalog.SPECIFICATION_ATTRIBUTES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> CustomEditSpecificationAttribute(SpecificationAttributeModel model, bool continueEditing)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAttributes))
-                return AccessDeniedView();
-
             //try to get a specification attribute with the specified id
             var specificationAttribute = await _specificationAttributeService.GetSpecificationAttributeByIdAsync(model.Id);
             if (specificationAttribute == null)
@@ -92,12 +89,10 @@ namespace Nop.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Catalog.SPECIFICATION_ATTRIBUTES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> OptionUsedByProducts(SpecificationAttributeOptionProductSearchModel searchModel)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAttributes))
-                return await AccessDeniedDataTablesJson();
-
             //try to get a specification attribute with the specified id
             var specificationAttributeOption = await _specificationAttributeService.GetSpecificationAttributeOptionByIdAsync(searchModel.SpecificationAttributeOptionId)
                 ?? throw new ArgumentException("No specification attribute found with the specified id");
@@ -112,12 +107,9 @@ namespace Nop.Web.Areas.Admin.Controllers
 
         /// <returns>A task that represents the asynchronous operation</returns>
         /// 
-
+        [CheckPermission(StandardPermission.Catalog.SPECIFICATION_ATTRIBUTES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> CreateSpecificationAttributeOption(int id)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAttributes))
-                return AccessDeniedView();
-
             //try to get a specification attribute with the specified id
             var specificationAttribute = await _specificationAttributeService.GetSpecificationAttributeByIdAsync(id);
             if (specificationAttribute == null)
@@ -133,12 +125,10 @@ namespace Nop.Web.Areas.Admin.Controllers
 
 
         [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
+        [CheckPermission(StandardPermission.Catalog.SPECIFICATION_ATTRIBUTES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> CreateSpecificationAttributeOption(SpecificationAttributeOptionModel model, bool continueEditing)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAttributes))
-                return AccessDeniedView();
-
             //try to get a specification attribute with the specified id
             var specificationAttribute = await _specificationAttributeService.GetSpecificationAttributeByIdAsync(model.SpecificationAttributeId);
             if (specificationAttribute == null)
@@ -173,11 +163,9 @@ namespace Nop.Web.Areas.Admin.Controllers
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
+        [CheckPermission(StandardPermission.Catalog.SPECIFICATION_ATTRIBUTES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> EditSpecificationAttributeOption(int id)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAttributes))
-                return AccessDeniedView();
-
             //try to get a specification attribute option with the specified id
             var specificationAttributeOption = await _specificationAttributeService.GetSpecificationAttributeOptionByIdAsync(id);
             if (specificationAttributeOption == null)
@@ -197,12 +185,10 @@ namespace Nop.Web.Areas.Admin.Controllers
         }
 
         [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
+        [CheckPermission(StandardPermission.Catalog.SPECIFICATION_ATTRIBUTES_CREATE_EDIT_DELETE)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> EditSpecificationAttributeOption(SpecificationAttributeOptionModel model, bool continueEditing)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAttributes))
-                return AccessDeniedView();
-
             //try to get a specification attribute option with the specified id
             var specificationAttributeOption = await _specificationAttributeService.GetSpecificationAttributeOptionByIdAsync(model.Id);
             if (specificationAttributeOption == null)
@@ -242,11 +228,9 @@ namespace Nop.Web.Areas.Admin.Controllers
             return View(model);
         }
 
+        [CheckPermission(StandardPermission.Catalog.SPECIFICATION_ATTRIBUTES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> SpecificationOptionProductUpdate(SpecificationAttributeOptionProductModel model)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAttributes))
-                return AccessDeniedView();
-
             //try to get a product category with the specified id
             var productSpecificationAttribute = await _specificationAttributeService.GetProductSpecificationAttributeByIdAsync(model.Id)
                 ?? throw new ArgumentException("No  Product Specification Attribute Option found with the specified id");
@@ -259,11 +243,9 @@ namespace Nop.Web.Areas.Admin.Controllers
             return new NullJsonResult();
         }
 
+        [CheckPermission(StandardPermission.Catalog.SPECIFICATION_ATTRIBUTES_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> ProductDelete(int id)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAttributes))
-                return AccessDeniedView();
-
             //try to get a product category with the specified id
             var productSpecificationAttribute = await _specificationAttributeService.GetProductSpecificationAttributeByIdAsync(id)
                 ?? throw new ArgumentException("No product category mapping found with the specified id", nameof(id));
@@ -283,6 +265,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> ExportProductsMappings(SpecificationAttributeOptionModel model)
         {
+            var _specificationAttributeService = EngineContext.Current.Resolve<ICustomSpecificationAttributeService>();
             var products = await _specificationAttributeService.GetProductsBySpecificationAttributeOptionIdAsync(model.Id, 0, int.MaxValue);
             if (!products.Any())
             {
@@ -292,10 +275,10 @@ namespace Nop.Web.Areas.Admin.Controllers
             try
             {
                 var _categoryService = EngineContext.Current.Resolve<ICategoryService>();
-                List<ExportProductSpecificationAttributeFormat> exprtPrdSpecFormat = new List<ExportProductSpecificationAttributeFormat>();
+                List<ExportProductSpecFormat> exprtPrdSpecFormat = new List<ExportProductSpecFormat>();
                 foreach (var product in products)
                 {
-                    ExportProductSpecificationAttributeFormat prd = new ExportProductSpecificationAttributeFormat();
+                    ExportProductSpecFormat prd = new ExportProductSpecFormat();
                     prd.ProductId = product.ProductId;
                     prd.SpecificationAttributeOptionId = product.SpecificationAttributeOptionId;
                     prd.DisplayOrder = product.DisplayOrder;
@@ -303,7 +286,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                     prd.CategoryIds = string.Join(",", categories.Select(c => c.CategoryId).ToArray());
                     exprtPrdSpecFormat.Add(prd);
                 }
-                var _exportManager = EngineContext.Current.Resolve<IExportManager>();
+                var _exportManager = EngineContext.Current.Resolve<IExportExtendedManager>();
                 var bytes = await _exportManager.ExportSpecificationAttributeOptionProductsToXlsxAsync(exprtPrdSpecFormat);
                 return File(bytes, MimeTypes.TextXlsx, "specification-option-products.xlsx");
             }
@@ -318,7 +301,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         /// <returns>A task that represents the asynchronous operation</returns>
         public virtual async Task<IActionResult> ImportProductMappingExcel(IFormFile importexcelfile, int id)
         {
-            var _importManager = EngineContext.Current.Resolve<IImportManager>();
+            var _importManager = EngineContext.Current.Resolve<IImportExtendedManager>();
             if (importexcelfile != null && importexcelfile.Length > 0)
                 await _importManager.ImportSpecificationAttributeOptionProductsFromXlsxAsync(importexcelfile.OpenReadStream(), id);
             else

@@ -1,11 +1,10 @@
-
-            @model SpecificationAttributeOptionModel
+@model SpecificationAttributeOptionModel
 
 @{
     //page title
     ViewBag.PageTitle = T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Options.EditOptionDetails").Text;
     //active menu item (system name)
-    Html.SetActiveMenuItemSystemName("Specification attributes");
+    NopHtml.SetActiveMenuItemSystemName("Specification attributes");
 }
 
 <div id="importexcel-product-mapping" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="importexcel-window-title">

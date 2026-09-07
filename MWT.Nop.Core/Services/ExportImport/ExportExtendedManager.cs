@@ -71,7 +71,7 @@ namespace MWT.Nop.Core.Services.ExportImport
 
             return await manager.ExportToXlsxAsync(products);
         }
-        public virtual async Task<byte[]> ExportSpecificationAttributeOptionProductsToXlsxAsync(IList<ExportProductSpecificationAttributeFormat> products)
+        public virtual async Task<byte[]> ExportSpecificationAttributeOptionProductsToXlsxAsync(IList<ExportProductSpecFormat> products)
         {
             //a vendor should have access only to part of order information
             var ignore = await _workContext.GetCurrentVendorAsync() != null;
@@ -80,13 +80,13 @@ namespace MWT.Nop.Core.Services.ExportImport
 
 
             //property array
-            var manager = new PropertyManager<ExportProductSpecificationAttributeFormat>(new[]
+            var manager = new PropertyManager<ExportProductSpecFormat>(new[]
            {
-                new PropertyByName<ExportProductSpecificationAttributeFormat>("SpecificationAttributeOptionId", (p, _) => p.SpecificationAttributeOptionId),
-                new PropertyByName<ExportProductSpecificationAttributeFormat>("ProductID", (p, _) => p.ProductId),
-                 new PropertyByName<ExportProductSpecificationAttributeFormat>("DisplayOrder", (p, _) => p.DisplayOrder),
-                new PropertyByName<ExportProductSpecificationAttributeFormat>("MobileDisplayOrder", (p, _) => p.MobileDisplayOrder),
-                  new PropertyByName<ExportProductSpecificationAttributeFormat>("CategoryIds", (p, _) => p.CategoryIds),
+                new PropertyByName<ExportProductSpecFormat>("SpecificationAttributeOptionId", (p, _) => p.SpecificationAttributeOptionId),
+                new PropertyByName<ExportProductSpecFormat>("ProductID", (p, _) => p.ProductId),
+                 new PropertyByName<ExportProductSpecFormat>("DisplayOrder", (p, _) => p.DisplayOrder),
+                new PropertyByName<ExportProductSpecFormat>("MobileDisplayOrder", (p, _) => p.MobileDisplayOrder),
+                  new PropertyByName<ExportProductSpecFormat>("CategoryIds", (p, _) => p.CategoryIds),
                 }, _catalogSettings);
 
             return await manager.ExportToXlsxAsync(products);

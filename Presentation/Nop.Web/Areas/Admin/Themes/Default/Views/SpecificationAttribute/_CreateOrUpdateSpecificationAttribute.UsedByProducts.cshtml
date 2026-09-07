@@ -1,33 +1,125 @@
 ﻿@model SpecificationAttributeModel
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="card card-default card-search">
+                <div class="card-body">
+                    <div class="row search-row" data-hideattribute="specificationoption.products.HideSearchBlock">
+                        <div class="search-text">@T("Admin.Common.Search")</div>
+                        <div class="icon-search"><i class="fas fa-search" aria-hidden="true"></i></div>
+                        <div class="icon-collapse"><i class="far fa-angle-up" aria-hidden="true"></i></div>
+                    </div>
 
+                    <div class="search-body">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <nop-label asp-for="SpecificationAttributeProductSearchModel.Search" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <nop-editor asp-for="SpecificationAttributeProductSearchModel.Search" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <nop-label asp-for="SpecificationAttributeProductSearchModel.SearchCategoryId" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <nop-select asp-for="SpecificationAttributeProductSearchModel.SearchCategoryId" asp-items="Model.SpecificationAttributeProductSearchModel.AvailableCategories" />
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="text-center col-12">
+                                <button type="button" id="search-products" class="btn btn-primary btn-search">
+                                    <i class="fas fa-search"></i>
+                                    @T("Admin.Common.Search")
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 <div class="card-body">
     @await Html.PartialAsync("Table", new DataTablesModel
     {
         Name = "used-by-products-grid",
-        UrlRead = new DataUrl("UsedByProducts", "SpecificationAttribute", new RouteValueDictionary { [nameof(Model.SpecificationAttributeProductSearchModel.SpecificationAttributeId)] = Model.SpecificationAttributeProductSearchModel.SpecificationAttributeId }),
-        SearchButtonId = "search-categories",
+        UrlRead = new DataUrl("CustomSpecificationAttributeUsedByProducts", "SpecificationAttribute", new RouteValueDictionary { [nameof(Model.SpecificationAttributeProductSearchModel.SpecificationAttributeId)] = Model.SpecificationAttributeProductSearchModel.SpecificationAttributeId }),
+        SearchButtonId = "search-products",
         Length = Model.SpecificationAttributeProductSearchModel.PageSize,
+        Filters = new List<FilterParameter>
+        {
+        new FilterParameter(nameof(Model.SpecificationAttributeProductSearchModel.Search)),
+        new FilterParameter(nameof(Model.SpecificationAttributeProductSearchModel.SearchCategoryId))
+        },
         LengthMenu = Model.SpecificationAttributeProductSearchModel.AvailablePageSizes,
         ColumnCollection = new List<ColumnProperty>
         {
-            new ColumnProperty(nameof(SpecificationAttributeProductModel.ProductName))
-            {
-                Title = T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.UsedByProducts.Product").Text
-            },
-            new ColumnProperty(nameof(SpecificationAttributeProductModel.Published))
-            {
-                Title = T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.UsedByProducts.Published").Text,
-                Width = "100",
-                ClassName =  NopColumnClassDefaults.CenterAll,
-                Render = new RenderBoolean()
-            },
-            new ColumnProperty(nameof(SpecificationAttributeProductModel.ProductId))
-            {
-                Title = T("Admin.Common.View").Text,
-                Width = "100",
-                ClassName =  NopColumnClassDefaults.Button,
-                Render = new RenderButtonView(new DataUrl("~/Admin/Product/Edit/"))
-            }
+        new ColumnProperty(nameof(SpecificationAttributeProductModel.SpecificationOptionId))
+        {
+        Title = T("Admin.Catalog.Products.Fields.SpecificationOptionId").Text,
+        Width = "100",
+
         }
-    })
+        ,new ColumnProperty(nameof(SpecificationAttributeProductModel.ProductId))
+        {
+        Title = T("Admin.Catalog.Products.Fields.ProductId").Text,
+        Width = "100",
+
+        },
+        new ColumnProperty(nameof(SpecificationAttributeProductModel.PictureThumbnailUrl))
+        {
+        Title = T("Admin.Catalog.Products.Fields.PictureThumbnailUrl").Text,
+        Width = "100",
+        Render = new RenderPicture()
+        },
+        new ColumnProperty(nameof(SpecificationAttributeProductModel.ProductName))
+        {
+        Title = T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.UsedByProducts.Product").Text
+        },
+        new ColumnProperty(nameof(SpecificationAttributeProductModel.OptionName))
+        {
+        Title = T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.UsedByProducts.OptionName").Text
+        },
+        new ColumnProperty(nameof(SpecificationAttributeProductModel.Published))
+        {
+        Title = T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.UsedByProducts.Published").Text,
+        Width = "100",
+        ClassName =  NopColumnClassDefaults.CenterAll,
+        Render = new RenderBoolean()
+        },
+        new ColumnProperty(nameof(SpecificationAttributeProductModel.ProductId))
+        {
+        Title = T("Admin.Common.View").Text,
+        Width = "100",
+        ClassName =  NopColumnClassDefaults.Button,
+        Render = new RenderButtonView(new DataUrl("~/Admin/Product/Edit/"))
+        }
+        }
+        })
 </div>
+
+<script>
+    $(document).ready(function () {
+
+        // alert($("#HiddenField1").attr("name"));
+
+        $("#SpecificationAttributeProductSearchModel_SearchCategoryId").attr("name", "SearchCategoryId");
+        $("#SpecificationAttributeProductSearchModel_SearchCategoryId").attr("id", "SearchCategoryId");
+        $("#SpecificationAttributeProductSearchModel_Search").attr("name", "Search");
+        $("#SpecificationAttributeProductSearchModel_Search").attr("id", "Search");
+
+        // alert($("#HiddenField1").attr("name"));
+    });
+</script>
