@@ -34,7 +34,7 @@ public partial class PictureController : BaseAdminController
         var httpPostedFile = await Request.GetFirstOrDefaultFileAsync();
         if (httpPostedFile == null)
             return Json(new { success = false, message = "No file uploaded" });
-
+            
         var picture = await _pictureService.InsertPictureAsync(httpPostedFile);
 
         //when returning JSON the mime-type must be set to text/plain

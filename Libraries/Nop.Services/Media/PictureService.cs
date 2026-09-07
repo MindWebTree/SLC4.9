@@ -755,8 +755,8 @@ public partial class PictureService : IPictureService
         var pics = await query.ToListAsync();
 
         return pics;
-    }
-
+    }   
+        
     /// <summary>
     /// Inserts a picture
     /// </summary>
