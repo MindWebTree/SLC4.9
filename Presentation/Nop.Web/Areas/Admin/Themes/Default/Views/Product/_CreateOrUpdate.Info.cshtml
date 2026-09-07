@@ -5,26 +5,12 @@
 @using Nop.Core.Domain.Catalog;
 @using Nop.Services
 @using Nop.Services.Stores
-@inject ICustomizationFormSerivce _customizationFormService
+
 @using Nop.Services.Security
 @inject IPermissionService _permissionService
 
 @{
-    var customizationFormTemplates = await _customizationFormService.GetAllProductCustomizationFormTemplatesAsync();
-    var availableCustomizationFormTemplates = new List<SelectListItem>();
-    availableCustomizationFormTemplates.Add(new SelectListItem()
-    {
-        Value = "0",
-        Text = "Please select"
-    });
-    foreach (var customizationFormTemplate in customizationFormTemplates)
-    {
-        availableCustomizationFormTemplates.Add(new SelectListItem()
-        {
-            Text = customizationFormTemplate.Name,
-            Value = customizationFormTemplate.Id.ToString()
-        });
-    }
+   
 
     var stores = await storeService.GetAllStoresAsync();
 }

@@ -1,16 +1,11 @@
 ﻿{
   "Group": "Misc",
   "FriendlyName": "MwtStorefront",
-  "SupportedVersions": [
-    "4.90"
-  ],
+  "SystemName": "MWT.Plugin.Misc.MwtStorefront",
+  "Version": "1.0",
+  "SupportedVersions": [ "4.90" ],
   "Author": "Mind Web Tree",
   "DisplayOrder": 1,
   "FileName": "MWT.Plugin.Misc.MwtStorefront.dll",
-  "Description": "Url redirections",
-  "LimitedToStores": [],
-  "LimitedToCustomerRoles": [],
-  "DependsOnSystemNames": [],
-  "SystemName": "MWT.Plugin.Misc.MwtStorefront",
-  "Version": "1.0"
-}
+  "Description": "Url redirections"
+}  

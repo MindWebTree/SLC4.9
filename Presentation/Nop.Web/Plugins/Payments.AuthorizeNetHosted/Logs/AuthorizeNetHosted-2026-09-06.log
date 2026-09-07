@@ -1,0 +1,76 @@
+﻿2026-09-06 12:52:53.105 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-06 12:52:54.572 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=9bbcac10-cbba-4af7-a55b-869451fc0a44, TokenLength=2853
+2026-09-06 12:52:54.574 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=9bbcac10-cbba-4af7-a55b-869451fc0a44
+2026-09-06 12:53:06.831 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-06 12:53:07.244 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=4a03aebe-9c1d-4b9a-9ac7-096112a2ec7e, TokenLength=2853
+2026-09-06 12:53:07.245 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=4a03aebe-9c1d-4b9a-9ac7-096112a2ec7e
+2026-09-06 12:55:12.410 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-06 12:55:13.374 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=9a3c6295-8e2b-431f-beb8-361e654f50e1, TokenLength=2853
+2026-09-06 12:55:13.375 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=9a3c6295-8e2b-431f-beb8-361e654f50e1
+2026-09-06 12:57:25.323 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-06 12:57:26.301 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=e4d88d63-85b3-4a92-821f-8e9cde971940, TokenLength=2853
+2026-09-06 12:57:26.301 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=e4d88d63-85b3-4a92-821f-8e9cde971940
+2026-09-06 13:05:04.230 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-06 13:05:05.728 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=88c978a1-e3e0-4d83-9b68-30749c376f82, TokenLength=2853
+2026-09-06 13:05:05.731 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=88c978a1-e3e0-4d83-9b68-30749c376f82
+2026-09-06 13:08:38.005 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-06 13:08:39.486 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=4c140177-dc4a-459d-8a28-b35bf46ae7ce, TokenLength=2853
+2026-09-06 13:08:39.488 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=4c140177-dc4a-459d-8a28-b35bf46ae7ce
+2026-09-06 13:11:27.129 UTC  [INFORMATION]  GetToken: hosted payment token refresh started. 
+2026-09-06 13:11:28.111 UTC  [INFORMATION]  GetToken: new hosted payment token generated successfully for iframe reload. OrderGuid=4c140177-dc4a-459d-8a28-b35bf46ae7ce, TokenLength=2853
+2026-09-06 13:16:39.700 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-06 13:16:40.666 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=dbf0e92a-3021-436c-9f39-f8a3b64faa80, TokenLength=2853
+2026-09-06 13:16:40.667 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=dbf0e92a-3021-436c-9f39-f8a3b64faa80
+2026-09-06 13:23:15.224 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-06 13:23:16.701 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=04cfc070-98f2-4af9-8643-b2bcd809442e, TokenLength=2853
+2026-09-06 13:23:16.702 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=04cfc070-98f2-4af9-8643-b2bcd809442e
+2026-09-06 13:24:07.922 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-06 13:24:08.336 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=3b6f7c75-a03b-4759-95e5-baf7f1d20ef6, TokenLength=2853
+2026-09-06 13:24:08.336 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=3b6f7c75-a03b-4759-95e5-baf7f1d20ef6
+2026-09-06 13:24:30.104 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-06 13:24:31.103 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=bb2ed196-2bfb-4230-9751-c9a035c412cf, TokenLength=2853
+2026-09-06 13:24:31.103 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=bb2ed196-2bfb-4230-9751-c9a035c412cf
+2026-09-06 13:24:56.395 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-06 13:24:56.814 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=20c6fa95-5621-456c-b428-555d84530f4f, TokenLength=2853
+2026-09-06 13:24:56.818 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=20c6fa95-5621-456c-b428-555d84530f4f
+2026-09-06 13:25:29.093 UTC  [INFORMATION]  GetToken: hosted payment token refresh started. 
+2026-09-06 13:25:30.488 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-06 13:25:30.845 UTC  [INFORMATION]  GetToken: new hosted payment token generated successfully for iframe reload. OrderGuid=20c6fa95-5621-456c-b428-555d84530f4f, TokenLength=2853
+2026-09-06 13:25:31.205 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=420ea1cf-0f59-470e-90b4-02b992b17f47, TokenLength=2853
+2026-09-06 13:25:31.206 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=420ea1cf-0f59-470e-90b4-02b992b17f47
+2026-09-06 13:41:10.592 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-06 13:41:28.287 UTC  [ERROR]  Hosted payment token generation failed. OrderGuid=2afd9bae-40a2-41b1-84a5-ace3f6f3f918, Error=The SSL connection could not be established, see inner exception.CustomerId=1216780payload={"getHostedPaymentPageRequest":{"merchantAuthentication":{"name":"9X5ry8qR6S9S","transactionKey":"25pf6Px33f7xKpYV"},"transactionRequest":{"transactionType":"authCaptureTransaction","amount":"4859.00","currencyCode":"USD","order":{"invoiceNumber":"2afd9bae-40a2-41b1-","description":"Full order #2afd9bae-40a2-41b1-84a5-ace3f6f3f918"},"customer":{"id":"1216780","email":"info@mindwebtree.com"},"billTo":{"firstName":"Third 3 Address","lastName":"Address","address":"america adress3","city":"chandigarh3","state":"WY","zip":"17431","country":"US","phoneNumber":"123-214-3555","email":"info@mindwebtree.com"},"shipTo":{"firstName":"Third 3 Address","lastName":"Address","address":"113213","city":"ddd","state":"NY","zip":"70001","country":"US"},"customerIP":"127.0.0.1"},"hostedPaymentSettings":{"setting":[{"settingName":"hostedPaymentPaymentOptions","settingValue":"{\"cardCodeRequired\":true,\"showCreditCard\":true,\"showBankAccount\":false}"},{"settingName":"hostedPaymentButtonOptions","settingValue":"{\"text\": \"Pay Now\"}"},{"settingName":"hostedPaymentOrderOptions","settingValue":"{\"show\": false}"},{"settingName":"hostedPaymentReturnOptions","settingValue":"{\"showReceipt\":false}"},{"settingName":"hostedPaymentIFrameCommunicatorUrl","settingValue":"{\"url\":\"http://qa4.sierralivingconcepts.com/plugins/Payments.AuthorizeNetHosted/content/Communicator.html\"}"},{"settingName":"hostedPaymentBillingAddressOptions","settingValue":"{\"show\": false,\"required\": false}"},{"settingName":"hostedPaymentStyleOptions","settingValue":"{\"bgColor\": \"#444444\"}"}]}}}
+    Exception: HttpRequestException - The SSL connection could not be established, see inner exception.
+    Inner: Unable to read data from the transport connection: An existing connection was forcibly closed by the remote host..
+    StackTrace:    at System.Net.Http.ConnectHelper.EstablishSslConnectionAsync(SslClientAuthenticationOptions sslOptions, HttpRequestMessage request, Boolean async, Stream stream, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.InjectNewHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionWaiter`1.WaitForConnectionWithTelemetryAsync(HttpRequestMessage request, HttpConnectionPool pool, Boolean async, CancellationToken requestCancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at Nop.Plugin.Payments.AuthorizeNetHosted.Services.AuthorizeNetManager.GetHostedFormToken(Int32 invoiceId, Object additionalData) in D:\Mind web Tree\Slc4.9\Source Code\Plugins\Nop.Plugin.Payments.AuthorizeNetHosted\Services\AuthorizeNetManager.cs:line 675
+2026-09-06 13:41:28.464 UTC  [ERROR]  Hosted payment token generation failed. OrderGuid=741053a2-8a34-4e48-8c96-906258c32ec6, Error=The SSL connection could not be established, see inner exception.
+    Exception: HttpRequestException - The SSL connection could not be established, see inner exception.
+    Inner: Unable to read data from the transport connection: An existing connection was forcibly closed by the remote host..
+    StackTrace:    at Nop.Plugin.Payments.AuthorizeNetHosted.Services.AuthorizeNetManager.GetHostedFormToken(Int32 invoiceId, Object additionalData) in D:\Mind web Tree\Slc4.9\Source Code\Plugins\Nop.Plugin.Payments.AuthorizeNetHosted\Services\AuthorizeNetManager.cs:line 709
+   at CallSite.Target(Closure, CallSite, Object)
+   at System.Dynamic.UpdateDelegates.UpdateAndExecute1[T0,TRet](CallSite site, T0 arg0)
+   at Nop.Plugin.Payments.AuthorizeNetHosted.Components.AuthorizeNetHostedPaymentViewComponent.InvokeAsync(String widgetZone, Object additionalData) in D:\Mind web Tree\Slc4.9\Source Code\Plugins\Nop.Plugin.Payments.AuthorizeNetHosted\Components\AuthorizeNetHostedPaymentViewComponent.cs:line 77
+2026-09-06 13:45:17.235 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-06 13:45:17.235 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-06 13:45:17.235 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-06 13:45:19.350 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=9e311956-448e-442f-bbf7-4cd5da3b6c62, TokenLength=2853
+2026-09-06 13:45:19.350 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=9e311956-448e-442f-bbf7-4cd5da3b6c62, TokenLength=2853
+2026-09-06 13:45:19.350 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=9e311956-448e-442f-bbf7-4cd5da3b6c62, TokenLength=2853
+2026-09-06 13:45:19.351 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=9e311956-448e-442f-bbf7-4cd5da3b6c62
+2026-09-06 13:45:19.351 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=9e311956-448e-442f-bbf7-4cd5da3b6c62
+2026-09-06 13:45:19.351 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=9e311956-448e-442f-bbf7-4cd5da3b6c62
+2026-09-06 14:09:58.317 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-06 14:10:04.222 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=6561ec1f-008e-485f-a542-f7ebb659527e, TokenLength=2853
+2026-09-06 14:10:04.223 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=6561ec1f-008e-485f-a542-f7ebb659527e

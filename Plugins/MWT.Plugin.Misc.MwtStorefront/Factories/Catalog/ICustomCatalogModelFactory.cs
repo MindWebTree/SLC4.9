@@ -2,11 +2,6 @@
 using Nop.Core.Domain.Catalog;
 using Nop.Web.Factories;
 using Nop.Web.Models.Catalog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
 {

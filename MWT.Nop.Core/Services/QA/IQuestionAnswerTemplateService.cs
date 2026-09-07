@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using MWT.Nop.Core.Domain.QA;
-using Nop.Core.Domain.Catalog; 
+﻿using MWT.Nop.Core.Domain.QA;
 
 namespace MWT.Nop.Core.Services.QA
 {

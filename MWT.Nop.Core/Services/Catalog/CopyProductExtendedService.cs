@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace MWT.Nop.Core.Services.Catalog
 {
-    internal class CopyProductExtendedService : CopyProductService, ICopyProductExtendedService
+    public partial class CopyProductExtendedService : CopyProductService, ICopyProductExtendedService
     {
         private readonly IProductExtendedService _productExtendedService;
         private readonly ICustomProductAttributeService _customProductAttributeService;
@@ -31,7 +31,7 @@ namespace MWT.Nop.Core.Services.Catalog
         }
 
         #region Methods
- 
+
 
         public virtual async Task<Product> CustomCopyProductAsync(Product product, string newName, string newSku,
        bool isPublished = true, bool copyMultimedia = true, bool copyAssociatedProducts = true)
@@ -41,7 +41,7 @@ namespace MWT.Nop.Core.Services.Catalog
             if (string.IsNullOrEmpty(newName))
                 throw new ArgumentException("Product name is required");
 
-            var productCopy = await CustomCopyBaseProductDataAsync(product, newName,newSku, isPublished);
+            var productCopy = await CustomCopyBaseProductDataAsync(product, newName, newSku, isPublished);
 
             //localization
             await CopyLocalizationDataAsync(product, productCopy);
@@ -370,7 +370,7 @@ namespace MWT.Nop.Core.Services.Catalog
 
                     await _productAttributeService.InsertProductAttributeValueAsync(attributeValueCopy);
 
-                   
+
 
                     int variantId = await _productExtendedService.GenerateVariantIdAsync(productAttributeMappingCopy, attributeValueCopy.Id, attributeValueCopy.Name);
 

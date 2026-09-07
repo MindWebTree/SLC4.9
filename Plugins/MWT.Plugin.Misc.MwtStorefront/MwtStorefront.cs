@@ -15,7 +15,7 @@ namespace MWT.Plugin.Misc.MwtStorefront
     {
         public MwtStorefrontPlugin()
         {
-            // 🔴 FIRST BREAKPOINT
+            
         }
 
         public override Task InstallAsync()

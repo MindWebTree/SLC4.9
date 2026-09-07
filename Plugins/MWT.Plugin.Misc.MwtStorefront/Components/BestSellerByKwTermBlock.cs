@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MWT.Nop.Core.Services.Orders;
 using MWT.Plugin.Misc.MwtStorefront.Factories;
 using MWT.Plugin.Misc.MwtStorefront.Models.Catalog;
 using Nop.Core;
@@ -23,13 +24,13 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
         private readonly ICustomProductModelFactory _productModelFactory;
         private readonly IStoreContext _storeContext;
         private readonly IStaticCacheManager _staticCacheManager;
-        private readonly IOrderReportService _orderReportService;
+        private readonly IOrderReportExtendedService _orderReportService;
         private readonly CatalogSettings _catalogSettings;
         public BestSellerByKwTermBlockViewComponent(IProductService productService,
         ICustomProductModelFactory productModelFactory,
         IStoreContext storeContext,
         IStaticCacheManager staticCacheManager,
-        IOrderReportService orderReportService,
+        IOrderReportExtendedService orderReportService,
         CatalogSettings catalogSettings)
         {
             _productService = productService;
@@ -51,22 +52,20 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
 
                 await _storeContext.GetCurrentStoreAsync(), kwTermId), async () =>
                 {
-                    // Need to Confirm
-                   // var bestsellers = await _orderReportService.CustomBestSellersReportAsync(kwTermId: kwTermId, pageIndex: 0, pageSize: _catalogSettings.NumberOfBestsellersOnHomepage,
-                  //  storeId: _storeContext.GetCurrentStore().Id);
 
-                  //  var productIds = await bestsellers.SelectAwait(async bestseller =>
-                   // {
+                    var bestsellers = await _orderReportService.CustomBestSellersReportAsync(kwTermId: kwTermId, pageIndex: 0, pageSize: _catalogSettings.NumberOfBestsellersOnHomepage,
+                    storeId: _storeContext.GetCurrentStore().Id);
+
+                    var productIds = await bestsellers.SelectAwait(async bestseller =>
+                    {
                         //fill in model values from the entity
-                     //   return bestseller.ProductId;
-                   // }).ToArrayAsync();
+                        return bestseller.ProductId;
+                    }).ToArrayAsync();
 
 
-                   // var model = (await _productModelFactory.PrepareCustomProductOverviewModelsAsync(await _productService.GetProductsByIdsAsync(productIds),
-                    // productThumbPictureSize: null, forceRedirectionAfterAddingToCart: true))
-                    //.ToList();
-                    return new List<CustomProductOverviewModel>();
-
+                    return (await _productModelFactory.PrepareCustomProductOverviewModelsAsync(await _productService.GetProductsByIdsAsync(productIds),
+                     productThumbPictureSize: null, forceRedirectionAfterAddingToCart: true))
+                    .ToList();
                 }));
 
 

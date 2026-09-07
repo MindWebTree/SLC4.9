@@ -475,7 +475,7 @@ public partial class CheckoutModelFactory : ICheckoutModelFactory
                 model.RewardPointsEnoughToPayForOrder = !await _orderProcessingService.IsPaymentWorkflowRequiredAsync(cart, true);
             }
         }
-
+   
         //filter by country
         var paymentMethods = await (await _paymentPluginManager
                 .LoadActivePluginsAsync(customer, store.Id, filterByCountryId))

@@ -1176,7 +1176,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
                         var minPrice = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(minPriceBase, await _workContext.GetWorkingCurrencyAsync());
                         var maxPrice = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(maxPriceBase, await _workContext.GetWorkingCurrencyAsync());
 
-                        // Need to confirm
+                   
                         (var minMembershipPriceValue, _) = await _customShoppingCartService.MemberShipPriceOfProduct(product.Id, product.MinMsrp, product.MinOldprice, product.MinPrice);
                         (var maxMembershipPriceValue, _) = await _customShoppingCartService.MemberShipPriceOfProduct(product.Id, product.MaxMsrp, product.MaxOldPrice, product.MaxPrice);
                         if (minMembershipPriceValue > decimal.Zero && maxMembershipPriceValue > decimal.Zero)

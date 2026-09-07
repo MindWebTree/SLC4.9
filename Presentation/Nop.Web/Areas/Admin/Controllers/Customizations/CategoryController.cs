@@ -96,8 +96,6 @@ namespace Nop.Web.Areas.Admin.Controllers
                 //update picture seo file name
                 await UpdatePictureSeoNamesAsync(category);
 
-                //ACL (customer roles)
-                // need to confirm sir
 
                 //stores
                 await _storeMappingService.SaveStoreMappingsAsync(category, model.SelectedStoreIds);
@@ -200,11 +198,8 @@ namespace Nop.Web.Areas.Admin.Controllers
                 //update picture seo file name
                 await UpdatePictureSeoNamesAsync(category);
 
-                //ACL
-                //need to confirm sir
-                // await _storeMappingService.SaveCategoryAclAsync(category, model);
-                var _aclService = EngineContext.Current.Resolve<IAclService>();
-                await _aclService.SaveAclAsync(category, model.SelectedCustomerRoleIds);
+              
+        
                 //stores
                 await _storeMappingService.SaveStoreMappingsAsync(category, model.SelectedStoreIds);
 

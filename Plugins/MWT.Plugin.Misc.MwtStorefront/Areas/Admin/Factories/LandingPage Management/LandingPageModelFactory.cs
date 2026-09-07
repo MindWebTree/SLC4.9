@@ -137,7 +137,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Factories
                     model.Locales = (IList<LandingPageLocalizedModel>)await _localizedModelFactory.PrepareLocalizedModelsAsync(localizedModelConfiguration);
 
                 // ACL & Store mapping
-                //  need to confirm
+      
                 await _aclSupportedModelFactory.PrepareModelCustomerRolesAsync(model);
                 await _storeMappingSupportedModelFactory.PrepareModelStoresAsync(model, landingPageEntity, excludeProperties);
             }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using MWT.Nop.Core.Services.Security;
 using Nop.Core;
 using Nop.Services.Security;
 using OfficeOpenXml.Utils;
@@ -23,12 +24,12 @@ namespace MWT.Plugin.Misc.MwtStorefront.Infrastructure.Filters
         private class AuthorizePermissionFilter : IAsyncAuthorizationFilter
         {
             private readonly string _permissionRecordSystemName;
-            private readonly IPermissionService _permissionService;
+            private readonly IPermissionExtendedService _permissionService;
             private readonly IWorkContext _workContext;
 
             public AuthorizePermissionFilter(
                 string permissionRecordSystemName,
-                IPermissionService permissionService,
+                IPermissionExtendedService permissionService,
                 IWorkContext workContext)
             {
                 _permissionRecordSystemName = permissionRecordSystemName;
@@ -37,16 +38,16 @@ namespace MWT.Plugin.Misc.MwtStorefront.Infrastructure.Filters
             }
 
 
-            // Need to confirm
+
             public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
             {
-                //var customer = await _workContext.GetCurrentCustomerAsync();
-                //var authorized = await _permissionService.CustomAuthorizeAsync(_permissionRecordSystemName, customer, context);
+                var customer = await _workContext.GetCurrentCustomerAsync();
+                var authorized = await _permissionService.CustomAuthorizeAsync(_permissionRecordSystemName, customer, context);
 
-                //if (!authorized)
-                //{
-                //    context.Result = new RedirectToActionResult("AccessDenied", "Security", new { area = "Admin" });
-                //}
+               if (!authorized)
+                {
+                   context.Result = new RedirectToActionResult("AccessDenied", "Security", new { area = "Admin" });
+               }
             }
         }
     }

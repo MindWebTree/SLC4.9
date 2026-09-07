@@ -156,7 +156,7 @@ namespace Nop.Web.Areas.Admin.Factories.Customization
         public async Task<KwTermModel> PrepareKwTermModelAsync(KwTermModel model, KwTerm kwTerm, bool excludeProperties = false)
         {
 
-            Func<KwTermLocalizedModel, int , Task> localizedModelConfiguration = null;
+            Func<KwTermLocalizedModel, int, Task> localizedModelConfiguration = null;
 
             if (kwTerm != null)
             {
@@ -222,10 +222,7 @@ namespace Nop.Web.Areas.Admin.Factories.Customization
                       var availableDiscounts = await _discountService.GetAllDiscountsAsync(DiscountType., showHidden: true);
                       await _discountSupportedModelFactory.PrepareModelDiscountsAsync(model, category, availableDiscounts, excludeProperties);*/
 
-            //prepare model customer roles
-            // need to confirm
-            //   await _aclSupportedModelFactory.PrepareModelCustomerRolesAsync(model, kwTerm, excludeProperties);
-            await _aclSupportedModelFactory.PrepareModelCustomerRolesAsync(model);
+         
             //prepare model stores
             await _storeMappingSupportedModelFactory.PrepareModelStoresAsync(model, kwTerm, excludeProperties);
 
@@ -384,11 +381,11 @@ namespace Nop.Web.Areas.Admin.Factories.Customization
                         KwTermCategoryModel.CategoryName = (await _categoryService.GetCategoryByIdAsync(categoryKwTerm.CategoryId))?.Name;
                         return KwTermCategoryModel;
                     }
-                    catch(Exception exp)
+                    catch (Exception exp)
                     {
                         return null;
                     }
-                 
+
                 });
             });
 

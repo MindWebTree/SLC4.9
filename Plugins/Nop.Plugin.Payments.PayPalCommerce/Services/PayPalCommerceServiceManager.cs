@@ -1159,7 +1159,7 @@ public class PayPalCommerceServiceManager
     public static bool IsConnected(PayPalCommerceSettings settings)
     {
         //webhook is required to accept notifications
-        return IsConfigured(settings) && !string.IsNullOrEmpty(settings.WebhookUrl);
+        return IsConfigured(settings) /*&& !string.IsNullOrEmpty(settings.WebhookUrl)*/;
     }
 
     /// <summary>

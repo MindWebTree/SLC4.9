@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using MWT.Nop.Core.Infrastructure;
+using MWT.Nop.Core.Services.Customers;
 using MWT.Nop.Core.Services.Message;
 using MWT.Plugin.Misc.MwtStorefront.Infrastructure.Filters;
 using MWT.Plugin.Misc.MwtStorefront.Infrastructure.Mapping;
@@ -57,6 +58,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
     [AutoValidateAntiforgeryToken]
     public partial class CustomerExtendedController : CustomerController
     {
+        private readonly ICustomerRegistrationExtendedService _customerRegistrationExtendedService;
         public CustomerExtendedController(AddressSettings addressSettings, CaptchaSettings captchaSettings, CustomerSettings customerSettings,
             DateTimeSettings dateTimeSettings, ForumSettings forumSettings, GdprSettings gdprSettings, HtmlEncoder htmlEncoder, IAddressModelFactory addressModelFactory,
             IAddressService addressService, IAttributeParser<AddressAttribute, AddressAttributeValue> addressAttributeParser,
@@ -70,8 +72,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
             IPictureService pictureService, IPriceFormatter priceFormatter, IProductService productService, IStateProvinceService stateProvinceService,
             IStoreContext storeContext, ITaxService taxService, IWorkContext workContext, IWorkflowMessageService workflowMessageService,
             LocalizationSettings localizationSettings, MediaSettings mediaSettings, MultiFactorAuthenticationSettings multiFactorAuthenticationSettings,
-            StoreInformationSettings storeInformationSettings, TaxSettings taxSettings) : base(addressSettings, captchaSettings, customerSettings, dateTimeSettings, forumSettings, gdprSettings, htmlEncoder, addressModelFactory, addressService, addressAttributeParser, customerAttributeParser, customerAttributeService, authenticationService, countryService, currencyService, customerActivityService, customerModelFactory, customerRegistrationService, customerService, downloadService, eventPublisher, exportManager, externalAuthenticationService, gdprService, genericAttributeService, giftCardService, localizationService, logger, multiFactorAuthenticationPluginManager, newsLetterSubscriptionService, notificationService, orderService, permissionService, pictureService, priceFormatter, productService, stateProvinceService, storeContext, taxService, workContext, workflowMessageService, localizationSettings, mediaSettings, multiFactorAuthenticationSettings, storeInformationSettings, taxSettings)
+            StoreInformationSettings storeInformationSettings, TaxSettings taxSettings, ICustomerRegistrationExtendedService customerRegistrationExtendedService) : base(addressSettings, captchaSettings, customerSettings, dateTimeSettings, forumSettings, gdprSettings, htmlEncoder, addressModelFactory, addressService, addressAttributeParser, customerAttributeParser, customerAttributeService, authenticationService, countryService, currencyService, customerActivityService, customerModelFactory, customerRegistrationService, customerService, downloadService, eventPublisher, exportManager, externalAuthenticationService, gdprService, genericAttributeService, giftCardService, localizationService, logger, multiFactorAuthenticationPluginManager, newsLetterSubscriptionService, notificationService, orderService, permissionService, pictureService, priceFormatter, productService, stateProvinceService, storeContext, taxService, workContext, workflowMessageService, localizationSettings, mediaSettings, multiFactorAuthenticationSettings, storeInformationSettings, taxSettings)
         {
+            _customerRegistrationExtendedService = customerRegistrationExtendedService;
         }
 
 
@@ -109,7 +112,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                                         ? await _customerService.GetCustomerByUsernameAsync(logincustomerEmail)
                                         : await _customerService.GetCustomerByEmailAsync(logincustomerEmail);
 
-                                    await _customerRegistrationService.SignInCustomerAsync(customer_login, null, true);
+                                    await _customerRegistrationExtendedService.SignInCustomerAsync(customer_login, true);
                                     message = await this._localizationService.GetResourceAsync("Customer.Login.Successfull.Message");
                                     break;
                                 }
@@ -212,7 +215,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                                     await _workflowMessageService.SendCustomerWelcomeMessageAsync(customer, (await _workContext.GetWorkingLanguageAsync()).Id);
                                     //raise event       
                                     await _eventPublisher.PublishAsync(new CustomerActivatedEvent(customer));
-                                    await _customerRegistrationService.SignInCustomerAsync(customer, null, true);
+                                    await _customerRegistrationExtendedService.SignInCustomerAsync(customer, true);
                                     redirectUrl = "";
                                     break;
                                 default:
@@ -303,7 +306,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                 await _customerService.UpdateCustomerAsync(customer);
             }
             //authenticate customer after changing password
-            await _customerRegistrationService.SignInCustomerAsync(customer, null, true);
+            await _customerRegistrationExtendedService.SignInCustomerAsync(customer, true);
 
             model.DisablePasswordChanging = true;
             model.Result = await _localizationService.GetResourceAsync("Account.PasswordRecovery.PasswordHasBeenChanged");
@@ -344,7 +347,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                                 ? await _customerService.GetCustomerByUsernameAsync(customerUserName)
                                 : await _customerService.GetCustomerByEmailAsync(customerEmail);
 
-                            await _customerRegistrationService.SignInCustomerAsync(customer_login, null, true);
+                            await _customerRegistrationExtendedService.SignInCustomerAsync(customer_login, true);
                             message = await this._localizationService.GetResourceAsync("Customer.Login.Successfull.Message");
                             break;
                         }
@@ -656,7 +659,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                                 await _workflowMessageService.SendCustomerWelcomeMessageAsync(customer, (await _workContext.GetWorkingLanguageAsync()).Id);
                                 //raise event       
                                 await _eventPublisher.PublishAsync(new CustomerActivatedEvent(customer));
-                                await _customerRegistrationService.SignInCustomerAsync(customer, null, true);
+                                await _customerRegistrationExtendedService.SignInCustomerAsync(customer, true);
                                 redirectUrl = "";
                                 break;
                             default:

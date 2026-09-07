@@ -6,7 +6,6 @@ using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Orders;
 using Nop.Web.Factories;
 using Nop.Web.Models.Catalog;
-using Nop.Web.Models.Media;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Factories
 {

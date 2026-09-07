@@ -73,7 +73,7 @@
     },
     {
       "SystemName": "NopAdvance.DiscountRules.CartSubTotal",
-      "Version": "1.2"
+      "Version": "1.05"
     },
     {
       "SystemName": "DiscountRequirement.MustBeAssignedToCustomerRole",
@@ -134,6 +134,10 @@
     {
       "SystemName": "MWT.Plugin.Misc.MwtStorefront",
       "Version": "1.0"
+    },
+    {
+      "SystemName": "Payments.PayPalCommerce",
+      "Version": "4.90.20"
     }
   ],
   "PluginNamesToUninstall": [],

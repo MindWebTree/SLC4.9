@@ -107,23 +107,30 @@ namespace Nop.Web.Framework.Mvc.Routing;
             //since we are here, all is ok with the slug, so process URL
             switch (urlRecord.EntityName)
             {
-                case var name when name.Equals(nameof(Product), StringComparison.InvariantCultureIgnoreCase):
-                    RouteToAction(values, "Product", "ProductDetails", slug, (NopRoutingDefaults.RouteValue.ProductId, urlRecord.EntityId));
-                    return;
 
-                case var name when name.Equals(nameof(ProductTag), StringComparison.InvariantCultureIgnoreCase):
-                    RouteToAction(values, "Catalog", "ProductsByTag", slug, (NopRoutingDefaults.RouteValue.ProductTagId, urlRecord.EntityId));
-                    return;
+            #region Custom updates Need to shift with Upgrade
+            //case var name when name.Equals(nameof(Product), StringComparison.InvariantCultureIgnoreCase):
+            //        RouteToAction(values, "Product", "ProductDetails", slug, (NopRoutingDefaults.RouteValue.ProductId, urlRecord.EntityId));
+            //        return;
+            #endregion
 
-                case var name when name.Equals(nameof(Category), StringComparison.InvariantCultureIgnoreCase):
-                    RouteToAction(values, "Catalog", "Category", slug, (NopRoutingDefaults.RouteValue.CategoryId, urlRecord.EntityId));
-                    return;
+            case var name when name.Equals(nameof(ProductTag), StringComparison.InvariantCultureIgnoreCase):
+                RouteToAction(values, "Catalog", "ProductsByTag", slug, (NopRoutingDefaults.RouteValue.ProductTagId, urlRecord.EntityId));
+                return;
 
-                case var name when name.Equals(nameof(Manufacturer), StringComparison.InvariantCultureIgnoreCase):
-                    RouteToAction(values, "Catalog", "Manufacturer", slug, (NopRoutingDefaults.RouteValue.ManufacturerId, urlRecord.EntityId));
-                    return;
+            #region Custom updates Need to shift with Upgrade
+            //case var name when name.Equals(nameof(Category), StringComparison.InvariantCultureIgnoreCase):
+            //    RouteToAction(values, "Catalog", "Category", slug, (NopRoutingDefaults.RouteValue.CategoryId, urlRecord.EntityId));
+            //    return;
+            #endregion
 
-                case var name when name.Equals(nameof(Vendor), StringComparison.InvariantCultureIgnoreCase):
+
+            #region Custom updates Need to shift with Upgrade
+            case var name when name.Equals(nameof(Manufacturer), StringComparison.InvariantCultureIgnoreCase):
+                    RouteToAction(values, "Catalog", "CustomManufacturer", slug, (NopRoutingDefaults.RouteValue.ManufacturerId, urlRecord.EntityId));
+                    return;
+            #endregion
+            case var name when name.Equals(nameof(Vendor), StringComparison.InvariantCultureIgnoreCase):
                     RouteToAction(values, "Catalog", "Vendor", slug, (NopRoutingDefaults.RouteValue.VendorId, urlRecord.EntityId));
                     return;
 

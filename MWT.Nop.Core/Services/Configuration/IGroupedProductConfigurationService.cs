@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MWT.Nop.Core.Domain;
+﻿using MWT.Nop.Core.Domain;
 
 namespace MWT.Nop.Core.Services.Configuration
 {

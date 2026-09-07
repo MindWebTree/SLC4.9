@@ -11,7 +11,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Infrastructure
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<ICustomOrderService, CustomOrderService>();
+  
             services.AddScoped<ICustomerModelFactory, CustomerModelFactory>();
             services.AddScoped<ICustomerActivityModelFactory, CustomerActivityModelFactory>();
             services.AddScoped<ICustomOrderModelFactory, CustomOrderModelFactory>();

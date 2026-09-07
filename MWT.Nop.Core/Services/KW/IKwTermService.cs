@@ -1,11 +1,6 @@
 ﻿using MWT.Nop.Core.Domain.KW;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MWT.Nop.Core.Services.KW
 {

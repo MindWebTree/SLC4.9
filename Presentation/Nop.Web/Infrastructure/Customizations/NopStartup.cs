@@ -19,6 +19,7 @@ using MWT.Nop.Core.Services.Customizations.CustomOrders;
 using MWT.Nop.Core.Services.Discounts;
 using MWT.Nop.Core.Services.ElasticSearch;
 using MWT.Nop.Core.Services.ExportImport;
+using MWT.Nop.Core.Services.Feed;
 using MWT.Nop.Core.Services.FeedBack;
 using MWT.Nop.Core.Services.Integrity_Report;
 using MWT.Nop.Core.Services.IPLite;
@@ -32,6 +33,7 @@ using MWT.Nop.Core.Services.Message;
 using MWT.Nop.Core.Services.Orders;
 using MWT.Nop.Core.Services.Payments;
 using MWT.Nop.Core.Services.PostDelivery;
+using MWT.Nop.Core.Services.PostPurchase;
 using MWT.Nop.Core.Services.QA;
 using MWT.Nop.Core.Services.QuickFilters;
 using MWT.Nop.Core.Services.Search;
@@ -64,23 +66,16 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<ICustomProductAttributeService, CustomProductAttributeService>();
 
             services.AddScoped<IStoreWideDiscountService, StoreWideDiscountService>();
-            services.AddScoped<ICustomizationFormSerivce, CustomizationFormSerivce>();
             services.AddScoped<IFeedService, FeedService>();
             services.AddScoped<ICustomSpecificationAttributeService, CustomSpecificationAttributeService>();
             services.AddScoped<IPictureExtendedService, PictureExtendedService>();
-            services.AddScoped<IShoppingCartExtendedService, ShoppingCartExtendedService>();
             services.AddScoped<ICustomProductAttributeFormatter, CustomProductAttributeFormatter>();
             services.AddScoped<IGroupedProductConfigurationService, GroupedProductConfigurationService>();
-            services.AddScoped<IKwTermService, KwTermService>();
-            //
             services.AddScoped<IQuestionAnswerService, QuestionAnswerService>();
             services.AddScoped<IQuestionAnswerTemplateService, QuestionAnswerTemplateService>();
             services.AddScoped<IFiltersMappingByEntityService, FiltersMappingByEntityService>();
             services.AddScoped<ICustomUrlRecordService, CustomUrlRecordService>();
-            services.AddScoped<ICustomCategoryService, CustomCategoryService>();
             services.AddScoped<ICustomWorkContext, CustomWorkContext>();
-            services.AddScoped<IKwTemplateService, KWTemplateService>();
-            services.AddScoped<ICustomerExtendedService, CustomerExtendedService>();
             services.AddScoped<ILandingPageService, LandingPageService>();
             services.AddScoped<ICustomFormService, CustomFormService>();
             services.AddScoped<IFeedbackService, FeedbackService>();
@@ -91,35 +86,32 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<ICustomWishlistService, CustomWishlistService>();
             services.AddScoped<IAbandonedCartService, AbandonedCartService>();
             services.AddScoped<IPriceCalculationExtendedService, PriceCalculationExtendedService>();
-            services.AddScoped<IOrderTotalCalculationExtendedService, OrderTotalCalculationExtendedService>();
             services.AddScoped<IDiscountExtendedService, DiscountExtendedService>();
-            services.AddScoped<ICustomBackInStockSubscriptionService, CustomBackInStockSubscriptionService>();
-            services.AddScoped<ICustomWorkflowMessageService, CustomWorkflowMessageService>();
-            services.AddScoped<ICustomOrderService, CustomOrderService>();
-            services.AddScoped<ICustomMessageTokenProvider, CustomMessageTokenProvider>();
-            services.AddScoped<IOrderExtendedService, OrderExtendedService>();
-            services.AddScoped<IPaymentProfileService, PaymentProfileService>();
-            services.AddScoped<IOrderProcessingExtendedService, OrderProcessingExtendedService>();
-
+          
+            
             services.AddScoped<IIpAddressService, IpAddressService>();
             services.AddScoped<IIPLiteService, IPLiteService>();
             services.AddScoped<IBundleLoggerService, BundleLoggerService>();
             services.AddScoped<IPaymentSessionService, PaymentSessionService>();
             services.AddScoped<IProductIntegrityReportService, ProductIntegrityReportService>();
-            services.AddScoped<IPostDeliveryService, PostDeliveryService>();
-            services.AddScoped<IExportExtendedManager, ExportExtendedManager>();
-            services.AddScoped<IImportExtendedManager, ImportExtendedManager>();
-            services.AddScoped<ICustomerExtendedService, CustomerExtendedService>();
+   
+   
             services.AddScoped<IPermissionExtendedService, PermissionExtendedService>();
-            services.AddScoped<ICloudflareService, CloudflareService>();
+ 
 
             #region Tag
+
             services.AddScoped<ITagSlugService, TagSlugService>();
             services.AddScoped<ISegmentSlugService, SegmentSlugService>();
             services.AddScoped<ITagSpecificationAttributeService, TagSpecificationAttributeService>();
             services.AddScoped<ITagProductService, TagProductService>();
+            services.AddScoped<IBestsellerPoolService, BestsellerPoolService>();
+            services.AddScoped<IBestsellerTagService, BestsellerTagService>();
+            services.AddScoped<INewArrivalTagService, NewArrivalTagService>();
+
 
             #endregion
+
             #region  Campagin Management
             services.AddScoped<ICampaignManagementService, CampaignManagementService>();
             #endregion
@@ -134,7 +126,6 @@ namespace Nop.Web.Infrastructure.Customizations
 
             #region  Message
             services.AddScoped<ICustomMessageTokenProvider, CustomMessageTokenProvider>();
-            services.AddScoped<ICustomNewsLetterSubscriptionService, CustomNewsLetterSubscriptionService>();
             services.AddScoped<ICustomWorkflowMessageService, CustomWorkflowMessageService>();
             #endregion
 
@@ -152,6 +143,7 @@ namespace Nop.Web.Infrastructure.Customizations
             services.AddScoped<IFaqService, FaqService>();
 
             #endregion
+
             #region NewsLetter
 
             services.AddScoped<ICustomNewsLetterSubscriptionService, CustomNewsLetterSubscriptionService>();
@@ -160,34 +152,81 @@ namespace Nop.Web.Infrastructure.Customizations
             #region ElasticSearch
             services.AddScoped<IElasticSearchHelpService, ElasticSearchHelpService>();
             services.AddScoped<IElasticSearchService, ElasticSearchService>();
-            services.AddScoped<ICustomBackInStockSubscriptionService, CustomBackInStockSubscriptionService>();
-            services.AddScoped<ICustomCategoryService, CustomCategoryService>();
-            services.AddScoped<ICustomizationFormSerivce, CustomizationFormSerivce>();
-            services.AddScoped<ICustomRecentlyViewedProductsService, CustomRecentlyViewedProductsService>();
-            services.AddScoped<ISuggestedKeywordsService, SuggestedKeywordsService>();
             services.AddScoped<IFuzzySearchService, FuzzySearchService>();
-            services.AddScoped<IRelatedSearchService, RelatedSearchService>();
+
             #endregion
+
             #region QuickFilter
             services.AddScoped<IQuickFilterService, QuickFilterService>();
 
             #endregion
+
             #region Kw
             services.AddScoped<IKwTermService, KwTermService>();
             services.AddScoped<IKwTemplateService, KWTemplateService>();
             #endregion
 
-            #region Template
-            services.AddScoped<IProductTemplateSectionService, ProductTemplateSectionService>();
+            #region Category
 
+            services.AddScoped<ICustomCategoryService, CustomCategoryService>();
+
+            #endregion
+
+            #region Product
+
+            services.AddScoped<IProductTemplateSectionService, ProductTemplateSectionService>();
+            services.AddScoped<ICopyProductExtendedService, CopyProductExtendedService>();
+            services.AddScoped<ICustomBackInStockSubscriptionService, CustomBackInStockSubscriptionService>();
+            services.AddScoped<ICustomizationFormSerivce, CustomizationFormSerivce>();
+            services.AddScoped<ICustomRecentlyViewedProductsService, CustomRecentlyViewedProductsService>();
+            services.AddScoped<ISuggestedKeywordsService, SuggestedKeywordsService>();
+            services.AddScoped<IRelatedSearchService, RelatedSearchService>();
             #endregion
 
             #region Order 
+          
             services.AddScoped<IDeclinedOrderLogService, DeclinedOrderLogService>();
+            services.AddScoped<IOrderExtendedService, OrderExtendedService>();
+            services.AddScoped<IOrderProcessingExtendedService, OrderProcessingExtendedService>();
+            services.AddScoped<IOrderReportExtendedService,OrderReportExtendedService>();
+            services.AddScoped<IOrderTotalCalculationExtendedService, OrderTotalCalculationExtendedService>();
+            services.AddScoped<IShoppingCartExtendedService, ShoppingCartExtendedService>();
+
             #endregion
 
             #region Customer
+            services.AddScoped<ICustomerExtendedService, CustomerExtendedService>();
             services.AddScoped<IExternalAuthenticationExtendedService, ExternalAuthenticationExtendedService>();
+            services.AddScoped<ICustomerRegistrationExtendedService, CustomerRegistrationExtendedService>();
+            #endregion
+
+            #region Cludflare
+            services.AddScoped<ICloudflareService, CloudflareService>();
+            #endregion
+
+            #region Import/Export
+
+            services.AddScoped<IExportExtendedManager, ExportExtendedManager>();
+            services.AddScoped<IImportExtendedManager, ImportExtendedManager>();
+
+            #endregion
+
+            #region Feed 
+
+            services.AddScoped<IGoogleFeedService, GoogleFeedService>();
+            services.AddScoped<IPaymentProfileService, PaymentProfileService>();
+
+            #endregion
+
+            #region Custom Order
+            services.AddScoped<ICustomOrderService, CustomOrderService>();
+            #endregion
+
+            #region Automations
+
+            services.AddScoped<IPostDeliveryService, PostDeliveryService>();
+            services.AddScoped<IPostPurchaseService, PostPurchaseService>();
+
             #endregion
 
         }

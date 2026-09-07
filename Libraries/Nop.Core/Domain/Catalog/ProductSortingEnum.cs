@@ -35,6 +35,7 @@ public enum ProductSortingEnum
     /// </summary>
     CreatedOn = 15,
 
-
+    #region Custom updates Need to shift with Upgrade
     BestSeller = 16,
+    #endregion
 }
