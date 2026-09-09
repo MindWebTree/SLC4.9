@@ -1,0 +1,96 @@
+﻿2026-09-08 12:25:19.959 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 12:25:21.480 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=71e4e8c1-2018-4e32-8b19-9f698e678727, TokenLength=2957
+2026-09-08 12:25:21.483 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=71e4e8c1-2018-4e32-8b19-9f698e678727
+2026-09-08 12:44:08.263 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 12:44:09.824 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=3af4279b-7221-4ca8-8f67-cc9d2b8a8ea7, TokenLength=2957
+2026-09-08 12:44:09.825 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=3af4279b-7221-4ca8-8f67-cc9d2b8a8ea7
+2026-09-08 12:47:48.251 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 12:47:49.253 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=ae1b5be8-9a1a-4aeb-991f-d0a69cb48d10, TokenLength=2957
+2026-09-08 12:47:49.253 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=ae1b5be8-9a1a-4aeb-991f-d0a69cb48d10
+2026-09-08 12:51:31.215 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 12:51:32.226 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=efa5da91-89f9-4145-ba15-c4a31e2b5208, TokenLength=2957
+2026-09-08 12:51:32.227 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=efa5da91-89f9-4145-ba15-c4a31e2b5208
+2026-09-08 12:53:47.636 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 12:53:48.672 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=25a2f609-33af-4fe8-9b00-dedfb79ca67f, TokenLength=2957
+2026-09-08 12:53:48.677 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=25a2f609-33af-4fe8-9b00-dedfb79ca67f
+2026-09-08 12:56:58.690 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 12:56:59.778 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=0a15563a-2aa6-4055-9e7b-f970831cc0df, TokenLength=2957
+2026-09-08 12:56:59.779 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=0a15563a-2aa6-4055-9e7b-f970831cc0df
+2026-09-08 13:00:26.612 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:00:27.661 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=6bd603fd-aa48-433d-a619-5a1fd401aee2, TokenLength=2957
+2026-09-08 13:00:27.662 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=6bd603fd-aa48-433d-a619-5a1fd401aee2
+2026-09-08 13:02:40.847 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:02:42.177 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=7d9e585f-0bfb-413c-8511-847098917f4b, TokenLength=2957
+2026-09-08 13:02:42.178 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=7d9e585f-0bfb-413c-8511-847098917f4b
+2026-09-08 13:03:14.983 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:03:15.444 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=a4010a0a-be0d-440e-bb7e-94176a7f863b, TokenLength=2957
+2026-09-08 13:03:15.445 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=a4010a0a-be0d-440e-bb7e-94176a7f863b
+2026-09-08 13:11:25.243 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:11:26.267 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=0c99d069-988d-435e-8585-cab0f6d84244, TokenLength=2957
+2026-09-08 13:11:26.268 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=0c99d069-988d-435e-8585-cab0f6d84244
+2026-09-08 13:22:37.191 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:22:38.505 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=3b8828ff-605a-4bdf-8430-2323c1115987, TokenLength=2957
+2026-09-08 13:22:38.505 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=3b8828ff-605a-4bdf-8430-2323c1115987
+2026-09-08 13:23:36.944 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:23:37.449 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=28a113f3-e645-42c8-8114-884af4e0ee33, TokenLength=2957
+2026-09-08 13:23:37.449 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=28a113f3-e645-42c8-8114-884af4e0ee33
+2026-09-08 13:24:08.824 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:24:09.272 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=e54938d8-d424-4d66-b46d-ae7633e9723e, TokenLength=2957
+2026-09-08 13:24:09.272 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=e54938d8-d424-4d66-b46d-ae7633e9723e
+2026-09-08 13:25:09.580 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:25:10.578 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=bc49c114-c6e1-47c5-8428-d4c121768127, TokenLength=2957
+2026-09-08 13:25:10.580 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=bc49c114-c6e1-47c5-8428-d4c121768127
+2026-09-08 13:29:19.535 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:29:20.528 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=90eb2c3b-e39f-4ce7-ad81-52c1cdb45474, TokenLength=2957
+2026-09-08 13:29:20.530 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=90eb2c3b-e39f-4ce7-ad81-52c1cdb45474
+2026-09-08 13:29:58.330 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:29:58.780 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=1b001f9b-f571-4861-8b0f-e720d536654c, TokenLength=2957
+2026-09-08 13:29:58.781 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=1b001f9b-f571-4861-8b0f-e720d536654c
+2026-09-08 13:30:20.333 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:30:20.791 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=38540a6b-b5d0-4bee-9925-a3ff0c0f9fb9, TokenLength=2957
+2026-09-08 13:30:20.793 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=38540a6b-b5d0-4bee-9925-a3ff0c0f9fb9
+2026-09-08 13:34:48.320 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:34:49.334 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=db7682b1-eba1-4861-a591-61662c39c27a, TokenLength=2957
+2026-09-08 13:34:49.335 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=db7682b1-eba1-4861-a591-61662c39c27a
+2026-09-08 13:35:52.816 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:35:53.864 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=392966aa-e5d7-4f51-b0ef-e7e7f644d1ee, TokenLength=2957
+2026-09-08 13:35:53.865 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=392966aa-e5d7-4f51-b0ef-e7e7f644d1ee
+2026-09-08 13:37:35.270 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:37:36.348 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=a82090bd-f605-4baa-bc8a-9bf813fad323, TokenLength=2957
+2026-09-08 13:37:36.348 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=a82090bd-f605-4baa-bc8a-9bf813fad323
+2026-09-08 13:39:16.966 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:39:18.077 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=b2d8393d-dd15-4106-9065-6e72a05b34c1, TokenLength=2957
+2026-09-08 13:39:18.078 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=b2d8393d-dd15-4106-9065-6e72a05b34c1
+2026-09-08 13:42:09.910 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:42:11.172 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=ea05878d-a883-4169-9310-1ed90e3e7963, TokenLength=2957
+2026-09-08 13:42:11.174 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=ea05878d-a883-4169-9310-1ed90e3e7963
+2026-09-08 13:42:55.720 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:42:56.731 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=a20afdfb-489c-4b97-ac35-50f8a2bd1569, TokenLength=2957
+2026-09-08 13:42:56.732 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=a20afdfb-489c-4b97-ac35-50f8a2bd1569
+2026-09-08 13:43:18.160 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:43:18.613 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=a615d035-259d-4450-9e73-a3ade4d20947, TokenLength=2957
+2026-09-08 13:43:18.613 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=a615d035-259d-4450-9e73-a3ade4d20947
+2026-09-08 13:43:31.440 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:43:31.929 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=9da5eb23-7f73-4ac4-a382-6020349ac38e, TokenLength=2957
+2026-09-08 13:43:31.930 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=9da5eb23-7f73-4ac4-a382-6020349ac38e
+2026-09-08 13:44:09.645 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:44:10.104 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=3155f41c-1251-4243-822f-9b5955fd4de6, TokenLength=2957
+2026-09-08 13:44:10.105 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=3155f41c-1251-4243-822f-9b5955fd4de6
+2026-09-08 13:45:40.622 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:45:41.648 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=58d4be7d-5118-4ced-acc1-20198b3e7be5, TokenLength=2957
+2026-09-08 13:45:41.649 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=58d4be7d-5118-4ced-acc1-20198b3e7be5
+2026-09-08 13:50:12.872 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:50:13.960 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=fd8e8cb4-9e61-47f5-a408-d2fc40b146cb, TokenLength=2957
+2026-09-08 13:50:13.961 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=fd8e8cb4-9e61-47f5-a408-d2fc40b146cb
+2026-09-08 13:52:36.988 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:52:38.070 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=623584eb-39d7-402e-9347-81a0421f8ad9, TokenLength=2957
+2026-09-08 13:52:38.071 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=623584eb-39d7-402e-9347-81a0421f8ad9
+2026-09-08 13:54:43.288 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:54:44.312 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=c1369dda-8e2f-4f4a-82e6-f3dc01888618, TokenLength=2957
+2026-09-08 13:54:44.313 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=c1369dda-8e2f-4f4a-82e6-f3dc01888618
+2026-09-08 13:55:29.127 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:55:29.558 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=7b7df4ee-053c-4019-8921-2bebc2216e16, TokenLength=2957
+2026-09-08 13:55:29.558 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=7b7df4ee-053c-4019-8921-2bebc2216e16
+2026-09-08 13:58:24.174 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 13:58:25.188 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=cc2daa6e-2821-4926-8d27-0b9b46173684, TokenLength=2957
+2026-09-08 13:58:25.188 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=cc2daa6e-2821-4926-8d27-0b9b46173684

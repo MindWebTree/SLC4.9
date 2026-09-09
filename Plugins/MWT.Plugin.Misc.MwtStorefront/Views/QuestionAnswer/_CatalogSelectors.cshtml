@@ -34,15 +34,11 @@
     @if (_workContext.IsMobileDevice())
     {
         <div class="position-relative ">
-
-          
-
         </div>
     }
     else
     {
         <div class="position-relative ">
-         
         </div>
     }
 
@@ -57,44 +53,44 @@
     {
         @await Component.InvokeAsync("QuickFilter", new { entityId = Model.KwTermId, entityType = "KwTerm", heading = "" })
     }
-<div class="sort-by  d-sm-block ">
-    <div id="noofprdDisplay">
-        @Html.Raw(string.Format(T("Label.Showing").Text, (Model.PageIndex + 1) * Model.PageSize > Model.TotalItems ? Model.TotalItems : (Model.PageIndex + 1) * Model.PageSize, Model.TotalItems))
-    </div>
-    @if (Model.AllowProductSorting)
-    {
-        <div class="sortbysection">
-            <div class="sortbylabel">
-                @T("Catalog.OrderBy")
-            </div>
-            <div class="custom-select">
-                <select aria-label="@T("Catalog.OrderBy.Label")" class="dropdown-filter" id="products-orderby" name="products-orderby">
-                    @foreach (var sortOption in Model.AvailableSortOptions)
-                    {
-                        <option selected="@sortOption.Selected" value="@( sortOption.Text.Replace(" ","_"))">@sortOption.Text</option>
-                    }
-
-                </select>
-
-            </div>
+    <div class="sort-by  d-sm-block ">
+        <div id="noofprdDisplay" tabindex="0">
+            @Html.Raw(string.Format(T("Label.Showing").Text, (Model.PageIndex + 1) * Model.PageSize > Model.TotalItems ? Model.TotalItems : (Model.PageIndex + 1) * Model.PageSize, Model.TotalItems))
         </div>
-        <script asp-location="Footer">
-            $(document).ready(function () {
-                var $orderByEl = $('#products-orderby');
-                $orderByEl.on('change', function () {
-                    CatalogProducts.getProducts();
-                });
+        @if (Model.AllowProductSorting)
+        {
+            <div class="sortbysection">
+                <div class="sortbylabel">
+                    @T("Catalog.OrderBy")
+                </div>
+                <div class="custom-select">
+                    <select aria-label="@T("Catalog.OrderBy.Label")" class="dropdown-filter" id="products-orderby" name="products-orderby">
+                        @foreach (var sortOption in Model.AvailableSortOptions)
+                        {
+                            <option selected="@sortOption.Selected" value="@( sortOption.Text.Replace(" ","_"))">@sortOption.Text</option>
+                        }
 
-                $(CatalogProducts).on('before', function (e) {
-                     if ($orderByEl.val() != defaultSortOption)
-                        e.payload.urlBuilder
-                            .addParameter('@T("SortOption.Query.Param")', "[" + $orderByEl.val() + "]");
+                    </select>
+
+                </div>
+            </div>
+            <script asp-location="Footer">
+                $(document).ready(function () {
+                    var $orderByEl = $('#products-orderby');
+                    $orderByEl.on('change', function () {
+                        CatalogProducts.getProducts();
+                    });
+
+                    $(CatalogProducts).on('before', function (e) {
+                         if ($orderByEl.val() != defaultSortOption)
+                            e.payload.urlBuilder
+                                .addParameter('@T("SortOption.Query.Param")', "[" + $orderByEl.val() + "]");
+                    });
                 });
-            });
-        </script>
-    }
-</div>
-    
+            </script>
+        }
+    </div>
+
     @*page size*@
     @if (Model.AllowCustomersToSelectPageSize)
     {
@@ -139,35 +135,37 @@
                     var listMode = Model.AvailableViewModes[1];
                     <div class="col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 grid-list-icon">
                         <a class="viewmode-icon grid @if(gridMode.Selected){
-                <text>selected</text>
-}" data-viewmode="@gridMode.Value" title="@gridMode.Text">@gridMode.Text</a>
-<a class="viewmode-icon list @if (listMode.Selected){
-                <text>selected</text>
-}" data-viewmode="@listMode.Value" title="@listMode.Text">@listMode.Text</a>
-</div>
-
-}
-            </div>
-        </div>
-        <script asp-location="Footer">
-            $(document).ready(function () {
-                var $viewModeEls = $('[data-viewmode]');
-                $viewModeEls.on('click', function () {
-                    if (!$(this).hasClass('selected')) {
-                        $viewModeEls.toggleClass('selected');
-                        CatalogProducts.getProducts();
-                    }
-                    return false;
-                });
-
-                $(CatalogProducts).on('before', function (e) {
-                    var $viewModeEl = $('[data-viewmode].selected');
-                    if ($viewModeEl) {
-                        e.payload.urlBuilder
-                            .addParameter('viewmode', $viewModeEl.data('viewmode'));
-                    }
-                });
-            });
-        </script>
+                        <text>selected</text>
     }
+    " data-viewmode="@gridMode.Value" title="@gridMode.Text">@gridMode.Text</a>
+                    <a class="viewmode-icon list @if (listMode.Selected){
+                    <text>selected</text>
+}
+" data-viewmode="@listMode.Value" title="@listMode.Text">@listMode.Text</a>
+            </div>
+
+                        }
+        </div>
+    </div>
+    <script asp-location="Footer">
+        $(document).ready(function () {
+            var $viewModeEls = $('[data-viewmode]');
+            $viewModeEls.on('click', function () {
+                if (!$(this).hasClass('selected')) {
+                    $viewModeEls.toggleClass('selected');
+                    CatalogProducts.getProducts();
+                }
+                return false;
+            });
+
+            $(CatalogProducts).on('before', function (e) {
+                var $viewModeEl = $('[data-viewmode].selected');
+                if ($viewModeEl) {
+                    e.payload.urlBuilder
+                        .addParameter('viewmode', $viewModeEl.data('viewmode'));
+                }
+            });
+        });
+    </script>
+        }
 </div>

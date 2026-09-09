@@ -4,12 +4,15 @@
     var filterAttr = '@string.Join( ",",Model.Attributes.Select(m=>m.Name.ToLower().Trim()).ToArray())';
 
 </script>
-<h4 class="filter-by-title d-sm-none">@T("Filtering.SpecificationFilter")</h4>
+<h3 class="filter-by-title d-sm-none">@T("Filtering.SpecificationFilter")</h3>
 
 <div class="@(_workContext.IsMobileDevice()?"mobile":"sideFilters") filter-content">
     @foreach (var attr in Model.Attributes)
     {
         <div class="card-header collapsed @(attr.Values.Any(x => !string.IsNullOrEmpty(x.ColorSquaresRgb)) ? "product-spec-color" : null )"
+             role="button"
+             tabindex="0"
+             aria-label="@attr.Name"
              data-bs-toggle="collapse" href="#collapse_@attr.Id" id="filter-btn-@attr.Id" data-filter-name="@(attr.Id == -1 ? attr.Sename : attr.Name)">
             <span class="card-title">
                 <strong>@attr.Name</strong>

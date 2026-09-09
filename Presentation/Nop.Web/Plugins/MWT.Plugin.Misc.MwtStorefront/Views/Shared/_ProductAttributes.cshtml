@@ -1,4 +1,4 @@
-﻿@model CustomsProductOverviewModel
+﻿@model CustomProductOverviewModel
 @using Nop.Core.Domain.Catalog
 @using Nop.Core.Domain.Media
 @using System.Text
@@ -6,7 +6,7 @@
 @using Nop.Services.Media
 @inject IDownloadService downloadService
 @inject CatalogSettings catalogSettings
-@inject Nop.Core.IWorkContext _workcontext
+@inject ICustomWorkContext _workcontext
 @using Nop.Core
 @if (Model.ProductAttributes.Count > 0)
 {
@@ -116,8 +116,8 @@
                                     <nop-date-picker asp-day-name="@(controlId + "_day")"
                                                      asp-month-name="@(controlId + "_month")"
                                                      asp-year-name="@(controlId + "_year")"
-                                                     asp-begin-year="@(DateTime.Now.Year)"
-                                                     asp-end-year="@(DateTime.Now.Year + catalogSettings.CountDisplayedYearsDatePicker)"
+                                                     asp-begin-year="@DateTime.UtcNow"
+                                                     asp-end-year="@DateTime.UtcNow.AddYears(catalogSettings.CountDisplayedYearsDatePicker)"
                                                      asp-selected-day="@(attribute.SelectedDay)"
                                                      asp-selected-month="@(attribute.SelectedMonth)"
                                                      asp-selected-year="@(attribute.SelectedYear)" />
@@ -132,8 +132,8 @@
                                     }
 
                                     //register CSS and JS
-                                    Html.AddCssFileParts(ResourceLocation.Footer, "~/lib/fineuploader/fine-uploader.min.css");
-                                    Html.AddScriptParts(ResourceLocation.Footer, "~/lib/fineuploader/jquery.fine-uploader.min.js");
+                                    NopHtml.AddCssFileParts("~/lib/fineuploader/fine-uploader.min.css");
+                                    NopHtml.AddScriptParts(ResourceLocation.Footer, "~/lib/fineuploader/jquery.fine-uploader.min.js");
 
                                     //ex. ['jpg', 'jpeg', 'png', 'gif'] or []
                                     var allowedFileExtensions = string.Join(", ", attribute.AllowedFileExtensions.Select(x => "'" + x.Trim() + "'").ToList());
@@ -268,9 +268,9 @@
                                             else if (T("Product.Attr.shades").Text == @textPrompt)
                                             {
                                                 <li style="margin:0px" data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected? @Html.Raw(" class=\"selected-value\"") : null)>
-                                                    <label for="@(controlId)_@(attributeValue.Id)" attr-is-show="@(attributeValue.IsPreSelected ? "true" : "false")" class="custom-shade-control" data-attr-name="@CommonHelper.StripUnwantedPrefixFromShade(attributeValue.Name)">
+                                                    <label for="@(controlId)_@(attributeValue.Id)" attr-is-show="@(attributeValue.IsPreSelected ? "true" : "false")" class="custom-shade-control" data-attr-name="@CustomCommonHelper.StripUnwantedPrefixFromShade(attributeValue.Name)">
                                                         <img class="lazy" src="/images/pixel.png" data-src="/images/shades/@(attributeValue.Name).jpg" alt="@attributeValue.Name">
-                                                        <span>  @CommonHelper.StripUnwantedPrefixFromShade(attributeValue.Name)</span>
+                                                        <span>  @CustomCommonHelper.StripUnwantedPrefixFromShade(attributeValue.Name)</span>
                                                         <input id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)"
                                                                value="@attributeValue.Id" checked="@attributeValue.IsPreSelected"
                                                                @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onclick=\"showHideRadioQuantity('{controlId}')\"") : null) />
@@ -281,7 +281,7 @@
 
                                                     <div class="shade-overview">
                                                         <img class="lazy" src="/images/pixel.png" data-src="/images/shades/large/@(attributeValue.Name).jpg" alt="@attributeValue.Name">
-                                                        <p>@CommonHelper.StripUnwantedPrefixFromShade(attributeValue.Name)</p>
+                                                        <p>@CustomCommonHelper.StripUnwantedPrefixFromShade(attributeValue.Name)</p>
                                                     </div>
                                                 </li>
                                             }
@@ -369,7 +369,7 @@
     </div>
     if (Model.AllowAddingOnlyExistingAttributeCombinations && catalogSettings.AttributeValueOutOfStockDisplayType == AttributeValueOutOfStockDisplayType.Disable)
     {
-        Html.AddScriptParts(ResourceLocation.Footer, "~/js/public.combinationsbehavior.js");
+        NopHtml.AddScriptParts(ResourceLocation.Footer, "~/js/public.combinationsbehavior.js");
 
         <script asp-location="Footer">
             var combinationsBehavior_@(Model.Id);

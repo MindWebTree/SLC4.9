@@ -31,17 +31,19 @@
         <div class="subheading">
             @T("opc.subheading.deliveryoptions")
         </div>
+
         <div class="shipping-option clear">
+       
             @if (Model.Warnings.Count == 0)
             {
+                <fieldset style="border:0; padding:0; margin:0;">
+                    <legend class="sr-only">Choose Your Shipping Method</legend>
                 <div>
                     @for (var i = 0; i < Model.ShippingMethods.Count; i++)
                     {
                         var shippingMethod = Model.ShippingMethods[i];
-
-                        <div class="section-option @(shippingMethod.Selected?"active":string.Empty)">
-
-                            <label for="shippingoption_@(i)">
+                        <div class="section-option @(shippingMethod.Selected ? "active" : string.Empty)">
+                            <label id="shipping_info_@(i)" for="shippingoption_@(i)">
                                 @if (Model.WgsRequired)
                                 {
 
@@ -93,7 +95,7 @@
                             <!-- Price & Radio button section -->
                             <div class="shipping-section-price-info">
                                 <!-- Price on the left -->
-                                <span style="color: green; font-size: 14px; font-weight: bold; margin-right: auto;">
+                                <span id="shipping_price_@(i)" style="color: green; font-size: 14px; font-weight: bold; margin-right: auto;">
                                     <span style="color: green; font-size: 14px; font-weight: bold; margin-right: auto;">
                                         @if (shippingMethod.Fee != "$0.00")
                                         {
@@ -109,16 +111,16 @@
 
 
                                 <!-- Radio button on the right -->
-                                <input id="shippingoption_@(i)" type="radio" name="shippingoption"
+                                <input aria-labelledby="shipping_info_@(i) shipping_price_@(i)" id="shippingoption_@(i)" type="radio" name="shippingoption"
                                        value="@(shippingMethod.Name)___@(shippingMethod.ShippingRateComputationMethodSystemName)"
-                                @(shippingMethod.Selected ? "checked" : "") />
+                                       @(shippingMethod.Selected ? "checked" : "") />
                             </div>
 
                         </div>
 
-
                     }
                 </div>
+                </fieldset>
             }
             else
             {
@@ -132,7 +134,7 @@
                 </div>
             }
 
-
+       
         </div>
 
     }

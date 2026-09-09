@@ -1,4 +1,4 @@
-﻿using Nop.Core.Domain.Customers;
+﻿    using Nop.Core.Domain.Customers;
 using Nop.Services.ScheduleTasks;
 
 namespace Nop.Services.Customers;

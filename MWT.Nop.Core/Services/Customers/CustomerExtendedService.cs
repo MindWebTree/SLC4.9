@@ -418,5 +418,51 @@ namespace MWT.Nop.Core.Services.Customers
                                     .ToListAsync();
             return categoryManagers;
         }
+
+
+        public virtual async Task<int> DeleteGuestCustomersAsync(bool onlyWithoutShoppingCart, int noOfCustomerTodelete)
+        {
+            var guestRole = await GetCustomerRoleBySystemNameAsync(NopCustomerDefaults.GuestsRoleName);
+
+            var allGuestCustomers = from guest in _customerRepository.Table
+                                    join ccm in _customerCustomerRoleMappingRepository.Table on guest.Id equals ccm.CustomerId
+                                    where ccm.CustomerRoleId == guestRole.Id
+                                    select guest;
+
+            var guestsToDelete = (from guest in _customerRepository.Table
+                                 join g in allGuestCustomers on guest.Id equals g.Id
+                                 from sCart in _shoppingCartRepository.Table.Where(sci => sci.CustomerId == guest.Id).DefaultIfEmpty()
+                                 from order in _orderRepository.Table.Where(o => o.CustomerId == guest.Id).DefaultIfEmpty()
+                                 from blogComment in _blogCommentRepository.Table.Where(o => o.CustomerId == guest.Id).DefaultIfEmpty()
+                                 from newsComment in _newsCommentRepository.Table.Where(o => o.CustomerId == guest.Id).DefaultIfEmpty()
+                                 from productReview in _productReviewRepository.Table.Where(o => o.CustomerId == guest.Id).DefaultIfEmpty()
+                                 from productReviewHelpfulness in _productReviewHelpfulnessRepository.Table.Where(o => o.CustomerId == guest.Id).DefaultIfEmpty()
+                                 from pollVotingRecord in _pollVotingRecordRepository.Table.Where(o => o.CustomerId == guest.Id).DefaultIfEmpty()
+                                 from forumTopic in _forumTopicRepository.Table.Where(o => o.CustomerId == guest.Id).DefaultIfEmpty()
+                                 from forumPost in _forumPostRepository.Table.Where(o => o.CustomerId == guest.Id).DefaultIfEmpty()
+                                 where (!onlyWithoutShoppingCart || sCart == null) &&
+                                       order == null && blogComment == null && newsComment == null && productReview == null && productReviewHelpfulness == null &&
+                                       pollVotingRecord == null && forumTopic == null && forumPost == null &&
+                                       !guest.IsSystemAccount
+                                 orderby guest.Id // Added: ensures we delete the oldest guest records first 
+                                 select new { CustomerId = guest.Id }).Take(noOfCustomerTodelete);
+
+            await using var tmpGuests = await _dataProvider.CreateTempDataStorageAsync("tmp_guestsToDelete", guestsToDelete);
+            await using var tmpAddresses = await _dataProvider.CreateTempDataStorageAsync("tmp_guestsAddressesToDelete",
+                _customerAddressMappingRepository.Table
+                    .Where(ca => tmpGuests.Any(c => c.CustomerId == ca.CustomerId))
+                    .Select(ca => new { AddressId = ca.AddressId }));
+
+            //delete guests
+            var totalRecordsDeleted = await _customerRepository.DeleteAsync(c => tmpGuests.Any(tmp => tmp.CustomerId == c.Id));
+
+            //delete attributes
+            await _gaRepository.DeleteAsync(ga => tmpGuests.Any(c => c.CustomerId == ga.EntityId) && ga.KeyGroup == nameof(Customer));
+
+            //delete m -> m addresses
+            await _customerAddressRepository.DeleteAsync(a => tmpAddresses.Any(tmp => tmp.AddressId == a.Id));
+
+            return totalRecordsDeleted;
+        }
     }
 }

@@ -24,5 +24,6 @@ namespace MWT.Nop.Core.Services.Customers
         Task<string> GetCustomerPhoneAsync(Customer customer, bool isBillingPhone = false,bool isShippingPhone = false);
         Task<IList<Customer>> GetAllCategoryManagers();
         Task<string> GetExtendedCustomerFullNameAsync(Customer customer);
+        Task<int> DeleteGuestCustomersAsync( bool onlyWithoutShoppingCart, int noOfCustomerTodelete);
     }
 }

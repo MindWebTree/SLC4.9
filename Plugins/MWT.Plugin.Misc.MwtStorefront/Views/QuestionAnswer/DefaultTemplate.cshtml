@@ -113,7 +113,7 @@
                 }
                 <li class="breadcrumb-item">
                     <span itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
-                        <a href="/answers" itemprop="item"> <span class="current-item" itemprop="name">Question & Answer</span></a>
+                        <a href="/answers" itemprop="item"> <span class="current-item"  itemprop="name">Question & Answer</span></a>
                         <meta itemprop="position" content="@position" />
                     </span>
                 </li>
@@ -130,7 +130,7 @@
                     <li itemprop="itemListElement" class="breadcrumb-item active" itemscope itemtype="http://schema.org/ListItem">
                         @if (isLastCategory)
                         {
-                            <strong class="current-item" itemprop="name">@cat.Name</strong>
+                            <strong class="current-item" tabindex="0" itemprop="name">@cat.Name</strong>
                             <span itemprop="item" itemscope itemtype="http://schema.org/Thing"
                                   id="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })">
                             </span>
