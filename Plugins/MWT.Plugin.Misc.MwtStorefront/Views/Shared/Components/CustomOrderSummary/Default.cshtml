@@ -312,7 +312,7 @@
 
                                                     <div class="discount">
                                                         @item.MemberShipDiscount
-                                                        <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.MemberShipDiscount.help")">
+                                                        <button aria-label="Offer Discount" type="button" class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.MemberShipDiscount.help")">
 
                                                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                 <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#444444" />
@@ -320,7 +320,7 @@
                                                                 <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
                                                             </svg>
 
-                                                        </span>
+                                                        </button>
                                                     </div>
                                                 }
 
@@ -330,7 +330,7 @@
                                                         @Html.Raw(!string.IsNullOrEmpty(item.OfferDiscount) ? item.OfferDiscount : await _priceFormatter.FormatPriceAsync(0))
 
 
-                                                        <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.OfferDiscount.help")">
+                                                        <button aria-label="Offer Discount" type="button" class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.OfferDiscount.help")">
 
                                                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                 <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#444444" />
@@ -338,7 +338,7 @@
                                                                 <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
                                                             </svg>
 
-                                                        </span>
+                                                        </button>
 
                                                     </div>
                                                 }
@@ -346,7 +346,7 @@
                                                 {
                                                     <div class="discount">
                                                         @Html.Raw(!string.IsNullOrEmpty(item.BuyMoreSaveMoreDiscount) ? item.BuyMoreSaveMoreDiscount : await _priceFormatter.FormatPriceAsync(0))
-                                                        <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.BuyMoreSaveMoreDiscount.help")">
+                                                        <button aria-label="BuyMoreSaveMoreDiscount" type="button" class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.BuyMoreSaveMoreDiscount.help")">
 
                                                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                 <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#444444" />
@@ -354,7 +354,7 @@
                                                                 <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
                                                             </svg>
 
-                                                        </span>
+                                                        </button>
                                                     </div>
                                                 }
 
@@ -363,7 +363,7 @@
 
                                                     <div class="discount">
                                                         @item.Discount
-                                                        <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.Coupon.Discount.help")">
+                                                        <button aria-label="Offer Discount" type="button" class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.Coupon.Discount.help")">
 
                                                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                 <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#444444" />
@@ -371,7 +371,7 @@
                                                                 <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
                                                             </svg>
 
-                                                        </span>
+                                                        </button>
                                                     </div>
                                                     if (item.MaximumDiscountedQty.HasValue)
                                                     {

@@ -97,13 +97,7 @@
                                                      asp-begin-year="@(DateTime.UtcNow)"
                                                      asp-end-year="@(DateTime.UtcNow.AddYears(catalogSettings.CountDisplayedYearsDatePicker))"
                                                      asp-selected-date="@Model.ParseDateOfBirth()" />
-                                </div>
-                                <div class="col-12 col-sm-12 col-md-2 col-lg-2 col-xl-2">
-                                    @if (Model.DateOfBirthRequired)
-                                    {
-                                        <nop-required />
-                                    }
-                                </div>
+                                </div> 
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
                                     <span asp-validation-for="DateOfBirthDay"></span>
                                     <span asp-validation-for="DateOfBirthMonth"></span>
@@ -116,10 +110,7 @@
                         <div class="row">
                             <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 px-0">
                                 <input aria-label="Email" asp-for="Email" placeholder="Email Address" class="form-control" />
-                            </div>
-                            <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
-                                <nop-required />
-                            </div>
+                            </div> 
                             <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-start px-0">
 
                                 <span asp-validation-for="Email"></span>
@@ -145,13 +136,7 @@
 
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 px-0">
                                     <input aria-label="Phone" asp-for="Phone" placeholder="Phone" class="form-control" />
-                                </div>
-                                <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
-                                    @if (Model.PhoneRequired)
-                                    {
-                                        <nop-required />
-                                    }
-                                </div>
+                                </div> 
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-start px-0">
                                     
                                     <span asp-validation-for="Phone"></span>
@@ -166,13 +151,7 @@
 
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 px-0">
                                     <input aria-label="Fax" asp-for="Fax" placeholder="Fax" class="form-control" />
-                                </div>
-                                <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
-                                    @if (Model.FaxRequired)
-                                    {
-                                        <nop-required />
-                                    }
-                                </div>
+                                </div> 
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-start px-0">
                                     <span asp-validation-for="Fax"></span>
                                 </div>
@@ -227,10 +206,7 @@
                                     <label asp-for="Username" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
                                     <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
                                         <input asp-for="Username" class="form-control" />
-                                    </div>
-                                    <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
-                                        <nop-required />
-                                    </div>
+                                    </div> 
                                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
                                         <span asp-validation-for="Username"></span>
                                         @if (Model.CheckUsernameAvailabilityEnabled)
@@ -269,13 +245,7 @@
                                     <label asp-for="Company" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
                                     <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
                                         <input asp-for="Company" class="form-control" />
-                                    </div>
-                                    <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
-                                        @if (Model.CompanyRequired)
-                                        {
-                                            <nop-required />
-                                        }
-                                    </div>
+                                    </div> 
                                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
                                         <span asp-validation-for="Company"></span>
                                     </div>
@@ -293,13 +263,7 @@
                                     <span class="vat-status">@Model.VatNumberStatusNote</span>
                                     <span class="vat-note">
                                         <em>@T("Account.Fields.VatNumber.Note")</em>
-                                    </span>
-                                    <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
-                                        @if (Model.VatNumberRequired)
-                                        {
-                                            <nop-required />
-                                        }
-                                    </div>
+                                    </span> 
                                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
                                         <span asp-validation-for="VatNumber"></span>
                                     </div>
@@ -328,13 +292,7 @@
                                     <label asp-for="StreetAddress" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
                                     <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
                                         <input asp-for="StreetAddress" class="form-control" />
-                                    </div>
-                                    <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
-                                        @if (Model.StreetAddressRequired)
-                                        {
-                                            <nop-required />
-                                        }
-                                    </div>
+                                    </div> 
                                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
                                         <span asp-validation-for="StreetAddress"></span>
                                     </div>
@@ -348,13 +306,7 @@
                                     <label asp-for="StreetAddress2" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
                                     <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
                                         <input asp-for="StreetAddress2" class="form-control" />
-                                    </div>
-                                    <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
-                                        @if (Model.StreetAddress2Required)
-                                        {
-                                            <nop-required />
-                                        }
-                                    </div>
+                                    </div> 
                                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
                                         <span asp-validation-for="StreetAddress2"></span>
                                     </div>
@@ -368,13 +320,7 @@
                                     <label asp-for="ZipPostalCode" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
                                     <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
                                         <input asp-for="ZipPostalCode" class="form-control" />
-                                    </div>
-                                    <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
-                                        @if (Model.ZipPostalCodeRequired)
-                                        {
-                                            <nop-required />
-                                        }
-                                    </div>
+                                    </div> 
                                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
                                         <span asp-validation-for="ZipPostalCode"></span>
                                     </div>
@@ -388,13 +334,7 @@
                                     <label asp-for="City" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
                                     <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
                                         <input asp-for="City" class="form-control" />
-                                    </div>
-                                    <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
-                                        @if (Model.CityRequired)
-                                        {
-                                            <nop-required />
-                                        }
-                                    </div>
+                                    </div> 
                                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
                                         <span asp-validation-for="City"></span>
                                     </div>
@@ -408,13 +348,7 @@
                                     <label asp-for="County" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
                                     <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
                                         <input asp-for="County" class="form-control" />
-                                    </div>
-                                    <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
-                                        @if (Model.CountyRequired)
-                                        {
-                                            <nop-required />
-                                        }
-                                    </div>
+                                    </div> 
                                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
                                         <span asp-validation-for="County"></span>
                                     </div>
@@ -432,13 +366,7 @@
                                                 data-url="@(Url.RouteUrl("GetStatesByCountryId"))"
                                                 data-stateprovince="#@Html.IdFor(model => model.StateProvinceId)"
                                                 data-loading="#states-loading-progress"></select>
-                                    </div>
-                                    <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
-                                        @if (Model.CountryRequired)
-                                        {
-                                            <nop-required />
-                                        }
-                                    </div>
+                                    </div> 
                                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
                                         <span asp-validation-for="CountryId"></span>
                                     </div>
@@ -452,13 +380,7 @@
                                     <label asp-for="StateProvinceId" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
                                     <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
                                         <select asp-for="StateProvinceId" asp-items="Model.AvailableStates" class="form-control"></select>
-                                    </div>
-                                    <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
-                                        @if (Model.StateProvinceRequired)
-                                        {
-                                            <nop-required />
-                                        }
-                                    </div>
+                                    </div> 
                                     <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
                                         <span id="states-loading-progress" style="display: none;" class="please-wait">@T("Common.Wait")</span>
                                         <span asp-validation-for="StateProvinceId"></span>

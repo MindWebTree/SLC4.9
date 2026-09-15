@@ -427,7 +427,8 @@ Model.SelectedShippingMethod == @T("WhiteGloveService.method.name").Value)
     else
     {
         <tr class="tax-value">
-            <td colspan="2" class="text-start taxcalculatesection">
+            <td tabindex="0"
+                role="button" colspan="2" class="text-start taxcalculatesection">
                 @T("ShoppingCart.Tax.Calculation.Label")
             </td>
         </tr>
@@ -546,7 +547,10 @@ Model.SelectedShippingMethod == @T("WhiteGloveService.method.name").Value)
     }
 </tfoot>
 <script type="text/javascript" asp-location="Footer">
-    $("body").on("click", ".taxcalculatesection", function () {
+    $("body").on("click keydown", ".taxcalculatesection", function (e) {
+      if (e.type === "click" || e.key === "Enter") {
+        e.preventDefault();
         $("#taxcalculatecontentsection").toggleClass("d-none");
+    }
     });
 </script>
