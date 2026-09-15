@@ -120,7 +120,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Models
 
 
             return await _orderTotalCalculationService.CalculatePaymentAdditionalFeeAsync(cart,
-             _authorizeNetHostedPaymentSettings.AdditionalFee ,_authorizeNetHostedPaymentSettings.AdditionalFeePercentage);
+             _authorizeNetHostedPaymentSettings.AdditionalFee, _authorizeNetHostedPaymentSettings.AdditionalFeePercentage);
         }
 
         #endregion
@@ -424,7 +424,12 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Models
             var orderIdRef = form[AuthorizeNetHostedPaymentDefaults.OrderId].ToString();
 
             if (!string.IsNullOrEmpty(orderIdRef))
+            {
                 paymentRequest.CustomValues[AuthorizeNetHostedPaymentDefaults.OrderId] = orderIdRef;
+                bool isValidGuid = Guid.TryParse(orderIdRef, out Guid guid);
+                if (isValidGuid)
+                    paymentRequest.OrderGuid = guid;
+            }   
 
             return paymentRequest;
         }
@@ -432,7 +437,7 @@ namespace Nop.Plugin.Payments.AuthorizeNetHosted.Models
         public override string GetConfigurationPageUrl()
             => $"{_webHelper.GetStoreLocation()}Admin/AuthorizeNetHostedPaymentSettings/Configure";
 
-  
+
 
         public async Task<string> GetPaymentMethodDescriptionAsync()
             => await _localizationService.GetResourceAsync(

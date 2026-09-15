@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Infrastructure;
+﻿
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using MWT.Nop.Core.Data.Discounts;
 using MWT.Nop.Core.Service.Catalog;
@@ -31,6 +32,9 @@ using Nop.Services.Seo;
 using Nop.Services.Shipping;
 using Nop.Services.Shipping.Date;
 using Nop.Services.Stores;
+using Nop.Services.Tax;
+
+
 
 namespace MWT.Nop.Core.Services.Orders
 {
@@ -161,8 +165,6 @@ bool includeDiscounts)
 
             return (finalPrice, oldPrice, msrp, discountAmount, appliedDiscounts);
         }
-
-
         public async Task<(decimal, decimal)> MemberShipPriceOfProduct(int productId, decimal msrp, decimal price, decimal salePrice)
         {
             decimal memberShipPrice = 0;
@@ -222,12 +224,11 @@ bool includeDiscounts)
             }
             return (memberShipPrice, discountPercent);
         }
-
         public virtual async Task<IList<string>> CustomAddToCartAsync(Customer customer, Product product,
-        ShoppingCartType shoppingCartType, int storeId, string attributesXml = null,
-        decimal customerEnteredPrice = decimal.Zero,
-        DateTime? rentalStartDate = null, DateTime? rentalEndDate = null,
-        int quantity = 1, bool addRequiredProducts = true, int? wishlistId = null)
+            ShoppingCartType shoppingCartType, int storeId, string attributesXml = null,
+            decimal customerEnteredPrice = decimal.Zero,
+            DateTime? rentalStartDate = null, DateTime? rentalEndDate = null,
+            int quantity = 1, bool addRequiredProducts = true, int? wishlistId = null)
         {
             if (customer == null)
                 throw new ArgumentNullException(nameof(customer));
@@ -344,17 +345,15 @@ bool includeDiscounts)
 
             return warnings;
         }
-
         public virtual async Task UpdateShoppingCartItemAsync(ShoppingCartItem item)
         {
             await _sciRepository.UpdateAsync(item);
         }
-
         public virtual async Task<IList<string>> UpdateShoppingCartItemAsync(Customer customer,
-    int shoppingCartItemId, string attributesXml,
-    decimal customerEnteredPrice, string specialInstructions,
-    DateTime? rentalStartDate = null, DateTime? rentalEndDate = null,
-    int quantity = 1, bool resetCheckoutData = true)
+         int shoppingCartItemId, string attributesXml,
+         decimal customerEnteredPrice, string specialInstructions,
+         DateTime? rentalStartDate = null, DateTime? rentalEndDate = null,
+         int quantity = 1, bool resetCheckoutData = true)
         {
             if (customer == null)
                 throw new ArgumentNullException(nameof(customer));
@@ -410,12 +409,11 @@ bool includeDiscounts)
             return warnings;
         }
 
-
         public virtual async Task<(IList<string>, int)> CustomAddToCartCollectionAsync(Customer customer, Product product,
-            ShoppingCartType shoppingCartType, int storeId, string attributesXml = null,
-            decimal customerEnteredPrice = decimal.Zero,
-            DateTime? rentalStartDate = null, DateTime? rentalEndDate = null,
-            int quantity = 1, bool addRequiredProducts = true)
+                   ShoppingCartType shoppingCartType, int storeId, string attributesXml = null,
+                   decimal customerEnteredPrice = decimal.Zero,
+                   DateTime? rentalStartDate = null, DateTime? rentalEndDate = null,
+                   int quantity = 1, bool addRequiredProducts = true)
         {
             int shoppingcartItemId = 0;
             if (customer == null)
@@ -539,15 +537,14 @@ bool includeDiscounts)
             return (warnings, shoppingcartItemId);
         }
 
-
         public virtual async Task<(decimal unitPrice, decimal oldPrice, decimal msrp, decimal discountAmount, List<Discount> appliedDiscounts)> GetCustomUnitPriceForAttributeAsync(Product product,
-         Customer customer,
-         ShoppingCartType shoppingCartType,
-         int quantity,
-         string attributesXml,
- decimal customerEnteredPrice,
-DateTime? rentalStartDate, DateTime? rentalEndDate,
-bool includeDiscounts)
+                Customer customer,
+                ShoppingCartType shoppingCartType,
+                int quantity,
+                string attributesXml,
+        decimal customerEnteredPrice,
+       DateTime? rentalStartDate, DateTime? rentalEndDate,
+       bool includeDiscounts)
         {
             if (product == null)
                 throw new ArgumentNullException(nameof(product));
@@ -581,8 +578,6 @@ bool includeDiscounts)
             return (finalPrice, oldPrice, msrp, discountAmount, appliedDiscounts);
         }
 
-
-
         public async Task<bool> IsSurchargeApplicable(IList<ShoppingCartItem> cart)
         {
             var _productAttributeFormatter = EngineContext.Current.Resolve<IProductAttributeFormatter>();
@@ -615,8 +610,6 @@ bool includeDiscounts)
             }
             return wgsSurchargeApplicable;
         }
-
-
         public async Task<string> GetBuyMoreSaveMoreDiscountConfiguration()
         {
             decimal discount = 0;
@@ -644,8 +637,7 @@ bool includeDiscounts)
             }
             return discount == 0 ? string.Empty : discountType == CustomDiscountType.Percent ? $"{discount}%" : await _priceFormatter.FormatPriceAsync(discount);
         }
-
-        public async Task<(CustomDiscountType discountType,decimal buyMoreDiscount, int notEligibleCartItemId)> GetBuyMoreSaveMoreDiscountDetailsAsync(IList<ShoppingCartItem> cart,decimal subTotal)
+        public async Task<(CustomDiscountType discountType, decimal buyMoreDiscount, int notEligibleCartItemId)> GetBuyMoreSaveMoreDiscountDetailsAsync(IList<ShoppingCartItem> cart, decimal subTotal)
         {
             var discountType = CustomDiscountType.Fixed;
             decimal buyMoreDiscount = 0;
@@ -660,7 +652,7 @@ bool includeDiscounts)
             decimal buyMoreSaveMoreSingleItemThreshold = await _settingService
                 .GetSettingByKeyAsync<decimal>("MarketingSettings.ApplyBuyMoreSaveMoreOnSingleItemOverThreshold");
 
-            
+
             string buyMoreSaveMoreDiscounts = await _settingService
                 .GetSettingByKeyAsync<string>("MarketingSettings.BuyMoreSaveMoreDiscountConfiguration");
 
@@ -721,6 +713,137 @@ bool includeDiscounts)
                 }
             }
             return wgsRequired;
+        }
+        public async Task<IList<ShoppingCartItemCustomTotals>> GetCustomCartItemTotalsAsync(IList<ShoppingCartItem> cart, decimal subTotal, Customer customer)
+        {
+            var store = await _storeContext.GetCurrentStoreAsync();
+            var _taxService = EngineContext.Current.Resolve<ITaxService>();
+            var _customerExtendedService = EngineContext.Current.Resolve<ICustomerExtendedService>();
+            decimal buyMoreSaveMoreDiscountBase = 0;
+            (CustomDiscountType discountType, decimal buyMoreSaveMoreDiscount, int notElgibleForSavemoreDiscountCartId) = await this.GetBuyMoreSaveMoreDiscountDetailsAsync(cart, subTotal);
+            var workingCurrency = await _workContext.GetWorkingCurrencyAsync();
+            var isCustomerElgibleForMembershipPrice = await _customerExtendedService.IsCustomerEligibleForMemberShipDiscount(customer);
+
+            var result = new List<ShoppingCartItemCustomTotals>();
+
+            try
+            {
+                //cart items
+                foreach (var sci in cart)
+                {
+                    ShoppingCartItemCustomTotals item = new ShoppingCartItemCustomTotals();
+                    item.Id = sci.Id;
+                    decimal itemPrice = 0;
+                    decimal memberShipDiscount = 0;
+                    decimal unitPriceValue = 0;
+                    var product = await _productService.GetProductByIdAsync(sci.ProductId);
+                    var (_unitPrice, _oldprice, _msrp, _, _) = await this.GetCustomUnitPriceAsync(product,
+                        customer, store,
+                        sci.ShoppingCartType,
+                        1, sci.AttributesXml, 0,
+                        sci.RentalStartDateUtc, sci.RentalEndDateUtc, false);
+
+                    (_unitPrice, _) = await _taxService.GetProductPriceAsync(product, _unitPrice);
+                    if (_oldprice > 0)
+                        (_oldprice, _) = await _taxService.GetProductPriceAsync(product, _oldprice);
+
+                    itemPrice = _unitPrice;
+
+
+                    #region Membership Price Section
+
+                    (var _memberShipPrice, _) = await this.MemberShipPriceOfProduct(product.Id, _msrp, _oldprice, _unitPrice);
+
+                    if (_memberShipPrice > 0)
+                    {
+                        if (_oldprice > 0 && _oldprice > _unitPrice && isCustomerElgibleForMembershipPrice)
+
+                            itemPrice =
+                             _memberShipPrice - ((_memberShipPrice * (
+                             ((_oldprice - _unitPrice) / _oldprice) * 100)) / 100);
+                        else if (isCustomerElgibleForMembershipPrice)
+                            itemPrice = _memberShipPrice;
+
+                        #region MembershipDiscount
+
+                        memberShipDiscount = (_oldprice > 0 && _oldprice > _unitPrice ? _oldprice : _unitPrice) - _memberShipPrice;
+                        memberShipDiscount = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(memberShipDiscount, await _workContext.GetWorkingCurrencyAsync());
+                        if (isCustomerElgibleForMembershipPrice)
+                            item.MembershipDiscount = "-" + await _priceFormatter.FormatPriceAsync(memberShipDiscount * sci.Quantity);
+
+                        #endregion
+
+                        _memberShipPrice = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(_memberShipPrice, await _workContext.GetWorkingCurrencyAsync());
+                    }
+
+                    #endregion
+
+
+                    var shoppingCartUnitPriceWithDiscount = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(_unitPrice, await _workContext.GetWorkingCurrencyAsync());
+                    if (_oldprice > 0)
+                        _oldprice = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(_oldprice, workingCurrency);
+                    unitPriceValue = shoppingCartUnitPriceWithDiscount;
+
+                    var shoppingCartItemPriceWithDiscount = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(itemPrice, await _workContext.GetWorkingCurrencyAsync());
+
+
+                    if (_oldprice > await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(_unitPrice, await _workContext.GetWorkingCurrencyAsync()))
+                    {
+                        unitPriceValue = _oldprice;
+                        if (isCustomerElgibleForMembershipPrice && _memberShipPrice > 0)
+                            item.OfferDiscount = "-" + await _priceFormatter.FormatPriceAsync(sci.Quantity * (_memberShipPrice - shoppingCartItemPriceWithDiscount));
+                        else
+                            item.OfferDiscount = "-" + await _priceFormatter.FormatPriceAsync(sci.Quantity * (_oldprice - shoppingCartUnitPriceWithDiscount));
+                    }
+
+
+                    #region Buy More Save More 
+
+                    if (buyMoreSaveMoreDiscount > 0 && sci.Id != notElgibleForSavemoreDiscountCartId)
+                    {
+                        if (cart.Count > 1)
+                        {
+                            buyMoreSaveMoreDiscountBase =
+                                discountType == CustomDiscountType.Percent ?
+                                   await _priceCalculationService.RoundPriceAsync((((shoppingCartItemPriceWithDiscount * sci.Quantity) * buyMoreSaveMoreDiscount) / 100), workingCurrency) :
+                                                          (buyMoreSaveMoreDiscount > shoppingCartItemPriceWithDiscount ? shoppingCartItemPriceWithDiscount * sci.Quantity :
+                                                          buyMoreSaveMoreDiscount * sci.Quantity);
+
+
+                            item.BuyMoreSaveMoreDiscount = "-" + await _priceFormatter.FormatPriceAsync(buyMoreSaveMoreDiscountBase);
+                        }
+                        else
+                        {
+                            buyMoreSaveMoreDiscountBase =
+                              discountType == CustomDiscountType.Percent ?
+                                 await _priceCalculationService.RoundPriceAsync((((shoppingCartItemPriceWithDiscount * (sci.Quantity - 1)) * buyMoreSaveMoreDiscount) / 100), workingCurrency) :
+                                                        (buyMoreSaveMoreDiscount > shoppingCartItemPriceWithDiscount ? shoppingCartItemPriceWithDiscount * (sci.Quantity - 1) :
+                                                        buyMoreSaveMoreDiscount * (sci.Quantity - 1));
+
+
+                            item.BuyMoreSaveMoreDiscount = "-" + await _priceFormatter.FormatPriceAsync(buyMoreSaveMoreDiscountBase);
+                        }
+                    }
+
+
+                    #endregion
+
+                    item.ItemTotal = await _priceFormatter.FormatPriceAsync(unitPriceValue * sci.Quantity);
+                    item.Quantity = sci.Quantity;
+                    result.Add(item);
+                }
+            }
+            catch (Exception exp)
+            {
+                var _logger = EngineContext.Current.Resolve<ILogger>();
+                await _logger.InsertLogAsync(
+           LogLevel.Error,
+           "Error while calculating custom shopping cart item totals.",
+           exp.ToString());
+
+
+            }
+            return result;
         }
     }
 }

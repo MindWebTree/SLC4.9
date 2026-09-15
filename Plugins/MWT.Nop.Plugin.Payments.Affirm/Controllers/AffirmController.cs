@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MWT.Nop.Core.Services.Customers;
 using MWT.Nop.Core.Services.Customizations.CustomOrders;
+using MWT.Nop.Core.Services.Message;
 using MWT.Nop.Core.Services.Orders;
 using MWT.Nop.Plugin.Payments.Affirm.Data.Domain;
 using MWT.Nop.Plugin.Payments.Affirm.Domain;
@@ -16,28 +16,19 @@ using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Logging;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Shipping;
-using Nop.Core.Domain.Stores;
-using Nop.Core.Http.Extensions;
 using Nop.Data;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Customers;
 //using Nop.Services.Customizations.Phone_Order;
 using Nop.Services.Localization;
+using Nop.Services.Logging;
 using Nop.Services.Orders;
 using Nop.Services.Payments;
 //using Nop.Web.Areas.CustomOrder.Factories;
 using Nop.Web.Framework.Controllers;
-using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using static iTextSharp.text.pdf.AcroFields;
 
 namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
 {
@@ -61,6 +52,8 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly ICustomOrderService _customOrderService;
         private readonly ICustomerService _customerService;
+        private readonly ICustomWorkflowMessageService _customWorkflowMessageService;
+        private readonly ILogger _logger;
 
         AffirmCheckoutSettings _affirmSettings;
 
@@ -76,7 +69,9 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                                ServiceManager serviceManager, ILocalizationService localizationService,
                                ICustomOrderService customOrderService,
                                ICustomerService customerService,
-                               AffirmCheckoutSettings affirmSettings
+                               AffirmCheckoutSettings affirmSettings,
+                               ICustomWorkflowMessageService customWorkflowMessageService,
+                               ILogger logger
                                )
         {
             _affirmLogRepository = affirmLogRepository;
@@ -96,6 +91,8 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
             _customOrderService = customOrderService;
             _customerService = customerService;
             _affirmSettings = affirmSettings;
+            _customWorkflowMessageService = customWorkflowMessageService;
+            _logger = logger;
         }
 
         #endregion
@@ -376,6 +373,18 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                 string response = string.IsNullOrEmpty(captureResponse) ? authResponse : captureResponse;
                 if (statusCode != HttpStatusCode.OK)
                 {
+
+                    try
+                    {
+
+
+                        await _customWorkflowMessageService.SendOrderDeclineMessage(null, null, customer, (await _workContext.GetWorkingCurrencyAsync()).Id, $"Payment Method: Affirm Error: {response}" , 0);
+                    }
+                    catch (Exception exp)
+                    {
+                        await _logger.InsertLogAsync(LogLevel.Error,
+                            "Failed to send order decline Email", exp.Message, await _workContext.GetCurrentCustomerAsync());
+                    }
 
                     await _affirmLogRepository.InsertAsync(new AffirmLog()
                     {
@@ -667,7 +676,17 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                 string response = string.IsNullOrEmpty(captureResponse) ? authResponse : captureResponse;
                 if (statusCode != HttpStatusCode.OK)
                 {
+                    try
+                    {
 
+
+                        await _customWorkflowMessageService.SendOrderDeclineMessage(null, null, customer, (await _workContext.GetWorkingCurrencyAsync()).Id, $"Payment Method: Affirm Error: {response}", orderId);
+                    }
+                    catch (Exception exp)
+                    {
+                        await _logger.InsertLogAsync(LogLevel.Error,
+                            "Failed to send order decline Email", exp.Message, await _workContext.GetCurrentCustomerAsync());
+                    }
                     await _affirmLogRepository.InsertAsync(new AffirmLog()
                     {
                         CreatedOnUtc = DateTime.UtcNow,
@@ -719,6 +738,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                 (var placeOrderResult, var paymentResponse) = await _orderProcessingService.CustomPlaceOrderAsync(
                     processPaymentRequest,
                     customOrder,
+                    customOrder.CustomerId ?? 0,
                     orderSummary,
                     saveOrderDetails,
                     refOrderno,
@@ -731,12 +751,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
 
                     tempOrder.Status = RequestStatus.Completed;
                     await _affirmSessionRepository.UpdateAsync(tempOrder);
-                    return Redirect(
-
-                        _affirmSettings.TransactMode == TransactMode.AuthorizeAndCapture ?
-                        $"/checkoutCustomOrder/ProcessAffirmOrder?orderid={orderId}&liveOrderNumber={placeOrderResult.PlacedOrder.Id}&transactionId={captureTransactionId}" :
-                        $"/checkoutCustomOrder/ProcessAffirmOrder?orderid={orderId}&liveOrderNumber={placeOrderResult.PlacedOrder.Id}&transactionId={authorizationTransactionId}"
-                        );
+                    return Redirect($"/checkoutCustomOrder?orderid={orderId}&customerid={customOrder.CustomerId ?? 0}");
                 }
                 else
                 {

@@ -10,6 +10,8 @@ public record PaymentInfoModel : BaseNopModel
 {
     #region Properties
 
+    public int CustomerId { get; set; }
+    public int InvoiceId { get; set; }
     public ButtonPlacement Placement { get; set; }
 
     public int? ProductId { get; set; }

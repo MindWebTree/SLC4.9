@@ -1761,3 +1761,18 @@ function updatePriceAriaLabel(section, saleprice, price) {
         $(section).parent().attr("aria-label", `Price ${saleprice}`);
     }
 }
+function waitForImages($container) {
+    var promises = $container.find('img').map(function () {
+        var img = this;
+        return new Promise(function (resolve) {
+            if (img.complete && img.naturalWidth !== 0) {
+                resolve();
+            } else {
+                img.addEventListener('load', resolve, { once: true });
+                img.addEventListener('error', resolve, { once: true }); // don't hang forever on a broken thumb
+            }
+        });
+    }).get();
+
+    return Promise.all(promises);
+}

@@ -1011,7 +1011,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                     paymentInfo.PaymentMethodSystemName = paymentMethod;
 
                     await this._orderProcessingService.SetProcessPaymentRequestAsync(paymentInfo, customer);
-                    return await ConfirmOrder(order, customer, paymentMethod, paymentInfo, filterByCountryId, _paymentMethod);
+                    return await ConfirmOrder(order, customer, paymentMethod, paymentInfo, filterByCountryId, _paymentMethod,
+                        (await this._workContext.GetCurrentCustomerAsync()).Id);
                 }
                 else
                 {
@@ -1082,7 +1083,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                        .LoadPluginBySystemNameAsync(initialOrder.PaymentMethodSystemName, customer, (await _storeContext.GetCurrentStoreAsync()).Id)
                        ?? throw new Exception("Payment method is not selected");
 
-                    return await ConfirmOrder(order, customer, initialOrder.PaymentMethodSystemName, processPaymentRequest, filterByCountryId, _paymentMethod, 0, true);
+                    return await ConfirmOrder(order, customer, initialOrder.PaymentMethodSystemName, processPaymentRequest, filterByCountryId, _paymentMethod,
+                        (await this._workContext.GetCurrentCustomerAsync()).Id, true);
                 }
                 else
                 {
@@ -1215,7 +1217,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                     saveOrderDetails = false;
                     refOrderno = Convert.ToInt32(order.LiveOrderNumber);
                 }
-                (var placeOrderResult, var paymentResponse) = await _orderProcessingService.CustomPlaceOrderAsync(processPaymentRequest, order, orderSummary, saveOrderDetails, refOrderno, chargeFromInitialaOrder);
+                (var placeOrderResult, var paymentResponse) = await _orderProcessingService.CustomPlaceOrderAsync(processPaymentRequest, order, customerId, orderSummary, saveOrderDetails, refOrderno, chargeFromInitialaOrder);
                 if (placeOrderResult.Success)
                 {
                     var postProcessPaymentRequest = new PostProcessPaymentRequest
@@ -1226,122 +1228,6 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                         //payment method could be null if order total is 0
                         //success
                         throw new Exception("Order Total 0");
-
-                    var _items = await _customOrderService.GetOrderItems(order.Id);
-
-                    foreach (var item in _items)
-
-                    {
-                        var product = await _productService.GetProductByIdAsync(item.ProductId);
-                        if (product != null)
-                        {
-                            product.NoOfSales = product.NoOfSales + item.Quantity;
-                            await _productService.UpdateProductAsync(product);
-                        }
-
-                    }
-
-
-
-                    var orderStatuses = await _customOrderService.GetOrderStatuses();
-                    var paidStatus = orderStatuses.Where(m => m.Name == Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString()).FirstOrDefault();
-
-
-                    decimal paidAmount = placeOrderResult.PlacedOrder.OrderTotal;
-                    bool fullPaid = true;
-                    var orderEntity = placeOrderResult.PlacedOrder;
-                    if (orderSummary.OrderType == OrderTypes.CustomOrder.ToString() && order.AlreadyFee != null && order.AlreadyFee > 0)
-                    {
-                        if (paidStatus != null && order.StatusId != paidStatus.Id)
-                        {
-                            fullPaid = false;
-                            decimal.TryParse(orderSummary.OrderTotal, NumberStyles.Currency,
-                                      CultureInfo.CurrentCulture.NumberFormat, out decimal orderTotal);
-
-
-                            orderEntity.OrderTotal = orderTotal;
-
-                        }
-                        else
-                        {
-                            await _manageService.SyncPendingOrderPartialPayment(orderEntity.Id, paymentResponse.CaptureTransactionId, processPaymentRequest.OrderTotal, DateTime.Now, paymentMethodName);
-                        }
-                    }
-                    // update Parent Order ref
-                    if (order.ParentOrderID > 0)
-                        orderEntity.ParentOrderID = order.ParentOrderID;
-                    string email = customer?.Email;
-                    if (string.IsNullOrEmpty(email))
-                    {
-                        email = (await _addressService.GetAddressByIdAsync(orderEntity.BillingAddressId))?.Email;
-                        if (string.IsNullOrEmpty(email) && orderEntity.ShippingAddressId.HasValue)
-                            email = (await _addressService.GetAddressByIdAsync(Convert.ToInt32(orderEntity.ShippingAddressId)))?.Email;
-                    }
-
-                    orderEntity.CustomerEmail = email;
-                    var orderTypes = await _customOrderService.GetOrderTypes();
-                    var orderType = orderTypes.Where(t => t.Id == order.OrderTypeId).FirstOrDefault();
-                    if (orderType != null && orderType.Name != OrderTypes.CustomOrder.ToString())
-                    {
-                        orderEntity.OrderStatus = NopOrderStatus.Processing;
-                        orderEntity.PaymentStatus = PaymentStatus.Paid;
-                    }
-                    await this._orderService.UpdateOrderAsync(orderEntity);
-                    // end 
-                    // Update OrderStatus
-
-                    if (paidStatus != null)
-                        order.StatusId = paidStatus.Id;
-
-                    //
-
-                    order.LiveOrderNumber = placeOrderResult.PlacedOrder.Id;
-                    order.FullPaid = fullPaid;
-                    if (order.CreatedOn == null)
-                        order.CreatedOn = DateTime.Now;
-
-                    #region Order Zoho Lead
-
-                    var items = await _orderService.GetOrderItemsAsync(order.Id);
-                    string description = "";
-                    foreach (var item in items)
-                    {
-                        var product = await _productService.GetProductByIdAsync(item.ProductId);
-                        description += "ProductId:" + item.ProductId + ";SKU:" + product?.Sku ?? "" + "|";
-                    }
-
-                    var iPAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress == null ? "" : _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
-                    var glclidCookie = _httpContextAccessor.HttpContext.Request.Cookies["gclid"];
-
-                    if ((order.SubOrderTypeId ?? 0) == 0 && (orderSummary.OrderType == OrderTypes.CustomOrder.ToString() || orderSummary.OrderType == OrderTypes.AlreadyPaid.ToString()))
-                    {
-                        order.ZohoPotentialId = await _zohoService.CreateUpdateOrderContactPotential(order.LiveOrderNumber ?? order.Id, order.ZohoPotentialId, customer, MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString(), description, iPAddress, glclidCookie, (order.SubTotal ?? 0) + (order.TotalDiscount ?? 0), order.CreatedBy, $"{_storeContext.GetCurrentStore().Url}checkoutCustomOrder?orderid={order.Id}&customerid={order.CustomerId}", true);
-                    }
-
-                    #endregion
-
-                    await _customOrderService.UpdateAsync(order);
-
-                    if (orderSummary.OrderType != OrderTypes.HouzzOrder.ToString())
-                        await _workflowMessageService
-                 .CustomOrder_SendCustomerNotificationAsync(order, placeOrderResult.PlacedOrder.CustomerLanguageId);
-
-                    //
-
-                    await this._customOrderService.InsertOrderStatusLogAsync(new CustomorderOrderStatusLog()
-                    {
-                        CreatedOn = DateTime.UtcNow,
-                        OrderId = order.Id,
-                        StatusId = paidStatus != null ? paidStatus.Id : 0,
-                        UserId = customerId == 0 ? (await _workContext.GetCurrentCustomerAsync()).Id : customerId,
-                        AmountPaid = paidAmount,
-                        PaymentResponse = JsonConvert.SerializeObject(paymentResponse)
-                    });
-
-                    // end
-
-
-
                     var content = await this._workflowMessageService.CustomOrderReceiptContentAsync(order, (await this._workContext.GetWorkingLanguageAsync()).Id);
                     content = "<div data-orderid=\"" + placeOrderResult.PlacedOrder.Id + "\">" + content + "</div>";
                     await this._orderProcessingService.SetProcessPaymentRequestAsync(null, customer);

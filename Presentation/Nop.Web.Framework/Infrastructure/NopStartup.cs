@@ -199,10 +199,10 @@ public partial class NopStartup : INopStartup
         services.AddScoped<IGiftCardService, GiftCardService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IOrderReportService, OrderReportService>();
-        services.AddScoped<IOrderProcessingService, OrderProcessingService>();
         #region Custom Updates
-        services.AddScoped<IOrderTotalCalculationService, OrderTotalCalculationExtendedService>();
-        #endregion Custom Updates
+        services.AddScoped<IOrderProcessingService, OrderProcessingExtendedService>();
+  services.AddScoped<IOrderTotalCalculationService, OrderTotalCalculationExtendedService>();
+        #endregion 
         services.AddScoped<IReturnRequestService, ReturnRequestService>();
         services.AddScoped<IRewardPointService, RewardPointService>();
         services.AddScoped<IShoppingCartService, ShoppingCartService>();

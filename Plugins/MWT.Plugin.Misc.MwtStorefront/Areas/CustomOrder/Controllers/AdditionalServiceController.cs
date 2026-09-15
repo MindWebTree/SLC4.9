@@ -360,7 +360,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
 
                     //session save
 
-                    (HttpStatusCode statusCode, string message) = await ConfirmOrder(customOrder, customer, paymentMethod, paymentInfo, filterByCountryId, _paymentMethod, Convert.ToInt32(order.CustomerId));
+                    (HttpStatusCode statusCode, string message) = await ConfirmOrder(customOrder, customer, paymentMethod, paymentInfo, filterByCountryId, _paymentMethod, (await this._workContext.GetCurrentCustomerAsync()).Id);
                     if (statusCode == HttpStatusCode.OK)
                     {
                         this._notificationService.SuccessNotification(message);
@@ -500,7 +500,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                     saveOrderDetails = false;
                     refOrderno = Convert.ToInt32(order.LiveOrderNumber);
                 }
-                (var placeOrderResult, var paymentResponse) = await _orderProcessingService.CustomPlaceOrderAsync(processPaymentRequest, order, orderSummary, saveOrderDetails, refOrderno, chargeFromInitialaOrder);
+                (var placeOrderResult, var paymentResponse) = await _orderProcessingService.CustomPlaceOrderAsync(processPaymentRequest, order, customerId, orderSummary, saveOrderDetails, refOrderno, chargeFromInitialaOrder);
                 if (placeOrderResult.Success)
                 {
                     var postProcessPaymentRequest = new PostProcessPaymentRequest
@@ -511,94 +511,6 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                         //payment method could be null if order total is 0
                         //success
                         throw new Exception("Order Total 0");
-
-                    var _items = await _customOrderService.GetOrderItems(order.Id);
-
-                    foreach (var item in _items)
-
-                    {
-                        var product = await _productService.GetProductByIdAsync(item.ProductId);
-                        if (product != null)
-                        {
-                            product.NoOfSales = product.NoOfSales + item.Quantity;
-                            await _productService.UpdateProductAsync(product);
-                        }
-
-                    }
-
-
-                    var orderStatuses = await _customOrderService.GetOrderStatuses();
-                    var paidStatus = orderStatuses.Where(m => m.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString()).FirstOrDefault();
-
-
-                    decimal paidAmount = placeOrderResult.PlacedOrder.OrderTotal;
-                    bool fullPaid = true;
-                    var orderEntity = placeOrderResult.PlacedOrder;
-                    if (orderSummary.OrderType == OrderTypes.CustomOrder.ToString() && order.AlreadyFee != null && order.AlreadyFee > 0)
-                    {
-                        if (paidStatus != null && order.StatusId != paidStatus.Id)
-                        {
-                            fullPaid = false;
-                            decimal.TryParse(orderSummary.OrderTotal, NumberStyles.Currency,
-                                      CultureInfo.CurrentCulture.NumberFormat, out decimal orderTotal);
-
-
-                            orderEntity.OrderTotal = orderTotal;
-
-
-                        }
-                    }
-
-                    // update Parent Order ref
-                    if (order.ParentOrderID > 0)
-                        orderEntity.ParentOrderID = order.ParentOrderID;
-                    string email = customer?.Email;
-                    if (string.IsNullOrEmpty(email))
-                    {
-                        email = (await _addressService.GetAddressByIdAsync(orderEntity.BillingAddressId))?.Email;
-                        if (string.IsNullOrEmpty(email) && orderEntity.ShippingAddressId.HasValue)
-                            email = (await _addressService.GetAddressByIdAsync(Convert.ToInt32(orderEntity.ShippingAddressId)))?.Email;
-                    }
-                    orderEntity.CustomerEmail = email;
-                    await this._orderService.UpdateOrderAsync(orderEntity);
-                    // end 
-                    // Update OrderStatus
-
-                    if (paidStatus != null)
-                        order.StatusId = paidStatus.Id;
-
-                    //
-
-                    order.LiveOrderNumber = placeOrderResult.PlacedOrder.Id;
-                    order.FullPaid = fullPaid;
-
-
-                    await _customOrderService.UpdateAsync(order);
-
-                    #region Manage Update Status of Order
-
-                    await _manageService.MarkWgsAsPaid(order.ParentOrderID, placeOrderResult.PlacedOrder.CustomerEmail, order.OrderTotal ?? 0, order.PairedOrderIds ?? string.Empty);
-
-
-                    #endregion
-
-                    //
-
-                    var orderPlacedCustomerNotificationQueuedEmailIds = await _workflowMessageService
-              .CustomOrder_SendCustomerNotificationAsync(order, placeOrderResult.PlacedOrder.CustomerLanguageId);
-
-                    await this._customOrderService.InsertOrderStatusLogAsync(new CustomorderOrderStatusLog()
-                    {
-                        CreatedOn = DateTime.UtcNow,
-                        OrderId = order.Id,
-                        StatusId = paidStatus != null ? paidStatus.Id : 0,
-                        UserId = (await _workContext.GetCurrentCustomerAsync()).Id,
-                        AmountPaid = paidAmount,
-                        PaymentResponse = string.IsNullOrEmpty(paymentResponse?.AuthorizationTransactionId) ? string.Empty : JsonConvert.SerializeObject(paymentResponse)
-                    });
-
-                    // end
-
                     message = await _localizationService.GetResourceAsync("CustomOrder.Message.OrderPlacedSuccessfully");
                     await this._orderProcessingService.SetProcessPaymentRequestAsync(null, customer);
                 }

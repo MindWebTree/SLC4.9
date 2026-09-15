@@ -100,7 +100,17 @@ public partial class CheckoutExtendedModelFactory : CheckoutModelFactory, ICheck
         {
             var shippingAddress = await _customerService.GetCustomerShippingAddressAsync(await _workContext.GetCurrentCustomerAsync());
 
-
+            if (shippingAddress == null)
+            {
+                var addresses = await _customerService.GetAddressesByCustomerIdAsync(customer.Id);
+                if(addresses.Count>0)
+                {
+                    shippingAddress = addresses[0];
+                    customer.ShippingAddressId = shippingAddress.Id;
+                    customer.BillingAddressId = shippingAddress.Id;
+                    await this._customerService.UpdateCustomerAsync(customer);
+                }
+            }
             /*********** new Address **************/
             if (shippingAddress == null)
             {
@@ -403,7 +413,7 @@ public partial class CheckoutExtendedModelFactory : CheckoutModelFactory, ICheck
             model.LastName = customer.LastName ?? string.Empty;
         }
 
-  
+
 
         model.FullName = CustomCommonHelper.GetCustomerFullName(model.FirstName, model.LastName);
         model.DisplayVatNumber = _taxSettings.EuVatEnabled;

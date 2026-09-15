@@ -11,8 +11,6 @@ using Nop.Core.Domain.Discounts;
 using Nop.Core.Domain.Logging;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Shipping;
-using Nop.Core.Domain.Stores;
-using Nop.Core.Domain.Tax;
 using Nop.Core.Domain.Tax;
 using Nop.Services.Attributes;
 using Nop.Services.Catalog;
@@ -27,11 +25,6 @@ using Nop.Services.Orders;
 using Nop.Services.Payments;
 using Nop.Services.Shipping;
 using Nop.Services.Tax;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DiscountType = Nop.Core.Domain.Discounts.DiscountType;
 
 namespace MWT.Nop.Core.Services.Orders

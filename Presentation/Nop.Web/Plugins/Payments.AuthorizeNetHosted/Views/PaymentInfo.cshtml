@@ -202,7 +202,7 @@ else
         var tokenUrl = "/AuthorizeNetHosted/GetIframeToken?invoiceId=@invoiceId";
         var handleUrl = "/AuthorizeNetHosted/HandleResponse";
         var tokenRefreshTimer = null;
-        var TOKEN_LIFETIME_MS = 14 * 60 * 1000; // refresh at 14 min, 1 min before the 15 min expiry
+        var TOKEN_LIFETIME_MS = 1 * 60 * 1000; // refresh at 14 min, 1 min before the 15 min expiry
         var iframe = document.getElementById("authnet-iframe");
         var currentHeight = iframe.offsetHeight;
 

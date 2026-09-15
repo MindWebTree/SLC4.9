@@ -43,7 +43,7 @@ public partial record ShoppingCartModel : BaseNopModel
 
     public IList<Type> ButtonPaymentMethodViewComponents { get; set; }
 
-    public bool HideCheckoutButton { get; set; }
+    public bool HideCheckoutButton { get; set; }    
     public bool ShowVendorName { get; set; }
 
     #region Nested Classes

@@ -300,6 +300,14 @@ public class PayPalCommercePaymentMethod : BasePlugin, IPaymentMethod, IWidgetPl
     public Type GetWidgetViewComponent(string widgetZone)
     {
         ArgumentNullException.ThrowIfNull(widgetZone);
+        #region Custom Updates need to upgrade
+        if (widgetZone.Equals(PublicWidgetZones.CheckoutPaymentInfoTop) ||
+            widgetZone.Equals(PublicWidgetZones.OpcContentBefore) ||
+            widgetZone.Equals(PublicWidgetZones.OrderSummaryContentBefore))
+        {
+            return typeof(ScriptViewComponent);
+        }
+        #endregion
 
         if (widgetZone.Equals(PublicWidgetZones.ProductDetailsAddInfo) || widgetZone.Equals(PublicWidgetZones.OrderSummaryContentBefore))
             return typeof(ButtonsViewComponent);

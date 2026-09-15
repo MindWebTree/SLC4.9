@@ -132,12 +132,12 @@
       "Version": "1.00"
     },
     {
-      "SystemName": "MWT.Plugin.Misc.MwtStorefront",
-      "Version": "1.0"
-    },
-    {
       "SystemName": "Payments.PayPalCommerce",
       "Version": "4.90.20"
+    },
+    {
+      "SystemName": "MWT.Plugin.Misc.MwtStorefront",
+      "Version": "1.0"
     }
   ],
   "PluginNamesToUninstall": [],

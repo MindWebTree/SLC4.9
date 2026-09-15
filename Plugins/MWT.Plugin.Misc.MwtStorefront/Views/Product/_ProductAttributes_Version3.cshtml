@@ -1036,8 +1036,9 @@
                           MagicZoom.start("product-magiczoom");
                           //  MagicZoom.update("product-magiczoom", imageObjects[0].FullSizeImageUrl,  imageObjects[0].ImageUrl, 'show-title: false');
                           // Reinitialize the jCarousel
-
-                          $slider.slick(getGallerySlickSettings());
+            waitForImages($slider).then(function () {
+                 $slider.slick(getGallerySlickSettings());
+             });
 
 
 

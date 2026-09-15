@@ -41,21 +41,17 @@ namespace MWT.Nop.Core.Services.Orders
             DateTime? rentalStartDate = null, DateTime? rentalEndDate = null,
             int quantity = 1, bool addRequiredProducts = true);
 
-        Task<(decimal unitPrice, decimal oldPrice, decimal msrp, decimal discountAmount, List<Discount> appliedDiscounts)> GetCustomUnitPriceForAttributeAsync(Product product,
-Customer customer,
-ShoppingCartType shoppingCartType,
-int quantity,
+        Task<(decimal unitPrice, decimal oldPrice, decimal msrp, decimal discountAmount, List<Discount> appliedDiscounts)> GetCustomUnitPriceForAttributeAsync(Product product,Customer customer,ShoppingCartType shoppingCartType,int quantity,
 string attributesXml,
 decimal customerEnteredPrice,
 DateTime? rentalStartDate, DateTime? rentalEndDate,
 bool includeDiscounts);
 
         Task<bool> IsSurchargeApplicable(IList<ShoppingCartItem> cart);
-
         Task<string> GetBuyMoreSaveMoreDiscountConfiguration();
-        Task<(CustomDiscountType discountType, decimal buyMoreDiscount, int notEligibleCartItemId)> 
+        Task<(CustomDiscountType discountType, decimal buyMoreDiscount, int notEligibleCartItemId)>
             GetBuyMoreSaveMoreDiscountDetailsAsync(IList<ShoppingCartItem> cart, decimal subTotal);
-
         Task<bool> IsWgsShippingMethodRequired(IList<ShoppingCartItem> cart);
+        Task<IList<ShoppingCartItemCustomTotals>> GetCustomCartItemTotalsAsync(IList<ShoppingCartItem> cart, decimal subTotal, Customer customer);
     }
 }

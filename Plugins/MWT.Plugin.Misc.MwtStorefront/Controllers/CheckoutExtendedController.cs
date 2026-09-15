@@ -1247,6 +1247,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                 processPaymentRequest.PaymentMethodSystemName = await _genericAttributeService.GetAttributeAsync<string>(await _workContext.GetCurrentCustomerAsync(),
                     NopCustomerDefaults.SelectedPaymentMethodAttribute, (await _storeContext.GetCurrentStoreAsync()).Id);
                 await _orderProcessingService.SetProcessPaymentRequestAsync(processPaymentRequest);
+
                 var placeOrderResult = await _orderProcessingService.PlaceOrderAsync(processPaymentRequest);
                 if (placeOrderResult.Success)
                 {
@@ -1273,7 +1274,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
                         });
                     }
 
-                    await UpdateOrderDiscountSendMail(cart, placeOrderResult.PlacedOrder.Id, shippingOption);
+          
 
                     await _paymentService.PostProcessPaymentAsync(postProcessPaymentRequest);
                     //success
@@ -1670,21 +1671,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
             }
 
 
-            if (!order.OrderConfirmed)
-            {
-                if (order.PaymentMethodSystemName.Contains("Affirm"))
-                {
-
-                    var orderSession = await this._paymentSessionService.GetOrderSession(orderId ?? 0);
-                    if (orderSession != null)
-                    {
-                        await UpdateOrderDiscountSendMail(JsonConvert.DeserializeObject<IList<ShoppingCartItem>>(orderSession.CartItems), (int)orderId,
-                                                     JsonConvert.DeserializeObject<ShippingOption>(orderSession.ShippingMethod), true
-                                                     );
-                    }
-
-                }
-            }
+         
             //model
             var model = await _orderModelFactory.PrepareCustomOrderDetailsModelAsync(order);
             model.OrderConfirmed = order.OrderConfirmed;
@@ -1696,272 +1683,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
             return View("Completed", model);
         }
 
-        private async Task UpdateOrderDiscountSendMail(IList<ShoppingCartItem> cart, int orderId, ShippingOption shippingOption, bool isAffirmOrder = false)
-        {
-            try
-            {
-                await _logger.InsertLogAsync(LogLevel.Information, $"IsAffirmOrder {isAffirmOrder} Order Updates Started {orderId}", string.Empty, await _workContext.GetCurrentCustomerAsync());
-                #region Update No Of Sales
 
-                foreach (var item in cart)
-                {
-                    var product = await _productService.GetProductByIdAsync(item.ProductId);
-                    if (product != null)
-                    {
-                        product.NoOfSales = product.NoOfSales + item.Quantity;
-                        await _productService.UpdateProductAsync(product);
-                    }
-
-                }
-                #endregion
-
-                #region Updatecustomdiscounts
-
-                #region Order
-
-
-
-                (decimal buyMoreSaveMoreDiscount, decimal membershipdiscount, decimal offerDiscount, decimal offerDiscountDefault, decimal productItemsDiscount, _) = await _orderTotalCalculationService.GetCustomBuyMoreSaveMoreDiscountAndMemberShipDiscountAsync(cart);
-
-                (decimal customDutyPercentage, decimal customDuty) = await _orderTotalCalculationService.GetCustomDuty(cart);
-                decimal memberShipFee = 0;
-                decimal memberShipFeeDiscount = 0;
-                if (await _customerExtendedService.IsMemberShipAddedInCart(await _workContext.GetCurrentCustomerAsync()))
-                    (memberShipFee, memberShipFeeDiscount) = await _orderTotalCalculationService.GetMemberShipFee();
-
-                var order = await _orderService.GetOrderByIdAsync(orderId);
-
-                // custom Duty
-                order.CustomDutyInclTax = order.CustomDutyExclTax = customDuty;
-                order.CustomDutyPercentage = customDutyPercentage;
-                // end 
-
-                order.MembershipDiscountIncTax = membershipdiscount;
-                order.OfferDiscountIncTax = offerDiscount;
-                order.BuyMoreSaveMoreDiscountIncTax = buyMoreSaveMoreDiscount;
-                order.MembershipFeeInclTax = memberShipFee;
-                order.MembershipFeeDiscountInclTax = await _currencyService.ConvertToPrimaryStoreCurrencyAsync(memberShipFeeDiscount, await _workContext.GetWorkingCurrencyAsync());
-                if (shippingOption != null && shippingOption.AdditionalFee > 0)
-                {
-                    if (Math.Round(order.OrderShippingInclTax, 2) == Math.Round(shippingOption.Rate, 2))
-                    {
-                        order.OrderShippingExclTax = shippingOption.Rate - shippingOption.AdditionalFee;
-                        order.OrderShippingInclTax = shippingOption.Rate - shippingOption.AdditionalFee;
-                        order.AdditonalShippingChargesInclTax = shippingOption.AdditionalFee;
-                    }
-                    else
-                    {
-                        decimal _shippingTotal = Math.Round(order.OrderShippingInclTax, 2);
-                        if (_shippingTotal > 0)
-                            if (_shippingTotal > Math.Round(shippingOption.Rate, 2))
-                            {
-                                order.OrderShippingExclTax = order.OrderShippingInclTax = order.OrderShippingInclTax - shippingOption.AdditionalFee;
-                                order.AdditonalShippingChargesInclTax = shippingOption.AdditionalFee;
-                            }
-                            else
-                            {
-                                decimal shippingDiscountPercentage = Math.Round((100 - ((_shippingTotal / (shippingOption.Rate) * 100))), 2);
-                                _shippingTotal = (shippingOption.Rate - shippingOption.AdditionalFee);
-                                _shippingTotal = Math.Round(_shippingTotal - ((_shippingTotal * shippingDiscountPercentage) / 100), 2);
-                                order.OrderShippingExclTax = order.OrderShippingInclTax = _shippingTotal;
-                                order.AdditonalShippingChargesInclTax =
-                                    Math.Round(shippingOption.AdditionalFee - ((shippingOption.AdditionalFee * shippingDiscountPercentage) / 100), 2);
-                            }
-                    }
-                }
-
-
-
-                #endregion
-
-                #region Order Items
-
-
-
-                var model = new ShoppingCartModel();
-
-                model = await _shoppingCartModelFactory.PrepareCustomShoppingCartModelAsync(model, cart, isEditable: false,
-                    prepareAndDisplayOrderReviewData: false);
-                var orderItems = await _orderService.GetOrderItemsAsync(order.Id);
-
-                decimal orderitemDiscount = 0;
-                foreach (var item in model.Items)
-                {
-                    var cartItem = cart.Where(m => m.Id == item.Id).FirstOrDefault();
-                    if (cartItem != null)
-                    {
-                        var _orderItem = orderItems.Where(m => m.ProductId == cartItem.ProductId && m.AttributesXml == cartItem.AttributesXml).FirstOrDefault();
-                        if (_orderItem != null)
-                        {
-                            _orderItem.ItemPriceIncTax = await _currencyService.ConvertToPrimaryStoreCurrencyAsync(string.IsNullOrEmpty(item.SubTotal) ? 0 : (Decimal.Parse(item.SubTotal.Replace("\"", ""), NumberStyles.Currency) / item.Quantity), await _workContext.GetWorkingCurrencyAsync());
-                            _orderItem.MembershipDiscountIncTax = await _currencyService.ConvertToPrimaryStoreCurrencyAsync(string.IsNullOrEmpty(item.MemberShipDiscount) ? 0 : Decimal.Parse(item.MemberShipDiscount.Replace("\"", ""), NumberStyles.Currency), await _workContext.GetWorkingCurrencyAsync());
-                            _orderItem.OfferDiscountIncTax = await _currencyService.ConvertToPrimaryStoreCurrencyAsync(string.IsNullOrEmpty(item.OfferDiscount) ? 0 : Decimal.Parse(item.OfferDiscount.Replace("\"", ""), NumberStyles.Currency), await _workContext.GetWorkingCurrencyAsync());
-                            _orderItem.BuyMoreSaveMoreDiscountIncTax = await _currencyService.ConvertToPrimaryStoreCurrencyAsync(string.IsNullOrEmpty(item.BuyMoreSaveMoreDiscount) ? 0 : Decimal.Parse(item.BuyMoreSaveMoreDiscount.Replace("\"", ""), NumberStyles.Currency), await _workContext.GetWorkingCurrencyAsync());
-                            _orderItem.SpecialInstructions = cartItem.SpecialInstructions;
-
-                            // item Discount
-                            if ((_orderItem.DiscountAmountExclTax > 0 || _orderItem.DiscountAmountInclTax > 0)
-                                && _orderItem.UnitPriceInclTax > 0)
-                            {
-                                var price = (_orderItem.UnitPriceInclTax * _orderItem.Quantity) + _orderItem.DiscountAmountInclTax;
-                                var percentage = (_orderItem.DiscountAmountInclTax / price) * 100;
-                                price = (_orderItem.ItemPriceIncTax * _orderItem.Quantity) + _orderItem.MembershipDiscountIncTax + _orderItem.OfferDiscountIncTax + _orderItem.BuyMoreSaveMoreDiscountIncTax;
-                                _orderItem.TotalDiscount = Math.Round((price * percentage) / 100, 2);
-
-                                orderitemDiscount += _orderItem.TotalDiscount;
-                            }
-                            await _orderService.UpdateOrderItemAsync(_orderItem);
-                        }
-                    }
-                }
-                #region SubTotalDiscount
-
-                var customSubTotal = await _orderTotalCalculationService.GetCustomShoppingCartSubTotalAsync(cart);
-                customSubTotal = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(customSubTotal, await _workContext.GetWorkingCurrencyAsync());
-
-                if (order.OrderSubTotalDiscountExclTax != 0)
-                {
-                    var discountedTotal = (order.OrderSubtotalExclTax +
-                                        memberShipFee + (offerDiscountDefault - offerDiscount))
-                                        - memberShipFeeDiscount
-                                        - buyMoreSaveMoreDiscount
-                                        - membershipdiscount - orderitemDiscount;
-                    var accuratediscountedTotal = ((customSubTotal - offerDiscountDefault) +
-                 memberShipFee + (offerDiscountDefault - offerDiscount))
-                 - memberShipFeeDiscount
-                 - buyMoreSaveMoreDiscount
-                 - membershipdiscount
-                 - orderitemDiscount;
-
-
-                    var percentage = (order.OrderSubTotalDiscountExclTax / discountedTotal) * 100;
-                    order.OrderSubTotalDiscountExclTax = order.OrderSubTotalDiscountInclTax =
-                        Math.Round((accuratediscountedTotal * percentage) / 100, 2);
-
-                    if (customDutyPercentage > 0)
-                    {
-                        order.CustomDutyInclTax = Math.Round(((accuratediscountedTotal - order.OrderSubTotalDiscountInclTax) * order.CustomDutyPercentage) / 100, 2);
-                    }
-
-                }
-
-                #endregion
-
-                #region Tax
-
-                var (shoppingCartTaxBase, taxRates, taxes) = await _orderTotalCalculationService.CustomGetTaxTotalAsync(cart);
-                try
-                {
-                    string taxInfo = "";
-                    foreach (var tax in taxes.Where(t => t.TaxRate > 0))
-                    {
-                        taxInfo += $"{tax.TaxType.ToString()}:{tax.TaxRate.ToString()}:{tax.Amount};";
-                    }
-                    order.TaxInfo = taxInfo;
-                }
-                catch (Exception exp)
-                {
-                    await _logger.InsertLogAsync(LogLevel.Error, $"IsAffirmOrder {isAffirmOrder} Order {order.Id} failed to update tax info", exp.Message);
-                }
-                #endregion
-
-                #region Email
-
-                string email = (await _workContext.GetCurrentCustomerAsync())?.Email;
-                if (string.IsNullOrEmpty(email))
-                {
-                    email = (await _addressService.GetAddressByIdAsync(order.BillingAddressId))?.Email;
-                    if (string.IsNullOrEmpty(email) && order.ShippingAddressId.HasValue)
-                        email = (await _addressService.GetAddressByIdAsync(Convert.ToInt32(order.ShippingAddressId)))?.Email;
-                }
-                #endregion
-                order.OrderSubtotalExclTax = customSubTotal;
-                order.OrderSubtotalInclTax = customSubTotal;
-                order.CustomerEmail = email;
-                await _orderService.UpdateOrderAsync(order);
-                #endregion
-
-                #region Order Notes
-
-                if (!string.IsNullOrEmpty(order.CheckoutAttributeDescription))
-                {
-                    var notes = order.CheckoutAttributeDescription.Replace("Order Notes:", "", StringComparison.InvariantCultureIgnoreCase);
-                    await _orderService.InsertOrderNoteAsync(new OrderNote()
-                    {
-                        CreatedOnUtc = DateTime.UtcNow,
-                        DisplayToCustomer = true,
-                        DownloadId = 0,
-                        Note = notes,
-                        OrderId = order.Id
-                    });
-                }
-
-                #endregion
-
-                #region AbandonedCart Process
-
-
-                await _abandonedCartService.MarkAbandonedInvoiceAsPaid(order.CustomerId, cart.Select(c => c.Id).ToArray(), order.Id, order.OrderTotal);
-
-                #endregion
-                await _logger.InsertLogAsync(LogLevel.Information, $"IsAffirmOrder {isAffirmOrder} Order Updates Completed {orderId}", string.Empty, await _workContext.GetCurrentCustomerAsync());
-
-                #region Notifications
-                await _logger.InsertLogAsync(LogLevel.Information, $"IsAffirmOrder {isAffirmOrder} Order Notification process Started {orderId}", string.Empty, await _workContext.GetCurrentCustomerAsync());
-                await _orderProcessingExtendedService.CustomSendNotificationsAndSaveNotesAsync(order);
-                await _logger.InsertLogAsync(LogLevel.Information, $"IsAffirmOrder {isAffirmOrder} Order Notification process Completed {orderId}", string.Empty, await _workContext.GetCurrentCustomerAsync());
-
-                #endregion
-
-                #endregion
-
-                #region Apply Membership level
-                var _customer = await _workContext.GetCurrentCustomerAsync();
-
-                if (await _customerExtendedService.IsMemberShipAddedInCart(_customer))
-                {
-                    var memberShipRole = await _settingService.GetSettingByKeyAsync<string>("MemberShip.Role.Name");
-
-                    if (memberShipRole == "MemberShip.Role.Name")
-                        await _logger.InsertLogAsync(LogLevel.Error, "Membership Program: Setting missed  \"MemberShip.Role.Name\" for Membership Program", "Membership wil not work without this setting.");
-
-
-                    var customerRole = await _customerService.GetCustomerRoleBySystemNameAsync(memberShipRole);
-                    if (customerRole == null)
-                        await _logger.InsertLogAsync(LogLevel.Error, "Membership Program: Customer role not exist with name " + memberShipRole,
-                            "Customer role not exist with name " + memberShipRole);
-                    else
-                        await _customerService.AddCustomerRoleMappingAsync(new CustomerCustomerRoleMapping()
-                        {
-                            CustomerId = _customer.Id,
-                            CustomerRoleId = customerRole.Id
-                        });
-                    await this._genericAttributeService.SaveAttributeAsync(_customer, NopCustomerDefaults.MemberShipLabelAttribute, false,
-                        (await _storeContext.GetCurrentStoreAsync()).Id);
-                }
-
-                #endregion
-
-                #region Order Zoho Lead
-
-                string description = "";
-                foreach (var item in orderItems)
-                {
-                    var product = await _productService.GetProductByIdAsync(item.ProductId);
-                    description += "ProductId:" + item.ProductId + ";SKU:" + product?.Sku ?? "" + "|";
-                }
-
-                var iPAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress == null ? "" : _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
-
-                await _zohoService.CreateUpdateOrderContactPotential(order.Id, string.Empty, _customer, "Paid", description, iPAddress, string.Empty, order.OrderTotal, -1, string.Empty, false);
-
-                #endregion
-            }
-            catch (Exception exp)
-            {
-                await _logger.InsertLogAsync(LogLevel.Error, $"IsAffirmOrder {isAffirmOrder} Issue happening in implementing custom updates on order {orderId}", exp.Message, await _workContext.GetCurrentCustomerAsync());
-            }
-        }
 
 
 

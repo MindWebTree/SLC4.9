@@ -1,0 +1,33 @@
+﻿2026-09-08 09:56:31.916 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 09:56:33.516 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=f32f0e26-c49e-4cc5-9a80-42459af645f2, TokenLength=3129
+2026-09-08 09:56:33.518 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=f32f0e26-c49e-4cc5-9a80-42459af645f2
+2026-09-08 10:08:29.511 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 10:08:30.468 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=c2c65ae0-724e-4ca9-8031-c1d2fac8f9ac, TokenLength=3129
+2026-09-08 10:08:30.469 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=c2c65ae0-724e-4ca9-8031-c1d2fac8f9ac
+2026-09-08 14:17:07.327 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 14:17:08.963 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=55d0c5d3-13fa-4f92-a295-e69d28518a9f, TokenLength=3129
+2026-09-08 14:17:08.965 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=55d0c5d3-13fa-4f92-a295-e69d28518a9f
+2026-09-08 14:22:07.535 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 14:22:08.622 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=fe027371-f3a3-4fec-b10d-508530095806, TokenLength=3129
+2026-09-08 14:22:08.625 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=fe027371-f3a3-4fec-b10d-508530095806
+2026-09-08 14:26:04.931 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 14:26:06.015 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=fa7fe251-7039-4afd-8680-5117f938cf08, TokenLength=3129
+2026-09-08 14:26:06.016 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=fa7fe251-7039-4afd-8680-5117f938cf08
+2026-09-08 14:26:22.741 UTC  [INFORMATION]  Hosted payment token generation started. 
+2026-09-08 14:26:23.768 UTC  [INFORMATION]  Hosted payment token generated successfully. OrderGuid=6697eef8-b652-49d2-b2d1-da65397260a5, TokenLength=3129
+2026-09-08 14:26:23.769 UTC  [INFORMATION]  Hosted payment page initialized successfully. OrderGuid=6697eef8-b652-49d2-b2d1-da65397260a5
+2026-09-08 14:40:25.414 UTC  [INFORMATION]  GetToken: hosted payment token refresh started. 
+2026-09-08 14:40:25.657 UTC  [ERROR]  Hosted payment token generation failed. OrderGuid=1ab5cfc9-f4cf-44c5-bf35-3dc216d02b64, Error=Value cannot be null. (Parameter 'customer')CustomerId=1501684payload=
+    Exception: ArgumentNullException - Value cannot be null. (Parameter 'customer')
+    StackTrace:    at System.ArgumentNullException.Throw(String paramName)
+   at System.ArgumentNullException.ThrowIfNull(Object argument, String paramName)
+   at Nop.Services.Customers.CustomerService.IsInCustomerRoleAsync(Customer customer, String customerRoleSystemName, Boolean onlyActiveCustomerRoles) in D:\Mind web Tree\Slc4.9\Source Code\Libraries\Nop.Services\Customers\CustomerService.cs:line 1308
+   at Nop.Services.Customers.CustomerService.IsRegisteredAsync(Customer customer, Boolean onlyActiveCustomerRoles) in D:\Mind web Tree\Slc4.9\Source Code\Libraries\Nop.Services\Customers\CustomerService.cs:line 1355
+   at MWT.Nop.Core.Services.Customers.CustomerExtendedService.IsCustomerEligibleForMemberShipDiscount(Customer customer) in D:\Mind web Tree\Slc4.9\Source Code\MWT.Nop.Core\Services\Customers\CustomerExtendedService.cs:line 54
+   at MWT.Nop.Core.Services.Orders.OrderTotalCalculationExtendedService.GetCustomBuyMoreSaveMoreDiscountAndMemberShipDiscountAsync(IList`1 cart, Boolean isOrderTotalpassed, Decimal subTotalIncTax, Decimal subTotalExcTax) in D:\Mind web Tree\Slc4.9\Source Code\MWT.Nop.Core\Services\Orders\OrderTotalCalculationExtendedService.cs:line 252
+   at MWT.Nop.Core.Services.Orders.OrderTotalCalculationExtendedService.GetShoppingCartTotalAsync(IList`1 cart, Nullable`1 useRewardPoints, Boolean usePaymentMethodAdditionalFee) in D:\Mind web Tree\Slc4.9\Source Code\MWT.Nop.Core\Services\Orders\OrderTotalCalculationExtendedService.cs:line 1062
+   at Nop.Plugin.Payments.AuthorizeNetHosted.Services.AuthorizeNetManager.GetHostedFormToken(Int32 invoiceId, Object additionalData) in D:\Mind web Tree\Slc4.9\Source Code\Plugins\Nop.Plugin.Payments.AuthorizeNetHosted\Services\AuthorizeNetManager.cs:line 588
+2026-09-08 14:40:25.742 UTC  [ERROR]  GetToken: hosted payment token refresh failed. OrderGuid=3da15814-8648-48c5-8d1b-a859de89d53e, Error=Value cannot be null. (Parameter 'customer')
+    Exception: ArgumentNullException - Value cannot be null. (Parameter 'customer')
+    StackTrace:    at Nop.Plugin.Payments.AuthorizeNetHosted.Services.AuthorizeNetManager.GetHostedFormToken(Int32 invoiceId, Object additionalData) in D:\Mind web Tree\Slc4.9\Source Code\Plugins\Nop.Plugin.Payments.AuthorizeNetHosted\Services\AuthorizeNetManager.cs:line 709
+   at Nop.Plugin.Payments.AuthorizeNetHosted.Controllers.AuthorizeNetHostedPaymentController.GetToken(Int32 invoiceId) in D:\Mind web Tree\Slc4.9\Source Code\Plugins\Nop.Plugin.Payments.AuthorizeNetHosted\Controllers\AuthorizeNetHostedPaymentController.cs:line 214

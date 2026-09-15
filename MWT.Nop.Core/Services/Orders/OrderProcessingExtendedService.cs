@@ -1,6 +1,10 @@
-﻿using MWT.Nop.Core.Domain.CustomOrders;
-using MWT.Nop.Core.Services.Catalog;
+﻿using Microsoft.AspNetCore.Http;
+using MWT.Nop.Core.Domain.CustomOrders;
+using MWT.Nop.Core.Service.Zoho;
+using MWT.Nop.Core.Services.AbandonedCarts;
+using MWT.Nop.Core.Services.Customers;
 using MWT.Nop.Core.Services.Customizations.CustomOrders;
+using MWT.Nop.Core.Services.Manage;
 using MWT.Nop.Core.Services.Message;
 using Newtonsoft.Json;
 using Nop.Core;
@@ -8,6 +12,7 @@ using Nop.Core.Caching;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Directory;
 using Nop.Core.Domain.Localization;
+using Nop.Core.Domain.Logging;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Payments;
 using Nop.Core.Domain.Shipping;
@@ -16,6 +21,7 @@ using Nop.Core.Events;
 using Nop.Services.Affiliates;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
+using Nop.Services.Configuration;
 using Nop.Services.Customers;
 using Nop.Services.Directory;
 using Nop.Services.Discounts;
@@ -41,6 +47,13 @@ namespace MWT.Nop.Core.Services.Orders
         private readonly Message.ICustomWorkflowMessageService _customWorkflowMessageService;
         private readonly ICustomOrderService _customOrderService;
         private readonly IShoppingCartExtendedService _shoppingCartExtendedCartService;
+        private readonly IOrderTotalCalculationExtendedService _orderTotalCalculationExtendedService;
+        private readonly ICustomerExtendedService _customerExtendedService;
+        private readonly ISettingService _settingService;
+        private readonly IZohoService _zohoService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IAbandonedCartService _abandonedCartService;
+        private readonly IManageService _manageService;
 
         #endregion
 
@@ -56,7 +69,10 @@ namespace MWT.Nop.Core.Services.Orders
             IStoreMappingService storeMappingService, IStoreService storeService, ITaxService taxService, IVendorService vendorService, IWebHelper webHelper, IWorkContext workContext,
           ICustomWorkflowMessageService workflowMessageService, LocalizationSettings localizationSettings, OrderSettings orderSettings, PaymentSettings paymentSettings,
             RewardPointsSettings rewardPointsSettings, ShippingSettings shippingSettings, TaxSettings taxSettings,
-            Message.ICustomWorkflowMessageService customWorkflowMessageService, ICustomOrderService customOrderService, IShoppingCartExtendedService shoppingCartExtendedCartService) :
+            Message.ICustomWorkflowMessageService customWorkflowMessageService, ICustomOrderService customOrderService, IShoppingCartExtendedService shoppingCartExtendedCartService,
+            IOrderTotalCalculationExtendedService orderTotalCalculationExtendedService, ICustomerExtendedService customerExtendedService, ISettingService settingService,
+            IZohoService zohoService, IHttpContextAccessor httpContextAccessor, IAbandonedCartService abandonedCartService,
+            IManageService manageService) :
             base(currencySettings, addressService, affiliateService, checkoutAttributeFormatter, countryService, currencyService, customerActivityService, customerService, customNumberFormatter,
                 discountService, encryptionService, eventPublisher, genericAttributeService, giftCardService, languageService, localizationService, logger, orderService, orderTotalCalculationService,
                 paymentPluginManager, paymentService, pdfService, priceCalculationService, priceFormatter, productAttributeFormatter, productAttributeParser, productService, returnRequestService,
@@ -66,6 +82,13 @@ namespace MWT.Nop.Core.Services.Orders
             _customWorkflowMessageService = customWorkflowMessageService;
             _customOrderService = customOrderService;
             _shoppingCartExtendedCartService = shoppingCartExtendedCartService;
+            _orderTotalCalculationExtendedService = orderTotalCalculationExtendedService;
+            _customerExtendedService = customerExtendedService;
+            _settingService = settingService;
+            _zohoService = zohoService;
+            _httpContextAccessor = httpContextAccessor;
+            _abandonedCartService = abandonedCartService;
+            _manageService = manageService;
         }
 
         #endregion
@@ -106,7 +129,7 @@ namespace MWT.Nop.Core.Services.Orders
                 await AddOrderNoteAsync(order, $"\"Order placed\" email (to affiliate) has been queued. Queued email identifiers: {string.Join(", ", orderPlacedAffiliateNotificationQueuedEmailIds)}.");
 
         }
-        public virtual async Task<(PlaceOrderResult result, ProcessPaymentResult request)> CustomPlaceOrderAsync(ProcessPaymentRequest processPaymentRequest, CustomOrder customOrder, dynamic orderSummary, bool saveOrderDetails = true, int refOrderno = 0, bool chargeFromInitialaOrder = false)
+        public virtual async Task<(PlaceOrderResult result, ProcessPaymentResult request)> CustomPlaceOrderAsync(ProcessPaymentRequest processPaymentRequest, CustomOrder customOrder, int paidBy, dynamic orderSummary, bool saveOrderDetails = true, int refOrderno = 0, bool chargeFromInitialaOrder = false)
         {
             ArgumentNullException.ThrowIfNull(processPaymentRequest);
 
@@ -196,13 +219,21 @@ namespace MWT.Nop.Core.Services.Orders
 
                             if (order.PaymentStatus == PaymentStatus.Paid)
                                 await ProcessOrderPaidAsync(order);
+
+                            await UpdateCustomOrderChargesAsync(processPaymentRequest.PaymentMethodSystemName, placeOrderContainer, result,
+          processPaymentResult, processPaymentRequest, order
+        , customOrder, orderSummary, paidBy);
                         }
                         else
                         {
                             Order order = await _orderService.GetOrderByIdAsync(refOrderno);
                             result.PlacedOrder = order;
                             await CustomOrderSendNotificationsAndSaveNotesAsync(order, customOrder);
+                            await UpdateCustomOrderChargesAsync(processPaymentRequest.PaymentMethodSystemName, placeOrderContainer, result,
+      processPaymentResult, processPaymentRequest, order
+    , customOrder, orderSummary, paidBy);
                         }
+
                     }
                     else
                         foreach (var paymentError in processPaymentResult.Errors)
@@ -268,11 +299,9 @@ namespace MWT.Nop.Core.Services.Orders
 
             return (result, processPaymentResult);
         }
-
-
         public virtual async Task SetProcessPaymentRequestAsync(ProcessPaymentRequest processPaymentRequest, Customer customer, bool useNewOrderGuid = false)
         {
-          
+
             var store = await _storeContext.GetCurrentStoreAsync();
 
             if (processPaymentRequest is null)
@@ -304,15 +333,144 @@ namespace MWT.Nop.Core.Services.Orders
             var json = JsonConvert.SerializeObject(processPaymentRequest);
             await _genericAttributeService.SaveAttributeAsync(customer, NopCustomerDefaults.ProcessPaymentRequestAttribute, json, store.Id);
         }
-
         public virtual async Task<ProcessPaymentRequest> GetProcessPaymentRequestAsync(Customer customer)
         {
-     
+
             var store = await _storeContext.GetCurrentStoreAsync();
             var json = await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.ProcessPaymentRequestAttribute, store.Id);
 
             return string.IsNullOrEmpty(json) ? null : JsonConvert.DeserializeObject<ProcessPaymentRequest>(json);
         }
+        public override async Task<PlaceOrderResult> PlaceOrderAsync(ProcessPaymentRequest processPaymentRequest)
+        {
+            ArgumentNullException.ThrowIfNull(processPaymentRequest);
+
+            if (processPaymentRequest.OrderGuid == Guid.Empty)
+                throw new Exception("Order GUID is not generated");
+
+            //prepare order details
+            var details = await PreparePlaceOrderDetailsAsync(processPaymentRequest);
+
+            async Task<PlaceOrderResult> placeOrder(PlaceOrderContainer placeOrderContainer)
+            {
+                var result = new PlaceOrderResult();
+
+                try
+                {
+                    var processPaymentResult =
+                        await GetProcessPaymentResultAsync(processPaymentRequest, placeOrderContainer)
+                        ?? throw new NopException("processPaymentResult is not available");
+
+                    if (processPaymentResult.Success)
+                    {
+                        var order = await SaveOrderDetailsAsync(processPaymentRequest, processPaymentResult,
+                            placeOrderContainer);
+                        result.PlacedOrder = order;
+
+                        //move shopping cart items to order items
+                        decimal orderitemDiscount = await MoveShoppingCartItemsToOrderItemsExtendedAsync(placeOrderContainer, order);
+
+                        await UpdateProductSalesFromCartAsync(details);
+
+                        await UpdateOrderChargesAsync(details, order, orderitemDiscount);
+
+                        await ApplyMemberShipAsync(placeOrderContainer);
+
+                        await ProcessAbandonedCartAndZohoLeadAsync(placeOrderContainer, order);
+                        //discount usage history
+                        await SaveDiscountUsageHistoryAsync(placeOrderContainer, order);
+
+                        //gift card usage history
+                        await SaveGiftCardUsageHistoryAsync(placeOrderContainer, order);
+
+                        //recurring orders
+                        if (placeOrderContainer.IsRecurringShoppingCart)
+                            await CreateFirstRecurringPaymentAsync(processPaymentRequest, order);
+
+                        //notifications
+                        await SendNotificationsAndSaveNotesExtendedAsync(order);
+
+                        //reset checkout data
+                        await _customerService.ResetCheckoutDataAsync(placeOrderContainer.Customer,
+                            processPaymentRequest.StoreId, clearCouponCodes: true, clearCheckoutAttributes: true);
+                        await _customerActivityService.InsertActivityAsync("PublicStore.PlaceOrder",
+                            string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.PlaceOrder"),
+                                order.Id), order);
+
+                        //raise event       
+                        await _eventPublisher.PublishAsync(new OrderPlacedEvent(order));
+
+                        //check order status
+                        await CheckOrderStatusAsync(order);
+
+                        if (order.PaymentStatus == PaymentStatus.Paid)
+                            await ProcessOrderPaidAsync(order);
+                    }
+                    else
+                        foreach (var paymentError in processPaymentResult.Errors)
+                            result.AddError(string.Format(
+                                await _localizationService.GetResourceAsync("Checkout.PaymentError"), paymentError));
+                }
+                catch (Exception exc)
+                {
+                    await _logger.ErrorAsync(exc.Message, exc);
+                    result.AddError(exc.Message);
+                }
+
+                if (result.Success)
+                    return result;
+
+                //log errors
+                var logError = result.Errors.Aggregate("Error while placing order. ",
+                    (current, next) => $"{current}Error {result.Errors.IndexOf(next) + 1}: {next}. ");
+                var customer = await _customerService.GetCustomerByIdAsync(processPaymentRequest.CustomerId);
+                await _logger.ErrorAsync(logError, customer: customer);
+
+                return result;
+            }
+
+            if (!_orderSettings.PlaceOrderWithLock)
+                return await placeOrder(details);
+
+            PlaceOrderResult result;
+            var resource = details.Customer.Id.ToString();
+
+            //the named mutex helps to avoid creating the same order in different threads,
+            //and does not decrease performance significantly, because the code is blocked only for the specific cart.
+            //you should be very careful, mutexes cannot be used in with the await operation
+            //we can't use semaphore here, because it produces PlatformNotSupportedException exception on UNIX based systems
+            using var mutex = new Mutex(false, resource);
+
+            mutex.WaitOne();
+
+            try
+            {
+                var cacheKey = _staticCacheManager.PrepareKey(NopOrderDefaults.OrderWithLockCacheKey, resource);
+                cacheKey.CacheTime = _orderSettings.MinimumOrderPlacementInterval;
+
+                var exist = _staticCacheManager.Get(cacheKey, () => false);
+
+                if (exist)
+                {
+                    result = new PlaceOrderResult();
+                    result.Errors.Add(_localizationService.GetResourceAsync("Checkout.MinOrderPlacementInterval").Result);
+                }
+                else
+                {
+                    result = placeOrder(details).Result;
+
+                    if (result.Success)
+                        _staticCacheManager.SetAsync(cacheKey, true).Wait();
+                }
+            }
+            finally
+            {
+                mutex.ReleaseMutex();
+            }
+
+            return result;
+        }
+
 
         #endregion
 
@@ -370,7 +528,6 @@ namespace MWT.Nop.Core.Services.Orders
 
             return details;
         }
-
         protected virtual async Task<Order> SaveCustomOrderDetailsAsync(ProcessPaymentRequest processPaymentRequest,
       ProcessPaymentResult processPaymentResult, PlaceOrderContainer details)
         {
@@ -608,7 +765,6 @@ namespace MWT.Nop.Core.Services.Orders
             if (!details.Cart.Any())
                 throw new NopException("Cart is empty");
         }
-
         public async Task CustomOrderAddItemsToCart(CustomOrder order, Customer customer,
      ProcessPaymentRequest processPaymentRequest)
         {
@@ -693,7 +849,6 @@ namespace MWT.Nop.Core.Services.Orders
 
 
         }
-
         protected virtual async Task PrepareCustomOrderShippingInfoAsync(PlaceOrderContainer details, ProcessPaymentRequest processPaymentRequest)
         {
             //shipping info
@@ -818,6 +973,408 @@ namespace MWT.Nop.Core.Services.Orders
             processPaymentRequest.OrderTotal = details.OrderTotal;
             #endregion
         }
+        protected virtual async Task<decimal> MoveShoppingCartItemsToOrderItemsExtendedAsync(PlaceOrderContainer details, Order order)
+        {
+            decimal orderitemDiscount = 0;
+            var subTotalIncludingTax = await _workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax && !_taxSettings.ForceTaxExclusionFromOrderSubtotal;
+            var (orderSubTotalDiscountAmountBase, _, subTotal, _, _) = await _orderTotalCalculationService.GetShoppingCartSubTotalAsync(details.Cart, subTotalIncludingTax);
+            var customShoppingcartTotal = await this._shoppingCartExtendedCartService.GetCustomCartItemTotalsAsync(details.Cart, subTotal, details.Customer);
+
+            foreach (var sc in details.Cart)
+            {
+                var product = await _productService.GetProductByIdAsync(sc.ProductId);
+
+                //prices
+                var scUnitPrice = (await _shoppingCartService.GetUnitPriceAsync(sc, true)).unitPrice;
+                var (scSubTotal, discountAmount, scDiscounts, _) = await _shoppingCartService.GetSubTotalAsync(sc, true);
+                var scUnitPriceInclTax = await _taxService.GetProductPriceAsync(product, scUnitPrice, true, details.Customer);
+                var scUnitPriceExclTax = await _taxService.GetProductPriceAsync(product, scUnitPrice, false, details.Customer);
+                var scSubTotalInclTax = await _taxService.GetProductPriceAsync(product, scSubTotal, true, details.Customer);
+                var scSubTotalExclTax = await _taxService.GetProductPriceAsync(product, scSubTotal, false, details.Customer);
+                var discountAmountInclTax = await _taxService.GetProductPriceAsync(product, discountAmount, true, details.Customer);
+                var discountAmountExclTax = await _taxService.GetProductPriceAsync(product, discountAmount, false, details.Customer);
+                foreach (var disc in scDiscounts)
+                    if (!_discountService.ContainsDiscount(details.AppliedDiscounts, disc))
+                        details.AppliedDiscounts.Add(disc);
+
+                //attributes
+                var store = await _storeService.GetStoreByIdAsync(sc.StoreId);
+                var attributeDescription = await _productAttributeFormatter.FormatAttributesAsync(product, sc.AttributesXml, details.Customer, store);
+
+                var itemWeight = await _shippingService.GetShoppingCartItemWeightAsync(sc);
+
+                //save order item
+                var orderItem = new OrderItem
+                {
+                    OrderItemGuid = Guid.NewGuid(),
+                    OrderId = order.Id,
+                    ProductId = product.Id,
+                    UnitPriceInclTax = scUnitPriceInclTax.price,
+                    UnitPriceExclTax = scUnitPriceExclTax.price,
+                    PriceInclTax = scSubTotalInclTax.price,
+                    PriceExclTax = scSubTotalExclTax.price,
+                    OriginalProductCost = await _priceCalculationService.GetProductCostAsync(product, sc.AttributesXml),
+                    AttributeDescription = attributeDescription,
+                    AttributesXml = sc.AttributesXml,
+                    Quantity = sc.Quantity,
+                    DiscountAmountInclTax = discountAmountInclTax.price,
+                    DiscountAmountExclTax = discountAmountExclTax.price,
+                    DownloadCount = 0,
+                    IsDownloadActivated = false,
+                    LicenseDownloadId = 0,
+                    ItemWeight = itemWeight,
+                    RentalStartDateUtc = sc.RentalStartDateUtc,
+                    RentalEndDateUtc = sc.RentalEndDateUtc
+                };
+
+                #region CustomLogic
+                try
+                {
+                    var item = customShoppingcartTotal.FirstOrDefault(x => x.Id == sc.Id);
+                    if (item != null)
+                    {
+
+
+                        orderItem.ItemPriceIncTax = await _currencyService.ConvertToPrimaryStoreCurrencyAsync(string.IsNullOrEmpty(item.ItemTotal) ? 0 : (Decimal.Parse(item.ItemTotal.Replace("\"", ""), NumberStyles.Currency) / item.Quantity), await _workContext.GetWorkingCurrencyAsync());
+                        orderItem.MembershipDiscountIncTax = await _currencyService.ConvertToPrimaryStoreCurrencyAsync(string.IsNullOrEmpty(item.MembershipDiscount) ? 0 : Decimal.Parse(item.MembershipDiscount.Replace("\"", ""), NumberStyles.Currency), await _workContext.GetWorkingCurrencyAsync());
+                        orderItem.OfferDiscountIncTax = await _currencyService.ConvertToPrimaryStoreCurrencyAsync(string.IsNullOrEmpty(item.OfferDiscount) ? 0 : Decimal.Parse(item.OfferDiscount.Replace("\"", ""), NumberStyles.Currency), await _workContext.GetWorkingCurrencyAsync());
+                        orderItem.BuyMoreSaveMoreDiscountIncTax = await _currencyService.ConvertToPrimaryStoreCurrencyAsync(string.IsNullOrEmpty(item.BuyMoreSaveMoreDiscount) ? 0 : Decimal.Parse(item.BuyMoreSaveMoreDiscount.Replace("\"", ""), NumberStyles.Currency), await _workContext.GetWorkingCurrencyAsync());
+                        orderItem.SpecialInstructions = sc.SpecialInstructions;
+                        if ((orderItem.DiscountAmountExclTax > 0 || orderItem.DiscountAmountInclTax > 0)
+                                       && orderItem.UnitPriceInclTax > 0)
+                        {
+                            var price = (orderItem.UnitPriceInclTax * orderItem.Quantity) + orderItem.DiscountAmountInclTax;
+                            var percentage = (orderItem.DiscountAmountInclTax / price) * 100;
+                            price = (orderItem.ItemPriceIncTax * orderItem.Quantity) + orderItem.MembershipDiscountIncTax + orderItem.OfferDiscountIncTax + orderItem.BuyMoreSaveMoreDiscountIncTax;
+                            orderItem.TotalDiscount = Math.Round((price * percentage) / 100, 2);
+                            orderitemDiscount += orderItem.TotalDiscount;
+                        }
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await _logger.ErrorAsync(
+            $"Failed to update order item pricing/discounts. " +
+            $"Order Id: {order.Id}, " +
+            $"ShoppingCartItemId: {sc.Id}, " +
+            $"OrderItemId: {orderItem.Id}, " +
+            $"ProductId: {orderItem.ProductId}",
+            ex);
+                }
+                #endregion
+
+                await _orderService.InsertOrderItemAsync(orderItem);
+
+                //gift cards
+                await AddGiftCardsAsync(product, sc.AttributesXml, sc.Quantity, orderItem, scUnitPriceExclTax.price);
+
+                //inventory
+                await _productService.AdjustInventoryAsync(product, -sc.Quantity, sc.AttributesXml,
+                    string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.PlaceOrder"), order.Id));
+
+                await _eventPublisher.PublishAsync(new ShoppingCartItemMovedToOrderItemEvent(sc, orderItem));
+            }
+
+            await _shoppingCartService.ClearShoppingCartAsync(details.Customer, order.StoreId);
+            return orderitemDiscount;
+        }
+
+        #region Order
+        protected virtual async Task UpdateOrderChargesAsync(PlaceOrderContainer details, Order order, decimal orderitemDiscount)
+        {
+            var store = await _storeContext.GetCurrentStoreAsync();
+            (decimal buyMoreSaveMoreDiscount, decimal membershipdiscount, decimal offerDiscount, decimal offerDiscountDefault, decimal productItemsDiscount, _) =
+                await _orderTotalCalculationExtendedService.GetCustomBuyMoreSaveMoreDiscountAndMemberShipDiscountAsync(details.Cart);
+
+            (decimal customDutyPercentage, decimal customDuty) = await _orderTotalCalculationExtendedService.GetCustomDuty(details.Cart);
+            decimal memberShipFee = 0;
+            decimal memberShipFeeDiscount = 0;
+            if (await _customerExtendedService.IsMemberShipAddedInCart(details.Customer))
+                (memberShipFee, memberShipFeeDiscount) = await _orderTotalCalculationExtendedService.GetMemberShipFee();
+
+            var shippingOption = await _genericAttributeService.GetAttributeAsync<ShippingOption>(details.Customer,
+        NopCustomerDefaults.SelectedShippingOptionAttribute, store.Id);
+
+            // custom Duty
+            order.CustomDutyInclTax = order.CustomDutyExclTax = customDuty;
+            order.CustomDutyPercentage = customDutyPercentage;
+            // end 
+
+            order.MembershipDiscountIncTax = membershipdiscount;
+            order.OfferDiscountIncTax = offerDiscount;
+            order.BuyMoreSaveMoreDiscountIncTax = buyMoreSaveMoreDiscount;
+            order.MembershipFeeInclTax = memberShipFee;
+            order.MembershipFeeDiscountInclTax = await _currencyService.ConvertToPrimaryStoreCurrencyAsync(memberShipFeeDiscount, await _workContext.GetWorkingCurrencyAsync());
+            if (shippingOption != null && shippingOption.AdditionalFee > 0)
+            {
+                if (Math.Round(order.OrderShippingInclTax, 2) == Math.Round(shippingOption.Rate, 2))
+                {
+                    order.OrderShippingExclTax = shippingOption.Rate - shippingOption.AdditionalFee;
+                    order.OrderShippingInclTax = shippingOption.Rate - shippingOption.AdditionalFee;
+                    order.AdditonalShippingChargesInclTax = shippingOption.AdditionalFee;
+                }
+                else
+                {
+                    decimal _shippingTotal = Math.Round(order.OrderShippingInclTax, 2);
+                    if (_shippingTotal > 0)
+                        if (_shippingTotal > Math.Round(shippingOption.Rate, 2))
+                        {
+                            order.OrderShippingExclTax = order.OrderShippingInclTax = order.OrderShippingInclTax - shippingOption.AdditionalFee;
+                            order.AdditonalShippingChargesInclTax = shippingOption.AdditionalFee;
+                        }
+                        else
+                        {
+                            decimal shippingDiscountPercentage = Math.Round((100 - ((_shippingTotal / (shippingOption.Rate) * 100))), 2);
+                            _shippingTotal = (shippingOption.Rate - shippingOption.AdditionalFee);
+                            _shippingTotal = Math.Round(_shippingTotal - ((_shippingTotal * shippingDiscountPercentage) / 100), 2);
+                            order.OrderShippingExclTax = order.OrderShippingInclTax = _shippingTotal;
+                            order.AdditonalShippingChargesInclTax =
+                                Math.Round(shippingOption.AdditionalFee - ((shippingOption.AdditionalFee * shippingDiscountPercentage) / 100), 2);
+                        }
+                }
+            }
+
+
+            #region SubTotalDiscount
+
+            var customSubTotal = await _orderTotalCalculationExtendedService.GetCustomShoppingCartSubTotalAsync(details.Cart);
+            customSubTotal = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(customSubTotal, await _workContext.GetWorkingCurrencyAsync());
+
+            if (order.OrderSubTotalDiscountExclTax != 0)
+            {
+                var discountedTotal = (order.OrderSubtotalExclTax +
+                                    memberShipFee + (offerDiscountDefault - offerDiscount))
+                                    - memberShipFeeDiscount
+                                    - buyMoreSaveMoreDiscount
+                                    - membershipdiscount - orderitemDiscount;
+                var accuratediscountedTotal = ((customSubTotal - offerDiscountDefault) +
+             memberShipFee + (offerDiscountDefault - offerDiscount))
+             - memberShipFeeDiscount
+             - buyMoreSaveMoreDiscount
+             - membershipdiscount
+             - orderitemDiscount;
+
+
+                var percentage = (order.OrderSubTotalDiscountExclTax / discountedTotal) * 100;
+                order.OrderSubTotalDiscountExclTax = order.OrderSubTotalDiscountInclTax =
+                    Math.Round((accuratediscountedTotal * percentage) / 100, 2);
+
+                if (customDutyPercentage > 0)
+                {
+                    order.CustomDutyInclTax = Math.Round(((accuratediscountedTotal - order.OrderSubTotalDiscountInclTax) * order.CustomDutyPercentage) / 100, 2);
+                }
+
+            }
+
+            #endregion
+
+            #region Tax
+
+            var (shoppingCartTaxBase, taxRates, taxes) = await _orderTotalCalculationExtendedService.CustomGetTaxTotalAsync(details.Cart);
+            try
+            {
+                string taxInfo = "";
+                foreach (var tax in taxes.Where(t => t.TaxRate > 0))
+                {
+                    taxInfo += $"{tax.TaxType.ToString()}:{tax.TaxRate.ToString()}:{tax.Amount};";
+                }
+                order.TaxInfo = taxInfo;
+            }
+            catch (Exception exp)
+            {
+                await _logger.InsertLogAsync(LogLevel.Error, $"Order {order.Id} failed to update tax info", exp.Message);
+            }
+            #endregion
+
+            order.OrderSubtotalExclTax = customSubTotal;
+            order.OrderSubtotalInclTax = customSubTotal;
+            order.CustomerEmail = await _customerExtendedService.GetCustomerEmailAsync(details.Customer);
+            await _orderService.UpdateOrderAsync(order);
+
+        }
+        protected virtual async Task SendNotificationsAndSaveNotesExtendedAsync(Order order)
+        {
+            if (!string.IsNullOrEmpty(order.CheckoutAttributeDescription))
+            {
+                var notes = order.CheckoutAttributeDescription.Replace("Order Notes:", "", StringComparison.InvariantCultureIgnoreCase);
+                await _orderService.InsertOrderNoteAsync(new OrderNote()
+                {
+                    CreatedOnUtc = DateTime.UtcNow,
+                    DisplayToCustomer = true,
+                    DownloadId = 0,
+                    Note = notes,
+                    OrderId = order.Id
+                });
+            }
+            await this.CustomSendNotificationsAndSaveNotesAsync(order);
+        }
+        protected virtual async Task ApplyMemberShipAsync(PlaceOrderContainer details)
+        {
+            if (await _customerExtendedService.IsMemberShipAddedInCart(details.Customer))
+            {
+                var memberShipRole = await _settingService.GetSettingByKeyAsync<string>("MemberShip.Role.Name");
+
+                if (memberShipRole == "MemberShip.Role.Name")
+                    await _logger.InsertLogAsync(LogLevel.Error, "Membership Program: Setting missed  \"MemberShip.Role.Name\" for Membership Program", "Membership wil not work without this setting.");
+
+
+                var customerRole = await _customerService.GetCustomerRoleBySystemNameAsync(memberShipRole);
+                if (customerRole == null)
+                    await _logger.InsertLogAsync(LogLevel.Error, "Membership Program: Customer role not exist with name " + memberShipRole,
+                        "Customer role not exist with name " + memberShipRole);
+                else
+                    await _customerService.AddCustomerRoleMappingAsync(new CustomerCustomerRoleMapping()
+                    {
+                        CustomerId = details.Customer.Id,
+                        CustomerRoleId = customerRole.Id
+                    });
+                await this._genericAttributeService.SaveAttributeAsync(details.Customer, NopCustomerDefaults.MemberShipLabelAttribute, false,
+                    (await _storeContext.GetCurrentStoreAsync()).Id);
+            }
+
+        }
+        protected virtual async Task ProcessAbandonedCartAndZohoLeadAsync(PlaceOrderContainer details, Order order)
+        {
+            var orderItems = await _orderService.GetOrderItemsAsync(order.Id);
+            string description = "";
+            foreach (var item in orderItems)
+            {
+                var product = await _productService.GetProductByIdAsync(item.ProductId);
+                description += "ProductId:" + item.ProductId + ";SKU:" + product?.Sku ?? "" + "|";
+            }
+            var iPAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress == null ? "" : _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            await _zohoService.CreateUpdateOrderContactPotential(order.Id, string.Empty, details.Customer, "Paid", description, iPAddress, string.Empty, order.OrderTotal, -1, string.Empty, false);
+
+            await _abandonedCartService.MarkAbandonedInvoiceAsPaid(order.CustomerId, details.Cart.Select(c => c.Id).ToArray(), order.Id, order.OrderTotal);
+        }
+        protected virtual async Task UpdateProductSalesFromCartAsync(PlaceOrderContainer details)
+        {
+            foreach (var item in details.Cart)
+            {
+                var product = await _productService.GetProductByIdAsync(item.ProductId);
+                if (product != null)
+                {
+                    product.NoOfSales = product.NoOfSales + item.Quantity;
+                    await _productService.UpdateProductAsync(product);
+                }
+
+            }
+        }
+
+        #endregion
+
+        #region CustomOrder
+
+        protected async Task UpdateCustomOrderChargesAsync(string paymentMethodName, PlaceOrderContainer details, PlaceOrderResult result, ProcessPaymentResult processPaymentResult,
+            ProcessPaymentRequest processPaymentRequest, Order orderEntity
+           , CustomOrder order, dynamic orderSummary, int paidBy)
+        {
+
+            decimal amountPaid = processPaymentRequest.OrderTotal;
+            #region Update Product Sales
+
+            var _items = await _customOrderService.GetOrderItems(order.Id);
+            foreach (var item in _items)
+            {
+                var product = await _productService.GetProductByIdAsync(item.ProductId);
+                if (product != null)
+                {
+                    product.NoOfSales = product.NoOfSales + item.Quantity;
+                    await _productService.UpdateProductAsync(product);
+                }
+            }
+
+            #endregion
+
+            var orderStatuses = await _customOrderService.GetOrderStatuses();
+            var paidStatus = orderStatuses.Where(m => m.Name == MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString()).FirstOrDefault();
+
+
+            bool fullPaid = true;
+            if (orderSummary.OrderType == OrderTypes.CustomOrder.ToString() && order.AlreadyFee != null && order.AlreadyFee > 0)
+            {
+                if (paidStatus != null && order.StatusId != paidStatus.Id)
+                {
+                    fullPaid = false;
+                    decimal.TryParse(orderSummary.OrderTotal, NumberStyles.Currency,
+                              CultureInfo.CurrentCulture.NumberFormat, out decimal orderTotal);
+
+                    orderEntity.OrderTotal = orderTotal;
+                }
+                else
+                {
+                    await _manageService.SyncPendingOrderPartialPayment(orderEntity.Id, processPaymentResult.CaptureTransactionId, processPaymentRequest.OrderTotal, DateTime.Now, paymentMethodName);
+                }
+            }
+
+
+            if (order.ParentOrderID > 0)
+                orderEntity.ParentOrderID = order.ParentOrderID;
+            string email = await this._customerExtendedService.GetCustomerEmailAsync(details.Customer);
+            orderEntity.CustomerEmail = email;
+
+            var orderTypes = await _customOrderService.GetOrderTypes();
+            var orderType = orderTypes.Where(t => t.Id == order.OrderTypeId).FirstOrDefault();
+            if (orderType != null && orderType.Name != OrderTypes.CustomOrder.ToString())
+            {
+                orderEntity.OrderStatus = OrderStatus.Processing;
+                orderEntity.PaymentStatus = PaymentStatus.Paid;
+            }
+            await this._orderService.UpdateOrderAsync(orderEntity);
+
+            if (paidStatus != null)
+                order.StatusId = paidStatus.Id;
+
+            order.LiveOrderNumber = orderEntity.Id;
+            order.FullPaid = fullPaid;
+
+            if (order.CreatedOn == null)
+                order.CreatedOn = DateTime.Now;
+            if (order.ParentOrderID == 0 &&
+                (order.SubOrderTypeId ?? 0) == 0 && (orderSummary.OrderType == OrderTypes.CustomOrder.ToString() || orderSummary.OrderType == OrderTypes.AlreadyPaid.ToString())
+                )
+            {
+                string description = "";
+                foreach (var item in _items)
+                {
+                    var product = await _productService.GetProductByIdAsync(item.ProductId);
+                    description += "ProductId:" + item.ProductId + ";SKU:" + product?.Sku ?? "" + "|";
+                }
+                var iPAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress == null ? "" : _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                order.ZohoPotentialId = await _zohoService.CreateUpdateOrderContactPotential(order.LiveOrderNumber ?? order.Id, order.ZohoPotentialId, details.Customer, MWT.Nop.Core.Domain.CustomOrders.OrderStatus.Paid.ToString(), description, iPAddress, string.Empty, (order.SubTotal ?? 0) + (order.TotalDiscount ?? 0), order.CreatedBy, $"{_storeContext.GetCurrentStore().Url}checkoutCustomOrder?orderid={order.Id}&customerid={order.CustomerId}", true);
+
+            }
+
+            await _customOrderService.UpdateAsync(order);
+
+            #region Manage Update Status of Order
+
+            if (order.ParentOrderID > 0)
+            {
+                await _manageService.MarkWgsAsPaid(order.ParentOrderID, email, order.OrderTotal ?? 0, order.PairedOrderIds ?? string.Empty);
+            }
+
+            #endregion
+            if (orderSummary.OrderType != OrderTypes.HouzzOrder.ToString())
+            {
+                var orderPlacedCustomerNotificationQueuedEmailIds = await _customWorkflowMessageService
+             .CustomOrder_SendCustomerNotificationAsync(order, orderEntity.CustomerLanguageId);
+            }
+
+            if (processPaymentResult != null && (!string.IsNullOrEmpty(processPaymentResult.AuthorizationTransactionId) || !string.IsNullOrEmpty(processPaymentResult.CaptureTransactionId)))
+                await this._customOrderService.InsertOrderStatusLogAsync(new CustomorderOrderStatusLog()
+                {
+                    CreatedOn = DateTime.UtcNow,
+                    OrderId = order.Id,
+                    StatusId = paidStatus != null ? paidStatus.Id : 0,
+                    UserId = paidBy,
+                    AmountPaid = amountPaid,
+                    PaymentResponse = processPaymentResult == null ? string.Empty : JsonConvert.SerializeObject(processPaymentResult)
+                });
+        }
+
+        #endregion
 
         #endregion
     }

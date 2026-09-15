@@ -315,7 +315,15 @@ defaults: new { controller = "Common", action = "CustomGoogleFeed" });
             endpointRouteBuilder.MapControllerRoute(name: "LandingPage", $"{lang}/landingpage/{{SeName?}}",
               new { controller = "LandingPage", action = "Index" });
 
+            endpointRouteBuilder.MapControllerRoute(name: "Sitemap_Products",
+               pattern: $"products_sitemap.xml",
+               defaults: new { controller = "SiteMap", action = "GenerateProductSitemapXml" });
+
             #endregion
+
+            endpointRouteBuilder.MapControllerRoute(name: Core.Http.NopRouteExtendedNames.Standard.CUSTOMORDER_CHECKOUT,
+    pattern: $"{lang}/CheckoutCustomOrder/",
+    defaults: new { controller = "CheckoutCustomOrder", action = "Index" });
 
         }
 
