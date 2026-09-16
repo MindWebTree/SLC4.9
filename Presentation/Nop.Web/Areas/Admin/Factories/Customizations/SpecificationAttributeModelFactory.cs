@@ -60,7 +60,7 @@ namespace Nop.Web.Areas.Admin.Factories
     SpecificationAttributeOption specificationAttributeOption,
      bool excludeProperties = false)
         {
-
+            ArgumentNullException.ThrowIfNull(specificationAttribute);
 
             Func<SpecificationAttributeOptionLocalizedModel, int, Task> localizedModelConfiguration = null;
 
@@ -109,6 +109,7 @@ namespace Nop.Web.Areas.Admin.Factories
                 {
                     locale.Name = await _localizationService.GetLocalizedAsync(specificationAttribute, entity => entity.Name, languageId, false, false);
                 };
+                await _baseAdminModelFactory.PreparePreTranslationSupportModelAsync(model);
             }
 
             //prepare localized models
@@ -128,11 +129,9 @@ namespace Nop.Web.Areas.Admin.Factories
         public virtual async Task<SpecificationAttributeProductListModel> CustomPrepareSpecificationAttributeProductListModelAsync(
        SpecificationAttributeProductSearchModel searchModel, SpecificationAttribute specificationAttribute)
         {
-            if (searchModel == null)
-                throw new ArgumentNullException(nameof(searchModel));
+            ArgumentNullException.ThrowIfNull(searchModel);
 
-            if (specificationAttribute == null)
-                throw new ArgumentNullException(nameof(specificationAttribute));
+            ArgumentNullException.ThrowIfNull(specificationAttribute);
 
             //get products
             var _customSpecificationAttributeService = EngineContext.Current.Resolve<ICustomSpecificationAttributeService>();
@@ -162,8 +161,9 @@ namespace Nop.Web.Areas.Admin.Factories
         }
         public virtual async Task<SpecificationAttributeListModel> CustomPrepareCategorySpecificationAttributeListModelAsync(string entityType, int categoryId, SpecificationAttributeSearchModel searchModel, SpecificationAttributeGroup group)
         {
-            if (searchModel == null)
-                throw new ArgumentNullException(nameof(searchModel));
+           
+            ArgumentNullException.ThrowIfNull(searchModel);
+
             var specificationAttributes = (await _specificationAttributeService.GetSpecificationAttributesByGroupIdAsync(group?.Id)).ToPagedList(searchModel);
             var _filtersMappingByEntityService = EngineContext.Current.Resolve<IFiltersMappingByEntityService>();
             var model = await new SpecificationAttributeListModel().PrepareToGridAsync(searchModel, specificationAttributes, () =>
@@ -185,10 +185,8 @@ namespace Nop.Web.Areas.Admin.Factories
         public virtual async Task<SpecificationAttributeOptionListModel> CustomPrepareCategorySpecificationAttributeOptionListModelAsync(string entityType,
            SpecificationAttributeOptionSearchModel searchModel, SpecificationAttribute specificationAttribute)
         {
-            if (searchModel == null)
-                throw new ArgumentNullException(nameof(searchModel));
-            if (specificationAttribute == null)
-                throw new ArgumentNullException(nameof(specificationAttribute));
+            ArgumentNullException.ThrowIfNull(searchModel);
+            ArgumentNullException.ThrowIfNull(specificationAttribute); 
             var options = (await _specificationAttributeService
                 .GetSpecificationAttributeOptionsBySpecificationAttributeAsync(specificationAttribute.Id)).ToPagedList(searchModel);
             var _filtersMappingByEntityService = EngineContext.Current.Resolve<IFiltersMappingByEntityService>();
@@ -214,10 +212,9 @@ namespace Nop.Web.Areas.Admin.Factories
         public virtual async Task<SpecificationAttributeOptionProductListModel> CustomPrepareCategorySpecificationOptionUsedByProductsListModelAsync(
         SpecificationAttributeOptionProductSearchModel searchModel, SpecificationAttributeOption specificationAttributeOption)
         {
-            if (searchModel == null)
-                throw new ArgumentNullException(nameof(searchModel));
-            if (specificationAttributeOption == null)
-                throw new ArgumentNullException(nameof(specificationAttributeOption));
+            ArgumentNullException.ThrowIfNull(searchModel);
+            ArgumentNullException.ThrowIfNull(specificationAttributeOption);
+
             var _customSpecificationAttributeService = EngineContext.Current.Resolve<ICustomSpecificationAttributeService>();
             var products = (await _customSpecificationAttributeService.CustomGetProductsSpecificationAttributeOptionByCategoryWiseAsync(searchModel.SearchCategoryId, specificationAttributeOption.Id
                 )).ToPagedList(searchModel);

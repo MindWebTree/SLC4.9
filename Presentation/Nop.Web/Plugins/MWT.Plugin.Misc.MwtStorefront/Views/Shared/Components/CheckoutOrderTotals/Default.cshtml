@@ -1,10 +1,10 @@
 ﻿@using MWT.Nop.Core.Domain.Orders
- 
+
 
 @model OrderTotalsModel
 @inject Nop.Services.Catalog.IPriceFormatter _priceFormatter;
 @inject Nop.Core.IWorkContext _workContext;
-@inject Nop.Services.Common.IAddressService   _addressService;
+@inject Nop.Services.Common.IAddressService _addressService;
 @inject Nop.Core.IWorkContext _workContext
 @inject Nop.Services.Orders.IShoppingCartService _shoppingCartService
 @{
@@ -66,82 +66,82 @@
             <td class="cart-total-left a-left" colspan="2">
                 <label>
                     @T("ShoppingCart.Totals.MemberShipFee.Discount") @{
-                        var discountSummary = Model.DiscountSummary.Where(d => d.Type == DiscountType.MemberShipFeeDiscount).FirstOrDefault();
-                        if (discountSummary != null)
-                        {
+                    var discountSummary = Model.DiscountSummary.Where(d => d.Type == DiscountType.MemberShipFeeDiscount).FirstOrDefault();
+                    if (discountSummary != null)
+                    {
 
-                            <span class="offer-info summary-offer-info">
+                        <span class="offer-info summary-offer-info">
 
-                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
-                                    <path d="M8.48658 9.80442C8.44601 9.79305 8.3996 9.80273 8.36841 9.82962C7.50124 10.5994 7.24845 10.694 7.17991 10.6989C7.17131 10.6996 7.15225 10.6916 7.12705 10.6665C7.09539 10.6356 7.07833 10.5951 7.07449 10.5425C7.04806 10.1763 7.29686 9.04559 7.81396 7.1817C8.24824 5.62301 8.28865 5.3069 8.28128 5.20502C8.27037 5.05288 8.19476 4.93471 8.05692 4.85357C7.92568 4.77658 7.74573 4.74585 7.5226 4.76198C7.14641 4.78918 6.69861 4.94731 6.19165 5.23222C6.04673 5.31382 5.89568 5.4114 5.74293 5.52204C5.34 5.81402 5.11902 6.25813 5.1516 6.70977C5.15421 6.74681 5.18325 6.77831 5.22505 6.78999C5.267 6.80151 5.31387 6.79076 5.34384 6.76279C5.74369 6.39106 6.01001 6.16316 6.13571 6.08525C6.26987 6.00227 6.38942 5.95663 6.49146 5.94925C6.52911 5.94648 6.54801 5.9451 6.55247 6.00765C6.55846 6.09078 6.54525 6.19021 6.51328 6.30254C5.75614 8.91358 5.41146 10.5044 5.45909 11.1658C5.47538 11.3906 5.56236 11.5653 5.71788 11.6855C5.87524 11.8074 6.081 11.8602 6.32888 11.8423C6.59888 11.8227 6.92297 11.7036 7.31945 11.4782C7.51015 11.3697 7.75726 11.1944 8.054 10.9571C8.40391 10.6771 8.58801 10.2862 8.55912 9.88448C8.55635 9.84775 8.52807 9.8164 8.48658 9.80442Z" fill="white" />
-                                    <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
-                                </svg>
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#444444" />
+                                <path d="M8.48658 9.80442C8.44601 9.79305 8.3996 9.80273 8.36841 9.82962C7.50124 10.5994 7.24845 10.694 7.17991 10.6989C7.17131 10.6996 7.15225 10.6916 7.12705 10.6665C7.09539 10.6356 7.07833 10.5951 7.07449 10.5425C7.04806 10.1763 7.29686 9.04559 7.81396 7.1817C8.24824 5.62301 8.28865 5.3069 8.28128 5.20502C8.27037 5.05288 8.19476 4.93471 8.05692 4.85357C7.92568 4.77658 7.74573 4.74585 7.5226 4.76198C7.14641 4.78918 6.69861 4.94731 6.19165 5.23222C6.04673 5.31382 5.89568 5.4114 5.74293 5.52204C5.34 5.81402 5.11902 6.25813 5.1516 6.70977C5.15421 6.74681 5.18325 6.77831 5.22505 6.78999C5.267 6.80151 5.31387 6.79076 5.34384 6.76279C5.74369 6.39106 6.01001 6.16316 6.13571 6.08525C6.26987 6.00227 6.38942 5.95663 6.49146 5.94925C6.52911 5.94648 6.54801 5.9451 6.55247 6.00765C6.55846 6.09078 6.54525 6.19021 6.51328 6.30254C5.75614 8.91358 5.41146 10.5044 5.45909 11.1658C5.47538 11.3906 5.56236 11.5653 5.71788 11.6855C5.87524 11.8074 6.081 11.8602 6.32888 11.8423C6.59888 11.8227 6.92297 11.7036 7.31945 11.4782C7.51015 11.3697 7.75726 11.1944 8.054 10.9571C8.40391 10.6771 8.58801 10.2862 8.55912 9.88448C8.55635 9.84775 8.52807 9.8164 8.48658 9.80442Z" fill="white" />
+                                <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
+                            </svg>
 
-                            </span>
+                        </span>
 
-                            <span class="discount-info in">
-                                <div class="discount-info-inner">
-                                    <h4>@discountSummary.Heading</h4><span class="close-discount-info">×</span><span>
-                                        @if (!string.IsNullOrEmpty(discountSummary.Description))
-                                        {
-                                            <h3>@Html.Raw(discountSummary.Description)</h3>
-                                        }
-                                        @Html.Raw(discountSummary.Summary)
-                                </div>
-                            </span>
-                        }
+                        <span class="discount-info in">
+                            <div class="discount-info-inner">
+                                <h4>@discountSummary.Heading</h4><span class="close-discount-info">×</span><span>
+                                    @if (!string.IsNullOrEmpty(discountSummary.Description))
+                                    {
+                                        <h3>@Html.Raw(discountSummary.Description)</h3>
+                                    }
+                                    @Html.Raw(discountSummary.Summary)
+                            </div>
+                        </span>
                     }
+                }
 
-                </label>
-            </td>
-            <td class="cart-total-right a-right">
-                <span class="value-summary discount">@Model.MemberShipFeeDiscount</span>
+            </label>
+        </td>
+        <td class="cart-total-right a-right">
+            <span class="value-summary discount">@Model.MemberShipFeeDiscount</span>
 
-            </td>
-        </tr>
-    }
+        </td>
+    </tr>
+        }
     @if (!string.IsNullOrEmpty(Model.MemberShipDiscount))
     {
         <tr class="order-subtotal-discount">
             <td class="cart-total-left a-left" colspan="2">
                 <label>
                     @T("ShoppingCart.Totals.MemberShipDiscount")  @{
-                        var discountSummary = Model.DiscountSummary.Where(d => d.Type == DiscountType.MemberShipDiscount).FirstOrDefault();
-                        if (discountSummary != null)
-                        {
+                    var discountSummary = Model.DiscountSummary.Where(d => d.Type == DiscountType.MemberShipDiscount).FirstOrDefault();
+                    if (discountSummary != null)
+                    {
 
-                            <span class="offer-info summary-offer-info">
+                        <span class="offer-info summary-offer-info">
 
-                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
-                                    <path d="M8.48658 9.80442C8.44601 9.79305 8.3996 9.80273 8.36841 9.82962C7.50124 10.5994 7.24845 10.694 7.17991 10.6989C7.17131 10.6996 7.15225 10.6916 7.12705 10.6665C7.09539 10.6356 7.07833 10.5951 7.07449 10.5425C7.04806 10.1763 7.29686 9.04559 7.81396 7.1817C8.24824 5.62301 8.28865 5.3069 8.28128 5.20502C8.27037 5.05288 8.19476 4.93471 8.05692 4.85357C7.92568 4.77658 7.74573 4.74585 7.5226 4.76198C7.14641 4.78918 6.69861 4.94731 6.19165 5.23222C6.04673 5.31382 5.89568 5.4114 5.74293 5.52204C5.34 5.81402 5.11902 6.25813 5.1516 6.70977C5.15421 6.74681 5.18325 6.77831 5.22505 6.78999C5.267 6.80151 5.31387 6.79076 5.34384 6.76279C5.74369 6.39106 6.01001 6.16316 6.13571 6.08525C6.26987 6.00227 6.38942 5.95663 6.49146 5.94925C6.52911 5.94648 6.54801 5.9451 6.55247 6.00765C6.55846 6.09078 6.54525 6.19021 6.51328 6.30254C5.75614 8.91358 5.41146 10.5044 5.45909 11.1658C5.47538 11.3906 5.56236 11.5653 5.71788 11.6855C5.87524 11.8074 6.081 11.8602 6.32888 11.8423C6.59888 11.8227 6.92297 11.7036 7.31945 11.4782C7.51015 11.3697 7.75726 11.1944 8.054 10.9571C8.40391 10.6771 8.58801 10.2862 8.55912 9.88448C8.55635 9.84775 8.52807 9.8164 8.48658 9.80442Z" fill="white" />
-                                    <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
-                                </svg>
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#444444" />
+                                <path d="M8.48658 9.80442C8.44601 9.79305 8.3996 9.80273 8.36841 9.82962C7.50124 10.5994 7.24845 10.694 7.17991 10.6989C7.17131 10.6996 7.15225 10.6916 7.12705 10.6665C7.09539 10.6356 7.07833 10.5951 7.07449 10.5425C7.04806 10.1763 7.29686 9.04559 7.81396 7.1817C8.24824 5.62301 8.28865 5.3069 8.28128 5.20502C8.27037 5.05288 8.19476 4.93471 8.05692 4.85357C7.92568 4.77658 7.74573 4.74585 7.5226 4.76198C7.14641 4.78918 6.69861 4.94731 6.19165 5.23222C6.04673 5.31382 5.89568 5.4114 5.74293 5.52204C5.34 5.81402 5.11902 6.25813 5.1516 6.70977C5.15421 6.74681 5.18325 6.77831 5.22505 6.78999C5.267 6.80151 5.31387 6.79076 5.34384 6.76279C5.74369 6.39106 6.01001 6.16316 6.13571 6.08525C6.26987 6.00227 6.38942 5.95663 6.49146 5.94925C6.52911 5.94648 6.54801 5.9451 6.55247 6.00765C6.55846 6.09078 6.54525 6.19021 6.51328 6.30254C5.75614 8.91358 5.41146 10.5044 5.45909 11.1658C5.47538 11.3906 5.56236 11.5653 5.71788 11.6855C5.87524 11.8074 6.081 11.8602 6.32888 11.8423C6.59888 11.8227 6.92297 11.7036 7.31945 11.4782C7.51015 11.3697 7.75726 11.1944 8.054 10.9571C8.40391 10.6771 8.58801 10.2862 8.55912 9.88448C8.55635 9.84775 8.52807 9.8164 8.48658 9.80442Z" fill="white" />
+                                <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
+                            </svg>
 
-                            </span>
+                        </span>
 
-                            <span class="discount-info in">
-                                <div class="discount-info-inner">
-                                    <h4>@discountSummary.Heading</h4><span class="close-discount-info">×</span><span>
-                                        @if (!string.IsNullOrEmpty(discountSummary.Description))
-                                        {
-                                            <h3>@Html.Raw(discountSummary.Description)</h3>
-                                        }
-                                        @Html.Raw(discountSummary.Summary)
-                                </div>
-                            </span>
-                        }
+                        <span class="discount-info in">
+                            <div class="discount-info-inner">
+                                <h4>@discountSummary.Heading</h4><span class="close-discount-info">×</span><span>
+                                    @if (!string.IsNullOrEmpty(discountSummary.Description))
+                                    {
+                                        <h3>@Html.Raw(discountSummary.Description)</h3>
+                                    }
+                                    @Html.Raw(discountSummary.Summary)
+                            </div>
+                        </span>
                     }
+                }
 
-                </label>
-            </td>
-            <td class="cart-total-right a-right">
-                <span class="value-summary discount">@Model.MemberShipDiscount</span>
+            </label>
+        </td>
+        <td class="cart-total-right a-right">
+            <span class="value-summary discount">@Model.MemberShipDiscount</span>
 
-            </td>
-        </tr>
-    }
+        </td>
+    </tr>
+        }
     @if (!string.IsNullOrEmpty(Model.offerDiscount))
     {
         <tr class="order-subtotal-discount">
@@ -156,7 +156,7 @@
                             <span class="offer-info summary-offer-info">
 
                                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
+                                    <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#444444" />
                                     <path d="M8.48658 9.80442C8.44601 9.79305 8.3996 9.80273 8.36841 9.82962C7.50124 10.5994 7.24845 10.694 7.17991 10.6989C7.17131 10.6996 7.15225 10.6916 7.12705 10.6665C7.09539 10.6356 7.07833 10.5951 7.07449 10.5425C7.04806 10.1763 7.29686 9.04559 7.81396 7.1817C8.24824 5.62301 8.28865 5.3069 8.28128 5.20502C8.27037 5.05288 8.19476 4.93471 8.05692 4.85357C7.92568 4.77658 7.74573 4.74585 7.5226 4.76198C7.14641 4.78918 6.69861 4.94731 6.19165 5.23222C6.04673 5.31382 5.89568 5.4114 5.74293 5.52204C5.34 5.81402 5.11902 6.25813 5.1516 6.70977C5.15421 6.74681 5.18325 6.77831 5.22505 6.78999C5.267 6.80151 5.31387 6.79076 5.34384 6.76279C5.74369 6.39106 6.01001 6.16316 6.13571 6.08525C6.26987 6.00227 6.38942 5.95663 6.49146 5.94925C6.52911 5.94648 6.54801 5.9451 6.55247 6.00765C6.55846 6.09078 6.54525 6.19021 6.51328 6.30254C5.75614 8.91358 5.41146 10.5044 5.45909 11.1658C5.47538 11.3906 5.56236 11.5653 5.71788 11.6855C5.87524 11.8074 6.081 11.8602 6.32888 11.8423C6.59888 11.8227 6.92297 11.7036 7.31945 11.4782C7.51015 11.3697 7.75726 11.1944 8.054 10.9571C8.40391 10.6771 8.58801 10.2862 8.55912 9.88448C8.55635 9.84775 8.52807 9.8164 8.48658 9.80442Z" fill="white" />
                                     <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
                                 </svg>
@@ -190,108 +190,108 @@
             <td class="cart-total-left a-left" colspan="2">
                 <label>
                     @T("ShoppingCart.Totals.BuyMoreSaveMoreDiscount") @{
-                        var discountSummary = Model.DiscountSummary.Where(d => d.Type == DiscountType.BuyMoreSaveMoreDiscount).FirstOrDefault();
-                        if (discountSummary != null)
-                        {
+                    var discountSummary = Model.DiscountSummary.Where(d => d.Type == DiscountType.BuyMoreSaveMoreDiscount).FirstOrDefault();
+                    if (discountSummary != null)
+                    {
 
-                            <span class="offer-info summary-offer-info">
+                        <span class="offer-info summary-offer-info">
 
-                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
-                                    <path d="M8.48658 9.80442C8.44601 9.79305 8.3996 9.80273 8.36841 9.82962C7.50124 10.5994 7.24845 10.694 7.17991 10.6989C7.17131 10.6996 7.15225 10.6916 7.12705 10.6665C7.09539 10.6356 7.07833 10.5951 7.07449 10.5425C7.04806 10.1763 7.29686 9.04559 7.81396 7.1817C8.24824 5.62301 8.28865 5.3069 8.28128 5.20502C8.27037 5.05288 8.19476 4.93471 8.05692 4.85357C7.92568 4.77658 7.74573 4.74585 7.5226 4.76198C7.14641 4.78918 6.69861 4.94731 6.19165 5.23222C6.04673 5.31382 5.89568 5.4114 5.74293 5.52204C5.34 5.81402 5.11902 6.25813 5.1516 6.70977C5.15421 6.74681 5.18325 6.77831 5.22505 6.78999C5.267 6.80151 5.31387 6.79076 5.34384 6.76279C5.74369 6.39106 6.01001 6.16316 6.13571 6.08525C6.26987 6.00227 6.38942 5.95663 6.49146 5.94925C6.52911 5.94648 6.54801 5.9451 6.55247 6.00765C6.55846 6.09078 6.54525 6.19021 6.51328 6.30254C5.75614 8.91358 5.41146 10.5044 5.45909 11.1658C5.47538 11.3906 5.56236 11.5653 5.71788 11.6855C5.87524 11.8074 6.081 11.8602 6.32888 11.8423C6.59888 11.8227 6.92297 11.7036 7.31945 11.4782C7.51015 11.3697 7.75726 11.1944 8.054 10.9571C8.40391 10.6771 8.58801 10.2862 8.55912 9.88448C8.55635 9.84775 8.52807 9.8164 8.48658 9.80442Z" fill="white" />
-                                    <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
-                                </svg>
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#444444" />
+                                <path d="M8.48658 9.80442C8.44601 9.79305 8.3996 9.80273 8.36841 9.82962C7.50124 10.5994 7.24845 10.694 7.17991 10.6989C7.17131 10.6996 7.15225 10.6916 7.12705 10.6665C7.09539 10.6356 7.07833 10.5951 7.07449 10.5425C7.04806 10.1763 7.29686 9.04559 7.81396 7.1817C8.24824 5.62301 8.28865 5.3069 8.28128 5.20502C8.27037 5.05288 8.19476 4.93471 8.05692 4.85357C7.92568 4.77658 7.74573 4.74585 7.5226 4.76198C7.14641 4.78918 6.69861 4.94731 6.19165 5.23222C6.04673 5.31382 5.89568 5.4114 5.74293 5.52204C5.34 5.81402 5.11902 6.25813 5.1516 6.70977C5.15421 6.74681 5.18325 6.77831 5.22505 6.78999C5.267 6.80151 5.31387 6.79076 5.34384 6.76279C5.74369 6.39106 6.01001 6.16316 6.13571 6.08525C6.26987 6.00227 6.38942 5.95663 6.49146 5.94925C6.52911 5.94648 6.54801 5.9451 6.55247 6.00765C6.55846 6.09078 6.54525 6.19021 6.51328 6.30254C5.75614 8.91358 5.41146 10.5044 5.45909 11.1658C5.47538 11.3906 5.56236 11.5653 5.71788 11.6855C5.87524 11.8074 6.081 11.8602 6.32888 11.8423C6.59888 11.8227 6.92297 11.7036 7.31945 11.4782C7.51015 11.3697 7.75726 11.1944 8.054 10.9571C8.40391 10.6771 8.58801 10.2862 8.55912 9.88448C8.55635 9.84775 8.52807 9.8164 8.48658 9.80442Z" fill="white" />
+                                <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
+                            </svg>
 
-                            </span>
+                        </span>
 
-                            <span class="discount-info in">
-                                <div class="discount-info-inner">
-                                    <h4>@discountSummary.Heading</h4><span class="close-discount-info">×</span><span>
-                                        @if (!string.IsNullOrEmpty(discountSummary.Description))
-                                        {
-                                            <h3>@Html.Raw(discountSummary.Description)</h3>
-                                        }
-                                        @Html.Raw(discountSummary.Summary)
-                                </div>
-                            </span>
-                        }
+                        <span class="discount-info in">
+                            <div class="discount-info-inner">
+                                <h4>@discountSummary.Heading</h4><span class="close-discount-info">×</span><span>
+                                    @if (!string.IsNullOrEmpty(discountSummary.Description))
+                                    {
+                                        <h3>@Html.Raw(discountSummary.Description)</h3>
+                                    }
+                                    @Html.Raw(discountSummary.Summary)
+                            </div>
+                        </span>
                     }
+                }
 
-                </label>
-            </td>
-            <td class="cart-total-right a-right">
-                <span class="value-summary discount">@Model.BuyMoreSaveMoreDiscount</span>
+            </label>
+        </td>
+        <td class="cart-total-right a-right">
+            <span class="value-summary discount">@Model.BuyMoreSaveMoreDiscount</span>
 
-            </td>
-        </tr>
-    }
+        </td>
+    </tr>
+        }
     @if (!string.IsNullOrEmpty(Model.SubTotalDiscount))
     {
         <tr class="order-subtotal-discount">
             <td class="cart-total-left a-left" colspan="2">
                 <label>
                     @T("ShoppingCart.Totals.SubTotalDiscount")  @{
-                        var productDiscountSummary = Model.DiscountSummary.Where(d => d.Type == DiscountType.ProductCouponDiscount).FirstOrDefault();
-                        var discountSummary = Model.DiscountSummary.Where(d => d.Type == DiscountType.SubTotalCouponDiscount).FirstOrDefault();
-                        if (discountSummary != null || productDiscountSummary != null)
-                        {
+                    var productDiscountSummary = Model.DiscountSummary.Where(d => d.Type == DiscountType.ProductCouponDiscount).FirstOrDefault();
+                    var discountSummary = Model.DiscountSummary.Where(d => d.Type == DiscountType.SubTotalCouponDiscount).FirstOrDefault();
+                    if (discountSummary != null || productDiscountSummary != null)
+                    {
 
-                            <span class="offer-info summary-offer-info">
+                        <span class="offer-info summary-offer-info">
 
-                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
-                                    <path d="M8.48658 9.80442C8.44601 9.79305 8.3996 9.80273 8.36841 9.82962C7.50124 10.5994 7.24845 10.694 7.17991 10.6989C7.17131 10.6996 7.15225 10.6916 7.12705 10.6665C7.09539 10.6356 7.07833 10.5951 7.07449 10.5425C7.04806 10.1763 7.29686 9.04559 7.81396 7.1817C8.24824 5.62301 8.28865 5.3069 8.28128 5.20502C8.27037 5.05288 8.19476 4.93471 8.05692 4.85357C7.92568 4.77658 7.74573 4.74585 7.5226 4.76198C7.14641 4.78918 6.69861 4.94731 6.19165 5.23222C6.04673 5.31382 5.89568 5.4114 5.74293 5.52204C5.34 5.81402 5.11902 6.25813 5.1516 6.70977C5.15421 6.74681 5.18325 6.77831 5.22505 6.78999C5.267 6.80151 5.31387 6.79076 5.34384 6.76279C5.74369 6.39106 6.01001 6.16316 6.13571 6.08525C6.26987 6.00227 6.38942 5.95663 6.49146 5.94925C6.52911 5.94648 6.54801 5.9451 6.55247 6.00765C6.55846 6.09078 6.54525 6.19021 6.51328 6.30254C5.75614 8.91358 5.41146 10.5044 5.45909 11.1658C5.47538 11.3906 5.56236 11.5653 5.71788 11.6855C5.87524 11.8074 6.081 11.8602 6.32888 11.8423C6.59888 11.8227 6.92297 11.7036 7.31945 11.4782C7.51015 11.3697 7.75726 11.1944 8.054 10.9571C8.40391 10.6771 8.58801 10.2862 8.55912 9.88448C8.55635 9.84775 8.52807 9.8164 8.48658 9.80442Z" fill="white" />
-                                    <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
-                                </svg>
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#444444" />
+                                <path d="M8.48658 9.80442C8.44601 9.79305 8.3996 9.80273 8.36841 9.82962C7.50124 10.5994 7.24845 10.694 7.17991 10.6989C7.17131 10.6996 7.15225 10.6916 7.12705 10.6665C7.09539 10.6356 7.07833 10.5951 7.07449 10.5425C7.04806 10.1763 7.29686 9.04559 7.81396 7.1817C8.24824 5.62301 8.28865 5.3069 8.28128 5.20502C8.27037 5.05288 8.19476 4.93471 8.05692 4.85357C7.92568 4.77658 7.74573 4.74585 7.5226 4.76198C7.14641 4.78918 6.69861 4.94731 6.19165 5.23222C6.04673 5.31382 5.89568 5.4114 5.74293 5.52204C5.34 5.81402 5.11902 6.25813 5.1516 6.70977C5.15421 6.74681 5.18325 6.77831 5.22505 6.78999C5.267 6.80151 5.31387 6.79076 5.34384 6.76279C5.74369 6.39106 6.01001 6.16316 6.13571 6.08525C6.26987 6.00227 6.38942 5.95663 6.49146 5.94925C6.52911 5.94648 6.54801 5.9451 6.55247 6.00765C6.55846 6.09078 6.54525 6.19021 6.51328 6.30254C5.75614 8.91358 5.41146 10.5044 5.45909 11.1658C5.47538 11.3906 5.56236 11.5653 5.71788 11.6855C5.87524 11.8074 6.081 11.8602 6.32888 11.8423C6.59888 11.8227 6.92297 11.7036 7.31945 11.4782C7.51015 11.3697 7.75726 11.1944 8.054 10.9571C8.40391 10.6771 8.58801 10.2862 8.55912 9.88448C8.55635 9.84775 8.52807 9.8164 8.48658 9.80442Z" fill="white" />
+                                <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
+                            </svg>
 
-                            </span>
+                        </span>
 
-                            <span class="discount-info in">
-                                <div class="discount-info-inner">
-                                    <h4>
-                                        @(discountSummary != null ? discountSummary.Heading : productDiscountSummary.Heading)
-                                    </h4><span class="close-discount-info">×</span><span>
-                                        @if ((discountSummary != null && !string.IsNullOrEmpty(discountSummary.Description))
-|| (productDiscountSummary != null && !string.IsNullOrEmpty(productDiscountSummary.Description)))
-                                        {
-                                            <h3> @Html.Raw(discountSummary != null ? discountSummary.Description : productDiscountSummary.Description)</h3>
-                                        }
-                                        @if (discountSummary != null && !String.IsNullOrEmpty(discountSummary.Summary))
-                                        {
-                                            @Html.Raw(discountSummary.Summary)
-                                        }
-                                        @if (productDiscountSummary != null && !String.IsNullOrEmpty(productDiscountSummary.Summary))
-                                        {
-                                            @Html.Raw(productDiscountSummary.Summary)
-                                        }
-                                </div>
-                            </span>
-                        }
+                        <span class="discount-info in">
+                            <div class="discount-info-inner">
+                                <h4>
+                                    @(discountSummary != null ? discountSummary.Heading : productDiscountSummary.Heading)
+                                </h4><span class="close-discount-info">×</span><span>
+                                    @if ((discountSummary != null && !string.IsNullOrEmpty(discountSummary.Description))
+                                                                || (productDiscountSummary != null && !string.IsNullOrEmpty(productDiscountSummary.Description)))
+                                    {
+                                        <h3> @Html.Raw(discountSummary != null ? discountSummary.Description : productDiscountSummary.Description)</h3>
+                                    }
+                                    @if (discountSummary != null && !String.IsNullOrEmpty(discountSummary.Summary))
+                                    {
+                                        @Html.Raw(discountSummary.Summary)
+                                    }
+                                    @if (productDiscountSummary != null && !String.IsNullOrEmpty(productDiscountSummary.Summary))
+                                    {
+                                        @Html.Raw(productDiscountSummary.Summary)
+                                    }
+                            </div>
+                        </span>
                     }
+                }
 
-                </label>
-            </td>
-            <td class="cart-total-right a-right">
-                <span class="value-summary discount">@Model.SubTotalDiscount</span>
+            </label>
+        </td>
+        <td class="cart-total-right a-right">
+            <span class="value-summary discount">@Model.SubTotalDiscount</span>
 
-            </td>
-        </tr>
-    }
+        </td>
+    </tr>
+        }
     @if (Model.SelectedShippingMethod == @T("freeshipping.method.name").Value ||
-Model.SelectedShippingMethod == @T("WhiteGloveService.method.name").Value)
+        Model.SelectedShippingMethod == @T("WhiteGloveService.method.name").Value)
     {
-        <tr class="shipping-cost">
-            <td class="cart-total-left a-left" colspan="2">
-                @T("ShoppingCart.Totals.Shipping") @(Model.SelectedShippingMethod == T("freeshipping.method.name").Value
-            ? T("freeshipping.method.display", Model.SelectedShippingMethod) :
-            string.IsNullOrEmpty(Model.SelectedShippingMethod)?"":
-            T("Promo.Shipping.Content"))
+    <tr class="shipping-cost">
+        <td class="cart-total-left a-left" colspan="2">
+            @T("ShoppingCart.Totals.Shipping") @(Model.SelectedShippingMethod == T("freeshipping.method.name").Value
+                        ? T("freeshipping.method.display", Model.SelectedShippingMethod) :
+                        string.IsNullOrEmpty(Model.SelectedShippingMethod) ? "" :
+                        T("Promo.Shipping.Content"))
 
-            </td>
+        </td>
 
             <td class="cart-total-right a-right">
                 <span class="value-summary">
-                    @if (Model.SelectedShippingMethod == @T("freeshipping.method.name").Value)
+                @if (Model.SelectedShippingMethod == @T("freeshipping.method.name").Value)
                     {
                         @Html.Raw(Model.Shipping)
                     }
@@ -305,7 +305,7 @@ Model.SelectedShippingMethod == @T("WhiteGloveService.method.name").Value)
         </tr>
     }
     @if (!Model.HideShippingTotal && !string.IsNullOrEmpty(Model.Shipping)
-&& !string.IsNullOrEmpty(Model.SelectedShippingMethod) && Model.SelectedShippingMethod != @T("freeshipping.method.name").Value)
+        && !string.IsNullOrEmpty(Model.SelectedShippingMethod) && Model.SelectedShippingMethod != @T("freeshipping.method.name").Value)
     {
         <tr class="shipping-cost">
             <td class="cart-total-left a-left" colspan="2">
@@ -338,7 +338,7 @@ Model.SelectedShippingMethod == @T("WhiteGloveService.method.name").Value)
                     <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.Shipping.AdditionalFee.help")">
 
                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
+                            <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#444444" />
                             <path d="M8.48658 9.80442C8.44601 9.79305 8.3996 9.80273 8.36841 9.82962C7.50124 10.5994 7.24845 10.694 7.17991 10.6989C7.17131 10.6996 7.15225 10.6916 7.12705 10.6665C7.09539 10.6356 7.07833 10.5951 7.07449 10.5425C7.04806 10.1763 7.29686 9.04559 7.81396 7.1817C8.24824 5.62301 8.28865 5.3069 8.28128 5.20502C8.27037 5.05288 8.19476 4.93471 8.05692 4.85357C7.92568 4.77658 7.74573 4.74585 7.5226 4.76198C7.14641 4.78918 6.69861 4.94731 6.19165 5.23222C6.04673 5.31382 5.89568 5.4114 5.74293 5.52204C5.34 5.81402 5.11902 6.25813 5.1516 6.70977C5.15421 6.74681 5.18325 6.77831 5.22505 6.78999C5.267 6.80151 5.31387 6.79076 5.34384 6.76279C5.74369 6.39106 6.01001 6.16316 6.13571 6.08525C6.26987 6.00227 6.38942 5.95663 6.49146 5.94925C6.52911 5.94648 6.54801 5.9451 6.55247 6.00765C6.55846 6.09078 6.54525 6.19021 6.51328 6.30254C5.75614 8.91358 5.41146 10.5044 5.45909 11.1658C5.47538 11.3906 5.56236 11.5653 5.71788 11.6855C5.87524 11.8074 6.081 11.8602 6.32888 11.8423C6.59888 11.8227 6.92297 11.7036 7.31945 11.4782C7.51015 11.3697 7.75726 11.1944 8.054 10.9571C8.40391 10.6771 8.58801 10.2862 8.55912 9.88448C8.55635 9.84775 8.52807 9.8164 8.48658 9.80442Z" fill="white" />
                             <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
                         </svg>
@@ -360,7 +360,7 @@ Model.SelectedShippingMethod == @T("WhiteGloveService.method.name").Value)
                 <span class="offer-info summary-offer-info">
 
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
+                        <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#444444" />
                         <path d="M8.48658 9.80442C8.44601 9.79305 8.3996 9.80273 8.36841 9.82962C7.50124 10.5994 7.24845 10.694 7.17991 10.6989C7.17131 10.6996 7.15225 10.6916 7.12705 10.6665C7.09539 10.6356 7.07833 10.5951 7.07449 10.5425C7.04806 10.1763 7.29686 9.04559 7.81396 7.1817C8.24824 5.62301 8.28865 5.3069 8.28128 5.20502C8.27037 5.05288 8.19476 4.93471 8.05692 4.85357C7.92568 4.77658 7.74573 4.74585 7.5226 4.76198C7.14641 4.78918 6.69861 4.94731 6.19165 5.23222C6.04673 5.31382 5.89568 5.4114 5.74293 5.52204C5.34 5.81402 5.11902 6.25813 5.1516 6.70977C5.15421 6.74681 5.18325 6.77831 5.22505 6.78999C5.267 6.80151 5.31387 6.79076 5.34384 6.76279C5.74369 6.39106 6.01001 6.16316 6.13571 6.08525C6.26987 6.00227 6.38942 5.95663 6.49146 5.94925C6.52911 5.94648 6.54801 5.9451 6.55247 6.00765C6.55846 6.09078 6.54525 6.19021 6.51328 6.30254C5.75614 8.91358 5.41146 10.5044 5.45909 11.1658C5.47538 11.3906 5.56236 11.5653 5.71788 11.6855C5.87524 11.8074 6.081 11.8602 6.32888 11.8423C6.59888 11.8227 6.92297 11.7036 7.31945 11.4782C7.51015 11.3697 7.75726 11.1944 8.054 10.9571C8.40391 10.6771 8.58801 10.2862 8.55912 9.88448C8.55635 9.84775 8.52807 9.8164 8.48658 9.80442Z" fill="white" />
                         <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
                     </svg>
@@ -447,40 +447,40 @@ Model.SelectedShippingMethod == @T("WhiteGloveService.method.name").Value)
         <tr class="discount-total">
             <td class="cart-total-left a-left" colspan="2">
                 @T("ShoppingCart.Totals.OrderTotalDiscount") @{
-                    var discountSummary = Model.DiscountSummary.Where(d => d.Type == DiscountType.OrderDiscount).FirstOrDefault();
-                    if (discountSummary != null)
-                    {
+                var discountSummary = Model.DiscountSummary.Where(d => d.Type == DiscountType.OrderDiscount).FirstOrDefault();
+                if (discountSummary != null)
+                {
 
-                        <span class="offer-info summary-offer-info">
+                    <span class="offer-info summary-offer-info">
 
-                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#CCCCCC" />
-                                <path d="M8.48658 9.80442C8.44601 9.79305 8.3996 9.80273 8.36841 9.82962C7.50124 10.5994 7.24845 10.694 7.17991 10.6989C7.17131 10.6996 7.15225 10.6916 7.12705 10.6665C7.09539 10.6356 7.07833 10.5951 7.07449 10.5425C7.04806 10.1763 7.29686 9.04559 7.81396 7.1817C8.24824 5.62301 8.28865 5.3069 8.28128 5.20502C8.27037 5.05288 8.19476 4.93471 8.05692 4.85357C7.92568 4.77658 7.74573 4.74585 7.5226 4.76198C7.14641 4.78918 6.69861 4.94731 6.19165 5.23222C6.04673 5.31382 5.89568 5.4114 5.74293 5.52204C5.34 5.81402 5.11902 6.25813 5.1516 6.70977C5.15421 6.74681 5.18325 6.77831 5.22505 6.78999C5.267 6.80151 5.31387 6.79076 5.34384 6.76279C5.74369 6.39106 6.01001 6.16316 6.13571 6.08525C6.26987 6.00227 6.38942 5.95663 6.49146 5.94925C6.52911 5.94648 6.54801 5.9451 6.55247 6.00765C6.55846 6.09078 6.54525 6.19021 6.51328 6.30254C5.75614 8.91358 5.41146 10.5044 5.45909 11.1658C5.47538 11.3906 5.56236 11.5653 5.71788 11.6855C5.87524 11.8074 6.081 11.8602 6.32888 11.8423C6.59888 11.8227 6.92297 11.7036 7.31945 11.4782C7.51015 11.3697 7.75726 11.1944 8.054 10.9571C8.40391 10.6771 8.58801 10.2862 8.55912 9.88448C8.55635 9.84775 8.52807 9.8164 8.48658 9.80442Z" fill="white" />
-                                <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
-                            </svg>
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#444444" />
+                            <path d="M8.48658 9.80442C8.44601 9.79305 8.3996 9.80273 8.36841 9.82962C7.50124 10.5994 7.24845 10.694 7.17991 10.6989C7.17131 10.6996 7.15225 10.6916 7.12705 10.6665C7.09539 10.6356 7.07833 10.5951 7.07449 10.5425C7.04806 10.1763 7.29686 9.04559 7.81396 7.1817C8.24824 5.62301 8.28865 5.3069 8.28128 5.20502C8.27037 5.05288 8.19476 4.93471 8.05692 4.85357C7.92568 4.77658 7.74573 4.74585 7.5226 4.76198C7.14641 4.78918 6.69861 4.94731 6.19165 5.23222C6.04673 5.31382 5.89568 5.4114 5.74293 5.52204C5.34 5.81402 5.11902 6.25813 5.1516 6.70977C5.15421 6.74681 5.18325 6.77831 5.22505 6.78999C5.267 6.80151 5.31387 6.79076 5.34384 6.76279C5.74369 6.39106 6.01001 6.16316 6.13571 6.08525C6.26987 6.00227 6.38942 5.95663 6.49146 5.94925C6.52911 5.94648 6.54801 5.9451 6.55247 6.00765C6.55846 6.09078 6.54525 6.19021 6.51328 6.30254C5.75614 8.91358 5.41146 10.5044 5.45909 11.1658C5.47538 11.3906 5.56236 11.5653 5.71788 11.6855C5.87524 11.8074 6.081 11.8602 6.32888 11.8423C6.59888 11.8227 6.92297 11.7036 7.31945 11.4782C7.51015 11.3697 7.75726 11.1944 8.054 10.9571C8.40391 10.6771 8.58801 10.2862 8.55912 9.88448C8.55635 9.84775 8.52807 9.8164 8.48658 9.80442Z" fill="white" />
+                            <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
+                        </svg>
 
-                        </span>
+                    </span>
 
-                        <span class="discount-info in">
-                            <div class="discount-info-inner">
-                                <h4>@discountSummary.Heading</h4><span class="close-discount-info">×</span><span>
-                                    @if (!string.IsNullOrEmpty(discountSummary.Description))
-                                    {
-                                        <h3>@Html.Raw(discountSummary.Description)</h3>
-                                    }
-                                    @Html.Raw(discountSummary.Summary)
-                            </div>
-                        </span>
-                    }
+                    <span class="discount-info in">
+                        <div class="discount-info-inner">
+                            <h4>@discountSummary.Heading</h4><span class="close-discount-info">×</span><span>
+                                @if (!string.IsNullOrEmpty(discountSummary.Description))
+                                {
+                                    <h3>@Html.Raw(discountSummary.Description)</h3>
+                                }
+                                @Html.Raw(discountSummary.Summary)
+                        </div>
+                    </span>
                 }
+            }
 
-            </td>
-            <td class="cart-total-right a-right">
-                <span class="value-summary discount">@Model.OrderTotalDiscount</span>
+        </td>
+        <td class="cart-total-right a-right">
+            <span class="value-summary discount">@Model.OrderTotalDiscount</span>
 
-            </td>
-        </tr>
-    }
+        </td>
+    </tr>
+        }
     @if (Model.GiftCards.Count > 0)
     {
         foreach (var gc in Model.GiftCards)

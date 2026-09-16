@@ -5,7 +5,7 @@ using Nop.Services.Media;
 namespace Nop.Web.Areas.Admin.Controllers
 {
     public partial class PictureController : BaseAdminController
-    { 
+    {
         #region Methods
 
         [HttpPost]
@@ -45,14 +45,16 @@ namespace Nop.Web.Areas.Admin.Controllers
             }
             else
             {
+                var picture = await _pictureService.GetPictureByIdAsync(pictureId); 
                 var _downloadService = EngineContext.Current.Resolve<IDownloadService>();
                 var pictureBinary = await _downloadService.GetDownloadBitsAsync(httpPostedFile);
-                var pictureupdated = await _pictureService.UpdatePictureAsync(pictureId, pictureBinary, qqFileName,null);
+                var contentType = httpPostedFile?.ContentType.ToLowerInvariant();
+                var pictureupdated = await _pictureService.UpdatePictureAsync(pictureId, pictureBinary, contentType, picture.SeoFilename);
                 return Json(new
                 {
                     success = true,
                     pictureId = pictureupdated.Id,
-                    imageUrl = (await _pictureService.GetPictureUrlAsync(pictureupdated, 100)).Url+$"?updated={DateTime.Now.Ticks}"
+                    imageUrl = (await _pictureService.GetPictureUrlAsync(pictureupdated, 100)).Url + $"?updated={DateTime.Now.Ticks}"
                 });
             }
 

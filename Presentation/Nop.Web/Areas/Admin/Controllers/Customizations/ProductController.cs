@@ -2502,7 +2502,7 @@ public partial class ProductController : BaseAdminController
     }
 
     [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
-    public virtual async Task<IActionResult> CustomProductPictureUpdate(ProductPictureModel model)
+    public virtual async Task<IActionResult>    CustomProductPictureUpdate(ProductPictureModel model)
     { 
         //try to get a product picture with the specified id
         var productPicture = await _productService.GetProductPictureByIdAsync(model.Id)
@@ -2749,7 +2749,7 @@ public partial class ProductController : BaseAdminController
     {
         return View(new LogProductPictureSearchModel()
         {
-            ProductId = productId
+            ProductId = productId   
         });
     }
     public virtual async Task<IActionResult> ProductPictureAddUpdatePopup(ProductPictureModel? model)

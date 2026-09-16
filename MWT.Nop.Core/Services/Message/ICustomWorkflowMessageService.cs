@@ -98,5 +98,9 @@ namespace MWT.Nop.Core.Services.Message
      string paymentMethod
      );
         #endregion
+
+        #region Schedule Task
+        Task<IList<int>> SendScheduledTaskFailedNotificationAsync(string taskName, string errorMessage, int languageId);
+        #endregion
     }
 }

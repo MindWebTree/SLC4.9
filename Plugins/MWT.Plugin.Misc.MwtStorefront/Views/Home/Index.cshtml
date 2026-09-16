@@ -6,6 +6,7 @@
 @inject Nop.Services.Configuration.ISettingService _settingService;
 @inject SeoSettings seoSettings
 @inject Nop.Core.IWebHelper webHelper
+@inject ICustomWorkContext customWorkContext;
 @{
     Layout = "_ColumnsOne";
     var controllerName = this.ViewContext.RouteData.Values["controller"].ToString();
@@ -53,7 +54,7 @@
         else
         {
             <div class="banner-section homepagebannersection-version2">
-                @if (!_useragentContext.IsMobileDevice())
+                @if (!customWorkContext.IsMobileDevice())
                 {
                     @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "Desktop.Home.Page.Slider" })
                 }

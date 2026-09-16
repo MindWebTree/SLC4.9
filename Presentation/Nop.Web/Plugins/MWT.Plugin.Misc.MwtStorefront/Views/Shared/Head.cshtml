@@ -6,7 +6,6 @@
 @inject IUserAgentHelper userAgentHelper
 
 @{
-    Layout ="";
     var themeName = await themeContext.GetWorkingThemeNameAsync();
     var supportRtl = await Html.ShouldUseRtlThemeAsync();
 

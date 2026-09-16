@@ -1328,6 +1328,43 @@ namespace MWT.Nop.Core.Services.Message
         }
 
         #endregion
+
+        #region TaskFailed
+        public virtual async Task<IList<int>> SendScheduledTaskFailedNotificationAsync(string taskName, string errorMessage, int languageId)
+        {
+            var store = await _storeContext.GetCurrentStoreAsync();
+            var messageTemplates = await GetActiveMessageTemplatesAsync("ScheduledTask.FailedNotification", store.Id);
+
+            if (!messageTemplates.Any())
+                return new List<int>();
+
+            // Create custom tokens for the email body
+            var commonTokens = new List<Token>
+            {
+                new Token("Task.Name", taskName),
+                new Token("Task.ErrorMessage", errorMessage, true) // true allows HTML formatting if needed
+            };
+
+            // Fallback to store email if admin hasn't set a specific support email
+            var storeEmail = await _settingService.GetSettingByKeyAsync<string>("store.email");
+
+            return await messageTemplates.SelectAwait(async messageTemplate =>
+            {
+                var emailAccount = await GetEmailAccountOfMessageTemplateAsync(messageTemplate, languageId);
+
+                var tokens = new List<Token>(commonTokens);
+                await _customMessageTokenProvider.AddStoreTokensAsync(tokens, store, emailAccount, languageId);
+                await _customMessageTokenProvider.AddStoreLogoToken(tokens);
+
+                await _eventPublisher.MessageTokensAddedAsync(messageTemplate, tokens);
+
+                var toEmail = string.IsNullOrEmpty(storeEmail) ? emailAccount.Email : storeEmail;
+                var toName = emailAccount.DisplayName;
+
+                return await SendNotificationAsync(messageTemplate, emailAccount, languageId, tokens, toEmail, toName);
+            }).ToListAsync();
+        }
+        #endregion
     }
 
 }
