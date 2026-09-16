@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using MWT.Nop.Core.Domain.CustomOrders;
+using MWT.Nop.Core.Services.Customizations.CustomOrders;
 using Nop.Plugin.Payments.PayPalCommerce.Domain;
 using Nop.Plugin.Payments.PayPalCommerce.Models.Admin;
 using Nop.Plugin.Payments.PayPalCommerce.Models.Public;
@@ -21,6 +22,7 @@ public class PayPalCommerceModelFactory
     private readonly ILocalizationService _localizationService;
     private readonly PayPalCommerceServiceManager _serviceManager;
     private readonly PayPalCommerceSettings _settings;
+    private readonly ICustomOrderService _customOrderService;
 
     #endregion
 
@@ -29,12 +31,14 @@ public class PayPalCommerceModelFactory
     public PayPalCommerceModelFactory(ICheckoutModelFactory checkoutModelFactory,
         ILocalizationService localizationService,
         PayPalCommerceServiceManager serviceManager,
-        PayPalCommerceSettings settings)
+        PayPalCommerceSettings settings,
+        ICustomOrderService customOrderService)
     {
         _checkoutModelFactory = checkoutModelFactory;
         _localizationService = localizationService;
         _serviceManager = serviceManager;
         _settings = settings;
+        _customOrderService = customOrderService;
     }
 
     #endregion
@@ -76,7 +80,7 @@ public class PayPalCommerceModelFactory
     /// A task that represents the asynchronous operation
     /// The task result contains the payment info model
     /// </returns>
-    public async Task<PaymentInfoModel> PreparePaymentInfoModelAsync(ButtonPlacement placement, int? productId = null,CustomOrder customOrder = null)
+    public async Task<PaymentInfoModel> PreparePaymentInfoModelAsync(ButtonPlacement placement, int? productId = null, CustomOrder customOrder = null)
     {
         var (((scriptUrl, clientToken, userToken), (email, name), (messageConfig, amount), (isRecurring, isShippable)), _) = await _serviceManager
             .PreparePaymentDetailsAsync(_settings, placement, productId, customOrder);
@@ -136,9 +140,10 @@ public class PayPalCommerceModelFactory
     /// A task that represents the asynchronous operation
     /// The task result contains the check result; error message if exists
     /// </returns>
-    public async Task<(bool ShippingIsRequired, string Error)> CheckShippingIsRequiredAsync(int? productId)
+    public async Task<(bool ShippingIsRequired, string Error)> CheckShippingIsRequiredAsync(int? productId, int invoiceId = 0)
     {
-        return await _serviceManager.CheckShippingIsRequiredAsync(productId);
+        return await _serviceManager.CheckShippingIsRequiredAsync(productId, invoiceId == 0 ? null :
+            await this._customOrderService.GetById(invoiceId));
     }
 
     /// <summary>
@@ -153,16 +158,16 @@ public class PayPalCommerceModelFactory
     /// A task that represents the asynchronous operation
     /// The task result contains the order model
     /// </returns>
-    public async Task<OrderModel> PrepareOrderModelAsync(ButtonPlacement placement, string orderId, string paymentSource, int? cardId, bool saveCard,int invoiceId)
+    public async Task<OrderModel> PrepareOrderModelAsync(ButtonPlacement placement, string orderId, string paymentSource, int? cardId, bool saveCard, int invoiceId)
     {
         var model = new OrderModel();
         (model.CheckoutIsEnabled, model.LoginIsRequired, _) = await _serviceManager.CheckoutIsEnabledAsync(invoiceId);
 
         //get the order or create a new one
         var (order, error) = string.IsNullOrEmpty(orderId)
-            ? invoiceId==0? await _serviceManager.CreateOrderAsync(_settings, placement, paymentSource, cardId, saveCard)
-            :await _serviceManager.CreateCustomOrderAsync(_settings, placement, paymentSource, cardId, saveCard,invoiceId)
-            : await _serviceManager.GetOrderAsync(_settings, orderId);
+            ? invoiceId == 0 ? await _serviceManager.CreateOrderAsync(_settings, placement, paymentSource, cardId, saveCard)
+            : await _serviceManager.CreateCustomOrderAsync(_settings, placement, paymentSource, cardId, saveCard, invoiceId)
+            : await _serviceManager.GetOrderAsync(_settings, orderId, invoiceId);
         if (!string.IsNullOrEmpty(error) || order is null)
         {
             model.Error = string.IsNullOrEmpty(error)
@@ -211,7 +216,7 @@ public class PayPalCommerceModelFactory
     /// A task that represents the asynchronous operation
     /// The task result contains the order approved model
     /// </returns>
-    public async Task<OrderApprovedModel> PrepareOrderApprovedModelAsync(string orderId, string liabilityShift,int invoiceId)
+    public async Task<OrderApprovedModel> PrepareOrderApprovedModelAsync(string orderId, string liabilityShift, int invoiceId)
     {
         var model = new OrderApprovedModel();
         (model.CheckoutIsEnabled, model.LoginIsRequired, var cart) = await _serviceManager.CheckoutIsEnabledAsync(invoiceId);
@@ -287,7 +292,7 @@ public class PayPalCommerceModelFactory
     /// A task that represents the asynchronous operation
     /// The task result contains the order completed model
     /// </returns>
-    public async Task<OrderCompletedModel> PrepareOrderCompletedModelAsync(string orderId, string liabilityShift,int invoiceId)
+    public async Task<OrderCompletedModel> PrepareOrderCompletedModelAsync(string orderId, string liabilityShift, int invoiceId)
     {
         var model = new OrderCompletedModel();
         if (invoiceId == 0)
@@ -297,49 +302,67 @@ public class PayPalCommerceModelFactory
             if (cart?.Any() != true)
                 return model;
 
-            //first place an order
-            var ((nopOrder, order), error) = await _serviceManager.PlaceOrderAsync(_settings, orderId, liabilityShift);
-            if (!string.IsNullOrEmpty(error))
-                model.Error = error;
-            else if (order is null)
-                model.Error = await _localizationService.GetResourceAsync("Plugins.Payments.PayPalCommerce.Order.Error");
-            else
-                model.OrderId = nopOrder.Id.ToString();
-
-            if (nopOrder is null || order is null)
+            var (validated, validateError) = await _serviceManager.ValidateOrderAsync(_settings, orderId, liabilityShift);
+            if (!string.IsNullOrEmpty(validateError))
+            {
+                model.Error = validateError;
                 return model;
+            }
 
-            //then confirm the placed order
+
+            var (capturedOrder, captureError) = await _serviceManager.CapturePaymentAsync(_settings, validated.Order);
+            if (!string.IsNullOrEmpty(captureError))
+            {
+                model.Error = captureError;   //payment failed — no NopOrder was ever created
+                return model;
+            }
+
+            var ((nopOrder, order), placeError) = await _serviceManager.PlaceNopOrderAsync(validated.PaymentRequest, capturedOrder, validated.TokenId);
+            if (!string.IsNullOrEmpty(placeError))
+            {
+                model.Error = placeError;
+                return model;
+            }
+            model.OrderId = nopOrder.Id.ToString();
+
             var (_, warning) = await _serviceManager.ConfirmOrderAsync(_settings, nopOrder, order);
             if (!string.IsNullOrEmpty(warning))
                 model.Warning = warning;
-
             return model;
         }
         else
         {
-            
+
             (model.CheckoutIsEnabled, model.LoginIsRequired, var cart) = await _serviceManager.CheckoutIsEnabledAsync(invoiceId);
-            if (cart?.Any() != true )
+            if (cart?.Any() != true)
                 return model;
 
-            //first place an order
-            var ((nopOrder, order), error) = await _serviceManager.PlaceCustomOrderAsync(_settings, orderId, liabilityShift,invoiceId);
-            if (!string.IsNullOrEmpty(error))
-                model.Error = error;
-            else if (order is null)
-                model.Error = await _localizationService.GetResourceAsync("Plugins.Payments.PayPalCommerce.Order.Error");
-            else
-                model.OrderId = nopOrder.Id.ToString();
-
-            if (nopOrder is null || order is null)
+            var (validated, validateError) = await _serviceManager.ValidateCustomOrderAsync(_settings, orderId, liabilityShift,invoiceId);
+            if (!string.IsNullOrEmpty(validateError))
+            {
+                model.Error = validateError;
                 return model;
+            }
 
-            //then confirm the placed order
-            var (_, warning) = await _serviceManager.ConfirmOrderAsync(_settings, nopOrder, order,invoiceId);
+
+            var (capturedOrder, captureError) = await _serviceManager.CapturePaymentAsync(_settings, validated.Order);
+            if (!string.IsNullOrEmpty(captureError))
+            {
+                model.Error = captureError;   //payment failed — no NopOrder was ever created
+                return model;
+            }
+
+            var ((nopOrder, order), placeError) = await _serviceManager.PlaceCustomNopOrderAsync(validated.PaymentRequest, capturedOrder, validated.TokenId, invoiceId);
+            if (!string.IsNullOrEmpty(placeError))
+            {
+                model.Error = placeError;
+                return model;
+            }
+            model.OrderId = nopOrder.Id.ToString();
+
+            var (_, warning) = await _serviceManager.ConfirmOrderAsync(_settings, nopOrder, order, invoiceId);
             if (!string.IsNullOrEmpty(warning))
                 model.Warning = warning;
-
             return model;
 
         }

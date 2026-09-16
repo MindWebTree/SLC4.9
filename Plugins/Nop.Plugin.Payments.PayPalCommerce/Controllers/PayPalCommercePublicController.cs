@@ -53,12 +53,14 @@ public class PayPalCommercePublicController : BasePublicController
     }
 
     [CheckLanguageSeoCode(ignore: true)]
-    public async Task<IActionResult> ValidateShoppingCart()
+    public async Task<IActionResult> ValidateShoppingCart(int InvoiceId)
     {
-        var warnings = await _modelFactory.GetShoppingCartWarningsAsync();
-        if (warnings?.Any() ?? false)
-            return ErrorJson(warnings.ToArray());
-
+        if (InvoiceId == 0)
+        {
+            var warnings = await _modelFactory.GetShoppingCartWarningsAsync();
+            if (warnings?.Any() ?? false)
+                return ErrorJson(warnings.ToArray());
+        }
         return Json(new { success = true });
     }
 
@@ -104,7 +106,7 @@ public class PayPalCommercePublicController : BasePublicController
 
     [HttpPost]
     public async Task<IActionResult> ApproveOrder(string orderId, string liabilityShift, int invoiceId)
-    {
+        {
         var model = await _modelFactory.PrepareOrderApprovedModelAsync(orderId, liabilityShift, invoiceId);
         if (model.LoginIsRequired)
             return Json(new { redirect = Url.RouteUrl(NopRouteNames.General.LOGIN, new { returnUrl = Url.RouteUrl(NopRouteNames.General.CART) }) });
@@ -309,9 +311,9 @@ public class PayPalCommercePublicController : BasePublicController
     }
 
     [HttpPost]
-    public async Task<IActionResult> CheckGoogleShipping(int placement, int? productId)
+    public async Task<IActionResult> CheckGoogleShipping(int placement, int? productId,int invoiceId)
     {
-        var (shippingIsRequired, error) = await _modelFactory.CheckShippingIsRequiredAsync(productId);
+        var (shippingIsRequired, error) = await _modelFactory.CheckShippingIsRequiredAsync(productId, invoiceId);
         if (!string.IsNullOrEmpty(error))
             return ErrorJson(error);
 
