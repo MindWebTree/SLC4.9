@@ -214,7 +214,7 @@ public class PayPalCommerceServiceManager
 
             return (default, exception.Message);
         }
-        }
+    }
 
     #region Components
 
@@ -1578,8 +1578,7 @@ public class PayPalCommerceServiceManager
     #region Components
 
     public async Task<((string ScriptUrl, string ClientToken, string UserToken),
-    string Error)>
-    PreparePaymentScriptsAsync(PayPalCommerceSettings settings, ButtonPlacement placement, int? productId)
+    string Error)> PreparePaymentScriptsAsync(PayPalCommerceSettings settings, ButtonPlacement placement, int? productId, int invoiceId = 0)
     {
         return await HandleFunctionAsync(async () =>
         {
@@ -1589,10 +1588,22 @@ public class PayPalCommerceServiceManager
                 return ((string.Empty, string.Empty, string.Empty));
 
             //customer details
-            var customer = await _workContext.GetCurrentCustomerAsync();
+
+            var customer = new Customer();
+
+            if (invoiceId == 0)
+                customer = await _workContext.GetCurrentCustomerAsync();
+            else
+            {
+                var customOrder = await this._customOrderService.GetById(invoiceId);
+                if (customOrder == null)
+                    return ((string.Empty, string.Empty, string.Empty));
+                customer = await this._customerService.GetCustomerByIdAsync(customOrder.CustomerId ?? 0);
+                if (customer == null)
+                    return ((string.Empty, string.Empty, string.Empty));
+
+            }
             var isGuest = await _customerService.IsGuestAsync(customer);
-
-
             //prepare script components
             var components = new List<string>() { "buttons", "funding-eligibility" };
             if (placement == ButtonPlacement.PaymentMethod && settings.UseCardFields)
@@ -3261,20 +3272,20 @@ public class PayPalCommerceServiceManager
 
             //best-effort: stamp PayPal's order with our human-readable order number.
             //non-critical — payment was already captured, so a failure here shouldn't fail the whole confirmation
-            try
-            {
-                var patch = new Patch<object>
-                {
-                    Op = PatchOpType.REPLACE.ToString().ToLower(),
-                    Path = "/purchase_units/@reference_id=='default'/invoice_id",
-                    Value = nopOrder.CustomOrderNumber
-                };
-                var updateRequest = new UpdateOrderRequest<object>([patch]) { OrderId = order.Id };
-                await _httpClient.RequestAsync<UpdateOrderRequest<object>, EmptyResponse>(updateRequest, settings);
-            }
-            catch (Exception ex)
-            {
-            }
+            //try
+            //{
+            //    var patch = new Patch<object>
+            //    {
+            //        Op = PatchOpType.REPLACE.ToString().ToLower(),
+            //        Path = "/purchase_units/@reference_id=='default'/invoice_id",
+            //        Value = nopOrder.CustomOrderNumber
+            //    };
+            //    var updateRequest = new UpdateOrderRequest<object>([patch]) { OrderId = order.Id };
+            //    await _httpClient.RequestAsync<UpdateOrderRequest<object>, EmptyResponse>(updateRequest, settings);
+            //}
+            //catch (Exception ex)
+            //{
+            //}
 
             var purchaseUnit = order.PurchaseUnits.FirstOrDefault()
                 ?? throw new NopException("Failed to get PayPal order info");

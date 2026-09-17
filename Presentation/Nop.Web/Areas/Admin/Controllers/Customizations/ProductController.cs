@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MWT.Nop.Core.Domain;
 using MWT.Nop.Core.Domain.Catalog;
 using MWT.Nop.Core.Domain.Media;
+using MWT.Nop.Core.Infrastructure;
 using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Core.Services;
 using MWT.Nop.Core.Services.Catalog;
@@ -99,6 +100,7 @@ public partial class ProductController : BaseAdminController
 
             //product
             var product = model.ToEntity<Product>();
+            product.Name = CustomCommonHelper.FixTitle(product.Name);
             product.CreatedOnUtc = DateTime.UtcNow;
             product.UpdatedOnUtc = DateTime.UtcNow;
             await _productService.InsertProductAsync(product);
@@ -246,6 +248,7 @@ public partial class ProductController : BaseAdminController
             product = model.ToEntity(product);
 
             product.UpdatedOnUtc = DateTime.UtcNow;
+            product.Name = CustomCommonHelper.FixTitle(product.Name);
             await _productService.UpdateProductAsync(product);
 
             if (product.ATCRecommendType == ATCRecommendType.SimilarItems || product.ATCRecommendType == ATCRecommendType.Collection || product.ATCRecommendType == ATCRecommendType.None)
@@ -1138,15 +1141,10 @@ public partial class ProductController : BaseAdminController
 
             }
         }
-
-
-
-
-
         variant.OldPrice = model.OldPrice;
         variant.Price = model.Price;
         variant.Msrp = model.Msrp;
-        variant.Title = model.Title;
+        variant.Title = CustomCommonHelper.FixTitle(model.Title);
         variant.EnableSurcharge = model.EnableSurcharge;
         variant.EstimatedDeliveryDate = model.EstimatedDeliveryDate;
         variant.WgsRequired = model.WgsRequired;
@@ -2387,7 +2385,7 @@ public partial class ProductController : BaseAdminController
     [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
     public virtual async Task<IActionResult> CustomProductPictureAdd(int pictureId, int displayOrder,
   string overrideAltAttribute, string overrideTitleAttribute, int productId, bool displayOnListingModules = false, bool hideOnProductPage = false, bool displayOnCategoryPage = false, bool isDimensionImage = false)
-    { 
+    {
         if (pictureId == 0)
             throw new ArgumentException();
 
@@ -2468,7 +2466,7 @@ public partial class ProductController : BaseAdminController
         //    #endregion
         //}
 
-        var pictureLog = new  LogPicture()
+        var pictureLog = new LogPicture()
         {
             AltAttribute = picture.AltAttribute,
             IsNew = picture.IsNew,
@@ -2502,8 +2500,8 @@ public partial class ProductController : BaseAdminController
     }
 
     [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
-    public virtual async Task<IActionResult>    CustomProductPictureUpdate(ProductPictureModel model)
-    { 
+    public virtual async Task<IActionResult> CustomProductPictureUpdate(ProductPictureModel model)
+    {
         //try to get a product picture with the specified id
         var productPicture = await _productService.GetProductPictureByIdAsync(model.Id)
             ?? throw new ArgumentException("No product picture found with the specified id");
@@ -2586,7 +2584,7 @@ public partial class ProductController : BaseAdminController
         }
         else
         {
-            pictureLog = new  LogPicture()
+            pictureLog = new LogPicture()
             {
                 AltAttribute = picture.AltAttribute,
                 IsNew = picture.IsNew,
@@ -2726,11 +2724,11 @@ public partial class ProductController : BaseAdminController
 
         return new NullJsonResult();
     }
-    [HttpPost] 
+    [HttpPost]
     [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
 
     public virtual async Task<IActionResult> ProductPictureLogList(LogProductPictureSearchModel searchModel)
-    { 
+    {
         //try to get a product with the specified id
         var product = await _productService.GetProductByIdAsync(searchModel.ProductId)
             ?? throw new ArgumentException("No product found with the specified id");
@@ -2749,7 +2747,7 @@ public partial class ProductController : BaseAdminController
     {
         return View(new LogProductPictureSearchModel()
         {
-            ProductId = productId   
+            ProductId = productId
         });
     }
     public virtual async Task<IActionResult> ProductPictureAddUpdatePopup(ProductPictureModel? model)
@@ -2852,7 +2850,7 @@ string overrideAltAttribute, string overrideTitleAttribute, int productId, bool 
 
             #region Product Picture Log
 
-            var pictureLog = new  LogPicture()
+            var pictureLog = new LogPicture()
             {
                 AltAttribute = picture.AltAttribute,
                 IsNew = picture.IsNew,
@@ -2888,6 +2886,6 @@ string overrideAltAttribute, string overrideTitleAttribute, int productId, bool 
 
     #endregion
 
- 
+
 
 }

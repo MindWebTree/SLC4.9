@@ -57,7 +57,7 @@ namespace Nop.Services.Customizations.Orders.Consumer
             await this._customerActivityService.InsertActivityAsync("CustomerRelatedActivity", String.Format(customerInsertActivityFormat, eventMessage.Entity.Id, eventMessage.Entity.CreatedOnUtc.ToString("dd MMM yyyy")), null);
             if (eventMessage.Entity.PaymentStatus == Core.Domain.Payments.PaymentStatus.Pending)
             {
-                if (!eventMessage.Entity.PaymentMethodSystemName.Contains("CashOnDelivery", StringComparison.InvariantCultureIgnoreCase))
+                if (eventMessage.Entity.PaymentMethodSystemName.Contains("authorize", StringComparison.InvariantCultureIgnoreCase))
                 {
                     var customer = await _customerService.GetCustomerByIdAsync(eventMessage.Entity.CustomerId);
                     await _workflowMessageService.SendSupportPendingOrderEmailMessage(customer, (await this._workContext.GetWorkingLanguageAsync()).Id, eventMessage.Entity.CaptureTransactionId ?? string.Empty,

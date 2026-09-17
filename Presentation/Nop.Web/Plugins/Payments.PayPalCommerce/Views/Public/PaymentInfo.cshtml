@@ -85,12 +85,12 @@
         approveCallback({
             orderID: orderId,
             liabilityShift: 'YES'
-        });
+        },null,false);
 
-       
+
     }
 
-      
+
         if (isCartPage) {
             //hide buttons in shopping cart according to the settings
             if ($('#checkout').length > 0) {
@@ -215,7 +215,7 @@
     //                 $.ajax({
     //                     async: false,
     //                     type: 'POST',
-    // url: '@(Url.Action("GetOrderStatus", "PayPalCommercePublic",new { invoiceid=Model.InvoiceId}))',
+    // url: '@(Url.Action("GetOrderStatus", "PayPalCommercePublic", new { invoiceid = Model.InvoiceId }))',
     // data: postData,
     //                     success: function (data, textStatus, jqXHR) {
     //                         if (data.error) {
@@ -557,7 +557,8 @@
         return orderId;
     }
 
-    function approveCallback(data, actions) {
+    function approveCallback(data, actions,defaultRedirect=true) {
+
         var redirectUrl = '';
 
         //check liability shift
@@ -584,7 +585,7 @@
                     redirectUrl = data.redirect;
                 } else {
                     displayBarNotification(data.error, 'error', 0);
-                    
+
                 }
             },
             complete: function (jqXHR, textStatus) {
@@ -599,9 +600,11 @@
                 }
             }
         });
-        if(redirectUrl!=""){
+
+        if(defaultRedirect || redirectUrl!=''){
         setLocation(redirectUrl);
         }
+
     }
 
     function cancelCallback(data) {
