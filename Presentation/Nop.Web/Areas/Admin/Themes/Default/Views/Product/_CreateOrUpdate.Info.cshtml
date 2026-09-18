@@ -5,12 +5,26 @@
 @using Nop.Core.Domain.Catalog;
 @using Nop.Services
 @using Nop.Services.Stores
-
+@inject ICustomizationFormSerivce _customizationFormService
 @using Nop.Services.Security
 @inject IPermissionService _permissionService
 
 @{
-   
+    var customizationFormTemplates = await _customizationFormService.GetAllProductCustomizationFormTemplatesAsync();
+    var availableCustomizationFormTemplates = new List<SelectListItem>();
+    availableCustomizationFormTemplates.Add(new SelectListItem()
+    {
+        Value = "0",
+        Text = "Please select"
+    });
+    foreach (var customizationFormTemplate in customizationFormTemplates)
+    {
+        availableCustomizationFormTemplates.Add(new SelectListItem()
+        {
+            Text = customizationFormTemplate.Name,
+            Value = customizationFormTemplate.Id.ToString()
+        });
+    }
 
     var stores = await storeService.GetAllStoresAsync();
 }
@@ -24,10 +38,10 @@
     $(function() {
         @if (!Model.IsLoggedInAsVendor)
         {
-                    <text>
-                    $("#@Html.IdFor(model => model.ShowOnHomepage)").click(toggleShowOnHomepage);
-                    toggleShowOnHomepage();
-                    </text>
+                        <text>
+                        $("#@Html.IdFor(model => model.ShowOnHomepage)").click(toggleShowOnHomepage);
+                        toggleShowOnHomepage();
+                        </text>
         }
         $("#@Html.IdFor(model => model.ProductTypeId)").change(toggleProductType);
         toggleProductType();
@@ -66,7 +80,7 @@
 
             @if (Model.Id > 0)
             {
-                        <text>updateTableWidth('#associatedproducts-grid');</text>
+                            <text>updateTableWidth('#associatedproducts-grid');</text>
             }
 
             $('#@Html.IdFor(model => model.VisibleIndividually)').prop('checked', true);
@@ -85,11 +99,11 @@
         var productTypeSupportedValues = {};
         @foreach (var kvp in Model.ProductsTypesSupportedByProductTemplates)
         {
-                    <text>productTypeSupportedValues['@(kvp.Key)'] = {};</text>
-                    foreach (var item in kvp.Value)
-                    {
-                                <text>productTypeSupportedValues['@(kvp.Key)']['@(item.Value)'] = '@Html.Raw(JavaScriptEncoder.Default.Encode((item.Text)))';</text>
-                    }
+                        <text>productTypeSupportedValues['@(kvp.Key)'] = {};</text>
+                        foreach (var item in kvp.Value)
+                        {
+                                        <text>productTypeSupportedValues['@(kvp.Key)']['@(item.Value)'] = '@Html.Raw(JavaScriptEncoder.Default.Encode((item.Text)))';</text>
+                        }
         }
         var productTemplateDropddown = $("#@Html.IdFor(model => model.ProductTemplateId)");
         var productTemplateSelectedValue = productTemplateDropddown.val();
@@ -175,7 +189,7 @@
                 @<div>
             @if (await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_INFO_NAME) || !await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_SEO))
             {
-                <div class="form-group row" @(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_INFO_NAME)) ? "card-hide" : "")">
+                <div class="form-group row @(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_INFO_NAME)) ? "card-hide" : "")">
                     <div class="col-md-3">
                         <nop-label asp-for="@Model.Locales[item].Name" />
                     </div>
@@ -185,7 +199,7 @@
                     </div>
                 </div>
             }
-            <div class="form-group row" @(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_INFO_DESCRIPTION)) ? "card-hide" : "")">
+            <div class="form-group row @(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_INFO_DESCRIPTION)) ? "card-hide" : "")">
                 <div class="col-md-3">
                     <nop-label asp-for="@Model.Locales[item].ShortDescription" />
                 </div>
@@ -194,7 +208,7 @@
                     <span asp-validation-for="@Model.Locales[item].ShortDescription"></span>
                 </div>
             </div>
-            <div class="form-group row" @(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_INFO_DESCRIPTION)) ? "card-hide" : "")">
+            <div class="form-group row @(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_INFO_DESCRIPTION)) ? "card-hide" : "")">
                 <div class="col-md-3">
                     <nop-label asp-for="@Model.Locales[item].FullDescription" />
                 </div>
@@ -225,7 +239,7 @@
                     </div>
                 </div>
             }
-            <div class="form-group row" @(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_INFO_DESCRIPTION)) ? "card-hide" : "")">
+            <div class="form-group row @(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_INFO_DESCRIPTION)) ? "card-hide" : "")">
                 <div class="col-md-3">
                     <nop-label asp-for="ShortDescription" />
                 </div>
@@ -234,7 +248,7 @@
                     <span asp-validation-for="ShortDescription"></span>
                 </div>
             </div>
-            <div class="form-group row" @(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_INFO_DESCRIPTION)) ? "card-hide" : "")">
+            <div class="form-group row @(!(await _permissionService.AuthorizeAsync(StandardPermission.CustomPermission.CUSTOM_ACCESS_PRODUCT_INFO_DESCRIPTION)) ? "card-hide" : "")">
                 <div class="col-md-3">
                     <nop-label asp-for="FullDescription" />
                 </div>
@@ -288,10 +302,10 @@
                         closeOnSelect: false,
                         @if (!Model.AvailableCategories.Any())
                         {
-                                <text>
-                                disabled: true,
-                                placeholder: '@T("Admin.Catalog.Products.Fields.Categories.NoCategoriesAvailable")',
-                                </text>
+                                    <text>
+                                    disabled: true,
+                                    placeholder: '@T("Admin.Catalog.Products.Fields.Categories.NoCategoriesAvailable")',
+                                    </text>
                         }
                     });
                 });
@@ -310,10 +324,10 @@
                         closeOnSelect: false,
                         @if (!Model.AvailableManufacturers.Any())
                         {
-                                <text>
-                                disabled: true,
-                                placeholder: '@T("Admin.Catalog.Products.Fields.Manufacturers.NoManufacturersAvailable")',
-                                </text>
+                                    <text>
+                                    disabled: true,
+                                    placeholder: '@T("Admin.Catalog.Products.Fields.Manufacturers.NoManufacturersAvailable")',
+                                    </text>
                         }
                     });
                 });
@@ -560,10 +574,10 @@
                                 closeOnSelect: false,
                                 @if (!Model.AvailableStores.Any())
                                 {
-                                        <text>
-                                        disabled: true,
-                                        placeholder: 'No stores available',
-                                        </text>
+                                            <text>
+                                            disabled: true,
+                                            placeholder: 'No stores available',
+                                            </text>
                                 }
                             });
                         });

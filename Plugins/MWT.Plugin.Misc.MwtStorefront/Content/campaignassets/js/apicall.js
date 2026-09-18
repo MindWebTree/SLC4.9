@@ -11,7 +11,7 @@ $(document).ready(function () {
     var Conversionurl = "/CampaignManagement/ConversionPopup";
     var Exiturl = "/CampaignManagement/ExitPopup";
     var URL = window.location.href;
-    var html = '<div class="campaign-popup-wrapper-fixed hide-element"><div class="campaign-popup-wrapper"><div class="campaign-popup-body"><button class="close-campaign-popup" id="close-campaign-popup"><span aria-hidden="true">×</span></button><div class="campaign-popup-body-html"></div></div></div></div><style type="text/css">#close-campaign-popup{position: fixed;}</style>';
+    var html = '<div inert class="campaign-popup-wrapper-fixed hide-element"><div class="campaign-popup-wrapper"><div class="campaign-popup-body"><button class="close-campaign-popup" id="close-campaign-popup"><span>×</span></button><div class="campaign-popup-body-html"></div></div></div></div><style type="text/css">#close-campaign-popup{position: fixed;}</style>';
     var CampaignId, usercountry, ip, city, duration_Days = '';
     var emailregexpattern = new RegExp("^.+@.+\..+$");
     var phoneRegexpattern = new RegExp("^[0-9]{3}-[0-9]{3}-[0-9]{4}$");
@@ -129,8 +129,8 @@ $(document).ready(function () {
     });
     function ShowPopup(htmlContent, fireImpression) {
         $(".campaign-popup-body-html").html(htmlContent);
-        $(".campaign-popup-wrapper-fixed").removeClass('hide-element');
-
+        $(".campaign-popup-wrapper-fixed").removeClass('hide-element').removeAttr("inert");
+ 
         if (isPopupDisplayed != true && fireImpression != false) {
             CampaignImpression(CampaignId, ip, usercountry, city, duration_Days, false);
         }
@@ -231,7 +231,10 @@ $(document).ready(function () {
         hideCampaign();
     });
     function hideCampaign() {
-        $(".campaign-popup-wrapper-fixed").addClass('hide-element');
+ 
+        var popup = $(".campaign-popup-wrapper-fixed"); 
+        popup.addClass("hide-element");
+        popup.attr("inert", "");
         if (isPopupDisplayed != true) {
             isPopupDisplayed = true;
 
@@ -269,7 +272,8 @@ $(document).ready(function () {
         ShowPopup(htmlContent);
     });
     $(document).on("click", "#close-thanks-campaign-popup", function () {
-        $(".campaign-popup-wrapper-fixed").addClass('hide-element');
+        $(".campaign-popup-wrapper-fixed").addClass('hide-element')
+            .prop("inert", true);
     });
 
     $(document).on("click", ".product-offer-info", function (e) {
@@ -337,7 +341,8 @@ $(document).ready(function () {
         }
     });
     $(document).on("click", ".pay-full", function () {
-        $(".campaign-popup-wrapper-fixed").addClass('hide-element');
+        $(".campaign-popup-wrapper-fixed").addClass('hide-element')
+            .prop("inert", true);
     });
     //$('html').mouseleave(function (e) {
     //    if (e.clientY < 0) {

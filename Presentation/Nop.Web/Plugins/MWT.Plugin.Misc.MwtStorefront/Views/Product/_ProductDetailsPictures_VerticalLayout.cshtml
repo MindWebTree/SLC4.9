@@ -44,7 +44,7 @@
                                 }
                                 <div class="image-block">
                                     <a class="thumb-item @(imgCount == 0 ? " img-selected" : "")
-            @(picture.IsDimensionImage ? "dimension-image" : "")" data-zoom-id="product-magiczoom" href="@picture.FullSizeImageUrl"
+                                                                                                                        @(picture.IsDimensionImage ? "dimension-image" : "")" data-zoom-id="product-magiczoom" href="@picture.FullSizeImageUrl"
                                        data-image="@picture.ImageUrl" alt="@($"{picture.AlternateText} - image {picturesCount} of {tatalPictures}")" title="@($"{picture.AlternateText} - image {picturesCount} of {tatalPictures}")" type="button" aria-pressed="false" role="button">
                                         <img data-index="@imgCount" class="lazy" width="100" height="100" src="/images/pixel.png" data-src="@picture.ThumbImageUrl"
                                              alt="@($"{picture.AlternateText} - image {picturesCount} of {tatalPictures}")" data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
@@ -57,7 +57,7 @@
 
                         }
                     </div>
-                 
+
                 </div>
                 <script asp-location="Footer">
                     function getGallerySlickSettings() {
@@ -96,6 +96,18 @@
                     $(document).ready(function () {
                        var $thumbSlider = $('.thumb-slick .subimagescontainer');
                         $thumbSlider.slick(getGallerySlickSettings());
+
+
+                        $('#product-magiczoom').on('keydown', function (event) {
+                            if (event.key === 'Enter' || event.keyCode === 13) {
+                                event.preventDefault();
+
+                                // Tell the MagicZoom API directly to expand this specific gallery
+                                if (typeof MagicZoom !== 'undefined') {
+                                    MagicZoom.expand('product-magiczoom');
+                                }
+                            }
+                        });
 
                         $(document).on('click', '.thumb-Video, .thumb-item', function (e) {
                             $("#product-magiczoom .overlay-text").removeClass("show");
@@ -211,7 +223,12 @@
 
                             if (e.key === ' ' || e.key === 'Enter') {
                                 e.preventDefault();
-                                $(this).trigger('click');
+                                 var r = this.getBoundingClientRect();
+                                var o = { bubbles: true, cancelable: true, view: window, button: 0,
+                                          clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 };
+                                this.dispatchEvent(new MouseEvent('mousedown', o));
+                                this.dispatchEvent(new MouseEvent('mouseup', o));
+                                this.dispatchEvent(new MouseEvent('click', o));
                             }
                         });
 
@@ -382,9 +399,64 @@
                 onZoomIn: function () {
                 },
                 onZoomOut: function () {
+                },
+                onExpandOpen: function () {
+                        var b = document.querySelector('.mz-expand .mz-button-next');
+                        if (b) { b.setAttribute('tabindex', '0'); b.focus(); }
                 }
             };
+            (function () {
+            function vis(el) { return el && el.getClientRects().length > 0; }
+            function popup() { var p = document.querySelector('.mz-expand'); return vis(p) ? p : null; }
 
+            // Tab order: Close -> Previous -> Next
+            function buttons(p) {
+                var list = [];
+                ['.mz-button-next', '.mz-button-prev', '.mz-button-close'].forEach(function (s) {
+                    var b = p.querySelector(s);
+                    if (vis(b)) { b.setAttribute('tabindex', '0'); list.push(b); }
+                });
+                return list;
+            }
+
+            // Magic Zoom ignores a plain click, so send what a real mouse sends
+            function press(b) {
+                var r = b.getBoundingClientRect();
+                var o = { bubbles: true, cancelable: true, view: window, button: 0, buttons: 1,
+                          clientX: r.left + r.width / 2, clientY: r.top + r.height / 2,
+                          pointerId: 1, pointerType: 'mouse', isPrimary: true };
+                var P = window.PointerEvent || MouseEvent;
+                b.dispatchEvent(new P('pointerdown', o));
+                b.dispatchEvent(new MouseEvent('mousedown', o));
+                o.buttons = 0;
+                b.dispatchEvent(new P('pointerup', o));
+                b.dispatchEvent(new MouseEvent('mouseup', o));
+                b.dispatchEvent(new P('click', o));
+            }
+
+            window.addEventListener('keydown', function (e) {
+                var p = popup();
+                if (!p) return;
+                var list = buttons(p);
+                if (!list.length) return;
+                var i = list.indexOf(document.activeElement);
+
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    i = e.shiftKey ? (i <= 0 ? list.length - 1 : i - 1) : (i + 1) % list.length;
+                    list[i].focus();
+                }
+                else if ((e.key === 'Enter' || e.key === ' ') && i > -1) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    if (e.repeat) return;
+
+                    var b = list[i];
+                    press(b);
+                }
+            }, true);
+        })();
         function patchMagicZoomAccessibility(zoomObject) {
             var mainImg = document.querySelector('figure.mz-figure > img');
             if (mainImg) {
