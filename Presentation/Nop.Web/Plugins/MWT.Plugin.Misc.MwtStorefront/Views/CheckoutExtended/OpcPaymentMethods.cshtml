@@ -156,9 +156,9 @@ else if (ViewData["Step"] == null)
             {
                 @Html.Raw(!string.IsNullOrEmpty(addressLine) ? addressLine : "----")
             }
-            <a tabindex="0" onclick="PaymentMethod.billingLoad(); return false;" id="edit-billing-address" aria-label="Edit Billing Address">
-                @Html.Raw(string.IsNullOrEmpty(addressLine) ? "<i class='fas fa-add'></i>" : "<i class='fas fa-edit'></i>") @T((string.IsNullOrEmpty(addressLine) ? "checkout.btn.Add" : "common.edit"))
-            </a>
+            <button class="shipping-address-edit" type="button" tabindex="0" onclick="PaymentMethod.billingLoad(); return false;" id="edit-billing-address" aria-label="Edit Billing Address">
+                  @T((string.IsNullOrEmpty(addressLine) ? "checkout.btn.Add" : "common.edit"))
+            </button>
         </p>
     </div>
     <div class="section-payment-methods">

@@ -22,18 +22,6 @@ $(".wishlist-icon").keydown(function (event) {
         this.click();
     }
 });
-$(document).ready(function () {
-    $('#product-magiczoom').on('keydown', function (event) {
-        if (event.key === 'Enter' || event.keyCode === 13) {
-            event.preventDefault();
-
-            // Tell the MagicZoom API directly to expand this specific gallery
-            if (typeof MagicZoom !== 'undefined') {
-                MagicZoom.expand('product-magiczoom');
-            }
-        }
-    });
-});
 
 //$('.filterDesktopIcon').on('click keydown', function (e) {
 //    if (e.type === 'click' || e.key === 'Enter' || e.key === ' ') {

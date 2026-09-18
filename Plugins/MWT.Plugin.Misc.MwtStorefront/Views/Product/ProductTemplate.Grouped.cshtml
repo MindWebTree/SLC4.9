@@ -92,7 +92,7 @@
                 <div class="row mx-0">
                     <div class="col-sm-6 product-image">
                         <div class="product-gallery">
-                            <h1 itemprop="name" class="allow-copy-content" data-bs-toggle="tooltip" data-bs-placement="top" title="@T("Common.CopyContent.Help")">
+                            <h1 tabindex="0" itemprop="name" class="allow-copy-content" data-bs-toggle="tooltip" data-bs-placement="top" title="@T("Common.CopyContent.Help")">
                                 @Model.Name
                             </h1>
                             @if (!string.IsNullOrEmpty(Model.Sku))
@@ -108,7 +108,7 @@
                     <div class="col-sm-6 product-details">
 
                         @await Html.PartialAsync("_Discontinued", Model)
-                        <h1 itemprop="name" class="allow-copy-content" data-bs-toggle="tooltip" data-bs-placement="top" title="@T("Common.CopyContent.Help")">
+                        <h1 tabindex="0" itemprop="name" class="allow-copy-content" data-bs-toggle="tooltip" data-bs-placement="top" title="@T("Common.CopyContent.Help")">
                             @Model.Name
                         </h1>
                         @if (!string.IsNullOrEmpty(Model.Sku))
