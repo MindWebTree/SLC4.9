@@ -51,7 +51,7 @@ public class ScriptViewComponent : NopViewComponent
         _serviceManager = serviceManager;
         _httpContextAccessor = httpContextAccessor;
         _orderSettings = orderSettings;
-        _nopUrlHelper=nopUrlHelper;
+        _nopUrlHelper = nopUrlHelper;
     }
 
     #endregion
@@ -69,6 +69,8 @@ public class ScriptViewComponent : NopViewComponent
     /// </returns>
     public async Task<IViewComponentResult> InvokeAsync(string widgetZone, object additionalData)
     {
+
+
         var customer = await _workContext.GetCurrentCustomerAsync();
         var store = await _storeContext.GetCurrentStoreAsync();
         if (!await _paymentPluginManager.IsPluginActiveAsync(PayPalCommerceDefaults.SystemName, customer, store?.Id ?? 0))
@@ -83,19 +85,24 @@ public class ScriptViewComponent : NopViewComponent
             return Content(string.Empty);
         }
 
+        int invoiceId = 0;
         var path = _httpContextAccessor.HttpContext?.Request.Path.Value;
         var isOnePageCheckout =
             path?.Equals(_orderSettings.OnePageCheckoutEnabled ? "/onepagecheckout" : "/checkout", StringComparison.OrdinalIgnoreCase) == true;
-        if(!isOnePageCheckout)
+        if (!isOnePageCheckout)
         {
             isOnePageCheckout = path?.Equals("/checkoutCustomOrder", StringComparison.OrdinalIgnoreCase) == true;
+            if (isOnePageCheckout)
+                int.TryParse(_httpContextAccessor.HttpContext?.Request.Query["orderid"].ToString(), out invoiceId);
         }
         if (!isOnePageCheckout)
         {
             return Content(string.Empty);
         }
-        
-        var ((script, clientToken, userToken), _) = await _serviceManager.PreparePaymentScriptsAsync(_settings, ButtonPlacement.PaymentMethod, null);
+
+
+
+        var ((script, clientToken, userToken), _) = await _serviceManager.PreparePaymentScriptsAsync(_settings, ButtonPlacement.PaymentMethod, null, invoiceId);
 
 
         var contentBuilder = new HtmlContentBuilder();

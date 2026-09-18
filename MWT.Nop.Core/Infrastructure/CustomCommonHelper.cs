@@ -1,13 +1,6 @@
-﻿using Nop.Core;
-using Nop.Core.Domain.Catalog;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace MWT.Nop.Core.Infrastructure
 {
@@ -339,6 +332,37 @@ namespace MWT.Nop.Core.Infrastructure
                     timeRemaining);
 
             return offerHelpText;
+        }
+
+        public static string FixTitle(string title)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+                return title;
+
+            string[] words = title.Split(' ');
+
+            for (int w = 0; w < words.Length; w++)
+            {
+                string word = words[w];
+                if (string.IsNullOrEmpty(word))
+                    continue;
+
+                for (int i = 0; i < word.Length; i++)
+                {
+                    if (char.IsLetter(word[i]))
+                    {
+                        if (char.IsLower(word[i]))
+                        {
+                            var sb = new StringBuilder(word);
+                            sb[i] = char.ToUpper(word[i]);
+                            words[w] = sb.ToString();
+                        }
+                        break;
+                    }
+                }
+            }
+
+            return (string.Join(" ", words)).Trim();
         }
     }
 }
