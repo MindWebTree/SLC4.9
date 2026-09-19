@@ -2815,7 +2815,7 @@ namespace MWT.Nop.Core.Service.Catalog
 
         }
         public async Task<(string offerText, string offerPlaceHolder, string discountAmount, decimal discountPercentage, DateTime? saleStartDate, DateTime? saleEndDate)> GetProductSaleOfferInfo(Product product, decimal? oldPrice, decimal? price)
-        {
+            {
             var _storeWideDiscountService = EngineContext.Current.Resolve<IStoreWideDiscountService>();
             var productOfferInfo = await _storeWideDiscountService.GetStoreWideProductDiscountInfoByProductIdAsync(product.Id);
 
