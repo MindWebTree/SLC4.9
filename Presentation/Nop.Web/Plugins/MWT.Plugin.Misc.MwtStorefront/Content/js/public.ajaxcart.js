@@ -86,7 +86,7 @@ var AjaxCart = {
         $.each($(formselector).serializeArray(), function (i, field) {
             postData[field.name] = field.value;
         });
-        addAntiForgeryToken(postData);  
+        addAntiForgeryToken(postData);
         $.ajax({
             cache: false,
             url: urladd,
@@ -191,10 +191,13 @@ var AjaxCart = {
             if (response.actionType)
                 setTimeout(function () { if ($.isFunction(window.addSlickSlider)) addSlickSlider(false); }, 200);
         }
-
         if (response.updateFlyoutCartPopupSectionHtml) {
-
             $(AjaxCart.flyoutcartpopupselector).html(response.updateFlyoutCartPopupSectionHtml);
+
+            if (response.actionType == "delete") {
+                var message = $(response.updateflyoutcartsectionhtml).find('.modal-title').text().trim();
+                announceToScreenReader(message);
+            }
         }
         if (response.updateFlyoutWishlistSectionHtml) {
             $(AjaxCart.flyoutwishlistselector).html(response.updateFlyoutWishlistSectionHtml);
@@ -271,8 +274,15 @@ var AjaxCart = {
             + "-" + dt.getMilliseconds();
 
         $("body").append('<div class="alert alert-custom alert-dismissible fade  bootstrap-alert" id="' + id + '" role="alert"></div>');
-        $("#" + id).html('<i class="fa fa-check" aria-hidden="true"></i>' + (noOfWishlIstItems > 0 ? AjaxCart.wishlist_deleteitem :
-            AjaxCart.wishlist_deleteitem_empty));
+
+        var message = "";
+        if (noOfWishlIstItems > 0) {
+            message = AjaxCart.wishlist_deleteitem.replace('{0}', noOfWishlIstItems);
+        } else {
+            message = AjaxCart.wishlist_deleteitem_empty;
+        }
+
+        $("#" + id).html('<i class="fa fa-check" aria-hidden="true"></i>' + message);
         $("#" + id).fadeTo(2000, 500).slideUp(300, function () {
             $("#success-alert").slideUp(100);
         });

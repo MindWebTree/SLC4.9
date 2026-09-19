@@ -38,6 +38,13 @@ $('body').on('click', function (event) {
 });
 /* end show sidebar not outside click || ram || 19-08-2023 */
 
+function announceToScreenReader(message) {
+    var $announcer = $('#announcer');
+    $announcer.text('');
+    setTimeout(function () {
+        $announcer.text(message);
+    }, 100);
+}
 
 //  Bar after header
 $(document).ready(function () {
@@ -1514,7 +1521,7 @@ jQuery(document).ready(function () {
 jQuery(document).ready(function () {
     $("body").on("click", ".summary-offer-info", function () {
         $(".discount-info").hide();
-        $(this).parent().find(".discount-info").show();
+        $(this).parent().find(".discount-info").show().trigger("focus");
     })
 
     $("body").on("click", ".close-discount-info", function () {

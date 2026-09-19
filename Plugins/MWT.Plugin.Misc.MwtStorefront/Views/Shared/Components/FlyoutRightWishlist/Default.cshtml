@@ -29,12 +29,12 @@
                     <div class="d-flex product-add-to-cart">
                         <div>  <input type="checkbox" class="checkbox" id="@(item.Id)" data-parent="@item.ProductId" data-variantId="@item.Variant?.Id??0" name="addtocart" value="@(item.Id)" /></div>
                         <div class="img-add-to-cart">
-                                 <img alt="@item.Picture.AlternateText" src="/images/pixel.png" data-src="@item.Picture.ImageUrl" class="lazy"/>
-                 
+                            <img alt="@item.Picture.AlternateText" src="/images/pixel.png" data-src="@item.Picture.ImageUrl" class="lazy" />
+
                         </div>
                         <div class="deatail-add-to-cart">
                             <h4>
-                                <a href="@Url.RouteUrl("Product", new { id = item.ProductId, SeName = item.ProductSeName })"  >
+                                <a href="@Url.RouteUrl("Product", new { id = item.ProductId, SeName = item.ProductSeName })">
                                     @item.ProductName
                                 </a>
                             </h4>
@@ -77,7 +77,7 @@
             </div>
             <div class="d-flex move-to-buttons">
                 <div class="continue product-add-to-buttons move-to-cart">
-                    <button type="button" name="addtocartbutton" class="btn btn-secondary" id="btnmovetocart" disabled>
+                    <button type="button" name="addtocartbutton" aria-label="Move to cart" class="btn btn-secondary" id="btnmovetocart" disabled>
                         <span> @T("cart.popup.wishlist.Button.MoveTocart")</span>
                         <svg width="20" height="20" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#4D585A" class="d-none" style=" width: 20px;">
                             <g fill="none" fill-rule="evenodd">
@@ -118,7 +118,7 @@
                                     </button>
                                 </div>
                                 <div class="col-md-6" style=" padding-left: 0px;">
-                                  
+
                                     <button type="button" class="btn btn-primary" id="btnwishlistcontinue">@T("common.createaccount")</button>
 
                                 </div>
@@ -208,6 +208,7 @@
             }
         });
         }
+          var movedCount = $('#popup-wishlist-items input[type="checkbox"]:checked').length;
         var btnId = "#btnmovetocart";
         $(btnId).prop("disabled", true);
         $(btnId + " span").addClass("d-none");
@@ -232,6 +233,13 @@
                         $(AjaxCart.flyoutwishlistpopupselector).html(result.updateFlyoutWishlistPopupSectionHtml);
                     }
                     $(AjaxCart.flyoutcartselector).html(result.updateFlyoutCartSectionHtml);
+
+             var msg = movedCount === 1
+        ? '@T("ShoppingCart.ItemMovedToCart")'
+        : '@T("ShoppingCart.ItemsMovedToCart")';
+
+    msg = movedCount + ' ' + msg;
+      announceToScreenReader(msg);
                     $(AjaxCart.flylayoutWishlistModel).modal('hide');
                     $(".ico-cart").click();
 
@@ -243,7 +251,7 @@
                     $(btnId + " span").removeClass("d-none");
                     $(btnId + " svg").addClass("d-none");
                 }
-                $(btnId).prop("disabled", false);
+              $(btnId).prop("disabled", false);
             },
             error: function (result) {
                 $(btnId).prop("disabled", false);
@@ -272,7 +280,7 @@
             url: '/CustomerExtended/LoginRegisterPopup',
             data: data,
             dataType: "json",
-            success: function (result) {    
+            success: function (result) {
                 if (result.statusCode == 200) {
                     setTimeout(function () {
                         window.location = window.location.href;
