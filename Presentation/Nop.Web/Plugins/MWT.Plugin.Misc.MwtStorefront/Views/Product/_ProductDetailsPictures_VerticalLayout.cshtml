@@ -44,7 +44,7 @@
                                 }
                                 <div class="image-block">
                                     <a class="thumb-item @(imgCount == 0 ? " img-selected" : "")
-                                                                                                                        @(picture.IsDimensionImage ? "dimension-image" : "")" data-zoom-id="product-magiczoom" href="@picture.FullSizeImageUrl"
+                                                                                                                                    @(picture.IsDimensionImage ? "dimension-image" : "")" data-zoom-id="product-magiczoom" href="@picture.FullSizeImageUrl"
                                        data-image="@picture.ImageUrl" alt="@($"{picture.AlternateText} - image {picturesCount} of {tatalPictures}")" title="@($"{picture.AlternateText} - image {picturesCount} of {tatalPictures}")" type="button" aria-pressed="false" role="button">
                                         <img data-index="@imgCount" class="lazy" width="100" height="100" src="/images/pixel.png" data-src="@picture.ThumbImageUrl"
                                              alt="@($"{picture.AlternateText} - image {picturesCount} of {tatalPictures}")" data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />

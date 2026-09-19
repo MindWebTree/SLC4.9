@@ -56,7 +56,7 @@
         }
         else
         {
-            <div tabindex="0" role="button" aria-label="Filters for @Model.CategoryName"
+            <div tabindex="@(!hidefilter ? "0" : "-1")" role="button" aria-label="Filters for @Model.CategoryName"
             class="position-relative filterDesktopIcon @(hidefilter ? "border-0" : "") @(displayFilters ? "show" : "")">
                 <span class="text-filter @(hidefilter?"d-none":"")" data-filter-text="@T("catalog.filter.text")"
                       data-hidefilter-text="@T("catalog.hidefilter.text")">

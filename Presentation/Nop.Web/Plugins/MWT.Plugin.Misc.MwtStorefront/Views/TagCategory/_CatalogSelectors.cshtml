@@ -44,7 +44,7 @@
     }
     else
     {
-        <div tabindex="0" role="button" aria-label="Filters for @Model.CategoryName" class="position-relative filterDesktopIcon @(displayFilters ? "show" : "")  @(hidefilter ? "hide" : "")">
+        <div tabindex="@(!hidefilter ? "0" : "-1")" role="button" aria-label="Filters for @Model.CategoryName" class="position-relative filterDesktopIcon @(displayFilters ? "show" : "")  @(hidefilter ? "hide" : "")">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0 4.5H16H0Z" fill="black"></path>
                 <path d="M0 4.5H16" stroke="#222222"></path>

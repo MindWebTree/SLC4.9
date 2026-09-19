@@ -681,9 +681,9 @@
                                                             <input data-index="@attributeValue.Name" id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)" value="@attributeValue.Id" checked="@attributeValue.IsPreSelected" @(attributeValue.Hide ? "disabled=\"disabled\"" : null)
                                                                    @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onclick=\"showHideRadioQuantity('{controlId}', true)\"") : null) />
 
-                                                        </label>
 
                                                         <span class="attrvalue-name">@attributeValue.Name </span>
+                                                        </label>
 
                                                     </li>
                                                 }
