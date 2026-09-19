@@ -1251,7 +1251,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories.Catalog
             priceModel.MaxPriceValue = CustomCommonHelper.FormatPriceWithoutDecimal(priceModel.MaxPriceValue);
             priceModel.MaxOldPrice = CustomCommonHelper.FormatCurrencyPriceWithoutDecimal(priceModel.MaxOldPrice);
             priceModel.MaxOldPriceValue = CustomCommonHelper.FormatPriceWithoutDecimal(priceModel.MaxOldPriceValue);
-            (priceModel.OfferText, priceModel.OfferPlaceHolder, priceModel.DiscountAmount, priceModel.DiscountPercentage, priceModel.SaleStartDate, priceModel.SaleEndDate) =
+             (priceModel.OfferText, priceModel.OfferPlaceHolder, priceModel.DiscountAmount, priceModel.DiscountPercentage, priceModel.SaleStartDate, priceModel.SaleEndDate) =
                 await _customProductService.GetProductSaleOfferInfo(product, priceModel.MinOldPrice != priceModel.MaxOldPrice ? null : priceModel.OldPriceValue, priceModel.MinPrice != priceModel.MaxPrice ? null : priceModel.PriceValue); ;
         }
 
