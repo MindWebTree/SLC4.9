@@ -995,8 +995,10 @@
     //        toast.classList.add('d-none');
     //    }
     //}
+    let lastFocusedTrigger = null;  
     function openQuickView(event, name, img, price, oldPrice, description, productId, dimension, sename, isdiscounted) {
         event.preventDefault();
+            lastFocusedTrigger = event.currentTarget;
         document.getElementById('qv-title').innerText = name;
         document.getElementById('qv-image').src = img;
         document.getElementById('qv-price').innerText = price;
@@ -1012,12 +1014,17 @@
         dimension= (dimension || '').toString().trim();
         document.querySelector('.modal-spec-value').textContent = dimension;
         document.querySelector('.qv-dimension').classList.toggle('d-none', dimension === '');
+    document.querySelector('#quickViewModal .mwt-close-btn').focus();
     }
 
     function closeQuickView(event) {
         // Prevent closing if clicking inside the content box
         if (event) event.stopPropagation();
         document.getElementById('quickViewModal').classList.add('d-none');
+          if (lastFocusedTrigger) {
+        lastFocusedTrigger.focus();
+        lastFocusedTrigger = null;
+    }
     }
     $(document).ready(function () {
         const $wrapper = $('#bundle-master-wrapper');

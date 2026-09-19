@@ -560,9 +560,9 @@
                                                                        @(attributeValue.Hide ? "disabled=\"disabled\"" : null)
                                                                        @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onclick=\"showHideRadioQuantity('{controlId}', true)\"") : null) />
 
-                                                            </label>
 
                                                             <span class="attrvalue-name">@attributeValue.Name </span>
+                                                            </label>
 
                                                         </li>
                                                     }
@@ -577,9 +577,9 @@
                                                                        @(attributeValue.Hide ? "disabled=\"disabled\"" : null)
                                                                        @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onclick=\"showHideRadioQuantity('{controlId}', true)\"") : null) />
 
-                                                            </label>
 
                                                             <span class="attrvalue-name">@attributeValue.Name </span>
+                                                            </label>
 
                                                         </li>
 
@@ -890,9 +890,8 @@
 
                       function change_gallery_img(imageObjects, FullSizeImageUrl, DefaultSize, dimensionPictureFullSizeUrl, dimensionPictureDefaultSizeUrl, dimensionPictureThumbImageUrl, defaultGallery) {
                           $("#product-magiczoom .overlay-text").removeClass("show");
-                          var $slider = $('.product-sub-images .subimagescontainer'); // same element you called .slick() on originally
+                          var $slider = $('.product-sub-images .subimagescontainer');
 
-                          // 1. Tear down slick if it's currently active, so we're appending to plain markup
                           if ($slider.hasClass('slick-initialized')) {
                               $slider.slick('unslick');
                           }
@@ -1036,9 +1035,8 @@
                           MagicZoom.start("product-magiczoom");
                           //  MagicZoom.update("product-magiczoom", imageObjects[0].FullSizeImageUrl,  imageObjects[0].ImageUrl, 'show-title: false');
                           // Reinitialize the jCarousel
-            waitForImages($slider).then(function () {
-                 $slider.slick(getGallerySlickSettings());
-             });
+
+
 
 
 
@@ -1055,7 +1053,7 @@
                           data: $('@addtoCartFormId').serialize(),
                           type: "post",
                           success: function (data, textStatus, jqXHR) {
-
+                              var slickNeedToReint=false;
                               var current_size = "";
                               if ($("@addtoCartFormId .size-section select").length > 0) {
                                   current_size = $("@addtoCartFormId .size-section select").val();
@@ -1199,8 +1197,6 @@
                                           });
                                       }
 
-                                      console.log(`${imageObjects.length} selectedAttrId ${selectedAttrId} attrId ${attrId}`)
-
                                       if (imageObjects.length > 0 && selectedAttrId != attrId) {
 
                                           selectedAttrId = attrId;
@@ -1272,12 +1268,8 @@
                                           $mainLink.attr("href", data.pictureFullSizeUrl);
                                           $mainLink.find("img").attr("src", data.pictureDefaultSizeUrl);
                                           MagicZoom.start("product-magiczoom");
+                                          slickNeedToReint=true;
 
-
-                                          if ($slider.hasClass('slick-initialized')) {
-                                              $slider.slick('unslick');
-                                          }
-                                          $slider.slick(getGallerySlickSettings());
                                           //$(".product-sub-images ul li a").removeClass("mz-thumb-selected");
                                           //$(".product-sub-images ul li[class=\"custom-thumbnail\"] a").addClass("mz-thumb-selected");
 
@@ -1300,10 +1292,7 @@
                                                       var dimensionRef = '<div class="image-block"> <a  class="thumb-item dimension-image" data-zoom-id="product-magiczoom" href="' + data.dimensionPictureFullSizeUrl + '" data-image="' + data.dimensionPictureDefaultSizeUrl + '" alt="' + prdName + '" title="' + prdName + '"><img data-index="1" class="img_fadeIn" data-defaultsize="' + data.dimensionPictureDefaultSizeUrl + '" src="' + data.dimensionPictureThumbImageUrl + '"  alt="' + prdName + '" title="' + prdName + '" data-fullsize="' + data.pictureFullSizeUrl + '"></a></div>';
                                                       $(".product-sub-images .subimagescontainer .image-block:nth-child(3)").after(dimensionRef);
 
-                                                      if ($slider.hasClass('slick-initialized')) {
-                                                          $slider.slick('unslick');
-                                                      }
-                                                      $slider.slick(getGallerySlickSettings());
+                                                   slickNeedToReint=true;
                                                   }
 
                                               }
@@ -1383,11 +1372,7 @@
                                                   var $slider = $('.product-sub-images .subimagescontainer');
                                                   var dimensionRef = '<div class="image-block"> <a  class="thumb-item dimension-image" data-zoom-id="product-magiczoom" href="' + data.dimensionPictureFullSizeUrl + '" data-image="' + data.dimensionPictureDefaultSizeUrl + '" alt="' + prdName + '" title="' + prdName + '"><img data-index="1" class="img_fadeIn" data-defaultsize="' + data.dimensionPictureDefaultSizeUrl + '" src="' + data.dimensionPictureThumbImageUrl + '"  alt="' + prdName + '" title="' + prdName + '" data-fullsize="' + data.pictureFullSizeUrl + '"></a></div>';
                                                   $(".product-sub-images .subimagescontainer .image-block:nth-child(3)").after(dimensionRef);
-
-                                                  if ($slider.hasClass('slick-initialized')) {
-                                                      $slider.slick('unslick');
-                                                  }
-                                                  $slider.slick(getGallerySlickSettings());
+                                                  slickNeedToReint=true;
                                               }
                                               MagicZoom.stop("product-magiczoom");
                                               MagicZoom.start("product-magiczoom");
@@ -1423,6 +1408,21 @@
                                               .replaceWith(data.title);
                                       }
                                       setProductBrowserHistory(window.location.href, `${productid}${data.variantId > 0 ? '_' + data.variantId : ""}`, data.slug);
+                                  }
+
+                                  // slick re init
+
+                                  var $slider = $('.product-sub-images .subimagescontainer');
+                                  if (!$slider.hasClass('slick-initialized')) {
+                                          waitForImages($slider).then(function () {
+                                   $slider.slick(getGallerySlickSettings());
+                                          });
+                                  }
+                                  else{
+                                      if(slickNeedToReint){
+                                          $slider.slick('unslick');
+                                          $slider.slick(getGallerySlickSettings());
+                                      }
                                   }
 
                               }

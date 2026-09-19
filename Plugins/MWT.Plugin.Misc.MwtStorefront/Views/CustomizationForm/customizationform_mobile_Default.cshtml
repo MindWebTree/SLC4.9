@@ -40,7 +40,7 @@
     }
 }
 <div class="modal-content mobile-customize-form">
-    <img src="/images/uploaded/customization-form-header-1.png" style="width: 100%;" alt="image" />
+    <img src="/images/uploaded/customization-form-header-1.png" style="width: 100%;" alt="Product customization banner" />
     <div class="modal-header">
         <div class="modal-header-text">
             <h2>@T("Customizationform.Default.heading")</h2>
@@ -60,7 +60,7 @@
                     <div class="product-info-heading">@T("customizationform.form.ProductInfo.heading")</div>
                     <div class="customize-box-left">
                         <div class="customize-img">
-                            <img src="@Model.DefaultPictureModel.ImageUrl" alt="image" />
+                            <img src="@Model.DefaultPictureModel.ImageUrl" alt="@Model.ProductName" />
 
                         </div>
                         <div class="customize-heading">
@@ -106,15 +106,15 @@
                         <div class="form-group message">
                             <nop-label asp-for="@Model.Message" />
 
-                            <nop-textarea asp-for="@Model.Message" placeholder="tell us more ..." />
+                            <nop-textarea asp-for="@Model.Message" aria-label="Custom Note" placeholder="tell us more ..." />
                             <span asp-validation-for="@Model.Message"></span>
                         </div>
                         <div class="attachment">
 
                             <div class="attachment">
-                                <label>@T("customizationform.Default.fields.attachment")</label>
-                                <img src="/images/uploaded/upload-icon.png">
-                                <input name="attachment" class="form-control-file" accept="@uploadTypes_Expression" type="file" />
+                                <span>@T("customizationform.Default.fields.attachment")</span>
+                                <img src="/images/uploaded/upload-icon.png" alt="upload icon">
+                                <input aria-label="Upload supporting document" name="attachment" class="form-control-file" accept="@uploadTypes_Expression" type="file" />
                                 <span class="attachment_image"></span>
                             </div>
 
@@ -130,7 +130,9 @@
                         <div class="form-group checkasterisk">
 
 
-                            <nop-editor asp-for="@Model.FullName" placeholder="Full Name" />
+                         @*    <nop-editor asp-for="@Model.FullName" placeholder="Full Name" /> *@
+                            <input asp-for="@Model.FullName" placeholder="Full Name" class="form-control" aria-label="FullName" />
+
 
                             <span asp-validation-for="@Model.FullName"></span>
 
@@ -138,7 +140,8 @@
                         <div class="form-group checkasterisk">
 
 
-                            <nop-editor asp-for="@Model.Email" placeholder="Email" />
+                           @*  <nop-editor asp-for="@Model.Email" placeholder="Email" /> *@
+                            <input asp-for="@Model.Email" placeholder="Email" class="form-control" aria-label="Email" />    
 
 
                             <span asp-validation-for="@Model.Email"></span>
@@ -146,13 +149,15 @@
                         <div class="merge-form-group">
                             <div class="form-group">
 
-                                <nop-editor asp-for="@Model.Phone" placeholder="Phone" />
+                      @*           <nop-editor asp-for="@Model.Phone" placeholder="Phone" /> *@
+                                <input asp-for="@Model.Phone" placeholder="Phone" class="form-control" aria-label="Phone" />
                                 <span asp-validation-for="@Model.Phone"></span>
                             </div>
                             <div class="form-group checkasterisk">
 
 
-                                <nop-editor asp-for="@Model.ZipCode" placeholder="Zip Code" />
+                          @*       <nop-editor asp-for="@Model.ZipCode" placeholder="Zip Code" /> *@
+                                <input asp-for="@Model.ZipCode" placeholder="Zip Code" class="form-control" aria-label="ZipCode" /> 
                                 <span id="zipCodeValidationMsg" style="color: red;"></span>
                                 <span asp-validation-for="@Model.ZipCode"></span>
 

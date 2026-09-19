@@ -49,7 +49,7 @@
     <button type="button" class="close dialog-close-btn border" data-bs-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
-    <img class="customization-form-header-image" src="/images/uploaded/customization-form-header-1.png" style="width: 100%;" height="100px" alt="image" />
+    <img class="customization-form-header-image" src="/images/uploaded/customization-form-header-1.png" style="width: 100%;" height="100px" alt="Product customization banner" />
     <div class="modal-header">
         <div class="modal-header-text">
             <h2>@T("Customizationform.Default.heading")</h2>
@@ -68,11 +68,12 @@
 
                             <div class="customize-img">
                                 <div class="product-info-heading">@Model.ProductName</div>
-                                <img class="main-customization-image" src="@Model.DefaultPictureModel.ImageUrl" alt="image" />
+                                <img class="main-customization-image" src="@Model.DefaultPictureModel.ImageUrl" alt="@Model.ProductName" />
                                 <div class="customization-product-sub-images jcarousel">
                                     <ul>
                                         @{
                                             var imgCount = 0;
+                                            int tatalPictures = Model.PictureModels.Count - 1;
                                             foreach (var picture in Model.PictureModels)
                                             {
                                                 <li>
@@ -80,15 +81,15 @@
                                                        data-image="@picture.ImageUrl" alt="@picture.AlternateText" title="@picture.Title">
 
                                                         <img class="lazy" src="/images/pixel.png" data-src="@picture.ThumbImageUrl"
-                                                             alt="@picture.AlternateText" title="@picture.Title" data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
+                                                             alt="@($"{picture.AlternateText} - image {imgCount} of {tatalPictures}")"   data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
                                                     </a>
                                                 </li>
                                                 imgCount++;
                                             }
                                         }
                                     </ul>
-                                    <a href="#" class="jcarousel-control-prev">&lsaquo;</a>
-                                    <a href="#" class="jcarousel-control-next">&rsaquo;</a>
+                                    <a href="#" role="button" aria-label="Previous" class="jcarousel-control-prev">&lsaquo;</a>
+                                    <a href="#" role="button" aria-label="Next" class="jcarousel-control-next">&rsaquo;</a>
                                 </div>
                             </div>
 
@@ -113,6 +114,7 @@
 
                             @if (Model.LstInteresedIn.Count > 0)
                             {
+                                 
                                 <div class="form-group form-check">
                                     <h3 class="request-type-heading">@T("customizationform.form.Requesttype.heading")</h3>
                                     <div class="check-customize">
@@ -135,16 +137,16 @@
                                 <div class="attachment">
 
                                     <div class="attachment">
-                                        <label>@T("customizationform.Default.fields.attachment")</label>
+                                        <span>@T("customizationform.Default.fields.attachment")</span>
                                         <img src="/images/uploaded/upload-icon.png">
-                                        <input name="attachment" class="form-control-file" accept="@uploadTypes_Expression" type="file" />
+                                        <input aria-label="Upload supporting document" name="attachment" class="form-control-file" accept="@uploadTypes_Expression" type="file" />
                                         <span class="attachment_image"></span>
                                     </div>
 
                                 </div>
                                 <div class="form-group message">
 
-                                    <nop-textarea asp-for="@Model.Message" placeholder="Please let us know about your requirement here." />
+                                    <nop-textarea asp-for="@Model.Message" aria-label="Custom Note" placeholder="Please let us know about your requirement here." />
                                     <span asp-validation-for="@Model.Message"></span>
                                 </div>
                             </div>
@@ -159,8 +161,8 @@
                     <div class="customize-form-section">
                         <div class="form-group checkasterisk">
 
-
-                            <nop-editor asp-for="@Model.FullName" placeholder="Full Name" />
+                            <input asp-for="@Model.FullName" placeholder="Full Name" class="form-control" aria-label="FullName" />
+                            @* <nop-editor asp-for="@Model.FullName" placeholder="Full Name" /> *@
 
                             <span asp-validation-for="@Model.FullName"></span>
 
@@ -168,7 +170,8 @@
                         <div class="form-group checkasterisk">
 
 
-                            <nop-editor asp-for="@Model.Email" placeholder="Email" />
+                            @* <nop-editor asp-for="@Model.Email" placeholder="Email" /> *@
+                            <input asp-for="@Model.Email" placeholder="Email" class="form-control" aria-label="Email" />
 
 
                             <span asp-validation-for="@Model.Email"></span>
@@ -176,13 +179,14 @@
                         <div class="merge-form-group">
                             <div class="form-group">
 
-                                <nop-editor asp-for="@Model.Phone" placeholder="Phone" />
+                               @*  <nop-editor asp-for="@Model.Phone" placeholder="Phone" /> *@
+                                <input asp-for="@Model.Phone" placeholder="Phone" class="form-control" aria-label="Phone" />
                                 <span asp-validation-for="@Model.Phone"></span>
                             </div>
                             <div class="form-group checkasterisk">
 
-
-                                <nop-editor asp-for="@Model.ZipCode" placeholder="Zip Code" />
+                                <input asp-for="@Model.ZipCode" placeholder="ZipCode" class="form-control" aria-label="ZipCode" />
+                                @* <nop-editor asp-for="@Model.ZipCode" placeholder="Zip Code" /> *@
                                 <span id="zipCodeValidationMsg" style="color: red;"></span>
                                 <span asp-validation-for="@Model.ZipCode"></span>
 

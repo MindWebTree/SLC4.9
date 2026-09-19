@@ -21,7 +21,7 @@ $(".wishlist-icon").keydown(function (event) {
         event.preventDefault();
         this.click();
     }
-});
+}); 
 
 //$('.filterDesktopIcon').on('click keydown', function (e) {
 //    if (e.type === 'click' || e.key === 'Enter' || e.key === ' ') {
