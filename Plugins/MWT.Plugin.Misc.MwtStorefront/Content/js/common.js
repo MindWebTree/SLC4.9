@@ -38,6 +38,13 @@ $('body').on('click', function (event) {
 });
 /* end show sidebar not outside click || ram || 19-08-2023 */
 
+function announceToScreenReader(message) {
+    var $announcer = $('#announcer');
+    $announcer.text('');
+    setTimeout(function () {
+        $announcer.text(message);
+    }, 100);
+}
 
 //  Bar after header
 $(document).ready(function () {

@@ -241,7 +241,7 @@
 
                                 {
 
-                                    <fieldset aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                    <fieldset aria-label="@($"Available {textPrompt}")"  style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                         <legend style="display:none;">
                                             @textPrompt
                                         </legend>
@@ -339,7 +339,7 @@
 
                                 {
 
-                                    <fieldset aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                    <fieldset aria-label="@($"Available {textPrompt}")"   style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                         <legend style="display:none;">
                                             @textPrompt
                                         </legend>
@@ -413,7 +413,7 @@
 
 
                                 {
-                                    <fieldset aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                    <fieldset aria-label="@($"Available {textPrompt}")"   style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                         <legend style="display:none;">
                                             @textPrompt
                                         </legend>
@@ -715,13 +715,13 @@
 
                                     {
 
-                                        <fieldset aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                        <fieldset aria-label="@($"Available {textPrompt}")"   style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                             <legend style="display:none;">
                                                 @textPrompt
                                             </legend>
 
                                             <ul data-attr="@(attribute.Id)" class="option-list attribute-squares color-squares @(attribute.Values.Count>0
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ? "new-size-box" + (attribute.Values.Count == 1 ? " single" : "") : "")" id="color-squares-@(attribute.Id)">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ? "new-size-box" + (attribute.Values.Count == 1 ? " single" : "") : "")" id="color-squares-@(attribute.Id)">
 
                         @foreach (var attributeValue in attribute.Values)
 
@@ -773,97 +773,97 @@
 
 
                                     {
-                                        <fieldset aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                        <fieldset aria-label="@($"Available {textPrompt}")"  style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                             <legend style="display:none;">
                                                 @textPrompt
                                             </legend>
-                                            <div class="jcarousel" data-jcarousel="true">
-                                                <ul data-attr="@(attribute.Id)" class="option-list attribute-squares color-squares shade-box" id="color-squares-@(attribute.Id)">
-                                                    @foreach (var attributeValue in attribute.Values)
+                                        <div class="jcarousel" data-jcarousel="true">
+                                            <ul data-attr="@(attribute.Id)" class="option-list attribute-squares color-squares shade-box" id="color-squares-@(attribute.Id)">
+                                                @foreach (var attributeValue in attribute.Values)
+
+
+
+                                                {
+
+
+
+                                                    var attributeName = string.IsNullOrEmpty(attributeValue.PriceAdjustment) ?
+
+
+
+                                                    attributeValue.Name :
+
+
+
+                                                    T("Products.ProductAttributes.PriceAdjustment", attributeValue.Name, attributeValue.PriceAdjustment, string.Empty).Text;
+
+
+
+                                                    if (T("Product.Attr.shades").Text == @textPrompt)
 
 
 
                                                     {
+                                                        <li data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected && !attributeValue.Hide ? @Html.Raw(" class=\"selected-value\"") : null) class="@(attributeValue.Hide ? "unavailable-swatch" : "")">
+                                                            <label for="@(controlId)_@(attributeValue.Id)" attr-is-show="@(attributeValue.IsPreSelected ? "true" : "false")" class="custom-shade-control @(attribute.EnableHoverImpact ? "attributevalue-section" : "")" data-attr-name="@CustomCommonHelper.StripUnwantedPrefixFromShade(attributeValue.Name)"
+                                                                   data-attr-img="/images/shades/large/@(attributeValue.Name).jpg">
+                                                                <img width="200" height="200" class="lazy" src="/images/pixel.png" data-src="/images/shades/large/@(attributeValue.Name).jpg" alt="@attributeValue.Name">
+                                                                <input id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)"
+                                                                       value="@attributeValue.Id" checked="@attributeValue.IsPreSelected" @(attributeValue.Hide ? "disabled=\"disabled\"" : null)
+                                                                       @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onclick=\"showHideRadioQuantity('{controlId}')\"") : null) />
 
-
-
-                                                        var attributeName = string.IsNullOrEmpty(attributeValue.PriceAdjustment) ?
-
-
-
-                                                        attributeValue.Name :
-
-
-
-                                                        T("Products.ProductAttributes.PriceAdjustment", attributeValue.Name, attributeValue.PriceAdjustment, string.Empty).Text;
-
-
-
-                                                        if (T("Product.Attr.shades").Text == @textPrompt)
-
-
-
-                                                        {
-                                                            <li data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected && !attributeValue.Hide ? @Html.Raw(" class=\"selected-value\"") : null) class="@(attributeValue.Hide ? "unavailable-swatch" : "")">
-                                                                <label for="@(controlId)_@(attributeValue.Id)" attr-is-show="@(attributeValue.IsPreSelected ? "true" : "false")" class="custom-shade-control @(attribute.EnableHoverImpact ? "attributevalue-section" : "")" data-attr-name="@CustomCommonHelper.StripUnwantedPrefixFromShade(attributeValue.Name)"
-                                                                       data-attr-img="/images/shades/large/@(attributeValue.Name).jpg">
-                                                                    <img width="200" height="200" class="lazy" src="/images/pixel.png" data-src="/images/shades/large/@(attributeValue.Name).jpg" alt="@attributeValue.Name">
-                                                                    <input id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)"
-                                                                           value="@attributeValue.Id" checked="@attributeValue.IsPreSelected" @(attributeValue.Hide ? "disabled=\"disabled\"" : null)
-                                                                           @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onclick=\"showHideRadioQuantity('{controlId}')\"") : null) />
-
-                                                                    <span>@CustomCommonHelper.StripUnwantedPrefixFromShade(attributeValue.Name)</span>
-                                                                </label>
-                                                            </li>
-                                                        }
-
-
-
-                                                        else
-
-
-
-                                                        {
-                                                            <li data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected && !@attributeValue.Hide ? @Html.Raw(" class=\"selected-value\"") : null) class="@(attributeValue.Hide ? "unavailable-swatch" : "")">
-                                                                <label for="@(controlId)_@(attributeValue.Id)" data-attr-name="@attributeValue.Name" data-attr-img="/images/shades/large/@(attributeValue.Name).jpg" class="@(attribute.EnableHoverImpact ? "attributevalue-section" : "")">
-                                                                    <span class="attribute-square-container" title="@attributeName">
-                                                                        <span class="attribute-square" style="background-color:@(attributeValue.ColorSquaresRgb);">&nbsp;</span>
-                                                                    </span>
-                                                                    <input id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)" value="@attributeValue.Id" checked="@attributeValue.IsPreSelected" @(attributeValue.Hide ? "disabled=\"disabled\"" : null)
-                                                                           @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onclick=\"showHideRadioQuantity('{controlId}')\"") : null) />
-                                                                </label>
-
-                                                            </li>
-                                                        }
-
-
-
-
-
-
-
+                                                                <span>@CustomCommonHelper.StripUnwantedPrefixFromShade(attributeValue.Name)</span>
+                                                            </label>
+                                                        </li>
                                                     }
 
-                                                </ul>
-                                                <a href="#" aria-label="Previous slide" class="jcarousel-control-prev" data-jcarouselcontrol="true">
-                                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <g transform="rotate(180 6 6)">
-                                                            <path d="M4.57373 9.65452L7.58296 6.64529C7.93835 6.2899 7.93835 5.70837 7.58296 5.35298L4.57373 2.34375"
-                                                                  stroke="white"
-                                                                  stroke-width="0.692308"
-                                                                  stroke-miterlimit="10"
-                                                                  stroke-linecap="round"
-                                                                  stroke-linejoin="round" />
-                                                        </g>
-                                                    </svg>
-                                                </a>
-                                                <a href="#" aria-label="Next slide" class="jcarousel-control-next" data-jcarouselcontrol="true">
-                                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M4.57373 9.65452L7.58296 6.64529C7.93835 6.2899 7.93835 5.70837 7.58296 5.35298L4.57373 2.34375" stroke="white" stroke-width="0.692308" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                                    </svg>
-                                                </a>
-                                            </div>
-                                        </fieldset>
+
+
+                                                    else
+
+
+
+                                                    {
+                                                        <li data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected && !@attributeValue.Hide ? @Html.Raw(" class=\"selected-value\"") : null) class="@(attributeValue.Hide ? "unavailable-swatch" : "")">
+                                                            <label for="@(controlId)_@(attributeValue.Id)" data-attr-name="@attributeValue.Name" data-attr-img="/images/shades/large/@(attributeValue.Name).jpg" class="@(attribute.EnableHoverImpact ? "attributevalue-section" : "")">
+                                                                <span class="attribute-square-container" title="@attributeName">
+                                                                    <span class="attribute-square" style="background-color:@(attributeValue.ColorSquaresRgb);">&nbsp;</span>
+                                                                </span>
+                                                                <input id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)" value="@attributeValue.Id" checked="@attributeValue.IsPreSelected" @(attributeValue.Hide ? "disabled=\"disabled\"" : null)
+                                                                       @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onclick=\"showHideRadioQuantity('{controlId}')\"") : null) />
+                                                            </label>
+
+                                                        </li>
+                                                    }
+
+
+
+
+
+
+
+                                                }
+
+                                            </ul>
+                                            <a href="#" aria-label="Previous slide" class="jcarousel-control-prev" data-jcarouselcontrol="true">
+                                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <g transform="rotate(180 6 6)">
+                                                        <path d="M4.57373 9.65452L7.58296 6.64529C7.93835 6.2899 7.93835 5.70837 7.58296 5.35298L4.57373 2.34375"
+                                                              stroke="white"
+                                                              stroke-width="0.692308"
+                                                              stroke-miterlimit="10"
+                                                              stroke-linecap="round"
+                                                              stroke-linejoin="round" />
+                                                    </g>
+                                                </svg>
+                                            </a>
+                                            <a href="#" aria-label="Next slide" class="jcarousel-control-next" data-jcarouselcontrol="true">
+                                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M4.57373 9.65452L7.58296 6.64529C7.93835 6.2899 7.93835 5.70837 7.58296 5.35298L4.57373 2.34375" stroke="white" stroke-width="0.692308" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                                </svg>
+                                            </a>
+                                        </div>
+                                         </fieldset>
 
                                     }
                                     foreach (var attributeValue in attribute.Values.Where(value => value.CustomerEntersQty))
@@ -919,85 +919,85 @@
 
 
                                     int index = 0;
-                                    <fieldset aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
+                                     <fieldset aria-label="@($"Available {textPrompt}")" style="border: 0; padding: 0; margin: 0; min-width: auto; display: contents; ">
                                         <legend style="display:none;">
                                             @textPrompt
                                         </legend>
-                                        <div class="jcarousel" data-jcarousel="true">
-                                            <ul data-attr="@(attribute.Id)" class="option-list attribute-squares image-squares" id="image-squares-@(attribute.Id)">
-                                                @foreach (var attributeValue in attribute.Values)
+                                    <div class="jcarousel" data-jcarousel="true">
+                                        <ul data-attr="@(attribute.Id)" class="option-list attribute-squares image-squares" id="image-squares-@(attribute.Id)">
+                                            @foreach (var attributeValue in attribute.Values)
 
 
 
+                                            {
+
+
+
+                                                index++;
+
+
+
+                                                var attributeName = string.IsNullOrEmpty(attributeValue.PriceAdjustment) ?
+
+
+
+                                                attributeValue.Name :
+
+
+
+                                                T("Products.ProductAttributes.PriceAdjustment", attributeValue.Name, attributeValue.PriceAdjustment, string.Empty).Text;
+                                                if (T("Product.Attr.shades").Text == @textPrompt)
                                                 {
+                                                    <li data-index="@attributeValue.Name" data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected && !attributeValue.Hide ? @Html.Raw(" class=\"selected-value\"") : null) class="@(attributeValue.Hide ? "unavailable-swatch" : "")">
+                                                        <label for="@(controlId)_@(attributeValue.Id)" data-attr-name="@CustomCommonHelper.StripUnwantedPrefixFromShade(attributeValue.Name)" data-attr-img="@attributeValue.ImageSquaresPictureModel.FullSizeImageUrl" class="@(attribute.EnableHoverImpact ? "attributevalue-section" : "")">
+                                                            <span class="attribute-square-container">
+                                                                <span class="attribute-square" style="background: url('@(attributeValue.ImageSquaresPictureModel.FullSizeImageUrl)') 50% 50% no-repeat;background-size: cover;">&nbsp;</span>
+                                                            </span>
+                                                            <input data-index="@attributeValue.Name" id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)" value="@attributeValue.Id" checked="@attributeValue.IsPreSelected" @(attributeValue.Hide ? "disabled=\"disabled\"" : null)
+                                                                   @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onclick=\"showHideRadioQuantity('{controlId}', true)\"") : null) />
 
 
+                                                        <span class="attrvalue-name">@attributeValue.Name </span>
+                                                        </label>
 
-                                                    index++;
-
-
-
-                                                    var attributeName = string.IsNullOrEmpty(attributeValue.PriceAdjustment) ?
-
-
-
-                                                    attributeValue.Name :
-
-
-
-                                                    T("Products.ProductAttributes.PriceAdjustment", attributeValue.Name, attributeValue.PriceAdjustment, string.Empty).Text;
-                                                    if (T("Product.Attr.shades").Text == @textPrompt)
-                                                    {
-                                                        <li data-index="@attributeValue.Name" data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected && !attributeValue.Hide ? @Html.Raw(" class=\"selected-value\"") : null) class="@(attributeValue.Hide ? "unavailable-swatch" : "")">
-                                                            <label for="@(controlId)_@(attributeValue.Id)" data-attr-name="@CustomCommonHelper.StripUnwantedPrefixFromShade(attributeValue.Name)" data-attr-img="@attributeValue.ImageSquaresPictureModel.FullSizeImageUrl" class="@(attribute.EnableHoverImpact ? "attributevalue-section" : "")">
-                                                                <span class="attribute-square-container">
-                                                                    <span class="attribute-square" style="background: url('@(attributeValue.ImageSquaresPictureModel.FullSizeImageUrl)') 50% 50% no-repeat;background-size: cover;">&nbsp;</span>
-                                                                </span>
-                                                                <input data-index="@attributeValue.Name" id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)" value="@attributeValue.Id" checked="@attributeValue.IsPreSelected" @(attributeValue.Hide ? "disabled=\"disabled\"" : null)
-                                                                       @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onclick=\"showHideRadioQuantity('{controlId}', true)\"") : null) />
-
-
-                                                                <span class="attrvalue-name">@attributeValue.Name </span>
-                                                            </label>
-
-                                                        </li>
-                                                    }
-                                                    else
-                                                    {
-                                                        <li data-index="@attributeValue.Name" data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected && !attributeValue.Hide ? @Html.Raw(" class=\"selected-value\"") : null) class="@(attributeValue.Hide ? "unavailable-swatch" : "")">
-                                                            <label for="@(controlId)_@(attributeValue.Id)" data-attr-name="@attributeValue.Name" data-attr-img="@attributeValue.ImageSquaresPictureModel.FullSizeImageUrl" class="@(attribute.EnableHoverImpact ? "attributevalue-section" : "")">
-                                                                <span class="attribute-square-container">
-                                                                    <span class="attribute-square" style="background: url('@(attributeValue.ImageSquaresPictureModel.FullSizeImageUrl)') 50% 50% no-repeat;background-size: cover;">&nbsp;</span>
-                                                                </span>
-                                                                <input data-index="@attributeValue.Name" id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)" value="@attributeValue.Id" checked="@attributeValue.IsPreSelected" @(attributeValue.Hide ? "disabled=\"disabled\"" : null)
-                                                                       @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onclick=\"showHideRadioQuantity('{controlId}', true)\"") : null) />
-
-
-                                                                <span class="attrvalue-name">@attributeValue.Name </span>
-                                                            </label>
-
-                                                        </li>
-                                                    }
+                                                    </li>
                                                 }
-                                            </ul>
+                                                else
+                                                {
+                                                    <li data-index="@attributeValue.Name" data-attr-value="@attributeValue.Id" @(attributeValue.IsPreSelected && !attributeValue.Hide ? @Html.Raw(" class=\"selected-value\"") : null) class="@(attributeValue.Hide ? "unavailable-swatch" : "")">
+                                                        <label for="@(controlId)_@(attributeValue.Id)" data-attr-name="@attributeValue.Name" data-attr-img="@attributeValue.ImageSquaresPictureModel.FullSizeImageUrl" class="@(attribute.EnableHoverImpact ? "attributevalue-section" : "")">
+                                                            <span class="attribute-square-container">
+                                                                <span class="attribute-square" style="background: url('@(attributeValue.ImageSquaresPictureModel.FullSizeImageUrl)') 50% 50% no-repeat;background-size: cover;">&nbsp;</span>
+                                                            </span>
+                                                            <input data-index="@attributeValue.Name" id="@(controlId)_@(attributeValue.Id)" type="radio" name="@(controlId)" value="@attributeValue.Id" checked="@attributeValue.IsPreSelected" @(attributeValue.Hide ? "disabled=\"disabled\"" : null)
+                                                                   @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onclick=\"showHideRadioQuantity('{controlId}', true)\"") : null) />
+
+
+                                                        <span class="attrvalue-name">@attributeValue.Name </span>
+                                                        </label>
+
+                                                    </li>
+                                                }
+                                            }
+                                        </ul>
                                             <a href="#" aria-label="Previous slide" class="jcarousel-control-prev" data-jcarouselcontrol="true">
-                                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <g transform="rotate(180 6 6)">
-                                                        <path d="M4.57373 9.65452L7.58296 6.64529C7.93835 6.2899 7.93835 5.70837 7.58296 5.35298L4.57373 2.34375"
-                                                              stroke="white"
-                                                              stroke-width="0.692308"
-                                                              stroke-miterlimit="10"
-                                                              stroke-linecap="round"
-                                                              stroke-linejoin="round" />
-                                                    </g>
-                                                </svg>
-                                            </a>
-                                            <a href="#" aria-label="Next slide" class="jcarousel-control-next" data-jcarouselcontrol="true">
-                                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M4.57373 9.65452L7.58296 6.64529C7.93835 6.2899 7.93835 5.70837 7.58296 5.35298L4.57373 2.34375" stroke="white" stroke-width="0.692308" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                                </svg>
-                                            </a>
-                                        </div>
+                                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <g transform="rotate(180 6 6)">
+                                                    <path d="M4.57373 9.65452L7.58296 6.64529C7.93835 6.2899 7.93835 5.70837 7.58296 5.35298L4.57373 2.34375"
+                                                          stroke="white"
+                                                          stroke-width="0.692308"
+                                                          stroke-miterlimit="10"
+                                                          stroke-linecap="round"
+                                                          stroke-linejoin="round" />
+                                                </g>
+                                            </svg>
+                                        </a>
+                                        <a href="#" aria-label="Next slide" class="jcarousel-control-next" data-jcarouselcontrol="true">
+                                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M4.57373 9.65452L7.58296 6.64529C7.93835 6.2899 7.93835 5.70837 7.58296 5.35298L4.57373 2.34375" stroke="white" stroke-width="0.692308" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                        </a>
+                                    </div>
                                     </fieldset>
                                     foreach (var attributeValue in attribute.Values.Where(value => value.CustomerEntersQty))
 
@@ -1040,7 +1040,7 @@
 
 
                             <div class="custom_shade_message @((attribute.Values.Where(attributeValue => attributeValue.IsPreSelected).FirstOrDefault()?.Name?? string.Empty).Equals(T("Product.Attr.shade.Custom.Shade").Text, StringComparison.InvariantCultureIgnoreCase)
-                                                                                                                                                                                                                                                                                                ? "" : "d-none")">
+                                                                                                                                                                                                                                                               ? "" : "d-none")">
                     @T("Product.Custom.Shade.Message")
                 </div>
                                 }
@@ -1492,9 +1492,8 @@
 
                       function change_gallery_img(imageObjects, FullSizeImageUrl, DefaultSize, dimensionPictureFullSizeUrl, dimensionPictureDefaultSizeUrl, dimensionPictureThumbImageUrl, defaultGallery) {
                           $("#product-magiczoom .overlay-text").removeClass("show");
-                          var $slider = $('.product-sub-images .subimagescontainer'); // same element you called .slick() on originally
+                          var $slider = $('.product-sub-images .subimagescontainer'); 
 
-                          // 1. Tear down slick if it's currently active, so we're appending to plain markup
                           if ($slider.hasClass('slick-initialized')) {
                               $slider.slick('unslick');
                           }
@@ -1639,9 +1638,7 @@
                           //  MagicZoom.update("product-magiczoom", imageObjects[0].FullSizeImageUrl,  imageObjects[0].ImageUrl, 'show-title: false');
                           // Reinitialize the jCarousel
 
-                                  waitForImages($slider).then(function () {
-                $slider.slick(getGallerySlickSettings());
-            });
+                     
 
 
 
@@ -1658,7 +1655,7 @@
                           data: $('@addtoCartFormId').serialize(),
                           type: "post",
                           success: function (data, textStatus, jqXHR) {
-
+                              var slickNeedToReint=false;
                               var current_size = "";
                               if ($("@addtoCartFormId .size-section select").length > 0) {
                                   current_size = $("@addtoCartFormId .size-section select").val();
@@ -1802,8 +1799,6 @@
                                           });
                                       }
 
-                                      console.log(`${imageObjects.length} selectedAttrId ${selectedAttrId} attrId ${attrId}`)
-
                                       if (imageObjects.length > 0 && selectedAttrId != attrId) {
 
                                           selectedAttrId = attrId;
@@ -1875,12 +1870,8 @@
                                           $mainLink.attr("href", data.pictureFullSizeUrl);
                                           $mainLink.find("img").attr("src", data.pictureDefaultSizeUrl);
                                           MagicZoom.start("product-magiczoom");
+                                          slickNeedToReint=true;
 
-
-                                          if ($slider.hasClass('slick-initialized')) {
-                                              $slider.slick('unslick');
-                                          }
-                                          $slider.slick(getGallerySlickSettings());
                                           //$(".product-sub-images ul li a").removeClass("mz-thumb-selected");
                                           //$(".product-sub-images ul li[class=\"custom-thumbnail\"] a").addClass("mz-thumb-selected");
 
@@ -1903,10 +1894,7 @@
                                                       var dimensionRef = '<div class="image-block"> <a  class="thumb-item dimension-image" data-zoom-id="product-magiczoom" href="' + data.dimensionPictureFullSizeUrl + '" data-image="' + data.dimensionPictureDefaultSizeUrl + '" alt="' + prdName + '" title="' + prdName + '"><img data-index="1" class="img_fadeIn" data-defaultsize="' + data.dimensionPictureDefaultSizeUrl + '" src="' + data.dimensionPictureThumbImageUrl + '"  alt="' + prdName + '" title="' + prdName + '" data-fullsize="' + data.pictureFullSizeUrl + '"></a></div>';
                                                       $(".product-sub-images .subimagescontainer .image-block:nth-child(3)").after(dimensionRef);
 
-                                                      if ($slider.hasClass('slick-initialized')) {
-                                                          $slider.slick('unslick');
-                                                      }
-                                                      $slider.slick(getGallerySlickSettings());
+                                                   slickNeedToReint=true;
                                                   }
 
                                               }
@@ -1986,11 +1974,7 @@
                                                   var $slider = $('.product-sub-images .subimagescontainer');
                                                   var dimensionRef = '<div class="image-block"> <a  class="thumb-item dimension-image" data-zoom-id="product-magiczoom" href="' + data.dimensionPictureFullSizeUrl + '" data-image="' + data.dimensionPictureDefaultSizeUrl + '" alt="' + prdName + '" title="' + prdName + '"><img data-index="1" class="img_fadeIn" data-defaultsize="' + data.dimensionPictureDefaultSizeUrl + '" src="' + data.dimensionPictureThumbImageUrl + '"  alt="' + prdName + '" title="' + prdName + '" data-fullsize="' + data.pictureFullSizeUrl + '"></a></div>';
                                                   $(".product-sub-images .subimagescontainer .image-block:nth-child(3)").after(dimensionRef);
-
-                                                  if ($slider.hasClass('slick-initialized')) {
-                                                      $slider.slick('unslick');
-                                                  }
-                                                  $slider.slick(getGallerySlickSettings());
+                                                  slickNeedToReint=true;
                                               }
                                               MagicZoom.stop("product-magiczoom");
                                               MagicZoom.start("product-magiczoom");
@@ -2026,6 +2010,21 @@
                                               .replaceWith(data.title);
                                       }
                                       setProductBrowserHistory(window.location.href, `${productid}${data.variantId > 0 ? '_' + data.variantId : ""}`, data.slug);
+                                  }
+
+                                  // slick re init
+
+                                  var $slider = $('.product-sub-images .subimagescontainer');
+                                  if (!$slider.hasClass('slick-initialized')) {
+                                          waitForImages($slider).then(function () {
+                                   $slider.slick(getGallerySlickSettings());
+                                          });
+                                  }
+                                  else{
+                                      if(slickNeedToReint){
+                                          $slider.slick('unslick');
+                                          $slider.slick(getGallerySlickSettings());
+                                      }
                                   }
 
                               }

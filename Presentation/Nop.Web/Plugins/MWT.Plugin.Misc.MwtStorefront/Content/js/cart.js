@@ -14,13 +14,13 @@ $(window).on('load', function (e) {
         updateCart("cart-update", "customupdatecart");
     });
 
-   
+
     $(document).on("click", ".quantity-btn.inc, .quantity-btn.desc", function () {
         e.preventDefault();
         let container = $(this).closest("td.quantity");
 
         var currentQuantity = container.find(".qty-input").val();
-   
+
         if ($(this).hasClass("inc")) {
             currentQuantity++;
         } else if ($(this).hasClass("desc") && currentQuantity > 1) {
@@ -29,7 +29,7 @@ $(window).on('load', function (e) {
             return;
         }
         container.find(".qty-input").val(currentQuantity);
-       
+
         updateCart("cart-update", "customupdatecart");
     });
 
@@ -39,9 +39,9 @@ $(window).on('load', function (e) {
         typingTimer = setTimeout(saveCart, 2000);
     });
     function saveCart() {
-        updateCart("cart-update", "customupdatecart","","",true);
+        updateCart("cart-update", "customupdatecart", "", "", true);
     }
-    function updateCart(type, action, value, refid,hideloader=false) {
+    function updateCart(type, action, value, refid, hideloader = false) {
         var postData = $("#shopping-cart-form").serialize();
         postData = postData + "&isAjaxCart=true&" + action + "=";
         if (!hideloader) {
@@ -53,6 +53,7 @@ $(window).on('load', function (e) {
             data: postData,
             type: "POST",
             success: function (resposne) {
+
                 if (!hideloader) {
                     setTimeout(function () {
                         $('#cartprocessingModel').find('.btn-close').trigger('click');
@@ -66,6 +67,17 @@ $(window).on('load', function (e) {
                         $("#" + refid).prop('readonly', true);
 
                     $("a[ref-checkout-attribute=\"" + refid + "\"]").html(value == "" ? common_save : common_edit);
+
+
+                    $('#cartprocessingModel')
+                        .one('hidden.bs.modal', function () {
+
+                            $("#" + refid).focus();
+
+                        })
+
+
+
                 }
             },
             complete: function (data) {
