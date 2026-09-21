@@ -18,9 +18,9 @@
                     @foreach (var picture in Model.PictureModels)
                     {
                         <a class="thumb-item" data-zoom-id="product-magiczoom" href="@picture.FullSizeImageUrl"
-                           data-image="@picture.ImageUrl" alt="@picture.AlternateText" title="@picture.Title">
+                           data-image="@picture.ImageUrl"  aria-label="@picture.Title">
                             <img src="@picture.ThumbImageUrl"
-                                 alt="@picture.AlternateText" title="@picture.Title" data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
+                                 alt=""  data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
                         </a>
                     }
                 </div>
@@ -36,7 +36,7 @@
                         @foreach (var picture in Model.PictureModels)
                         {
                             <div class="thumb-item">
-                                <img class="lazy" src="/images/pixel.png" data-src="@picture.ThumbImageUrl" alt="@picture.AlternateText" title="@picture.Title" data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
+                                <img class="lazy" src="/images/pixel.png" data-src="@picture.ThumbImageUrl" alt="@picture.AlternateText"  data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
                             </div>
                         }
                     </div>
@@ -69,16 +69,15 @@
                 </div>
                 @if (_mediaSettings.DefaultPictureZoomEnabled)
                 {
-                    <a href="@Model.DefaultPictureModel.FullSizeImageUrl" title="@Model.DefaultPictureModel.Title" id="product-magiczoom">
-                        <img alt="@Model.DefaultPictureModel.AlternateText" src="@Model.DefaultPictureModel.ImageUrl"
-                             title="@Model.DefaultPictureModel.Title"
+                    <a href="@Model.DefaultPictureModel.FullSizeImageUrl" aria-label="@Model.DefaultPictureModel.Title" id="product-magiczoom">
+                        <img alt="" src="@Model.DefaultPictureModel.ImageUrl" 
                              id="main-product-img-@Model.Id" />
                     </a>
 
                 }
                 else
                 {
-                    <img class="lazy" alt="@Model.DefaultPictureModel.AlternateText" src="/images/pixel.png" data-src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" id="main-product-img-@Model.Id" />
+                    <img class="lazy" alt="@Model.DefaultPictureModel.AlternateText" src="/images/pixel.png" data-src="@Model.DefaultPictureModel.ImageUrl"  id="main-product-img-@Model.Id" />
                 }
             </div>
         </div>

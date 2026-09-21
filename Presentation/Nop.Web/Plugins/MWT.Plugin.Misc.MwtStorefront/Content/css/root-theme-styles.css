@@ -1008,7 +1008,7 @@ div#checkout-shipping-method-load {
   left: 0;
   z-index: 1000;
   width: 100%;
-  padding: 15px 25px 15px 10px;
+  padding: 8px 25px 8px 10px;
   line-height: 16px;
   color: #fff;
   opacity: 0.95;
@@ -1017,7 +1017,11 @@ div#checkout-shipping-method-load {
   background-color: #4bb07a;
 }
 .bar-notification.error {
-  background-color: #e4444c;
+  background-color: #ad0000;
+      text-align: center;
+}
+.bar-notification.error .content {
+    color: #fff;
 }
 .bar-notification.warning {
   background-color: #f39c12;
@@ -1030,12 +1034,12 @@ div#checkout-shipping-method-load {
   text-decoration: underline;
 }
 .bar-notification .close {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 32px;
-  height: 32px;
-  margin: 7px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 24px;
+    height: 24px;
+    margin: 4px;
   background: #fff url("../images/close.png") center no-repeat;
   cursor: pointer;
 }
@@ -7757,6 +7761,7 @@ button.button-2.btn.btn-primary.cart-button {
   font-weight: 700;
   margin-right: 5px;
   text-align: center;
+      text-transform: uppercase !important;
 }
 button.button-2.btn.btn-primary.cart-button:hover {
   background-color: #000;
@@ -14890,6 +14895,7 @@ span.join-text-sign-up {
 }
 .featuredproduct .product-sub-images .slick-slide {
   margin: 5px 15px !important;
+      width: auto !important;
 }
 .featuredproduct .product-sub-images {
   margin: 0 !important;
@@ -15086,6 +15092,12 @@ form#CustomizationForm .attributes {
 }
 .customizationform-popup .attachment {
   position: relative;
+    display: flex;
+    flex-direction: column;
+}
+.customizationform-popup .attachment button {
+    background: none;
+	 border: none;
 }
 .customizationform-popup .attachment input {
   position: absolute;
@@ -15320,7 +15332,7 @@ h2.product-info-heading-contact {
 }
 form#CustomizationForm h3,
 form#CustomizationForm .form-group.message label,
-form#CustomizationForm .attachment label {
+form#CustomizationForm .attachment span {
   text-align: left;
   width: 100%;
   padding-bottom: 5px;
@@ -15338,7 +15350,7 @@ form#CustomizationForm .attachment label {
   font-size: 13px !important;
   padding-top: 10px !important;
 }
-label.image-attachment-error {
+.image-attachment-error {
   display: none;
 }
 #drp-customize img {
@@ -15976,6 +15988,7 @@ a.miniwishlist.signin {
   padding: 0 24px;
   font-size: 12px;
   line-height: 36px;
+  text-transform: uppercase !important;
 }
 #flyout-wishlist-popup .mini-shopping-cart.row .count {
   margin: 0;
@@ -16682,7 +16695,7 @@ span.sale-endss {
   width: 200px !important;
   height: 40px;
   background: #444444;
-  border-radius: 5px !important;
+  border-radius: 0px !important;
   font-size: 14px;
   font-weight: 700;
   margin-right: 5px;
@@ -16926,7 +16939,7 @@ span.Product-customize-size.text-decoration-underline {
   margin: 0 auto;
   height: 68px;
   width: 68px;
-  border-radius: 5px;
+  border-radius: 0px;
 }
 .featuredproduct .slide-arrow i.fas.fa-chevron-left,
 .featuredproduct .slide-arrow i.fas.fa-chevron-right {
@@ -17749,10 +17762,14 @@ figcaption.mz-caption.mz-show {
 .customizationform-popup .desktop-customize-form .attachment img {
   max-width: 50px;
 }
+.modal-content.desktop-customize-form .image-upload button {
+    border: none;
+	background:none;
+}
 .customizationform-popup button.remove-preview {
   position: absolute;
-  background: #fff;
-  border: 1px solid #444;
+  background: #fff !important;
+  border: 1px solid #444 !important;
   width: 18px;
   height: 18px;
   line-height: 0px;
@@ -17774,7 +17791,7 @@ figcaption.mz-caption.mz-show {
   text-align: left;
   padding: 5px 0 0 0;
 }
-label.image-attachment-error {
+.image-attachment-error {
   color: #B80000 !important;
   margin-bottom: 10px !important;
 }
@@ -17954,7 +17971,7 @@ tr.custom.custom-shade-tr td.custom-size-request-input.disabled {
   color: #444444;
   line-height: 48px;
   background: transparent;
-  text-transform: capitalize;
+  text-transform: uppercase;
   font-size: 16px;
   border: 1px solid #000;
 }
@@ -19279,7 +19296,7 @@ label.custom-control-label a {
   margin: 10px 0 0 0;
 }
 .featuredproduct .picture img {
-  border-radius: 8px;
+  border-radius: 0px;
 }
 .featuredproduct .product-gallery h4 {
   display: none;
@@ -21696,7 +21713,7 @@ section.testimonials-section-cat {
   gap: 10px;
   margin: 8px 0 0 0;
 }
-.customize-form-section-messgae-attachemnt .attachment label {
+.customize-form-section-messgae-attachemnt .attachment span {
   padding-bottom: 14px !important;
   padding-top: 0px !important;
 }
@@ -23095,10 +23112,10 @@ form#CustomizationForm .attributes input:before {
   border: none !important;
 }
 p.customize-available-size {
-  font-size: 14px;
+  font-size: 14px !important;
   margin-bottom: 8px !important;
 }
-form#CustomizationForm .attachment label {
+form#CustomizationForm .attachment span {
   font-size: 14px;
 }
 .check-customize.check-customize-new .form-check-input:focus {
@@ -23208,7 +23225,7 @@ form#CustomizationForm .attachment label {
   float: left;
   width: 100%;
   font-size: 10px;
-  padding: 1px 5px 3px 5px;
+  padding: 10px 5px 13px 5px;
 }
 .col-sm-4.product-details .product-attribute-size-drpdown div#drp-customize {
   position: relative;
@@ -23941,7 +23958,7 @@ body .attribute-craousel .jcarousel ul li {
     border-style: solid;
     border-color: #444444;
     border-image: initial;
-    border-radius: 3px;
+    border-radius: 0px;
     height: 40px;
     line-height: 40px;
     padding: 0 12px;
@@ -24538,8 +24555,8 @@ body .attribute-craousel .jcarousel ul li {
     text-align: center;
   }
   .desktop-customize-form .customize-img img {
-    max-width: max-content;
-    border-radius: 0px;
+    max-width: max-content !important;
+    border-radius: 0px !important;
   }
   .desktop-customize-form .product-info-heading {
     color: #444;
@@ -24614,6 +24631,8 @@ body .attribute-craousel .jcarousel ul li {
   }
   .customizationform-popup .desktop-customize-form .attachment {
     width: 100%;
+	        display: flex;
+        flex-direction: column;
   }
   .customizationform-popup .desktop-customize-form .form-group.message {
     width: 100%;
@@ -24721,7 +24740,7 @@ body .attribute-craousel .jcarousel ul li {
   }
   .customizationform-popup .modal-header-text p {
     line-height: 16px;
-    padding-top: 10px;
+    padding-top: 10px !important;
   }
   .attribute-craousel td {
     max-width: 480px !important;
@@ -25225,6 +25244,7 @@ svg.show-mobile-or {
   padding: 9px 20px;
   border: 1px solid #111;
   color: #444;
+	text-transform: uppercase;
 }
 .share-info a.share-link:hover {
   background: #000;
@@ -28939,6 +28959,12 @@ p.selection {
     overflow: visible;
 }
 @media (max-width: 767px) {
+	.checkout-pages tbody.summary-items td img {
+    width: 80px;
+}
+	.bar-notification {
+  position: relative;
+}
 	 .pager li a,
   .pager li span {
     min-width: 38px;
@@ -30537,6 +30563,9 @@ p.selection {
   .section.payment-info {
     z-index: 0;
   }
+  .section.payment-info {
+        padding: 20px 20px;
+    }
   .contact-info {
     display: none;
   }
@@ -31602,7 +31631,7 @@ p.selection {
     position: relative;
     left: 5px;
   }
-  body .customize-form-section-messgae-attachemnt .attachment label {
+  body .customize-form-section-messgae-attachemnt .attachment span {
     text-align: center !important;
     font-size: 14px !important;
     padding-bottom: 24px !important;
@@ -34690,8 +34719,8 @@ p.selection {
     .Configuration-section
     .attribute-squares
     .attribute-square {
-    width: 105px !important;
-    height: 105px !important;
+    width: 103px !important;
+    height: 103px !important;
     border-radius: 0px !important;
     padding: 0px !important;
     border: none !important;
@@ -34960,7 +34989,9 @@ p.selection {
   width: 100% !important;
   height: 100% !important;
 }
-
+  .customizationform-popup .modal-header h2{
+	  display: block !important;
+  }
 @media (min-width: 1200px) {
   .fixed-filter .filter-section,
   .fixed-filter .desktopFilters {
@@ -35379,6 +35410,21 @@ p.selection {
   div#stickyHeader .add-to-cart {
     width: calc(100% - 0px);
   }
+}
+@media (min-width: 350px) and (max-width: 374px) {
+    .attributes.bundleproduct .Configuration-section .attribute-squares .attribute-square {
+        width: 94px !important;
+        height: 94px !important;
+    }
+  .guestcheckoutsignin-modal .modal-body {
+    max-width: 280px;
+}
+.shopping-cart-page-body .cart-total * {
+        font-size: 13px;
+    }
+	ul#checkout-steps h4, ul#checkout-steps a {
+        font-size: 11px;
+    }
 }
 .skip-main-link a {
   position: absolute;

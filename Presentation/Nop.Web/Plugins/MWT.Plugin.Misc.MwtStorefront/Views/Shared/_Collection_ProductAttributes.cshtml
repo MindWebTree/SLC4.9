@@ -430,7 +430,7 @@
                                                                     attribute.Values.Count >= 1)
                                             {
                                                 <li>
-                                                    <label data-attr-for="startCustomization" id="drp-customize-shade" class="product-customize-shade">@T("Product.Size.Customize.Text.With.Image")</label>
+                                                    <span data-attr-for="startCustomization" id="drp-customize-shade" class="product-customize-shade">@T("Product.Size.Customize.Text.With.Image")</span>
                                                 </li>
                                             }
                                         </ul>
@@ -651,75 +651,8 @@
 
 
               var prdName ='Picture of ' + $("h1[itemprop=\"name\"]").text().trim();
-              console.log(prdName);
-                    var show_image_length=$('.product-sub-images').jcarousel('visible').length;
-
-                                function change_gallery_img(imageObjects,FullSizeImageUrl,DefaultSize){
-
-                                    $('.product-sub-images').find('ul').empty();
-                                                imageObjects.forEach(function(imageObj,index) {
-
-
-                                                  const newLi = $('<li>').append(
-                                                    $('<a>', {
-                                                        'data-zoom-id': 'product-magiczoom',
-                                                        'href': imageObj.FullSizeImageUrl,
-                                                        'class': 'thumb-item mz-thumb ',
-                                                        'data-image': imageObj.ImageUrl,
-                                                        'AlternateText': imageObj.AlternateText,
-                                                        'title': prdName
-                                                    }).append(
-                                                        $('<img>', {
-                                                            'src': imageObj.ThumbImageUrl,
-                                                            'class': 'lazy',
-                                                            'width': "100",
-                                                            'height': '100',
-                                                            'title': prdName,
-                                                            'data-src': imageObj.ThumbImageUrl,
-                                                            'data-defaultsize': imageObj.ImageUrl,
-                                                            'data-fullsize': imageObj.FullSizeImageUrl,
-                                                            'AlternateText': imageObj.AlternateText
-                                                        })
-                                                    )
-                                                );
-                                                 $('.product-sub-images').find('ul').append(newLi); // Append the new <li> to the carousel
-
-
-                                                    });
-
-                                                     MagicZoom.stop("product-magiczoom");
-
-                                                    // Update the main image elements
-                                                   var $mainLink = $("#product-magiczoom");
-
-                                                    $mainLink.attr("href", FullSizeImageUrl || imageObjects[0].FullSizeImageUrl); // Set to the largeUrl of the first new image
-                                                    $mainLink.find("img").attr("src", DefaultSize ||  imageObjects[0].ImageUrl); // Set to the thumbUrl of the first new image
-                                                    $mainLink.find("img").attr("alt", imageObjects[0].AlternateText); // Set the alt text
-
-                                                    // Restart MagicZoom
-                                                    MagicZoom.start("product-magiczoom");
-                                                   //  MagicZoom.update("product-magiczoom", imageObjects[0].FullSizeImageUrl,  imageObjects[0].ImageUrl, 'show-title: false');
-                                                    // Reinitialize the jCarousel
-                                                    $(".jcarousel").jcarousel("destroy"); // Destroy previous instance
-                                                    $(".jcarousel").jcarousel();
-
-                                                    // Reinitialize jCarousel control functionality
-                                                    $(".jcarousel-control-prev").jcarouselControl({
-                                                        target: '-=1'
-                                                    });
-
-                                                    $(".jcarousel-control-next").jcarouselControl({
-                                                        target: '+=1'
-                                                    });
-                                                    console.log(show_image_length);
-
-                                                    if (imageObjects.length >= show_image_length) {
-                                                            $(".jcarousel-control-prev, .jcarousel-control-next").show();
-                                                    }else{
-                                                        $(".jcarousel-control-prev, .jcarousel-control-next").hide();
-                                                    }
-
-            }
+         
+                  
 
                             $.ajax({
                                 cache: false,
@@ -811,102 +744,7 @@
                                     var $carousel = $('.product-sub-images');
 
 
-                                    if (isMainProduct!='False') {
-                                                 var isGalleryFunctioncalled=false;
-                                        if(refId != "onload"){
-
-                                              <!--  shade image code -->
-                                                            console.log(data);
-                                           var imageObjects=data.gallery;
-
-                                                if(default_img.length<1 ){
-
-                                                $('.product-sub-images li').each(function(index) {
-                                                    var  gallary_img = {
-                                                    ThumbImageUrl: $(this).find('img').attr('src'),
-                                                    ImageUrl: $(this).find('a').attr('href'),
-                                                    AlternateText: $(this).find('img').attr('alt'),
-                                                    FullSizeImageUrl: $(this).find('img').data('fullsize')
-                                                };
-                                                default_img.push(gallary_img);
-                                                })
-                                                }
-
-
-                                            if(imageObjects.length>0 && previous_shade!=$.trim($('#product-details-form .shade-section .Stain').text())){
-                                                    previous_shade=$.trim($('#product-details-form .shade-section .Stain').text());
-
-                                                change_gallery_img(imageObjects,data.pictureFullSizeUrl,data.pictureDefaultSizeUrl);
-                                                isGalleryFunctioncalled=true;
-                                                show_default_img=false;
-
-                                            }
-                                            else if (imageObjects.length > 0 && previous_config != $("#product-details-form .Configuration-section input:checked").val()) {
-                                                previous_config = $("#product-details-form .Configuration-section input:checked").val();
-
-                                                change_gallery_img(imageObjects, data.pictureFullSizeUrl, data.pictureDefaultSizeUrl);
-                                                isGalleryFunctioncalled = true;
-                                                show_default_img = false;
-
-                                            }
-                                            else {
-
-
-                                                if (!show_default_img &&
-                                                    (previous_shade != $.trim($('#product-details-form .shade-section .Stain').text())
-                                                    || (previous_config != $("#product-details-form .Configuration-section input:checked").val()))
-
-                                                ) {
-                                                         previous_shade=$.trim($('#product-details-form .shade-section .Stain').text());
-                                                    previous_config = $("#product-details-form .Configuration-section input:checked").val();
-                                                          change_gallery_img(default_img,data.pictureFullSizeUrl,data.pictureDefaultSizeUrl);
-                                                           isGalleryFunctioncalled=true;
-                                                        show_default_img=true;
-                                                    }
-                                            }
-                                        }
-                                        if (data.pictureDefaultSizeUrl && refId != "onload") {
-
-
-                                            if (data.attrName?.toLowerCase().indexOf("configuration") >= 0) {
-                                                if ($(".custom-thumbnail").length == 0) {
-                                                    var thumbRef = '<li class="custom-thumbnail"> <a class="thumb-item" data-zoom-id="product-magiczoom" href="' + data.pictureFullSizeUrl + '" data-image="' + data.pictureDefaultSizeUrl + '" alt="' + prdName + '" title="' + prdName + '"><img class="img_fadeIn" data-defaultsize="' + data.pictureDefaultSizeUrl + '" src="' + data.pictureThumbImageUrl + '"  alt="' + prdName + '" title="' + prdName + '" data-fullsize="' + data.pictureFullSizeUrl + '"></a></li>';
-                                                }
-                                                else {
-                                                    $(".custom-thumbnail a").attr("href", data.pictureFullSizeUrl);
-                                                    $(".custom-thumbnail a").attr("data-image", data.pictureDefaultSizeUrl);
-                                                    $(".custom-thumbnail img").attr("src", data.pictureThumbImageUrl);
-                                                    $(".custom-thumbnail img").attr("data-fullsize", data.pictureFullSizeUrl);
-                                                    $(".custom-thumbnail img").attr("data-defaultsize", data.pictureDefaultSizeUrl);
-                                                }
-                                                $(".product-sub-images ul li:first").after(thumbRef);
-                                                MagicZoom.stop("product-magiczoom");
-                                                var $mainLink = $("#product-magiczoom");
-                                                $mainLink.attr("href", data.pictureFullSizeUrl);
-                                                $mainLink.find("img").attr("src", data.pictureDefaultSizeUrl);
-                                                MagicZoom.start("product-magiczoom");
-
-
-                                                $(".product-sub-images").jcarousel("destroy");
-                                                $(".product-sub-images").jcarousel({ wrap: null });
-                                                //$(".product-sub-images ul li a").removeClass("mz-thumb-selected");
-                                                //$(".product-sub-images ul li[class=\"custom-thumbnail\"] a").addClass("mz-thumb-selected");
-
-                                            }
-                                            else {
-
-                                                 if(!isGalleryFunctioncalled ){
-                                                 $('#main-product-img-lightbox-anchor-@Model.Id').attr("href", data.pictureFullSizeUrl);
-                                                MagicZoom.update("product-magiczoom", data.pictureFullSizeUrl, data.pictureDefaultSizeUrl, 'show-title: false');
-
-                                                 }
-                                            }
-
-
-                                        }
-
-                                    }
-                                    else if ('@addtoCartFormId' == '#product-details-form' ) {
+                                   if ('@addtoCartFormId' == '#product-details-form' ) {
 
                                         if ((data.pictureDefaultSizeUrl  || data.pictureFullSizeUrl)&& refId != "onload") {
 

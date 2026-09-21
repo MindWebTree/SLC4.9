@@ -1152,6 +1152,7 @@ public partial class ProductController : BaseAdminController
         variant.Weight = model.Weight;
         variant.ManufacturerPartNumber = model.ManufacturerPartNumber;
         variant.DimensionPictureId = model.DimensionPictureId;
+        variant.PictureId = model.PictureId;
         await _productService.UpdateVariant(variant);
         if (!continueEditing)
             return RedirectToAction("Edit", new { id = model.ProductId });

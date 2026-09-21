@@ -1,7 +1,7 @@
 ﻿@model ProductConfigurationBundleModel
 @using Nop.Core
 @using System.Text.Encodings.Web
-
+@using Newtonsoft.Json.Linq
 @if (Model != null)
 {
     <div id="bundle-master-wrapper"
@@ -19,101 +19,22 @@
                         <h5 class="image-content-name" id="bundle-preview-text">Previewing Set</h5>
                     </div>
                     @* Added id="main-bundle-image" *@
-                    <img id="main-bundle-image" src="/images/uploaded/product-bundle-image.jpeg" alt="product-bundle-image" class="img-fluid rounded" />
+                    <img id="main-bundle-image" src="" alt="product-bundle-image" class="img-fluid rounded" />
                 </div>
-                <div class="bundle-contents">
-                    @foreach (var product in Model.ProductOverviewModels)
-                    {
-                        var initialMatch = Model.InitialItems.FirstOrDefault(x => x.ProductId == product.Id);
-                        bool isVisibleOnLoad = initialMatch != null;
-
-                        <div class="bundle-product-card master-item mb-3 @(isVisibleOnLoad ? "" : "d-none")"
-                             id="master-card-@product.Id"
-                             data-productid="@product.Id"
-                             data-price="@product.ProductPrice.PriceValue"
-                             data-old-price="@(product.ProductPrice.OldPriceValue > 0 ? product.ProductPrice.OldPriceValue : product.ProductPrice.PriceValue)">
-
-                            <div class="d-flex justify-content-between gap-3 align-items-start main-product-row">
-                                <div class="bundle-product-image position-relative flex-shrink-0">
-                                    <img src="@product.DefaultPictureModel.ImageUrl" alt="@product.Name" class="img-fluid rounded" />
-
-                                    @* RESTORED: Zoom Button *@
-                                    @if (Model.EnableQuickView)
-                                    {
-                                        <button type="button" class="zoom-icon-btn"
-                                                data-name="@product.Name"
-                                                data-img="@product.DefaultPictureModel.ImageUrl"
-                                                data-desc="@Html.Raw(JavaScriptEncoder.Default.Encode(product.ShortDescription ?? ""))"
-                                                data-sename="@product.SeName"
-                                                onclick="openQuickView(event, '@product.Name', '@product.DefaultPictureModel.ImageUrl', '@product.ProductPrice.Price', '@product.ProductPrice.OldPrice', '@Html.Raw(JavaScriptEncoder.Default.Encode(product.ShortDescription ?? ""))',@product.Id, '', '@product.SeName', (@product.ProductPrice.OldPriceValue > @product.ProductPrice.PriceValue)">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zoom-in w-3.5 h-3.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" x2="16.65" y1="21" y2="16.65"></line><line x1="11" x2="11" y1="8" y2="14"></line><line x1="8" x2="14" y1="11" y2="11"></line></svg>
-                                        </button>
-                                    }
-                                </div>
-
-                                <div class="d-flex flex-column flex-md-row flex-grow-1 min-w-0 gap-2">
-                                    <div class="flex-grow-1 min-w-0">
-                                        <h5 class="product-title">@product.Name</h5>
-
-                                        <div class="shead-bundle-header">
-                                            <span class="text-bundle-header">Stain:&nbsp;</span>
-                                            <span class="shead-bundle-content selected-stain-name" data-product-id="@product.Id">Default Selection</span>
-                                        </div>
-
-                                        <div class="price-row d-flex align-items-center gap-2">
-                                            <span class="price-current">@product.ProductPrice.Price</span>
-
-                                            @{
-                                                var hasDiscount = !string.IsNullOrEmpty(product.ProductPrice.OldPrice) &&
-                                                product.ProductPrice.OldPriceValue > product.ProductPrice.PriceValue;
-                                            }
-
-                                            <span class="price-old @(hasDiscount ? "" : "d-none")">
-                                                @product.ProductPrice.OldPrice
-                                            </span>
-
-                                            <span class="badge-save @(hasDiscount ? "" : "d-none")">
-                                                Save @(Math.Round((1 - (product.ProductPrice.PriceValue / product.ProductPrice.OldPriceValue)) * 100))%
-                                            </span>
-
-                                        </div>
-                                    </div>
-
-                                    <div class="qty-container flex-shrink-0">
-                                        <div class="qty-view d-flex flex-column align-items-end">
-                                            <div class="qty-static-box">
-                                                Qty:<span class="qty-value">@(isVisibleOnLoad? initialMatch.Quantity.ToString() : "1")</span>
-                                            </div>
-                                        </div>
-
-                                        @* RESTORED: Show Options Link *@
-                                        @*<div class="text-end show-options-content">
-                                            <a href="javascript:void(0)" class="show-options-link" data-product-id="@product.Id">
-                                            Show Options <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"></path></svg>
-                                            </a>
-                                            </div>*@
-                                    </div>
-                                </div>
-                            </div>
-
-                            @* RESTORED: Options Drawer *@
-
+                <div class="bundle-contents" id="dynamic-bundle-container">
+                </div>
+                @* --- Bundle Total Footer --- *@
+                <div class="bundle-summary-footer d-none">
+                    <div class="row align-items-start">
+                        <div class="col-6">
+                            <h5 class="bundle-total-content">Your Bundle Total</h5>
+                            <span class="qty-value-main">Items Included</span>
                         </div>
-                    }
-
-                    @* --- Bundle Total Footer --- *@
-                    <div class="bundle-summary-footer">
-                        <div class="row align-items-start">
-                            <div class="col-6">
-                                <h5 class="bundle-total-content">Your Bundle Total</h5>
-                                <span class="qty-value-main">@Model.InitialItems.Sum(x => x.Quantity) Items Included</span>
-                            </div>
-                            <div class="col-6 text-end">
-                                <h3 class="bundle-total-amount">@Model.DefaultBundlePrice</h3>
-                                <div class="bundle-total-save">Total Save <span class="save-total">@Model.TotalSaving</span></div>
-                                <div class="bundle-total-offer d-none">
-                                    <span class="promo--offer">Offer: <span class="offer">@Model.Offer</span></span>  <span class="promo--bmsm">+ Bmsm: <span class="save-bmsm-offer">@Model.BMSMDiscount</span></span> <span class="promo--bundle">+ Bundle: <span class="save-extra">@Model.BundleDiscount</span></span>
-                                </div>
+                        <div class="col-6 text-end">
+                            <h3 class="bundle-total-amount"></h3>
+                            <div class="bundle-total-save">Total Save <span class="save-total"></span></div>
+                            <div class="bundle-total-offer d-none">
+                                <span class="promo--offer">Offer: <span class="offer"></span></span>  <span class="promo--bmsm">+ Bmsm: <span class="save-bmsm-offer"></span></span> <span class="promo--bundle">+ Bundle: <span class="save-extra"></span></span>
                             </div>
                         </div>
                     </div>
@@ -132,7 +53,7 @@
                 </div>
                 <div class="col-md-6 d-flex flex-column">
                     <h4 id="qv-title" class="fw-bold modal-product-title mb-2"></h4>
-                    <div id="qv-description" style="visibility:hidden;height:0px;" class="mb-3 product-description"></div>
+                    @*<div id="qv-description" class="mb-3 product-description"></div>*@
                     <div class="mb-3 qv-dimension">
                         <span class="text-uppercase text-muted extra-small-label d-block fw-bold mb-1">Dimensions</span>
                         <span class="modal-spec-value"></span>
@@ -337,7 +258,7 @@
         padding: 0 5px;
     }
 
-    .shead-bundle-header {
+    .attr-bundle-header {
         margin: 5px 0 !important;
     }
     /* Ensure container doesn't squash it */
@@ -468,7 +389,7 @@
         color: #6a7282;
     }
 
-    .shead-bundle-content {
+    .attr-bundle-content {
         font-size: 12px;
         color: #364153;
     }
@@ -968,448 +889,528 @@
     }
 </style>
 <script asp-location="Footer">
-    let toastTimer;
-    var buyMoreSaveMoreDiscount = '@Model.BuyMoreSaveMoreDiscount';
-    var singleItemThreshold = '@Model.SingleItemThreshold';
-    var discountType = "@Model.DiscountType";
-
-
-    //// --- 1. GLOBAL FUNCTIONS ---
-    //function showBundleToast(type, message) {
-    //    const toast = document.getElementById('bundle-toast');
-    //    if (!toast) return;
-
-    //    const msgEl = toast.querySelector('.toast-message');
-
-    //    clearTimeout(toastTimer);
-    //    toast.classList.remove('d-none', 'success', 'info');
-    //    toast.classList.add(type);
-    //    msgEl.innerHTML = message;
-
-    //    // Auto close after 5 seconds
-    //    toastTimer = setTimeout(() => {
-    //        closeBundleToast();
-    //    }, 5000);
-    //}
-
-    //function closeBundleToast() {
-    //    const toast = document.getElementById('bundle-toast');
-    //    if (toast) {
-    //        toast.classList.add('d-none');
-    //    }
-    //}
-    let lastFocusedTrigger = null;
-    function openQuickView(event, name, img, price, oldPrice, description, productId, dimension, sename, isdiscounted) {
-        event.preventDefault();
-            lastFocusedTrigger = event.currentTarget;
-        document.getElementById('qv-title').innerText = name;
-        document.getElementById('qv-image').src = img;
-        document.getElementById('qv-price').innerText = price;
-        if (isdiscounted == true) {
-            document.getElementById('qv-old-price').innerText = oldPrice || '';
-        }
-        else {
-            document.getElementById('qv-old-price').innerText = '';
-        }
-        document.getElementById('qv-description').innerHTML = description;
-        document.getElementById('more-link').href = `/product/${productId}/${sename}`;
-        document.getElementById('quickViewModal').classList.remove('d-none');
-        dimension= (dimension || '').toString().trim();
-        document.querySelector('.modal-spec-value').textContent = dimension;
-        document.querySelector('.qv-dimension').classList.toggle('d-none', dimension === '');
-    document.querySelector('#quickViewModal .mwt-close-btn').focus();
-    }
-
-    function closeQuickView(event) {
-        // Prevent closing if clicking inside the content box
-        if (event) event.stopPropagation();
-        document.getElementById('quickViewModal').classList.add('d-none');
-          if (lastFocusedTrigger) {
-        lastFocusedTrigger.focus();
-        lastFocusedTrigger = null;
-    }
-    }
-    $(document).ready(function () {
-        const $wrapper = $('#bundle-master-wrapper');
-        const manifest = JSON.parse($wrapper.attr('data-manifest') || "[]");
-
-        function switchBundleUI(mainVariantId) {
-            const config = manifest.find(x => x.variantId == mainVariantId);
-            if (!config) {
-                $('.shop-collection-container').addClass('d-none');
-                return;
-            }
-            $('.shop-collection-container').removeClass('d-none');
-
-            const $mainImg = $('#main-bundle-image');
-
-            if (config.displayonproductpage === false) {
-                // If the toggle in Admin is OFF, hide the image
-                $mainImg.hide();
-            }
-            else {
-                // If the toggle is ON, ensure the image is visible
-                $mainImg.show();
-
-                var configUrl = (config.imageurl && config.imageurl.FullSizeImageUrl) ? config.imageurl.FullSizeImageUrl : null;
-                if (configUrl) {
-                    $mainImg.fadeOut(100, function () {
-                        var tempImg = new Image();
-                        tempImg.src = configUrl;
-
-                        tempImg.onload = function () {
-                            $mainImg.attr('src', configUrl).fadeIn(200);
-                        };
-                    });
-                }
-                else {
-                    $mainImg.fadeOut(100, function () {
-                        var tempImg = new Image();
-                        tempImg.src = "";
-
-                        tempImg.onload = function () {
-                            $mainImg.attr('src', configUrl).fadeIn(200);
-                        };
-                    });
-                }
-            }
-
-            // 1. Update the Main Total
-            $('.bundle-total-amount').text(config.price);
-
-            // 2. Hide all cards, then enable specific ones
-            $('.master-item').addClass('d-none');
-
-            config.metadata.forEach(function (item) {
-                const $card = $('#master-card-' + item.productId);
-                $card.removeClass('d-none');
-
-                // 3. Update Individual Card Prices from Metadata
-                $card.find('.price-current').text(item.price);
-                $card.find('.price-old').text(item.oldPrice);
-                $card.find('.qty-value').text(item.qnty);
-
-                // Update data attributes so the "recalculateVisibleBundleMath" stays accurate
-                $card.attr('data-price', item.priceraw);
-                $card.attr('data-old-price', item.oldPriceraw);
-                const $badge = $card.find('.badge-save');
-                const $oldprice = $card.find('.price-old');
-                if (item.discountPct > 0) {
-                    $badge.text('Save ' + item.discountPct + '%').show();
-                    $oldprice.show();
-                } else {
-                    $badge.hide(); // Hide if there's no discount for this variant
-                    $oldprice.hide();
-                }
-
-
-                const $quickViewBtn = $card.find('.zoom-icon-btn');
-
-                if ($quickViewBtn!=null && $quickViewBtn.length) {
-                    const name = $quickViewBtn.attr('data-name') || '';
-                    const img = $quickViewBtn.attr('data-img') || '';
-                    const desc = $quickViewBtn.attr('data-desc') || '';
-                    const sename = $quickViewBtn.attr('data-sename') || '';
-                    const newOnClick = `openQuickView(event, '${name}', '${img}', '${item.price}', '${item.oldPrice}', '${desc}','${item.productId}','${item.dimension}','${sename}',${item.discountPct > 0})`;
-
-                    // 3. Apply it to the button
-                    $quickViewBtn.attr('onclick', newOnClick);
-                }
-
-            });
-
-            recalculateVisibleBundleMath(config.priceraw, config);
-            $(".bundle-total-offer").removeClass("d-none");
-        }
-
-        // --- LISTEN TO MAIN PAGE ATTRIBUTE CHANGE ---
-        $(document).ajaxSuccess(function (event, xhr, settings) {
-            if (settings.url.indexOf("CustomProductDetails_AttributeChange") !== -1) {
-                const data = xhr.responseJSON; // Contains variantId, price, oldPrice
-                const params = new URLSearchParams(settings.url.split('?')[1] || settings.data || "");
-                const isMainProduct = params.get('formId') === "product_details_form";
-
-                if (isMainProduct) {
-                    // 1. Refresh the Bundle UI
-                    switchBundleUI(data.variantId);
-
-                    // 2. Delay to allow nopCommerce and custom select scripts to initialize
-                    //setTimeout(function () {
-                    //    const $mainStainRow = $('.product-details .stain-attrname').first();
-
-                    //    // Get selected name from main product
-                    //    const selectedStainName = $mainStainRow.find('li.selected-value label').attr('data-attr-name') ||
-                    //        $mainStainRow.find('select option:selected').text();
-
-                    //    if (selectedStainName) {
-                    //        const targetName = selectedStainName.trim();
-                    //        console.log("Syncing Stain: " + targetName);
-
-                    //        $('.bundle-product-card').each(function () {
-                    //            const $subItem = $(this);
-                    //            const $stainRow = $subItem.find('tr.stain-attrname');
-
-                    //            // --- CASE 1: DROPDOWN UI ---
-                    //            const $select = $stainRow.find('select');
-                    //            if ($select.length > 0) {
-                    //                console.log("Dropdown detected. Syncing...");
-
-                    //                // A. Update the hidden <select> value
-                    //                $select.find('option').each(function () {
-                    //                    if ($(this).text().trim() === targetName) {
-                    //                        $select.val($(this).val()).trigger('change');
-                    //                        return false;
-                    //                    }
-                    //                });
-
-                    //                // B. Update the visual "Custom Select" (the div-based UI)
-                    //                // We find the div inside .select-items that matches the text and click it
-                    //                const $customOption = $stainRow.find('.select-items div').filter(function () {
-                    //                    return $(this).text().trim() === targetName;
-                    //                });
-
-                    //                if ($customOption.length > 0) {
-                    //                    $customOption[0].click(); // Native click on the custom div
-                    //                }
-                    //            }
-
-                    //            // --- CASE 2: RADIO / IMAGE SQUARES ---
-                    //            else {
-                    //                const $targetLabel = $stainRow.find('label').filter(function () {
-                    //                    return ($(this).attr('data-attr-name') || "").trim() === targetName;
-                    //                });
-
-                    //                if ($targetLabel.length > 0) {
-                    //                    const visualElement = $targetLabel.find('img')[0] ||
-                    //                        $targetLabel.find('.attribute-square')[0] ||
-                    //                        $targetLabel[0];
-
-                    //                    if (visualElement) {
-                    //                        visualElement.click();
-                    //                    }
-                    //                }
-                    //            }
-                    //        });
-                    //    }
-                    //}, 450);
-                }
-            }
-        });
-        // --- COMMON UI LOGIC (Toggle/Collapse) ---
-        //$(document).on('click', '.show-options-link', function (e) {
-        //    e.preventDefault();
-        //    const id = $(this).data('product-id');
-        //    const $drawer = $('#opts-drawer-' + id);
-        //    $drawer.css({ 'display': 'block', 'max-height': $drawer[0].scrollHeight + 'px', 'opacity': '1' });
-        //    $(this).addClass('d-none');
-        //});
-
-        //$(document).on('click', '.collapse-link', function (e) {
-        //    e.preventDefault();
-        //    const id = $(this).data('product-id');
-        //    $('#opts-drawer-' + id).css({ 'max-height': '0', 'opacity': '0' });
-        //    $('.show-options-link[data-product-id="' + id + '"]').removeClass('d-none');
-        //});
-
-        // Toggle Main Bundle Content (Shop Collection)
-        //$('#toggleBundleContent').on('click', function () {
-        //    const $body = $('#bundleBody');
-        //    const $icon = $('#main-toggle-icon');
-
-        //    if ($body.is(':visible')) {
-        //        $body.slideUp(400);
-        //        $icon.removeClass('active');
-        //    } else {
-        //        $body.slideDown(400);
-        //        $icon.addClass('active');
-        //    }
-        //});
-
-        function recalculateVisibleBundleMath(bundlePriceFromAjax, config) {
-            let totalIndividualCurrent = 0;
-            let totalIndividualOld = 0;
-            let totalItemsCount = 0;
-
-            // 1. SELECT ONLY VISIBLE CARDS
-
-            $('.master-item:not(.d-none)').each(function () {
-                const $card = $(this);
-                const qty = parseInt($card.find('.qty-value').text()) || 0;
-
-                // Pull raw numbers from data-attributes
-                const currentPrice = parseFloat($card.attr('data-price')) || 0;
-                const oldPrice = parseFloat($card.attr('data-old-price')) || currentPrice;
-
-                totalIndividualCurrent += (currentPrice * qty);
-                totalIndividualOld += (oldPrice * qty);
-                totalItemsCount += qty;
-            });
-
-
-            // 2. The Set Price (The "Shared" Bundle Price from the Main Variant)
-            const setPrice = parseFloat(bundlePriceFromAjax) || 0;
-
-            // 3. The Math Logic
-            const formatter = new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                maximumFractionDigits: 2
-            });
-
-
-            var offer = totalIndividualOld - totalIndividualCurrent; // "Save" (Retail vs Individual)
-            var bundleOffer = totalIndividualCurrent - setPrice;       // "Offer" (Individual vs Set)
-            var bmsmDiscountAmount = (getBMSMDiscountAmount(config, setPrice));
-            let bundleofferwithoutbmsm = bundleOffer - bmsmDiscountAmount
-            var totalSaving = offer + bundleOffer;
-            console.log(totalSaving, setPrice, bmsmDiscountAmount, bundleOffer);
-            if (bundleofferwithoutbmsm < 0) {
-                bmsmDiscountAmount = 0;
-                bundleofferwithoutbmsm = bundleOffer;
-            }
-
-
-
-            // 5. Update the Footer Elements
-            $('.bundle-total-amount').text(formatter.format(setPrice));
-            $('.save-total').text(formatter.format(totalSaving));
-            $('.offer').text(formatter.format(offer));
-
-            $('.save-bmsm-offer').text(formatter.format(bmsmDiscountAmount));
-            $('.save-extra').text(formatter.format(bundleofferwithoutbmsm));
-            $('.qty-value-main').text(totalItemsCount + " items Included");
-
-            $(".promo--bmsm").toggleClass("d-none", bmsmDiscountAmount <= 0);
-            $(".promo--offer").toggleClass("d-none", offer <= 0);
-            $(".promo--bundle").toggleClass("d-none", bundleofferwithoutbmsm <= 0);
-
-            // --- NEW: UPDATE ADD TO CART BUTTON ---
-            const $cartBtn = $('#product-details-form .add-to-cart-button');
-            if (totalItemsCount > 0) {
-                $cartBtn.html('Add collection to cart ');
-            } else {
-                $cartBtn.html('Add to cart');
-            }
-        }
-
-        function getBMSMDiscountAmount(config, subTotal) {
-            if (!config || !config.metadata || config.metadata.length === 0) {
-                return 0; // Return 0 if no bundle data exists
-            }
-       let isPercent = discountType == "Percent" ? true : false;
-
-
-            // If there is no discount configured or subtotal didn't match a tier, return 0 early
-            if (buyMoreSaveMoreDiscount <= 0) return 0;
-
-            let costlyItemPrice = 0;
-            let excludedProductId = null;
-            let totalDiscount = 0;
-
-            config.metadata.forEach(function (item) {
-                let price = parseFloat(item.priceraw) || 0;
-                let qty = parseInt(item.qnty) || 1;
-                let itemTotalValue = price * qty;
-
-                if ((itemTotalValue > costlyItemPrice && config.metadata.length > 1) ||
-                    (config.metadata.length === 1 && (qty === 1 || price < singleItemThreshold))) {
-
-                    costlyItemPrice = itemTotalValue;
-                    excludedProductId = item.productId;
-                }
-            });
-
-            // 4. Calculate the discount for the eligible items
-            config.metadata.forEach(function (item) {
-                if (item.productId !== excludedProductId) {
-                    let price = parseFloat(item.priceraw) || 0;
-                    let qty = parseInt(item.qnty) || 1;
-                    let deduction = 0;
-
-                    if (config.metadata.length > 1) {
-                        // Multi-item bundle logic
-                        if (isPercent) {
-                            deduction = ((price * qty) * buyMoreSaveMoreDiscount) / 100;
-                        } else {
-                            deduction = (buyMoreSaveMoreDiscount > price) ? (price * qty) : (buyMoreSaveMoreDiscount * qty);
-                        }
-                    } else {
-                        // Single item bundle (qty > 1) logic
-                        if (isPercent) {
-                            deduction = ((price * (qty - 1)) * buyMoreSaveMoreDiscount) / 100;
-                        } else {
-                            deduction = (buyMoreSaveMoreDiscount > price) ? (price * (qty - 1)) : (buyMoreSaveMoreDiscount * (qty - 1));
-                        }
-                    }
-
-                    totalDiscount += deduction;
-                }
-            });
-
-            return totalDiscount;
-        }
-
-        //function updateSelectedStainText($element) {
-        //    let $card = $element.closest('.bundle-product-card');
-        //    let productId = $card.data('productid');
-        //    let stainText = "";
-
-        //    // Check if the element is a dropdown
-        //    if ($element.is('select')) {
-        //        let $selectedOption = $element.find('option:selected');
-        //        // Check if it's not the default "0" value
-        //        if ($selectedOption.val() !== "0") {
-        //            stainText = $selectedOption.text(); // Grab the text of the dropdown option
-        //        } else {
-        //            stainText = "Default Selection";
-        //        }
-        //    }
-        //    // Otherwise, it's a radio button or swatch
-        //    else {
-        //        let $label = $element.closest('label');
-        //        let $li = $element.closest('li');
-
-        //        // Try to grab the exact name from the data attribute first
-        //        stainText = $label.attr('data-attr-name') || $li.attr('data-attr-name');
-
-        //        // IF the data attribute is empty, grab the actual visible text from the HTML
-        //        if (!stainText) {
-        //            stainText = $label.text() || $li.find('.attrvalue-name').text() || $li.text();
-        //        }
-        //    }
-
-        //    // Clean up the text (removes extra line breaks and excess spaces)
-        //    stainText = $.trim(stainText.replace(/\s+/g, ' '));
-
-        //    if (stainText) {
-        //        // Updates the header text
-        //        $card.find('.selected-stain-name[data-product-id="' + productId + '"]').text(stainText);
-
-        //        // Updates the text below the swatches/dropdown
-        //        $card.find('.current-selected-shade-name').text(stainText);
-        //    }
-        //}
-
-        // 2. Listen for changes when a user clicks a stain option
-        //$(document).on('change', '.options-drawer tr[class*="stain-attrname"] input[type="radio"], .options-drawer tr[class*="shade"] input[type="radio"], .options-drawer tr[class*="stain-attrname"] select, .options-drawer tr[class*="shade"] select', function () {
-        //    updateSelectedStainText($(this));
-        //});
-
-        // 3. Set the correct text on initial page load (FIXED)
-        //$('.bundle-product-card').each(function () {
-        //    let $card = $(this);
-
-        //    // A. explicitly check for pre-selected dropdowns first
-        //    $card.find('tr[class*="stain-attrname"] select, tr[class*="shade"] select').each(function () {
-        //        if ($(this).val() && $(this).val() !== "0") {
-        //            updateSelectedStainText($(this));
-        //        }
-        //    });
-
-        //    // B. explicitly check for pre-selected swatches/radios
-        //    $card.find('tr[class*="stain-attrname"] input[type="radio"]:checked, tr[class*="shade"] input[type="radio"]:checked').each(function () {
-        //        updateSelectedStainText($(this));
-        //    });
-        //});
-    });
+       let toastTimer;
+       var buyMoreSaveMoreDiscount = '@Model.BuyMoreSaveMoreDiscount';
+       var singleItemThreshold = '@Model.SingleItemThreshold';
+       var discountType = "@Model.DiscountType";
+       var activeBundleConfig = null;
+
+       //// --- 1. GLOBAL FUNCTIONS ---
+       //function showBundleToast(type, message) {
+       //    const toast = document.getElementById('bundle-toast');
+       //    if (!toast) return;
+
+       //    const msgEl = toast.querySelector('.toast-message');
+
+       //    clearTimeout(toastTimer);
+       //    toast.classList.remove('d-none', 'success', 'info');
+       //    toast.classList.add(type);
+       //    msgEl.innerHTML = message;
+
+       //    // Auto close after 5 seconds
+       //    toastTimer = setTimeout(() => {
+       //        closeBundleToast();
+       //    }, 5000);
+       //}
+
+       //function closeBundleToast() {
+       //    const toast = document.getElementById('bundle-toast');
+       //    if (toast) {
+       //        toast.classList.add('d-none');
+       //    }
+       //}
+       function openQuickView(event, name, img, price, oldPrice, productId, sename, prdVariantId, isdiscounted,variantId) {
+           event.preventDefault();
+           let description = '';
+           let dimension = '';
+           if (activeBundleConfig && Array.isArray(activeBundleConfig.metadata)) {
+               const meta = activeBundleConfig.metadata.find(m => m.variantId === variantId);
+               if (meta) {
+                   description = meta.shortDesc || '';
+                   dimension = (meta.dimension || '').toString().trim();
+               }
+           }
+
+           document.getElementById('qv-title').innerText = name;
+           document.getElementById('qv-image').src = img;
+           document.getElementById('qv-price').innerText = price;
+           if (isdiscounted == true) {
+               document.getElementById('qv-old-price').innerText = oldPrice || '';
+           }
+           else {
+               document.getElementById('qv-old-price').innerText = '';
+           }
+          /* document.getElementById('qv-description').innerHTML = description;*/
+           document.getElementById('more-link').href = `/product/${prdVariantId}/${sename}`;
+           document.getElementById('quickViewModal').classList.remove('d-none');
+           dimension= (dimension || '').toString().trim();
+           document.querySelector('.modal-spec-value').innerHTML  = dimension;
+           document.querySelector('.qv-dimension').classList.toggle('d-none', dimension === '');
+       }
+
+       function closeQuickView(event) {
+           // Prevent closing if clicking inside the content box
+           if (event) event.stopPropagation();
+           document.getElementById('quickViewModal').classList.add('d-none');
+       }
+
+       function getbBundleSelectedShadeName() {
+           var $bundlePrdShadeRow = $('#product-details-form .attributes .shade-section, #product-details-form .attributes tr[class*="stain-attrname"]');
+           if ($bundlePrdShadeRow.length === 0) {
+               return '';
+           }
+
+           // Dropdown control
+           var $bundlePrdAttrSelect = $bundlePrdShadeRow.find('select');
+           if ($bundlePrdAttrSelect.length > 0) {
+               if ($bundlePrdAttrSelect.val() && $bundlePrdAttrSelect.val() !== '0') {
+                   return $.trim($bundlePrdAttrSelect.find('option:selected').text());
+               }
+               return '';
+           }
+
+           var $bundlePrdAttrCheckbox = $bundlePrdShadeRow.find('input:checked');
+           if ($bundlePrdAttrCheckbox.length === 0) {
+               return '';
+           }
+           var $bundlePrdAttrCheckboxLabel = $bundlePrdAttrCheckbox.closest('label');
+           var $bundlePrdAttrCheckboxLi = $bundlePrdAttrCheckbox.closest('li');
+           var name = $bundlePrdAttrCheckboxLabel.attr('data-attr-name') || $bundlePrdAttrCheckboxLi.attr('data-attr-name') ||
+               $bundlePrdAttrCheckboxLi.find('.attrvalue-name').text() || $bundlePrdAttrCheckboxLabel.text() || $bundlePrdAttrCheckboxLi.text();
+
+           return $.trim((name || '').replace(/\s+/g, ' '));
+       }
+       $(document).ready(function () {
+           const $wrapper = $('#bundle-master-wrapper');
+           const manifest = JSON.parse($wrapper.attr('data-manifest') || "[]");
+
+           function switchBundleUI(mainVariantId) {
+               $(".bundle-summary-footer").addClass("d-none");
+               const config = manifest.find(x => x.variantId == mainVariantId);
+               if (!config) {
+                   $('.shop-collection-container').addClass('d-none');
+                   return;
+               }
+               $('.shop-collection-container').removeClass('d-none');
+               activeBundleConfig = config;
+               const $mainImg = $('#main-bundle-image');
+               const $mainImgsection = $('.product-bundle-image-section');
+               const isMobile = window.matchMedia("(max-width: 767px)").matches;
+
+               if (config.displayonproductpage === false || !isMobile) {
+                   // If the toggle in Admin is OFF, hide the image
+                   $mainImgsection.hide();
+               }
+               else {
+                   // If the toggle is ON, ensure the image is visible
+                   $mainImg.show();
+                   $mainImgsection.show();
+                   var configUrl = (config.imageurl && config.imageurl.FullSizeImageUrl) ? config.imageurl.FullSizeImageUrl : null;
+                   if (configUrl) {
+                       $mainImg.fadeOut(100, function () {
+                           var tempImg = new Image();
+                           tempImg.src = configUrl;
+
+                           tempImg.onload = function () {
+                               $mainImg.attr('src', configUrl).fadeIn(200);
+                           };
+                       });
+                   }
+                   else {
+                       $mainImgsection.hide();
+                   }
+               }
+
+               // 1. Update the Main Total
+               $('.bundle-total-amount').text(config.price);
+
+               const $container = $('#dynamic-bundle-container'); // Make sure this ID matches your HTML
+               $container.empty();
+
+
+               config.metadata.forEach(function (item) {
+                   let attrsHtml = '';
+                   if (item.attributes && item.attributes.length > 0) {
+                       item.attributes.forEach(function (attr) {
+                           attrsHtml += `
+           <div class="attr-bundle-header">
+               <span class="text-bundle-header">${attr.Key}:&nbsp;</span>
+               <span class="attr-bundle-content">${attr.Value}</span>
+           </div>`;
+                       });
+                   }
+                   // default selection of stain hardcoded add in lastt
+
+                   var bundleSelectedShade = getbBundleSelectedShadeName();
+                   if (bundleSelectedShade != '') {
+                       attrsHtml += `
+       <div class="attr-bundle-header">
+           <span class="text-bundle-header">Stain:</span>
+           <span class="attr-bundle-content selected-stain-name" data-product-id="${item.productId}">${bundleSelectedShade}</span>
+       </div>`
+
+                   };
+
+                   const safetitle = escapeForAttr((item.title || ''));
+                   const safeDesc = escapeForAttr((item.shortDesc || ''));
+                   const safeDimension = escapeForAttr((item.dimension || ''));
+                   const seName = item.seName || '';
+                   const prdVariantId = item.prdVariantId;
+                   const bundle_variantId = item.variantId;
+
+                   // BUILD THE FULL CARD HTML
+                   let cardHtml = `
+           <div class="bundle-product-card master-item mb-3"
+                id="master-card-${item.variantId}"
+                data-productid="${item.productId}"
+                data-variantid="${item.variantId}"
+                data-price="${item.priceraw}"
+                data-old-price="${item.oldPriceraw}">
+
+               <div class="d-flex justify-content-between gap-3 align-items-start main-product-row">
+                   <div class="bundle-product-image position-relative flex-shrink-0">
+                       <img src="${item.imageUrl}" alt="${item.title}" class="img-fluid rounded" />
+
+                       <button type="button" class="zoom-icon-btn"
+                               data-name="${safetitle}"
+                               data-img="${item.imageUrl}"
+                               data-desc="${safeDesc || ''}"
+                               data-sename="${seName}"
+    data-prdVariantId="${prdVariantId}"
+                               onclick="openQuickView(event, '${safetitle}', '${item.imageUrl}', '${item.price}', '${item.oldPrice}', '${item.productId}', '${seName}','${prdVariantId}', ${item.discountPct > 0},${bundle_variantId})">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zoom-in w-3.5 h-3.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" x2="16.65" y1="21" y2="16.65"></line><line x1="11" x2="11" y1="8" y2="14"></line><line x1="8" x2="14" y1="11" y2="11"></line></svg>
+                       </button>
+                   </div>
+
+                   <div class="d-flex flex-column flex-md-row flex-grow-1 min-w-0 gap-2">
+                       <div class="flex-grow-1 min-w-0">
+                           <h5 class="product-title">${safetitle}</h5>
+                           <div class="dynamic-attributes-container">${attrsHtml}</div>
+
+                           <div class="price-row d-flex align-items-center gap-2">
+                               <span class="price-current">${item.price}</span>
+                               <span class="price-old ${item.discountPct > 0 ? '' : 'd-none'}">${item.oldPrice}</span>
+                               <span class="badge-save ${item.discountPct > 0 ? '' : 'd-none'}">Save ${item.discountPct}%</span>
+                           </div>
+                       </div>
+
+                       <div class="qty-container flex-shrink-0">
+                           <div class="qty-view d-flex flex-column align-items-end">
+                               <div class="qty-static-box">
+                                   Qty:<span class="qty-value">${item.qnty}</span>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>`;
+
+                   // 4. We appended html
+                   $container.append(cardHtml);
+               });
+               //Recalculated total
+               recalculateVisibleBundleMath(config.priceraw, config);
+               $(".bundle-summary-footer").removeClass("d-none");
+               $(".bundle-total-offer").removeClass("d-none");
+           }
+           function escapeForAttr(str) {
+               return (str || '')
+                   .replace(/\\/g, '\\\\')
+                   .replace(/&/g, '&amp;')   // & must go first
+                   .replace(/'/g, "\\'")
+                   .replace(/"/g, '&quot;')
+                   .replace(/</g, '&lt;')
+                   .replace(/>/g, '&gt;');
+           }
+
+           // --- LISTEN TO MAIN PAGE ATTRIBUTE CHANGE ---
+           $(document).ajaxSuccess(function (event, xhr, settings) {
+               if (settings.url.indexOf("CustomProductDetails_AttributeChange") !== -1) {
+                   const data = xhr.responseJSON; // Contains variantId, price, oldPrice
+                   const params = new URLSearchParams(settings.url.split('?')[1] || settings.data || "");
+                   const isMainProduct = params.get('formId') === "product_details_form";
+
+                   if (isMainProduct) {
+                       // 1. Refresh the Bundle UI
+                       switchBundleUI(data.variantId);
+
+                       // 2. Delay to allow nopCommerce and custom select scripts to initialize
+                       //setTimeout(function () {
+                       //    const $mainStainRow = $('.product-details .stain-attrname').first();
+
+                       //    // Get selected name from main product
+                       //    const selectedStainName = $mainStainRow.find('li.selected-value label').attr('data-attr-name') ||
+                       //        $mainStainRow.find('select option:selected').text();
+
+                       //    if (selectedStainName) {
+                       //        const targetName = selectedStainName.trim();
+                       //        console.log("Syncing Stain: " + targetName);
+
+                       //        $('.bundle-product-card').each(function () {
+                       //            const $subItem = $(this);
+                       //            const $stainRow = $subItem.find('tr.stain-attrname');
+
+                       //            // --- CASE 1: DROPDOWN UI ---
+                       //            const $select = $stainRow.find('select');
+                       //            if ($select.length > 0) {
+                       //                console.log("Dropdown detected. Syncing...");
+
+                       //                // A. Update the hidden <select> value
+                       //                $select.find('option').each(function () {
+                       //                    if ($(this).text().trim() === targetName) {
+                       //                        $select.val($(this).val()).trigger('change');
+                       //                        return false;
+                       //                    }
+                       //                });
+
+                       //                // B. Update the visual "Custom Select" (the div-based UI)
+                       //                // We find the div inside .select-items that matches the text and click it
+                       //                const $customOption = $stainRow.find('.select-items div').filter(function () {
+                       //                    return $(this).text().trim() === targetName;
+                       //                });
+
+                       //                if ($customOption.length > 0) {
+                       //                    $customOption[0].click(); // Native click on the custom div
+                       //                }
+                       //            }
+
+                       //            // --- CASE 2: RADIO / IMAGE SQUARES ---
+                       //            else {
+                       //                const $targetLabel = $stainRow.find('label').filter(function () {
+                       //                    return ($(this).attr('data-attr-name') || "").trim() === targetName;
+                       //                });
+
+                       //                if ($targetLabel.length > 0) {
+                       //                    const visualElement = $targetLabel.find('img')[0] ||
+                       //                        $targetLabel.find('.attribute-square')[0] ||
+                       //                        $targetLabel[0];
+
+                       //                    if (visualElement) {
+                       //                        visualElement.click();
+                       //                    }
+                       //                }
+                       //            }
+                       //        });
+                       //    }
+                       //}, 450);
+                   }
+               }
+           });
+           // --- COMMON UI LOGIC (Toggle/Collapse) ---
+           //$(document).on('click', '.show-options-link', function (e) {
+           //    e.preventDefault();
+           //    const id = $(this).data('product-id');
+           //    const $drawer = $('#opts-drawer-' + id);
+           //    $drawer.css({ 'display': 'block', 'max-height': $drawer[0].scrollHeight + 'px', 'opacity': '1' });
+           //    $(this).addClass('d-none');
+           //});
+
+           //$(document).on('click', '.collapse-link', function (e) {
+           //    e.preventDefault();
+           //    const id = $(this).data('product-id');
+           //    $('#opts-drawer-' + id).css({ 'max-height': '0', 'opacity': '0' });
+           //    $('.show-options-link[data-product-id="' + id + '"]').removeClass('d-none');
+           //});
+
+           // Toggle Main Bundle Content (Shop Collection)
+           //$('#toggleBundleContent').on('click', function () {
+           //    const $body = $('#bundleBody');
+           //    const $icon = $('#main-toggle-icon');
+
+           //    if ($body.is(':visible')) {
+           //        $body.slideUp(400);
+           //        $icon.removeClass('active');
+           //    } else {
+           //        $body.slideDown(400);
+           //        $icon.addClass('active');
+           //    }
+           //});
+
+           function recalculateVisibleBundleMath(bundlePriceFromAjax, config) {
+               let totalIndividualCurrent = 0;
+               let totalIndividualOld = 0;
+               let totalItemsCount = 0;
+
+               // 1. SELECT ONLY VISIBLE CARDS
+
+               $('.master-item:not(.d-none)').each(function () {
+                   const $card = $(this);
+                   const qty = parseInt($card.find('.qty-value').text()) || 0;
+
+                   // Pull raw numbers from data-attributes
+                   const currentPrice = parseFloat($card.attr('data-price')) || 0;
+                   const oldPrice = parseFloat($card.attr('data-old-price')) || currentPrice;
+
+                   totalIndividualCurrent += (currentPrice * qty);
+                   totalIndividualOld += (oldPrice * qty);
+                   totalItemsCount += qty;
+               });
+
+
+               // 2. The Set Price (The "Shared" Bundle Price from the Main Variant)
+               const setPrice = parseFloat(bundlePriceFromAjax) || 0;
+
+               // 3. The Math Logic
+               const formatter = new Intl.NumberFormat('en-US', {
+                   style: 'currency',
+                   currency: 'USD',
+                   maximumFractionDigits: 2
+               });
+
+
+               var offer = totalIndividualOld - totalIndividualCurrent; // "Save" (Retail vs Individual)
+               var bundleOffer = totalIndividualCurrent - setPrice;       // "Offer" (Individual vs Set)
+               var bmsmDiscountAmount = (getBMSMDiscountAmount(config, setPrice));
+               let bundleofferwithoutbmsm = bundleOffer - bmsmDiscountAmount
+               var totalSaving = offer + bundleOffer;
+               console.log(totalSaving, setPrice, bmsmDiscountAmount, bundleOffer);
+               if (bundleofferwithoutbmsm < 0) {
+                   bmsmDiscountAmount = 0;
+                   bundleofferwithoutbmsm = bundleOffer;
+               }
+
+
+
+               // 5. Update the Footer Elements
+               $('.bundle-total-amount').text(formatter.format(setPrice));
+               $('.save-total').text(formatter.format(totalSaving));
+               $('.offer').text(formatter.format(offer));
+
+               $('.save-bmsm-offer').text(formatter.format(bmsmDiscountAmount));
+               $('.save-extra').text(formatter.format(bundleofferwithoutbmsm));
+               $('.qty-value-main').text(totalItemsCount + " items Included");
+
+               $(".promo--bmsm").toggleClass("d-none", bmsmDiscountAmount <= 0);
+               $(".promo--offer").toggleClass("d-none", offer <= 0);
+               $(".promo--bundle").toggleClass("d-none", bundleofferwithoutbmsm <= 0);
+
+               // --- NEW: UPDATE ADD TO CART BUTTON ---
+               const $cartBtn = $('#product-details-form .add-to-cart-button');
+               if (totalItemsCount > 0) {
+                   $cartBtn.html('Add collection to cart ');
+               } else {
+                   $cartBtn.html('Add to cart');
+               }
+           }
+
+           function getBMSMDiscountAmount(config, subTotal) {
+               if (!config || !config.metadata || config.metadata.length === 0) {
+                   return 0; // Return 0 if no bundle data exists
+               }
+          let isPercent = discountType == "Percent" ? true : false;
+
+
+               // If there is no discount configured or subtotal didn't match a tier, return 0 early
+               if (buyMoreSaveMoreDiscount <= 0) return 0;
+
+               let costlyItemPrice = 0;
+               let excludedProductId = null;
+               let totalDiscount = 0;
+
+               config.metadata.forEach(function (item) {
+                   let price = parseFloat(item.priceraw) || 0;
+                   let qty = parseInt(item.qnty) || 1;
+                   let itemTotalValue = price * qty;
+
+                   if ((itemTotalValue > costlyItemPrice && config.metadata.length > 1) ||
+                       (config.metadata.length === 1 && (qty === 1 || price < singleItemThreshold))) {
+
+                       costlyItemPrice = itemTotalValue;
+                       excludedProductId = item.productId;
+                   }
+               });
+
+               // 4. Calculate the discount for the eligible items
+               config.metadata.forEach(function (item) {
+                   if (item.productId !== excludedProductId) {
+                       let price = parseFloat(item.priceraw) || 0;
+                       let qty = parseInt(item.qnty) || 1;
+                       let deduction = 0;
+
+                       if (config.metadata.length > 1) {
+                           // Multi-item bundle logic
+                           if (isPercent) {
+                               deduction = ((price * qty) * buyMoreSaveMoreDiscount) / 100;
+                           } else {
+                               deduction = (buyMoreSaveMoreDiscount > price) ? (price * qty) : (buyMoreSaveMoreDiscount * qty);
+                           }
+                       } else {
+                           // Single item bundle (qty > 1) logic
+                           if (isPercent) {
+                               deduction = ((price * (qty - 1)) * buyMoreSaveMoreDiscount) / 100;
+                           } else {
+                               deduction = (buyMoreSaveMoreDiscount > price) ? (price * (qty - 1)) : (buyMoreSaveMoreDiscount * (qty - 1));
+                           }
+                       }
+
+                       totalDiscount += deduction;
+                   }
+               });
+
+               return totalDiscount;
+           }
+
+           //function updateSelectedStainText($element) {
+           //    let $card = $element.closest('.bundle-product-card');
+           //    let productId = $card.data('productid');
+           //    let stainText = "";
+
+           //    // Check if the element is a dropdown
+           //    if ($element.is('select')) {
+           //        let $selectedOption = $element.find('option:selected');
+           //        // Check if it's not the default "0" value
+           //        if ($selectedOption.val() !== "0") {
+           //            stainText = $selectedOption.text(); // Grab the text of the dropdown option
+           //        } else {
+           //            stainText = "Default Selection";
+           //        }
+           //    }
+           //    // Otherwise, it's a radio button or swatch
+           //    else {
+           //        let $label = $element.closest('label');
+           //        let $li = $element.closest('li');
+
+           //        // Try to grab the exact name from the data attribute first
+           //        stainText = $label.attr('data-attr-name') || $li.attr('data-attr-name');
+
+           //        // IF the data attribute is empty, grab the actual visible text from the HTML
+           //        if (!stainText) {
+           //            stainText = $label.text() || $li.find('.attrvalue-name').text() || $li.text();
+           //        }
+           //    }
+
+           //    // Clean up the text (removes extra line breaks and excess spaces)
+           //    stainText = $.trim(stainText.replace(/\s+/g, ' '));
+
+           //    if (stainText) {
+           //        // Updates the header text
+           //        $card.find('.selected-stain-name[data-product-id="' + productId + '"]').text(stainText);
+
+           //        // Updates the text below the swatches/dropdown
+           //        $card.find('.current-selected-shade-name').text(stainText);
+           //    }
+           //}
+
+           // 2. Listen for changes when a user clicks a stain option
+           //$(document).on('change', '.options-drawer tr[class*="stain-attrname"] input[type="radio"], .options-drawer tr[class*="shade"] input[type="radio"], .options-drawer tr[class*="stain-attrname"] select, .options-drawer tr[class*="shade"] select', function () {
+           //    updateSelectedStainText($(this));
+           //});
+
+           // 3. Set the correct text on initial page load (FIXED)
+           //$('.bundle-product-card').each(function () {
+           //    let $card = $(this);
+
+           //    // A. explicitly check for pre-selected dropdowns first
+           //    $card.find('tr[class*="stain-attrname"] select, tr[class*="shade"] select').each(function () {
+           //        if ($(this).val() && $(this).val() !== "0") {
+           //            updateSelectedStainText($(this));
+           //        }
+           //    });
+
+           //    // B. explicitly check for pre-selected swatches/radios
+           //    $card.find('tr[class*="stain-attrname"] input[type="radio"]:checked, tr[class*="shade"] input[type="radio"]:checked').each(function () {
+           //        updateSelectedStainText($(this));
+           //    });
+           //});
+       });
 </script>   

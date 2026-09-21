@@ -84,7 +84,7 @@ var pageSize='@Model.CatalogProductsModel.PageSize';
                 }
                 else
                 {
-                    <a href="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })" title="@cat.Name" itemprop="item">
+                    <a href="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })"  itemprop="item">
                         <span itemprop="name">@cat.Name</span>
                     </a>
                 }

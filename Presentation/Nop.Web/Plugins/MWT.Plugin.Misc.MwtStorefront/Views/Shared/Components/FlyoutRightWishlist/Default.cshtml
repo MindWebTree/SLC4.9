@@ -27,7 +27,7 @@
                 {
                     var item = Model.Items[i];
                     <div class="d-flex product-add-to-cart">
-                        <div>  <input type="checkbox" class="checkbox" id="@(item.Id)" data-parent="@item.ProductId" data-variantId="@item.Variant?.Id??0" name="addtocart" value="@(item.Id)" /></div>
+                        <div>  <input aria-label="Select @item.ProductName" type="checkbox" class="checkbox" id="@(item.Id)" data-parent="@item.ProductId" data-variantId="@item.Variant?.Id??0" name="addtocart" value="@(item.Id)" /></div>
                         <div class="img-add-to-cart">
                             <img alt="@item.Picture.AlternateText" src="/images/pixel.png" data-src="@item.Picture.ImageUrl" class="lazy" />
 

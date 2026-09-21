@@ -72,7 +72,7 @@
 
 <div class="ssf-outer">
     <div class="ssf-background ssf-bg-count">
-        <i class="ssf-share-trigger a-declarative" title="Share" role="img" aria-label="Share"
+        <i class="ssf-share-trigger a-declarative"  role="img" aria-hidden="true"
            tabindex="0" data-share="{&quot;background&quot;:true}"
            style="height: 24px; width: 24px; background-image: url(&quot;/images/icons/share-std.svg&quot;);"> <span class="hidden-xs">Share</span></i>
     </div>
@@ -80,35 +80,35 @@
         <div class="ssf-channel-v">
             <a target="_blank" class="ssf-channel email a-color-base" href="mailto:?subject=I wanted you to see this site&amp;body=Check out this site @url" title="Share via e-mail" data-key="email">
                 <span class="a-spinner a-spinner-small a-align-center aok-hidden"></span>
-                <i role="img" aria-label="Email" style="background-image: url(/images/icons/email-circular.svg)"></i>
+                <i role="img" aria-hidden="true" style="background-image: url(/images/icons/email-circular.svg)"></i>
                 <span class="email-label">Email</span>
             </a>
         </div>
         <div class="ssf-channel-v">
             <a target="_blank" class="ssf-channel pi a-color-base" href="https://www.pinterest.com/pin/create/button/?url=@(url)&description=@(Model.Name)&media=@(Model.PictureModels.Count > 0 ? Model.PictureModels.FirstOrDefault().FullSizeImageUrl : "")&method=button" title="Pin it on Pinterest" data-key="pi">
                 <span class="a-spinner a-spinner-small a-align-center aok-hidden"></span>
-                <i role="img" aria-label="Pinterest" style="background-image: url(/images/icons/pinterest-circular.svg)"></i>
+                <i role="img" aria-hidden="true" style="background-image: url(/images/icons/pinterest-circular.svg)"></i>
                 <span class="pi-label">Pinterest</span>
             </a>
         </div>
         <div class="ssf-channel-v">
             <a target="_blank" class="ssf-channel fb a-color-base" href="https://www.facebook.com/sharer/sharer.php?u=@(url)" title="Share on Facebook" data-key="fb">
                 <span class="a-spinner a-spinner-small a-align-center aok-hidden"></span>
-                <i role="img" aria-label="Facebook" style="background-image: url(&quot;/images/icons/facebook-circular.svg&quot;); display: inline-block;"></i>
+                <i role="img" aria-hidden="true" style="background-image: url(&quot;/images/icons/facebook-circular.svg&quot;); display: inline-block;"></i>
                 <span class="fb-label">Facebook</span>
             </a>
         </div>
         <div class="ssf-channel-v">
             <a target="_blank" class="ssf-channel tw a-color-base" href="https://twitter.com/intent/tweet?text=@(url)&keywords=@(Model.MetaKeywords)&sr=8-2&th=1" title="Share on Twitter" data-key="tw">
                 <span class="a-spinner a-spinner-small a-align-center aok-hidden"></span>
-                <i role="img" aria-label="Twitter" style="background-image: url(/images/icons/icon-twitter-circle-1.png)"></i>
+                <i role="img" aria-hidden="true" style="background-image: url(/images/icons/icon-twitter-circle-1.png)"></i>
                 <span class="tw-label">Twitter</span>
             </a>
         </div>
         <div class="ssf-channel-v">
-            <a target="_blank" class="ssf-channel copy a-color-base" title="Copy Link" data-key="copy" data-attr="@(url)">
+            <a target="_blank" class="ssf-channel copy a-color-base"  data-key="copy" data-attr="@(url)">
                 <span class="a-spinner a-spinner-small a-align-center aok-hidden"></span>
-                <i role="img" aria-label="Copy Link" style="background-image: url(/images/icons/link-circular.svg)"></i>
+                <i role="img" aria-hidden="true" style="background-image: url(/images/icons/link-circular.svg)"></i>
                 <span class="copy-label">Copy Link</span>
             </a>
         </div>

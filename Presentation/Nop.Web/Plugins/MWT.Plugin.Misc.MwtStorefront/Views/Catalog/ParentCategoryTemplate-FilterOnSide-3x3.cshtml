@@ -96,7 +96,7 @@
                         }
                         else
                         {
-                            <a href="@Url.RouteUrl("Category", new {id=cat.Id, SeName = cat.SeName })" title="@cat.Name" itemprop="item">
+                            <a href="@Url.RouteUrl("Category", new {id=cat.Id, SeName = cat.SeName })"  itemprop="item">
                                 <span itemprop="name">@cat.Name</span>
                             </a>
                         }
@@ -154,11 +154,11 @@
                     <div class="category-card">
                         <div class="card">
                                 <a href="@Url.RouteUrl("Category", new { SeName = item.SeName, id = item.Id })" aria-label="@item.PictureModel.Title">
-                                    <img alt="" width="450" height="450" class="card-img-top lazy" src="/images/pixel.png" data-src="@item.PictureModel.ImageUrl" title="@item.PictureModel.Title" />
+                                    <img alt="" width="450" height="450" class="card-img-top lazy" src="/images/pixel.png" data-src="@item.PictureModel.ImageUrl"  />
                             </a>
                             <div class="card-body text-center">
                                 <h2 class="title">
-                                        <span class="card-title" title="@item.PictureModel.Title">
+                                        <span class="card-title" >
                                             @item.Name
                                         </span>
                                 </h2>

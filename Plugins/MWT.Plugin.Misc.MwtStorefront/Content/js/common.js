@@ -1521,7 +1521,7 @@ jQuery(document).ready(function () {
 jQuery(document).ready(function () {
     $("body").on("click", ".summary-offer-info", function () {
         $(".discount-info").hide();
-        $(this).parent().find(".discount-info").show();
+        $(this).parent().find(".discount-info").show().focus();
     })
 
     $("body").on("click", ".close-discount-info", function () {

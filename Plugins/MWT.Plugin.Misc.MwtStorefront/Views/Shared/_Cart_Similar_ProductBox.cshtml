@@ -12,7 +12,7 @@
 
 }
 <div data-productid="@Model.Id" data-main-catid="@await _specificationAttributeService.GetMainCategoryOfProduct(Model.Id)">
-    <a href="@Url.RouteUrl("Product", new {id=Model.Id, SeName = Model.SeName })" title="@Model.DefaultPictureModel.Title">
+    <a href="@Url.RouteUrl("Product", new {id=Model.Id, SeName = Model.SeName })" aria-label="@Model.DefaultPictureModel.Title">
         @*Tags*@
         <div class="Tags">
 
@@ -24,8 +24,8 @@
                 }
             }
         </div>
-        <img alt="@Model.DefaultPictureModel.AlternateText" style="width:100%; height:auto;" width="415" height="415" src="@Model.DefaultPictureModel.ImageUrl"
-		title="@Model.DefaultPictureModel.Title" class="" />
+        <img alt="" style="width:100%; height:auto;" width="415" height="415" src="@Model.DefaultPictureModel.ImageUrl"
+		 class="" />
     </a>
     @*@if (ViewBag.Type == null)
         {*@

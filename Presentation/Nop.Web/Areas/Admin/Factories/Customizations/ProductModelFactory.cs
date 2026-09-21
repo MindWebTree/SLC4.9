@@ -869,6 +869,7 @@ public partial class ProductModelFactory : IProductModelFactory
         variantModel.Weight = variant.Weight;
         variantModel.ManufacturerPartNumber = variant.ManufacturerPartNumber;
         variantModel.DimensionPictureId = variant.DimensionPictureId;
+        variantModel.PictureId = variant.PictureId;
         var productPictures = await _productService.GetProductPicturesByProductIdAsync(variant.ProductId);
         variantModel.ProductPictureModels = await productPictures.SelectAwait(async productPicture => new ProductPictureModel
         {

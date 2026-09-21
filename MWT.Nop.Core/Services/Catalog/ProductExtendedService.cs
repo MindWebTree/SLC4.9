@@ -3318,7 +3318,31 @@ namespace MWT.Nop.Core.Service.Catalog
 
 
         #endregion
-       
+
+
+        public async Task<Dictionary<string, string>> GetVariantAttributesListAsync(VariantCombination variant, Product product)
+        {
+            var result = new Dictionary<string, string>();
+            var _productformatter = EngineContext.Current.Resolve<IProductAttributeFormatter>();
+            string attributeDescription = await _productformatter.FormatAttributesAsync(product, variant.Combination);
+            foreach (var attribute in attributeDescription.Split(new String[] { "<br />" }, StringSplitOptions.None))
+            {
+
+                var parts = attribute.Split(":");
+                if (parts.Length > 1)
+                {
+                    try
+                    {
+                        string rawKey = parts[0];
+                        string rawValue = string.Join(':', parts.Skip(1));
+                        result.Add(rawKey, rawValue);
+
+                    }
+                    catch { }
+                }
+            }
+            return result;
+        }
 
     }
 }

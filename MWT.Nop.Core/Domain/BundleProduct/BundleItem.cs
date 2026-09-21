@@ -7,6 +7,8 @@ namespace MWT.Nop.Core.Domain.ProductBundle
         public int BundleId { get; set; }
         public int ProductId { get; set; }
         public int Quantity { get; set; }
+        public int DisplayOrder { get; set; }
+
         public int VariantId { get; set; }
         public bool IsActive { get; set; }
         public DateTime? CreatedOnUtc { get; set; }

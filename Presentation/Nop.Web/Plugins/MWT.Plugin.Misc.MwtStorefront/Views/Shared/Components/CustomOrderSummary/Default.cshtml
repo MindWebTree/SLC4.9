@@ -67,7 +67,7 @@
                 </ul>
             </div>
         }
-        @*we add enctype = "multipart/form-data" because "File upload" attribute control type requires it*@
+     @*we add enctype = "multipart/form-data" because "File upload" attribute control type requires it*@
         <form asp-route="ShoppingCart" method="post" enctype="multipart/form-data" id="shopping-cart-form">
 
             @*Membership Section*@
@@ -108,7 +108,7 @@
                     </div>
                 }
             }
-            @*Membership Section End*@
+     @*Membership Section End*@
 
 
 
@@ -179,7 +179,7 @@
 
                                             <td class="product">
                                                 <div class="shoppping-cart-left-image">
-                                                    <a target="_blank" href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" /></a>
+                                                    <a target="_blank" href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl"  /></a>
 
                                                 </div>
                                                 <div class="shoppping-cart-right-image">
@@ -264,12 +264,12 @@
                                             @if (Model.ShowVendorName)
                                             {
                                                 <td class="vendor">
-                                                    <label class="td-title">@T("ShoppingCart.VendorName"):</label>
+                                                    <span class="td-title">@T("ShoppingCart.VendorName"):</span>
                                                     <span class="vendor-name">@item.VendorName</span>
                                                 </td>
                                             }
                                             <td class="quantity nobr">
-                                                <label class="td-title" for="itemquantity@(item.Id)">@T("ShoppingCart.Quantity"):</label>
+                                                <span class="td-title" for="itemquantity@(item.Id)">@T("ShoppingCart.Quantity"):</span>
                                                 @if (Model.IsEditable)
                                                 {
 
@@ -299,12 +299,12 @@
                                                 }
                                             </td>
                                             <td class="unit-price nobr">
-                                                <label class="td-title">@T("ShoppingCart.UnitPrice"):</label>
+                                                <span class="td-title">@T("ShoppingCart.UnitPrice"):</span>
                                                 <span class="product-unit-price">@item.UnitPrice</span>
                                             </td>
 
                                             <td class="subtotal nobr end">
-                                                <label class="td-title">@T("ShoppingCart.ItemTotal"):</label>
+                                                <span class="td-title">@T("ShoppingCart.ItemTotal"):</span>
                                                 <span class="product-subtotal">@item.SubTotal</span>
 
                                                 @if (!string.IsNullOrEmpty(item.MemberShipDiscount))
@@ -312,7 +312,7 @@
 
                                                     <div class="discount">
                                                         @item.MemberShipDiscount
-                                                        <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.MemberShipDiscount.help")">
+                                                        <button aria-label="Offer Discount" type="button" class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.MemberShipDiscount.help")">
 
                                                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                 <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#444444" />
@@ -320,7 +320,7 @@
                                                                 <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
                                                             </svg>
 
-                                                        </span>
+                                                        </button>
                                                     </div>
                                                 }
 
@@ -330,7 +330,7 @@
                                                         @Html.Raw(!string.IsNullOrEmpty(item.OfferDiscount) ? item.OfferDiscount : await _priceFormatter.FormatPriceAsync(0))
 
 
-                                                        <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.OfferDiscount.help")">
+                                                        <button aria-label="Offer Discount" type="button" class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.OfferDiscount.help")">
 
                                                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                 <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#444444" />
@@ -338,7 +338,7 @@
                                                                 <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
                                                             </svg>
 
-                                                        </span>
+                                                        </button>
 
                                                     </div>
                                                 }
@@ -346,7 +346,7 @@
                                                 {
                                                     <div class="discount">
                                                         @Html.Raw(!string.IsNullOrEmpty(item.BuyMoreSaveMoreDiscount) ? item.BuyMoreSaveMoreDiscount : await _priceFormatter.FormatPriceAsync(0))
-                                                        <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.BuyMoreSaveMoreDiscount.help")">
+                                                        <button aria-label="BuyMoreSaveMoreDiscount" type="button" class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.BuyMoreSaveMoreDiscount.help")">
 
                                                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                 <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#444444" />
@@ -354,7 +354,7 @@
                                                                 <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
                                                             </svg>
 
-                                                        </span>
+                                                        </button>
                                                     </div>
                                                 }
 
@@ -363,7 +363,7 @@
 
                                                     <div class="discount">
                                                         @item.Discount
-                                                        <span class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.Coupon.Discount.help")">
+                                                        <button aria-label="Offer Discount" type="button" class="offer-info" data-bs-toggle="tooltip" data-bs-placement="bottom" data-placement="top" title="@T("ShoppingCart.Coupon.Discount.help")">
 
                                                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                 <path d="M6.99336 13.9086C10.8125 13.9086 13.9086 10.8125 13.9086 6.99336C13.9086 3.17418 10.8125 0.078125 6.99336 0.078125C3.17418 0.078125 0.078125 3.17418 0.078125 6.99336C0.078125 10.8125 3.17418 13.9086 6.99336 13.9086Z" fill="#444444" />
@@ -371,7 +371,7 @@
                                                                 <path d="M7.88972 4.03724C8.41345 4.03724 8.83802 3.61267 8.83802 3.08893C8.83802 2.5652 8.41345 2.14062 7.88972 2.14062C7.36598 2.14062 6.94141 2.5652 6.94141 3.08893C6.94141 3.61267 7.36598 4.03724 7.88972 4.03724Z" fill="white" />
                                                             </svg>
 
-                                                        </span>
+                                                        </button>
                                                     </div>
                                                     if (item.MaximumDiscountedQty.HasValue)
                                                     {
@@ -421,7 +421,7 @@
                             <div class="shopiing-product-details">
                                 <div class="col-md-12">
                                     <div class="image-section">
-                                        <a target="_blank" href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" /></a>
+                                        <a target="_blank" href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl"  /></a>
                                     </div>
                                     <div class="desc-section">
                                         <p class="name">
@@ -441,7 +441,7 @@
 
                                             }
                                         }
-                                        @if (!string.IsNullOrEmpty(item.Sku))
+                  @if (!string.IsNullOrEmpty(item.Sku))
                                         {
 
                                             <p class="sku"><strong>@T("shoppingcart.sku"):</strong> @Html.Raw(item.Sku)</p>
@@ -566,7 +566,7 @@
                                         </button>
                                         <a href="@Url.Action("SaveForLater","ShoppingCart",new {cartId=item.Id})" class="ShpSaveForLater"><i class="far fa-heart"></i> @T("shoppingcart.saveforlater") </a>
                                     }
-                                    <a href="#" class="instruc-pop" title="phone" aria-label="phone" data-bs-toggle="modal" data-bs-target="#special-instruction-popup-@item.Id">
+                                    <a href="#" class="instruc-pop"  aria-label="phone" data-bs-toggle="modal" data-bs-target="#special-instruction-popup-@item.Id">
                                         @if (string.IsNullOrEmpty(item.SpecialInstructions) || item.SpecialInstructions.Replace("\n", "").Replace("\r", "").Trim() == "")
                                         {
                                             @T("shoppingcart.specialinstructions")
@@ -589,7 +589,7 @@
                                                 <div class="modal-body">
                                                     <div class="row">
                                                         <div class="col-5">
-                                                            <a href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" /></a>
+                                                            <a href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl"  /></a>
                                                         </div>
                                                         <div class="col-7">
                                                             <p class="txt-solid">
@@ -630,7 +630,7 @@
                                 </div>
                             </div>
                         }
-                    }
+                   }
                     <div class="share-info">
                         <p class="share-label">@T("ShoppingCart.Share.Heading")</p>
                         <a href="#" class="share-link" onclick="copyCartLink(event)"
@@ -670,7 +670,7 @@
                                 <div class="total-section col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
 
                                     <div class="total">
-                                        <p class="headeing-order">@T("checkout.ordersummary", Model.Items.Count)</p>
+                                        <h2 class="headeing-order">@T("checkout.ordersummary", Model.Items.Count)</h2>
                                         <div class="accordion">
                                             <div class="card" type="button">
                                                 <button type="button" tabindex="0" role="button" class="card-header collapsed" id="heading-discountcodes"
@@ -818,9 +818,9 @@
                                                 @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryCartFooter })
                                                 @if (Model.IsEditable)
                                                 {
-                                                    <label class="custom-control-label cart-term-service" style="margin: 20px 0 0px;">
+                                                    <span class="custom-control-label cart-term-service" style="margin: 20px 0 0px;">
                                                         @T("Checkout.TermsOfService.IAccept")
-                                                    </label>
+                                                    </span>
                                                 }
                                                 <div class="addon-buttons">
                                                     @foreach (var pm in Model.ButtonPaymentMethodViewComponents)
@@ -870,9 +870,9 @@
     <script>
         window.dataLayer = window.dataLayer || [];
         @{
-                    var currencyCode = (await workContext.GetWorkingCurrencyAsync()).CurrencyCode;
-                    var eventId = Guid.NewGuid().ToString();
-                    var cartValue = Model.Items.Sum(x => x.Quantity * x.UnitPriceValue);
+                var currencyCode = (await workContext.GetWorkingCurrencyAsync()).CurrencyCode;
+                var eventId = Guid.NewGuid().ToString();
+                var cartValue = Model.Items.Sum(x => x.Quantity * x.UnitPriceValue);
         }
             window.dataLayer.push({
                 'event': 'view_cart',
@@ -882,14 +882,14 @@
                     'items': [
         @foreach (var item in Model.Items)
         {
-                    <text>{
-                                        'item_id': '@item.ProductId',
-                                        'item_name': '@Html.Raw(JavaScriptEncoder.Default.Encode(item.ProductName))',
-                                        'price': @item.UnitPriceValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture),
-                                        'quantity': @item.Quantity,
-                                        'item_variant': @(item.Variant?.VariantId ?? 0),
-                                        'item_category': 'Shopping Cart'
-                                        },</text>
+                <text>{
+                                    'item_id': '@item.ProductId',
+                                    'item_name': '@Html.Raw(JavaScriptEncoder.Default.Encode(item.ProductName))',
+                                    'price': @item.UnitPriceValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture),
+                                    'quantity': @item.Quantity,
+                                    'item_variant': @(item.Variant?.VariantId ?? 0),
+                                    'item_category': 'Shopping Cart'
+                                    },</text>
         }
                     ]
                 }

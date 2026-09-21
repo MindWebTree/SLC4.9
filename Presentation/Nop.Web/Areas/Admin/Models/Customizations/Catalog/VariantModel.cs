@@ -60,7 +60,8 @@ namespace Nop.Web.Areas.Admin.Models.Customization.Catalog
 
         [NopResourceDisplayName("Admin.Catalog.Products.Variant.Fields.Product.DimensionPictureId")]
         public int DimensionPictureId { get; set; }
-
+        [NopResourceDisplayName("Admin.Catalog.Products.Variant.Fields.Product.PictureId")]
+        public int PictureId { get; set; }
         public int ProductId { get; set; }
         public IList<ProductPictureModel> ProductPictureModels { get; set; }
 

@@ -28,7 +28,7 @@
         <form asp-controller="Order" asp-action="ExtendedCustomerOrders" method="post">
             <div class="order-filters">
                 <div class="order-filters__row">
-                    <label class="order-filters__label">@T("Account.CustomerOrders.Period")</label>
+                    <label class="order-filters__label" for="periodSelector" >@T("Account.CustomerOrders.Period")</label>
                     <select class="order-filters__input" id="periodSelector" asp-items="@Model.AvailableLimits"></select>
                 </div>
             </div>

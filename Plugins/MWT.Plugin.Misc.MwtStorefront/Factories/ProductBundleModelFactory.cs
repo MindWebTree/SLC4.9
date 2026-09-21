@@ -158,7 +158,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
         public async Task<IList<BundleItem>> GetBundleItemsAsync(int bundleId)
         {
             var _items = await _bundleItemRepository.Table
-                .Where(x => x.BundleId == bundleId && x.IsActive)
+                .Where(x => x.BundleId == bundleId && x.IsActive).OrderBy(x => x.DisplayOrder).ThenBy(x => x.Id)
                 .ToListAsync();
             List<BundleItem> items = new List<BundleItem>();
             foreach (var _item in _items)
@@ -214,178 +214,178 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
 
 
 
-                #region Commented
+                    #region Commented
 
-                //var bundleItems = await this.GetBundleItemsAsync(bundle.Id);
-                //decimal totalPrice = 0;
-                //decimal totalOldPrice = 0;
-                //decimal totalMSRP = 0;
+                    //var bundleItems = await this.GetBundleItemsAsync(bundle.Id);
+                    //decimal totalPrice = 0;
+                    //decimal totalOldPrice = 0;
+                    //decimal totalMSRP = 0;
 
-                //List<BundleItemModel> items = new List<BundleItemModel>();
-                //foreach (var item in bundleItems)
-                //{
-                //    var itemProduct = await _productService.GetProductByIdAsync(item.ProductId);
-                //    if (itemProduct == null)
-                //        continue;
-                //    var variantdetails = await _productService.GetVariantByVariantId(item.VariantId);
+                    //List<BundleItemModel> items = new List<BundleItemModel>();
+                    //foreach (var item in bundleItems)
+                    //{
+                    //    var itemProduct = await _productService.GetProductByIdAsync(item.ProductId);
+                    //    if (itemProduct == null)
+                    //        continue;
+                    //    var variantdetails = await _productService.GetVariantByVariantId(item.VariantId);
 
-                //    var productattributeCombination = await GetBestMatchingCombinationAsync(variantdetails);
-
-
-                //    if (productattributeCombination != null)
-                //    {
-                //        items.Add(new BundleItemModel()
-                //        {
-                //            ProductId = itemProduct.Id,
-                //            Price = ((decimal)(productattributeCombination.OverriddenPrice > 0 ? productattributeCombination.OverriddenPrice : itemProduct.Price)),
-                //            OldPrice = (decimal)((productattributeCombination.OverriddenOldPrice ?? 0) > 0 ? (decimal)productattributeCombination.OverriddenOldPrice
-                //               : ((productattributeCombination.OverriddenPrice) > 0 ? productattributeCombination.OverriddenPrice : (itemProduct.OldPrice > 0 ? itemProduct.OldPrice : itemProduct.Price))),
-                //            MSRP = (productattributeCombination.OverriddenMsrp ?? itemProduct.Msrp),
-                //            Quantity = item.Quantity,
-                //            Id = item.Id
-                //        });
-                //    }
-                //    else
-                //    {
-                //        items.Add(new BundleItemModel()
-                //        {
-                //            ProductId = itemProduct.Id,
-                //            Price = itemProduct.Price,
-                //            OldPrice = itemProduct.OldPrice > 0 ? itemProduct.OldPrice : itemProduct.Price,
-                //            MSRP = itemProduct.Msrp,
-                //            Quantity = item.Quantity,
-                //            Id = item.Id
-                //        });
-                //    }
-                //}
-
-                //if (items.Sum(itm => itm.Price) <= 0)
-                //    continue;
-
-                //int totalQty = bundleItems.Sum(x => x.Quantity);
-                //if (bundle.NoOfPieces != totalQty)
-                //    continue;
-                //if (items.Count > 1 || totalQty > 1)
-                //{
+                    //    var productattributeCombination = await GetBestMatchingCombinationAsync(variantdetails);
 
 
+                    //    if (productattributeCombination != null)
+                    //    {
+                    //        items.Add(new BundleItemModel()
+                    //        {
+                    //            ProductId = itemProduct.Id,
+                    //            Price = ((decimal)(productattributeCombination.OverriddenPrice > 0 ? productattributeCombination.OverriddenPrice : itemProduct.Price)),
+                    //            OldPrice = (decimal)((productattributeCombination.OverriddenOldPrice ?? 0) > 0 ? (decimal)productattributeCombination.OverriddenOldPrice
+                    //               : ((productattributeCombination.OverriddenPrice) > 0 ? productattributeCombination.OverriddenPrice : (itemProduct.OldPrice > 0 ? itemProduct.OldPrice : itemProduct.Price))),
+                    //            MSRP = (productattributeCombination.OverriddenMsrp ?? itemProduct.Msrp),
+                    //            Quantity = item.Quantity,
+                    //            Id = item.Id
+                    //        });
+                    //    }
+                    //    else
+                    //    {
+                    //        items.Add(new BundleItemModel()
+                    //        {
+                    //            ProductId = itemProduct.Id,
+                    //            Price = itemProduct.Price,
+                    //            OldPrice = itemProduct.OldPrice > 0 ? itemProduct.OldPrice : itemProduct.Price,
+                    //            MSRP = itemProduct.Msrp,
+                    //            Quantity = item.Quantity,
+                    //            Id = item.Id
+                    //        });
+                    //    }
+                    //}
 
-                //    var buyMoreSaveMoreConfiguration = await _shoppingCartService.GetBuyMoreSaveMoreDiscountConfiguration();
-                //    decimal buyMoreSaveMoreSingleItemThreshold = await _settingService.GetSettingByKeyAsync<decimal>("MarketingSettings.ApplyBuyMoreSaveMoreOnSingleItemOverThreshold");
-                //    if (!string.IsNullOrEmpty(buyMoreSaveMoreConfiguration))
-                //    {
-                //        decimal buyMoreSaveMoreDiscount =
-                //        buyMoreSaveMoreConfiguration.Contains("%")
-                //            ? decimal.Parse(buyMoreSaveMoreConfiguration.Replace("%", ""))
-                //            : decimal.Parse(
-                //                buyMoreSaveMoreConfiguration.Replace("$", ""));
-                //        discountType = buyMoreSaveMoreConfiguration.Contains("%") ? CustomDiscountType.Percent : CustomDiscountType.Fixed;
+                    //if (items.Sum(itm => itm.Price) <= 0)
+                    //    continue;
 
-                //        int notElgibleForSavemoreDiscountCartId = 0;
-                //        decimal costlyItemPrice = 0;
-                //        decimal itemPrice = 0;
-                //        foreach (var item in items)
-                //        {
-                //            itemPrice = item.Price;
-                //            if (((itemPrice * item.Quantity) > costlyItemPrice && items.Count > 1) ||
-                //                (items.Count == 1 && (items.Sum(c => c.Quantity) == 1 || itemPrice < buyMoreSaveMoreSingleItemThreshold)))
-                //            {
-
-                //                costlyItemPrice = itemPrice * item.Quantity;
-                //                notElgibleForSavemoreDiscountCartId = item.Id;
-                //            }
-                //        }
-                //        foreach (var item in items)
-                //        {
-                //            if (item.Id != notElgibleForSavemoreDiscountCartId)
-                //            {
-                //                decimal buyMoreSaveMoreDiscountBase = 0;
-                //                if (items.Count > 1)
-                //                {
-                //                    buyMoreSaveMoreDiscountBase =
-                //                discountType == CustomDiscountType.Percent ? (((item.Price * item.Quantity) * buyMoreSaveMoreDiscount) / 100)
-                //                : (buyMoreSaveMoreDiscount > item.Price ? item.Price * item.Quantity :
-                //                                      buyMoreSaveMoreDiscount * item.Quantity);
-                //                }
-                //                else
-                //                {
-                //                    buyMoreSaveMoreDiscountBase =
-                //          discountType == CustomDiscountType.Percent ?
-                //             (((item.Price * (item.Quantity - 1)) * buyMoreSaveMoreDiscount) / 100) :
-                //                                    (buyMoreSaveMoreDiscount > item.Price ? item.Price * (item.Quantity - 1) :
-                //                                    buyMoreSaveMoreDiscount * (item.Quantity - 1));
-                //                }
-                //                item.BuyMoreSaveMoreDiscountBase = buyMoreSaveMoreDiscountBase;
-                //            }
-
-                //        }
-
-                //    }
-                //}
+                    //int totalQty = bundleItems.Sum(x => x.Quantity);
+                    //if (bundle.NoOfPieces != totalQty)
+                    //    continue;
+                    //if (items.Count > 1 || totalQty > 1)
+                    //{
 
 
-                //foreach (var item in items)
-                //{
-                //    var ItemdiscountPercent = ((item.OldPrice - item.Price) / item.OldPrice) * 100;
-                //    item.DiscountPercentage = (int)ItemdiscountPercent;
 
-                //    item.Price = ((item.Price * item.Quantity) - item.BuyMoreSaveMoreDiscountBase);
-                //    item.OldPrice = item.OldPrice * item.Quantity;
-                //    item.MSRP = item.MSRP * item.Quantity;
+                    //    var buyMoreSaveMoreConfiguration = await _shoppingCartService.GetBuyMoreSaveMoreDiscountConfiguration();
+                    //    decimal buyMoreSaveMoreSingleItemThreshold = await _settingService.GetSettingByKeyAsync<decimal>("MarketingSettings.ApplyBuyMoreSaveMoreOnSingleItemOverThreshold");
+                    //    if (!string.IsNullOrEmpty(buyMoreSaveMoreConfiguration))
+                    //    {
+                    //        decimal buyMoreSaveMoreDiscount =
+                    //        buyMoreSaveMoreConfiguration.Contains("%")
+                    //            ? decimal.Parse(buyMoreSaveMoreConfiguration.Replace("%", ""))
+                    //            : decimal.Parse(
+                    //                buyMoreSaveMoreConfiguration.Replace("$", ""));
+                    //        discountType = buyMoreSaveMoreConfiguration.Contains("%") ? CustomDiscountType.Percent : CustomDiscountType.Fixed;
 
-                //}
+                    //        int notElgibleForSavemoreDiscountCartId = 0;
+                    //        decimal costlyItemPrice = 0;
+                    //        decimal itemPrice = 0;
+                    //        foreach (var item in items)
+                    //        {
+                    //            itemPrice = item.Price;
+                    //            if (((itemPrice * item.Quantity) > costlyItemPrice && items.Count > 1) ||
+                    //                (items.Count == 1 && (items.Sum(c => c.Quantity) == 1 || itemPrice < buyMoreSaveMoreSingleItemThreshold)))
+                    //            {
 
-                ////totalOldPrice = items.Sum(x => x.OldPrice);
-                //totalPrice = items.Sum(x => x.Price);
-                //totalMSRP = items.Sum(x => x.MSRP);
-                //var maxDiscountPercentage = items.Max(x => x.DiscountPercentage);
+                    //                costlyItemPrice = itemPrice * item.Quantity;
+                    //                notElgibleForSavemoreDiscountCartId = item.Id;
+                    //            }
+                    //        }
+                    //        foreach (var item in items)
+                    //        {
+                    //            if (item.Id != notElgibleForSavemoreDiscountCartId)
+                    //            {
+                    //                decimal buyMoreSaveMoreDiscountBase = 0;
+                    //                if (items.Count > 1)
+                    //                {
+                    //                    buyMoreSaveMoreDiscountBase =
+                    //                discountType == CustomDiscountType.Percent ? (((item.Price * item.Quantity) * buyMoreSaveMoreDiscount) / 100)
+                    //                : (buyMoreSaveMoreDiscount > item.Price ? item.Price * item.Quantity :
+                    //                                      buyMoreSaveMoreDiscount * item.Quantity);
+                    //                }
+                    //                else
+                    //                {
+                    //                    buyMoreSaveMoreDiscountBase =
+                    //          discountType == CustomDiscountType.Percent ?
+                    //             (((item.Price * (item.Quantity - 1)) * buyMoreSaveMoreDiscount) / 100) :
+                    //                                    (buyMoreSaveMoreDiscount > item.Price ? item.Price * (item.Quantity - 1) :
+                    //                                    buyMoreSaveMoreDiscount * (item.Quantity - 1));
+                    //                }
+                    //                item.BuyMoreSaveMoreDiscountBase = buyMoreSaveMoreDiscountBase;
+                    //            }
 
-                ////        if ((_productBundleSettings.DiscountPercentage != null
-                ////? _productBundleSettings.DiscountPercentage
-                ////: 0) > 0)
-                ////        {
-                ////            totalPrice = totalPrice - (totalPrice * (_productBundleSettings.DiscountPercentage / 100));
-                ////        }
+                    //        }
 
-                //if (!existingBackupVariantIds.Contains(variant.VariantId))
-                //{
-                //    var productattributeCombination = await GetBestMatchingCombinationAsync(variant);
-                //    decimal price = productattributeCombination.OverriddenPrice ?? 0;
-                //    decimal oldPrice = productattributeCombination.OverriddenOldPrice ?? 0;
-                //    decimal msrp = productattributeCombination.OverriddenMsrp ?? 0;
+                    //    }
+                    //}
 
-                //    var backupRecord = new VariantPriceBackup
-                //    {
-                //        VariantId = variant.VariantId,
-                //        ProductId = product.Id,
-                //        Price = price > 0 ? price : product.Price,
-                //        OldPrice = oldPrice > 0 ? oldPrice : product.OldPrice,
-                //        Msrp = msrp > 0 ? msrp : product.Msrp,
-                //        BackupDateUtc = DateTime.UtcNow
-                //    };
-                //    await _variantbackupRepository.InsertAsync(backupRecord);
-                //}
 
-                //try
-                //{
-                //    BundleEventContext.SkipRecalculation.Value = true;
-                //    decimal? oldPrice = variant.Price;
-                //    totalOldPrice = CommonHelper.RoundToNearest49or99(totalPrice + (totalPrice * maxDiscountPercentage / 100));
-                //    totalPrice = totalOldPrice - (totalOldPrice * maxDiscountPercentage / 100);
+                    //foreach (var item in items)
+                    //{
+                    //    var ItemdiscountPercent = ((item.OldPrice - item.Price) / item.OldPrice) * 100;
+                    //    item.DiscountPercentage = (int)ItemdiscountPercent;
 
-                //    variant.Msrp = CommonHelper.RoundToNearest49or99(totalMSRP);
-                //    variant.OldPrice = totalOldPrice;
-                //    variant.Price = (totalPrice % 1 >= 0.5m) ? Math.Ceiling((decimal)totalPrice) : Math.Floor((decimal)totalPrice);
+                    //    item.Price = ((item.Price * item.Quantity) - item.BuyMoreSaveMoreDiscountBase);
+                    //    item.OldPrice = item.OldPrice * item.Quantity;
+                    //    item.MSRP = item.MSRP * item.Quantity;
 
-                //    await _productService.UpdateVariant(variant);
-                //    await _bundleLoggerService.LogBundleUpdatedAsync(bundle, bundle, bundleItems.ToList(), oldPrice, variant.Price);
-                //}
-                //finally
-                //{
-                //    BundleEventContext.SkipRecalculation.Value = false;
-                //}
+                    //}
 
-                #endregion
+                    ////totalOldPrice = items.Sum(x => x.OldPrice);
+                    //totalPrice = items.Sum(x => x.Price);
+                    //totalMSRP = items.Sum(x => x.MSRP);
+                    //var maxDiscountPercentage = items.Max(x => x.DiscountPercentage);
+
+                    ////        if ((_productBundleSettings.DiscountPercentage != null
+                    ////? _productBundleSettings.DiscountPercentage
+                    ////: 0) > 0)
+                    ////        {
+                    ////            totalPrice = totalPrice - (totalPrice * (_productBundleSettings.DiscountPercentage / 100));
+                    ////        }
+
+                    //if (!existingBackupVariantIds.Contains(variant.VariantId))
+                    //{
+                    //    var productattributeCombination = await GetBestMatchingCombinationAsync(variant);
+                    //    decimal price = productattributeCombination.OverriddenPrice ?? 0;
+                    //    decimal oldPrice = productattributeCombination.OverriddenOldPrice ?? 0;
+                    //    decimal msrp = productattributeCombination.OverriddenMsrp ?? 0;
+
+                    //    var backupRecord = new VariantPriceBackup
+                    //    {
+                    //        VariantId = variant.VariantId,
+                    //        ProductId = product.Id,
+                    //        Price = price > 0 ? price : product.Price,
+                    //        OldPrice = oldPrice > 0 ? oldPrice : product.OldPrice,
+                    //        Msrp = msrp > 0 ? msrp : product.Msrp,
+                    //        BackupDateUtc = DateTime.UtcNow
+                    //    };
+                    //    await _variantbackupRepository.InsertAsync(backupRecord);
+                    //}
+
+                    //try
+                    //{
+                    //    BundleEventContext.SkipRecalculation.Value = true;
+                    //    decimal? oldPrice = variant.Price;
+                    //    totalOldPrice = CommonHelper.RoundToNearest49or99(totalPrice + (totalPrice * maxDiscountPercentage / 100));
+                    //    totalPrice = totalOldPrice - (totalOldPrice * maxDiscountPercentage / 100);
+
+                    //    variant.Msrp = CommonHelper.RoundToNearest49or99(totalMSRP);
+                    //    variant.OldPrice = totalOldPrice;
+                    //    variant.Price = (totalPrice % 1 >= 0.5m) ? Math.Ceiling((decimal)totalPrice) : Math.Floor((decimal)totalPrice);
+
+                    //    await _productService.UpdateVariant(variant);
+                    //    await _bundleLoggerService.LogBundleUpdatedAsync(bundle, bundle, bundleItems.ToList(), oldPrice, variant.Price);
+                    //}
+                    //finally
+                    //{
+                    //    BundleEventContext.SkipRecalculation.Value = false;
+                    //}
+
+                    #endregion
             }
         }
         // made function for single bundle wise not all 
@@ -919,9 +919,14 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
                 .FirstOrDefaultAsync(bc => bc.VariantId == variantId);
         }
 
-        public async Task<BundleItem> GetBundleItemByProductIdAsync(int bundleId, int productId)
+        public async Task<BundleItem> GetBundleItemByProductAndVariantAsync(int bundleId, int productId, int variantId)
         {
-            return await _bundleItemRepository.Table.FirstOrDefaultAsync(x => x.BundleId == bundleId && x.ProductId == productId && x.IsActive);
+            { 
+                return await _bundleItemRepository.Table.FirstOrDefaultAsync(x => x.BundleId == bundleId 
+                && x.ProductId == productId 
+                && x.VariantId == variantId 
+                && x.IsActive);
+            }
         }
 
         public async Task<List<BundleConfiguration>> GetAffectedBundlesByProductId(int productId)
@@ -939,7 +944,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
             return bundles;
         }
 
-        private async Task<bool> IsVariantValid(int variantId)
+        public async Task<bool> IsVariantValid(int variantId)
         {
             bool isValid = false;
             var variant = await _productService.GetVariantByVariantId(variantId);

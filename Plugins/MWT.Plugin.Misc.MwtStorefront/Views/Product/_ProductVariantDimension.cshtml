@@ -25,7 +25,7 @@
 
 
 
-            <select id="attributeDropdown" name="AttributeValues" class="form-control">
+            <select id="attributeDropdown" aria-label="@attr.Name" name="AttributeValues" class="form-control">
                 <option value="0">@T("Products.ProductAttributes.DropdownList.DefaultItem")</option>
                 @foreach (var value in attr.Values.Where(v => !string.IsNullOrEmpty(v.VariantDimension)))
                 {
@@ -49,7 +49,7 @@
 
 
 
-                        <select id="attributeDropdown" name="AttributeValues" class="form-control">
+                        <select id="attributeDropdown" aria-label="@attr.Name" name="AttributeValues" class="form-control">
                             <option value="0">@T("Products.ProductAttributes.DropdownList.DefaultItem")</option>
                             @foreach (var value in attr.Values.Where(v => !string.IsNullOrEmpty(v.VariantDimension)))
                             {
