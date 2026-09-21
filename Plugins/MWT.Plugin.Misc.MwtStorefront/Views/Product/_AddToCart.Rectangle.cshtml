@@ -43,7 +43,7 @@
     @if (!Model.DisableBuyButton)
     {
         <div class="flex qty-select">
-            <label asp-for="EnteredQuantity" asp-postfix=":" class="qty-label"></label>
+            <span asp-for="EnteredQuantity" asp-postfix=":" class="qty-label"></span>
             @if (Model.AllowedQuantities.Count > 0)
             {
                 <select asp-for="EnteredQuantity" asp-items="Model.AllowedQuantities" id="product_enteredQuantity_@Model.ProductId"

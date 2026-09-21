@@ -64,7 +64,8 @@
                                           role="region"
                                         class="discount-info in">
                                         <div class="discount-info-inner">
-                                            <h3>@discountSummary.Heading</h3><span class="close-discount-info">×</span><span>
+                                            <h3>@discountSummary.Heading</h3>
+                                            <button type="button" aria-label="close" class="close-discount-info">×</button>
                                                 @if (!string.IsNullOrEmpty(discountSummary.Description))
                                                 {
                                                     <h3>@Html.Raw(discountSummary.Description)</h3>
@@ -106,7 +107,8 @@
                                       role="region"
                                         class="discount-info in">
                                         <div class="discount-info-inner">
-                                            <h3>@discountSummary.Heading</h3><span class="close-discount-info">×</span><span>
+                                            <h3>@discountSummary.Heading</h3>
+                                            <button type="button" aria-label="close" class="close-discount-info">×</button>
                                                 @if (!string.IsNullOrEmpty(discountSummary.Description))
                                                 {
                                                     <h3>@Html.Raw(discountSummary.Description)</h3>
@@ -368,7 +370,8 @@
                             <div class="discount-info-inner">
                                 <h3>
                                     @Html.Raw(T("shoppingcart.totals.customduty.Heading"))
-                                </h3><span class="close-discount-info">×</span>
+                                </h3>
+                                <button type="button" aria-label="close" class="close-discount-info">×</button>
 
                                 <div class="text-start">@Html.Raw(T("shoppingcart.totals.customduty.Description", Model.CustomDutyPercentage))</div>
 
@@ -448,7 +451,7 @@
                                                         </button>
 
                                 <span tabindex="-1"
-                                      role="region"
+                                      role="region",
                                          class="discount-info in">
                                         <div class="discount-info-inner">
                                             <h3>@discountSummary.Heading</h3>

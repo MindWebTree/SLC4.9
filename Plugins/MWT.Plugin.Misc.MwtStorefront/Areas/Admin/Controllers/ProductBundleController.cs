@@ -220,6 +220,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
                     bundleItemModel.VariantId = x.VariantId;
                     bundleItemModel.BundleId = x.BundleId;
                     bundleItemModel.Quantity = x.Quantity;
+                    bundleItemModel.DisplayOrder = x.DisplayOrder;
                     var vcombination = await _productService.GetVariantByVariantId(x.VariantId);
 
                     if (product != null && vcombination != null)
@@ -269,6 +270,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
             bundle.Quantity = model.Quantity;
             bundle.UpdatedBy = (await _workContext.GetCurrentCustomerAsync())?.Id ?? 0;
             bundle.UpdatedOnUtc = DateTime.UtcNow;
+            bundle.DisplayOrder = model.DisplayOrder;
             await _bundleService.UpdateBundleItemAsync(bundle);
 
             return new NullJsonResult(); // Tells the grid it saved successfully
@@ -357,7 +359,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
         [HttpPost]
         [CheckPermission(StandardPermission.Catalog.PRODUCTS_CREATE_EDIT_DELETE)]
         public virtual async Task<IActionResult> BundleItemProductAddPopup(AddBundleItemProductModel model)
-        { 
+        {
 
             if (model.SelectedProducts != null && model.SelectedProducts.Any())
             {
@@ -377,7 +379,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
                     // We do this because updating an existing item from Qty 1 to Qty 2 is only a net increase of 1, not 2.
                     foreach (var variant in model.SelectedProducts.Values)
                     {
-                        var existingProductInBundle = await _bundleService.GetBundleItemByProductIdAsync(model.BundleId, variant.ProductId);
+                        var existingProductInBundle = await _bundleService.GetBundleItemByProductAndVariantAsync(model.BundleId, variant.ProductId, variant.VariantId);
 
                         if (existingProductInBundle != null)
                         {
@@ -400,30 +402,22 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
 
                     foreach (var variant in model.SelectedProducts.Values)
                     {
-                        var existingProductInBundle = await _bundleService.GetBundleItemByProductIdAsync(model.BundleId, variant.ProductId);
+                        bool toInsert = true;
+                        var existingProductInBundle = await _bundleService.GetBundleItemByProductAndVariantAsync(model.BundleId, variant.ProductId, variant.VariantId);
 
                         if (existingProductInBundle != null)
                         {
                             // Scenario A: The product exists, but the admin changed the Variant (e.g., changed from King to Queen)
-                            if (existingProductInBundle.VariantId != variant.VariantId)
-                            {
-                                // Delete the old configuration. We set it to null so the insert logic below triggers.
-                                await _bundleService.DeleteBundleItemAsync(existingProductInBundle);
-                                existingProductInBundle = null;
-                            }
-                            // Scenario B: The product and variant are exactly the same, only the quantity changed
-                            else
-                            {
-                                existingProductInBundle.Quantity = variant.Quantity;
-                                existingProductInBundle.UpdatedOnUtc = DateTime.UtcNow;
-                                existingProductInBundle.IsActive = true;
-                                await _bundleService.UpdateBundleItemAsync(existingProductInBundle);
-                                continue; // Done with this item, skip the insert logic
-                            }
+
+                            toInsert = false;
+                            existingProductInBundle.Quantity = variant.Quantity;
+                            existingProductInBundle.UpdatedOnUtc = DateTime.UtcNow;
+                            existingProductInBundle.IsActive = true;
+                            await _bundleService.UpdateBundleItemAsync(existingProductInBundle);
+                            continue; // Done with this item, skip the insert logic
+
                         }
-                        // Scenario C: This is either a brand new product for this bundle, 
-                        // or the old variant was deleted in Scenario A.
-                        if (existingProductInBundle == null)
+                        else
                         {
                             var bundleItem = new BundleItem
                             {
@@ -446,6 +440,8 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
             ViewBag.btnId = model.btnId;
 
             var searchModel = new BundleItemProductSearchModel { BundleId = model.BundleId };
+
+
             return View("BundleProductAddPopup", searchModel);
         }
 
@@ -678,6 +674,7 @@ namespace MWT.Nop.Plugin.Misc.ProductBundle.Controllers
             {
                 return RedirectToAction("Manage", new { id = variantId });
             }
+            SaveSelectedCardName("product-product-attributes");
             return RedirectToAction("Edit", "Product", new { id = productId, area = AreaNames.ADMIN });
 
         }

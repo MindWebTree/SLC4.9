@@ -10,8 +10,8 @@
                     @if (!string.IsNullOrWhiteSpace(variant.DefaultPictureModel.ImageUrl))
                     {
                         <div class="variant-picture" aria-hidden="true" tabindex="-1">
-                            <a href="@(Url.RouteUrl("Product", new { id=variant.Id, SeName=variant.SeName }))" title="@variant.DefaultPictureModel.Title">
-                                <img alt="@variant.DefaultPictureModel.AlternateText" src="@variant.DefaultPictureModel.ImageUrl"
+                            <a href="@(Url.RouteUrl("Product", new { id=variant.Id, SeName=variant.SeName }))" aria-label="@variant.DefaultPictureModel.Title">
+                                <img alt="" src="@variant.DefaultPictureModel.ImageUrl"
                               id="main-product-img-@variant.Id" />
                             </a>
                         </div>
@@ -22,7 +22,7 @@
                     @if (!string.IsNullOrWhiteSpace(variant.Name))
                     {
                         <div class="variant-name">
-                            <a href="@(Url.RouteUrl("Product", new { id=variant.Id, SeName=variant.SeName }))" title="@variant.DefaultPictureModel.Title">
+                            <a href="@(Url.RouteUrl("Product", new { id=variant.Id, SeName=variant.SeName }))">
 
                                 <h2>  @variant.Name</h2>
                             </a>

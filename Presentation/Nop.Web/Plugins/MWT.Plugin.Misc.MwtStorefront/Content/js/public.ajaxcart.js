@@ -277,7 +277,7 @@ var AjaxCart = {
 
         var message = "";
         if (noOfWishlIstItems > 0) {
-            message = AjaxCart.wishlist_deleteitem.replace('{0}', noOfWishlIstItems);
+            message = AjaxCart.wishlist_deleteitem;
         } else {
             message = AjaxCart.wishlist_deleteitem_empty;
         }

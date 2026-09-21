@@ -179,7 +179,7 @@
 
                                             <td class="product">
                                                 <div class="shoppping-cart-left-image">
-                                                    <a target="_blank" href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" /></a>
+                                                    <a target="_blank" href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl"  /></a>
 
                                                 </div>
                                                 <div class="shoppping-cart-right-image">
@@ -264,12 +264,12 @@
                                             @if (Model.ShowVendorName)
                                             {
                                                 <td class="vendor">
-                                                    <label class="td-title">@T("ShoppingCart.VendorName"):</label>
+                                                    <span class="td-title">@T("ShoppingCart.VendorName"):</span>
                                                     <span class="vendor-name">@item.VendorName</span>
                                                 </td>
                                             }
                                             <td class="quantity nobr">
-                                                <label class="td-title" for="itemquantity@(item.Id)">@T("ShoppingCart.Quantity"):</label>
+                                                <span class="td-title" for="itemquantity@(item.Id)">@T("ShoppingCart.Quantity"):</span>
                                                 @if (Model.IsEditable)
                                                 {
 
@@ -299,12 +299,12 @@
                                                 }
                                             </td>
                                             <td class="unit-price nobr">
-                                                <label class="td-title">@T("ShoppingCart.UnitPrice"):</label>
+                                                <span class="td-title">@T("ShoppingCart.UnitPrice"):</span>
                                                 <span class="product-unit-price">@item.UnitPrice</span>
                                             </td>
 
                                             <td class="subtotal nobr end">
-                                                <label class="td-title">@T("ShoppingCart.ItemTotal"):</label>
+                                                <span class="td-title">@T("ShoppingCart.ItemTotal"):</span>
                                                 <span class="product-subtotal">@item.SubTotal</span>
 
                                                 @if (!string.IsNullOrEmpty(item.MemberShipDiscount))
@@ -421,7 +421,7 @@
                             <div class="shopiing-product-details">
                                 <div class="col-md-12">
                                     <div class="image-section">
-                                        <a target="_blank" href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" /></a>
+                                        <a target="_blank" href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl"  /></a>
                                     </div>
                                     <div class="desc-section">
                                         <p class="name">
@@ -566,7 +566,7 @@
                                         </button>
                                         <a href="@Url.Action("SaveForLater","ShoppingCart",new {cartId=item.Id})" class="ShpSaveForLater"><i class="far fa-heart"></i> @T("shoppingcart.saveforlater") </a>
                                     }
-                                    <a href="#" class="instruc-pop" title="phone" aria-label="phone" data-bs-toggle="modal" data-bs-target="#special-instruction-popup-@item.Id">
+                                    <a href="#" class="instruc-pop"  aria-label="phone" data-bs-toggle="modal" data-bs-target="#special-instruction-popup-@item.Id">
                                         @if (string.IsNullOrEmpty(item.SpecialInstructions) || item.SpecialInstructions.Replace("\n", "").Replace("\r", "").Trim() == "")
                                         {
                                             @T("shoppingcart.specialinstructions")
@@ -589,7 +589,7 @@
                                                 <div class="modal-body">
                                                     <div class="row">
                                                         <div class="col-5">
-                                                            <a href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" /></a>
+                                                            <a href="@Url.RouteUrl("Product", new {id=item.ProductId,SeName = item.ProductSeName})"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl"  /></a>
                                                         </div>
                                                         <div class="col-7">
                                                             <p class="txt-solid">
@@ -670,7 +670,7 @@
                                 <div class="total-section col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
 
                                     <div class="total">
-                                        <p class="headeing-order">@T("checkout.ordersummary", Model.Items.Count)</p>
+                                        <h2 class="headeing-order">@T("checkout.ordersummary", Model.Items.Count)</h2>
                                         <div class="accordion">
                                             <div class="card" type="button">
                                                 <button type="button" tabindex="0" role="button" class="card-header collapsed" id="heading-discountcodes"
@@ -818,9 +818,9 @@
                                                 @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryCartFooter })
                                                 @if (Model.IsEditable)
                                                 {
-                                                    <label class="custom-control-label cart-term-service" style="margin: 20px 0 0px;">
+                                                    <span class="custom-control-label cart-term-service" style="margin: 20px 0 0px;">
                                                         @T("Checkout.TermsOfService.IAccept")
-                                                    </label>
+                                                    </span>
                                                 }
                                                 <div class="addon-buttons">
                                                     @foreach (var pm in Model.ButtonPaymentMethodViewComponents)

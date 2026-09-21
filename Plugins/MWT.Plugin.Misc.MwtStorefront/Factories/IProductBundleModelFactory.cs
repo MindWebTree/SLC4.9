@@ -35,11 +35,12 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
         Task ValidateAndRestoreIncompleteBundlesAsync();
         #region Variant
         Task<BundleConfiguration> GetBundleByVariantIdAsync(int variantId);
-        Task<BundleItem> GetBundleItemByProductIdAsync(int bundleId, int productId);
+        Task<BundleItem> GetBundleItemByProductAndVariantAsync(int bundleId, int productId, int variantId);
         Task<ProductAttributeCombination> GetBestMatchingCombinationAsync(
  VariantCombination variant);
         Task<List<BundleConfiguration>> GetAffectedBundlesByProductId(int productId);
         Task<VariantBundleSearchListModel> PrepareVariantListModelAsync(VariantBundleSearchModel searchModel, Product product);
+        Task<bool> IsVariantValid(int variantId);
         #endregion
         #region Variantbackup
         Task<VariantPriceBackup> GetVariantPriceBackupAsync(int variantId);

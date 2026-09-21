@@ -11,11 +11,11 @@
             @*Tags*@
 
 
-            <a href="@Url.RouteUrl("Product", new {id=Model.ProductId, SeName = Model.ProductSeName })" title="@Model.Picture.Title">
-                <img alt="@Model.Picture.AlternateText" src="/images/pixel.png" height="415" width="415"
+            <a href="@Url.RouteUrl("Product", new {id=Model.ProductId, SeName = Model.ProductSeName })" aria-label="@Model.Picture.Title">
+                <img alt="" src="/images/pixel.png" height="415" width="415"
                      data-src="@Model.Picture.ImageUrl"
                      default-pic="@Model.Picture.ImageUrl" alt-pic="@(Model.Picture==null?"":Model.Picture.ImageUrl)"
-                     title="@Model.Picture.Title" class="lazy" style="width:100%;height:auto;" />
+                     class="lazy" style="width:100%;height:auto;" />
             </a>
 
         </div>
@@ -44,9 +44,9 @@
                     }
                 </h4>
             }*@
-        <h5 class="price old-price">
+        <h4 class="price old-price">
             <span class="saleprice">  @Model.UnitPrice</span>
-        </h5>
+        </h4>
 
         <div class="add-to-cart" bis_skin_checked="1">
             <form asp-route="Wishlist" method="post" class="d-inline">

@@ -18,8 +18,8 @@
             }
         }
     </div>
-    <a href="@Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName })" title="@Model.DefaultPictureModel.Title">
-        <img alt="@Model.DefaultPictureModel.AlternateText" src="/images/pixel.png" data-src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" class="lazy" />
+    <a href="@Url.RouteUrl("Product", new { id = Model.Id, SeName = Model.SeName })" aria-label="@Model.DefaultPictureModel.Title">
+        <img alt="" src="/images/pixel.png" data-src="@Model.DefaultPictureModel.ImageUrl" class="lazy" />
     </a>
 
 </div>

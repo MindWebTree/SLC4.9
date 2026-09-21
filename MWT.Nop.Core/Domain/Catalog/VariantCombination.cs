@@ -29,5 +29,6 @@ namespace MWTNop.Core.Domain.Catalog
         public string EstimatedDeliveryDate { get; set; }
         public int DimensionPictureId { get; set; }
         public string SeName { get; set; }
+        public int PictureId { get; set; }
     }
 }

@@ -23,6 +23,10 @@ namespace MWT.Plugin.Misc.MwtStorefront.Area.Admin.Models
 
         [NopResourceDisplayName("Admin.Catalog.Products.Variant.Fields.Product.Attributes")]
         public string Attributes { get; set; }
+
+        [NopResourceDisplayName("MWT.Plugin.ProductBundle.DisplayOrder")]
+        public int DisplayOrder { get; set; }
+
         public decimal Price { get; set; }
         public decimal BuyMoreSaveMoreDiscountBase { get; set; }
         public decimal OldPrice { get; set; }

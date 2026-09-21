@@ -76,7 +76,7 @@
                         }
                         else
                         {
-                            <a href="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })" title="@cat.Name" itemprop="item">
+                            <a href="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })"  itemprop="item">
                                 <span itemprop="name">@cat.Name</span>
                             </a>
                         }
@@ -134,12 +134,12 @@
                         <div class="sub-category-item card-block">
 
                             <div class="picture">
-                                <a href="@Url.RouteUrl("Category", new { id = item.Id, SeName = item.SeName })" title="@item.PictureModel.Title">
-                                    <img alt="@item.PictureModel.AlternateText" class="card-img-top lazy" src="/images/pixel.png" data-src="@item.PictureModel.ImageUrl" title="@item.PictureModel.Title" />
+                                <a href="@Url.RouteUrl("Category", new { id = item.Id, SeName = item.SeName })" aria-label="@item.PictureModel.Title">
+                                    <img alt="" class="card-img-top lazy" src="/images/pixel.png" data-src="@item.PictureModel.ImageUrl"  />
                                 </a>
                             </div>
                             <h2 class="title">
-                                <a container="@Url.RouteUrl("Category", new { id = item.Id, SeName = item.SeName })" class="card-title" title="@item.PictureModel.Title">
+                                <a container="@Url.RouteUrl("Category", new { id = item.Id, SeName = item.SeName })" class="card-title" >
                                     @item.Name
                                 </a>
                             </h2>

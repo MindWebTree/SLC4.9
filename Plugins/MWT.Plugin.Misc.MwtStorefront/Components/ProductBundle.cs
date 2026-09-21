@@ -4,6 +4,7 @@ using MWT.Nop.Core.Domain.ProductBundle;
 using MWT.Nop.Core.Service.Catalog;
 using MWT.Nop.Core.Services.Orders;
 using MWT.Plugin.Misc.MwtStorefront.Factories;
+using MWT.Plugin.Misc.MwtStorefront.Infrastructure.Cache;
 using MWT.Plugin.Misc.MwtStorefront.Models.Catalog;
 using MWT.Plugin.Misc.MwtStorefront.Models.ProductBundle;
 using Newtonsoft.Json;
@@ -17,6 +18,7 @@ using Nop.Services.Localization;
 using Nop.Services.Logging;
 using Nop.Services.Media;
 using Nop.Web.Framework.Components;
+using Nop.Web.Infrastructure.Cache;
 using Nop.Web.Models.Media;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Components
@@ -31,8 +33,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
         private readonly IPictureService _pictureService;
         private readonly ILocalizationService _localizationService;
         private readonly IProductAttributeService _productAttributeService;
-        private readonly IProductExtendedService _productService;
-        private readonly IProductAttributeParser _productAttributeParser;
+        private readonly IProductExtendedService _productService; 
         private readonly IPriceFormatter _priceFormatter;
         private readonly ISettingService _settingService;
         private readonly IShoppingCartExtendedService _shoppingCartService;
@@ -52,8 +53,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
             ILocalizationService localizationService,
             IProductExtendedService productService,
             IPictureService pictureService,
-            ICustomProductModelFactory productModelFactory,
-            IProductAttributeParser productAttributeParser,
+            ICustomProductModelFactory productModelFactory, 
             IPriceFormatter priceFormatter,
             ISettingService settingService,
             IShoppingCartExtendedService shoppingCartService,
@@ -69,8 +69,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
             _localizationService = localizationService;
             _productService = productService;
             _pictureService = pictureService;
-            _productModelFactory = productModelFactory;
-            _productAttributeParser = productAttributeParser;
+            _productModelFactory = productModelFactory; 
             _priceFormatter = priceFormatter;
             _settingService = settingService;
             _shoppingCartService = shoppingCartService;
@@ -106,6 +105,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
        CustomNopCatalogDefaults.BundleWidgetModelKey,
        productDetailsModel.Id, selectedVariantId, workingLanguage, currentStore);
 
+                var productOverviewModels = new List<CustomProductOverviewModel>();
+
                 var model = await _staticCacheManager.GetAsync(bundleWidgetCacheKey, async () =>
                 {
 
@@ -135,15 +136,15 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
                     if (!validBundles.Any())
                         return new ProductConfigurationBundleModel();
 
-                        var uniqueProductIds = allBundleItems.Select(item => item.ProductId).Distinct().ToArray();
+                    var uniqueProductIds = allBundleItems.Select(item => item.ProductId).Distinct().ToArray();
                     var bundleProducts = await _productService.GetProductsByIdsAsync(uniqueProductIds);
 
-                    var productOverviewModels = await _productModelFactory.PrepareCustomProductOverviewDetailInfoModelAsync(
-                        bundleProducts, true, true, null, false, false, false, false, false, false, 0);
+                    productOverviewModels = (await _productModelFactory.PrepareCustomProductOverviewDetailInfoModelAsync(
+                      bundleProducts, true, true, null, false, false, false, false, false, false, 0)).ToList();
 
-                    var initialBundle = validBundles.FirstOrDefault(bundle => bundle.VariantId == selectedVariantId)
-                                        ?? validBundles.First();
-                    var initialBundleItems = allBundleItems.Where(item => item.BundleId == initialBundle.Id).ToList();
+                    //var initialBundle = validBundles.FirstOrDefault(bundle => bundle.VariantId == selectedVariantId)
+                    //                    ?? validBundles.First();
+                    //var initialBundleItems = allBundleItems.Where(item => item.BundleId == initialBundle.Id).ToList();
 
                     var bundleManifest = new List<object>();
 
@@ -199,6 +200,38 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
                                     }
                                 }
 
+
+                                var variantpictureModel = new PictureModel();
+                                if (itemVariant.PictureId > 0)
+                                {
+
+                                    var productAttributePictureCacheKey = _staticCacheManager.PrepareKeyForDefaultCache(NopModelCacheDefaults.ProductAttributePictureModelKey,
+                              itemVariant.PictureId, _webHelper.IsCurrentConnectionSecured(), await _storeContext.GetCurrentStoreAsync());
+                                    variantpictureModel = await _staticCacheManager.GetAsync(productAttributePictureCacheKey, async () =>
+                                    {
+                                        var picture = await _pictureService.GetPictureByIdAsync(itemVariant.PictureId);
+                                        string fullSizeImageUrl, imageUrl, thumbImageUrl;
+
+                                        (fullSizeImageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture);
+                                        (imageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, _mediaSettings.ProductDetailsPictureSize);
+
+
+                                        (thumbImageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, _mediaSettings.ProductThumbPictureSizeOnProductDetailsPage);
+
+                                        return picture == null ? new PictureModel() : new PictureModel
+                                        {
+                                            FullSizeImageUrl = fullSizeImageUrl,
+                                            ImageUrl = imageUrl,
+                                            ThumbImageUrl = thumbImageUrl
+                                        };
+                                    });
+
+                                }
+                                var attribute = await _productService.GetVariantAttributesListAsync(itemVariant, baseProduct);
+                                var itemproductdetails = productOverviewModels.FirstOrDefault(x => x.Id == itemVariant.ProductId);
+
+
+
                                 itemMetadataList.Add(new
                                 {
 
@@ -212,14 +245,21 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
                                     priceraw = currentPrice,
                                     oldPriceraw = oldPrice,
                                     discountPct = discountPercentage,
-                                    dimension = dimension
+                                    dimension = dimension,
+                                    title = string.IsNullOrWhiteSpace(itemVariant.Title) ? baseProduct.Name : itemVariant.Title,
+                                    imageUrl = string.IsNullOrWhiteSpace(variantpictureModel.ImageUrl) ? itemproductdetails.DefaultPictureModel.ImageUrl : variantpictureModel.ImageUrl,
+                                    attributes = attribute.ToList(),
+                                    shortDesc = baseProduct.ShortDescription ?? string.Empty,
+                                    seName = bundleItem.VariantId == itemproductdetails.DefaultVariantId ||
+                                    string.IsNullOrWhiteSpace(itemVariant.SeName) ? itemproductdetails.SeName : itemVariant.SeName,
+                                    prdVariantId = bundleItem.VariantId == itemproductdetails.DefaultVariantId ? bundleItem.ProductId.ToString() : $"{bundleItem.ProductId}_{bundleItem.VariantId}"
                                 });
-                                if (bundle.Id == initialBundle.Id)
-                                {
-                                    defaultClubbedPrice += currentPrice * bundleItem.Quantity;
-                                    defaultClubbedOldPrice += oldPrice * bundleItem.Quantity;
+                                //if (bundle.Id == initialBundle.Id)
+                                //{
+                                //    defaultClubbedPrice += currentPrice * bundleItem.Quantity;
+                                //    defaultClubbedOldPrice += oldPrice * bundleItem.Quantity;
 
-                                }
+                                //}
                             }
 
 
@@ -232,7 +272,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
                             bundleManifest.Add(new
                             {
                                 bundleId = bundle.Id,
-                                imageurl = await _staticCacheManager.GetAsync(bundlePictureCacheKey, async () =>
+                                imageurl = bundle.PictureId == 0 ? null : await _staticCacheManager.GetAsync(bundlePictureCacheKey, async () =>
                                 {
                                     var picture = await _pictureService.GetPictureByIdAsync(bundle.PictureId);
                                     string fullSizeImageUrl, imageUrl;
@@ -257,8 +297,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
                                 metadata = itemMetadataList,
 
                             });
-                            if (bundle.Id == initialBundle.Id)
-                                defaultBundlePrice = bundletPrice;
+                            //if (bundle.Id == initialBundle.Id)
+                            //    defaultBundlePrice = bundletPrice;
                         }
                     }
 
@@ -266,11 +306,11 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
 
                     var model = new ProductConfigurationBundleModel
                     {
-                        ProductOverviewModels = productOverviewModels.ToList(),
+                        //ProductOverviewModels = productOverviewModels.ToList(),
                         BundleManifestJson = JsonConvert.SerializeObject(bundleManifest),
-                        InitialProductIds = initialBundleItems.Select(item => item.ProductId).ToList(),
-                        InitialItems = initialBundleItems,
-                        SelectedVariantId = selectedVariantId
+                        //InitialProductIds = initialBundleItems.Select(item => item.ProductId).ToList(),
+                        //InitialItems = initialBundleItems,
+                        //SelectedVariantId = selectedVariantId
                     };
 
 
@@ -307,7 +347,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Components
                     return model;
                 });
 
-                if (model.ProductOverviewModels == null || model.ProductOverviewModels.Count() == 0)
+                //if (model.ProductOverviewModels == null || model.ProductOverviewModels.Count() == 0)
+                if (string.IsNullOrEmpty(model.BundleManifestJson))
                     return Content(string.Empty);
                 return View(model);
             }

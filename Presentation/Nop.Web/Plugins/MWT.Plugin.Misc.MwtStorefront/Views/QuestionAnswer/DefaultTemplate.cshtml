@@ -113,7 +113,7 @@
                 }
                 <li class="breadcrumb-item">
                     <span itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
-                        <a href="/answers" itemprop="item"> <span class="current-item" itemprop="name">Question & Answer</span></a>
+                        <a href="/answers" itemprop="item"> <span class="current-item"  itemprop="name">Question & Answer</span></a>
                         <meta itemprop="position" content="@position" />
                     </span>
                 </li>
@@ -137,7 +137,7 @@
                         }
                         else
                         {
-                            <a href="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })" title="@cat.Name" itemprop="item">
+                            <a href="@Url.RouteUrl("Category", new { id = cat.Id, SeName = cat.SeName })"  itemprop="item">
                                 <span itemprop="name">@cat.Name</span>
                             </a>
                         }
