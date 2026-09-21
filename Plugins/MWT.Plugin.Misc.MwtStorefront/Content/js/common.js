@@ -1,5 +1,7 @@
 ﻿
 var cookieDefaultExpiryDays = 1;
+var lastClickedElement = null;
+var lastFocusedFilterId = null;
 // mobile Menu
 $(".mobile-menu-icon .navbar-toggler").click(function () {
     if ($(".mobile-call-chat")) {
@@ -21,7 +23,7 @@ $(".wishlist-icon").keydown(function (event) {
         event.preventDefault();
         this.click();
     }
-}); 
+});
 
 //$('.filterDesktopIcon').on('click keydown', function (e) {
 //    if (e.type === 'click' || e.key === 'Enter' || e.key === ' ') {
@@ -410,66 +412,36 @@ $('.card-title,.cta-tab').on('keydown', function (event) {
         $(this).click();        // Trigger the normal click event
     }
 });
-$(document).ready(function () {
-    var lastFocusedFilterId = null;
-
-    $(document).on('change', '.filtercheckbox', function () {
-        lastFocusedFilterId = $(this).attr('id');
-    });
-    $(document).ajaxSuccess(function (event, xhr, settings) {
-        if (lastFocusedFilterId) {
-            // Put focus back on the checkbox instantly
-            var $targetCheckbox = $('#' + lastFocusedFilterId);
-            if ($targetCheckbox.length > 0) {
-                $targetCheckbox.focus();
-            }
-            // Clear tracking so it doesn't fight normal browsing behavior later
-            lastFocusedFilterId = null;
+$(document).on('change', '.filtercheckbox', function () {
+    lastFocusedFilterId = $(this).attr('id');
+});
+$(document).ajaxSuccess(function (event, xhr, settings) {
+    if (lastFocusedFilterId) {
+        var $targetCheckbox = $('#' + lastFocusedFilterId);
+        if ($targetCheckbox.length > 0) {
+            $targetCheckbox.focus();
         }
-    });
+        lastFocusedFilterId = null;
+    }
 });
 
-$(document).ready(function () {
-    var $lastClickedWishlistIcon = null;
-
-    $(document).on("click", ".wishlist-icon,[id^='add-to-wishlist-button-']", function () {
-        $lastClickedWishlistIcon = $(this);
-    });
-
-    $(document).on('click', '.close', function () {
-        if ($lastClickedWishlistIcon && $lastClickedWishlistIcon.length > 0) {
-
-            $lastClickedWishlistIcon.focus();
-
-            // Clear tracking so it doesn't fire accidentally later
-            $lastClickedWishlistIcon = null;
-        }
-    });
+$(document).on("click", ".wishlist-icon, [id^='add-to-wishlist-button-'], .add-to-cart-button, [id^='add-to-cart-button-']", function () {
+    lastClickedElement = $(this);
 });
 
-$(document).ready(function () {
-    var $lastClickedElement = null;
-
-    // Track last clicked Wishlist or Add to Cart button
-    $(document).on("click", ".wishlist-icon, [id^='add-to-wishlist-button-'], .add-to-cart-button, [id^='add-to-cart-button-']", function () {
-        $lastClickedElement = $(this);
-    });
-
-    // Return focus when popup closes
-    $(document).on("click", ".close", function () {
-        if ($lastClickedElement && $lastClickedElement.length) {
-            $lastClickedElement.focus();
-            $lastClickedElement = null;
-        }
-    });
+$(document).on("click", ".close", function () {
+    if (lastClickedElement && lastClickedElement.length) {
+        lastClickedElement.focus();
+        lastClickedElement = null;
+    }
 });
+
 $(document).on('keydown', '.prev-arrow, .next-arrow', function (e) {
     if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         $(this).trigger('click');
     }
 });
-
 $(".filterDesktopIcon").keydown(function (event) {
     if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();

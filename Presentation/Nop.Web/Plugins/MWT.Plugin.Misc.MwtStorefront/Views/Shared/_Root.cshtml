@@ -85,8 +85,8 @@
                 @RenderSection("Breadcrumb")
             }
             <div class="master-column-wrapper">
-                <div id="announcer" class="sr-only" role="status"
-                     aria-live="assertive" aria-atomic="true"></div>
+                    <div id="announcer" class="sr-only" role="status"
+                         aria-live="assertive" aria-atomic="true"></div>
 
                 @RenderBody()
             </div>
@@ -149,7 +149,7 @@
         $("#zsiq_agtpic").length > 0 ? $("#zsiq_agtpic").click() : $("#zsiq_float").click()
     });
 </script>
-<script defer src="/Themes/@themeName/Content/js/SalesIqEvents.js?"></script>
+<script defer src="/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/SalesIqEvents.js"></script>
 @if (_customWorkContext.IsMobileDevice())
 {
     <script type="text/javascript" asp-location="Footer">

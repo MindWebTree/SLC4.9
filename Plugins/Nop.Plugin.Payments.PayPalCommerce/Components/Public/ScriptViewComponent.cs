@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Wordprocessing;
+﻿using DocumentFormat.OpenXml.EMMA;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -85,11 +86,23 @@ public class ScriptViewComponent : NopViewComponent
             return Content(string.Empty);
         }
 
+
+
+        if (widgetZone.Equals(PublicWidgetZones.OrderSummaryContentBefore))
+        {
+            if (!_settings.DisplayButtonsOnShoppingCart)
+                return Content(string.Empty);
+            var routeName = HttpContext.GetEndpoint()?.Metadata.GetMetadata<RouteNameMetadata>()?.RouteName;
+            if (routeName == NopRouteNames.General.CART)
+                return Content(string.Empty);
+        }
+
+
         int invoiceId = 0;
         var path = _httpContextAccessor.HttpContext?.Request.Path.Value;
         var isOnePageCheckout =
             path?.Equals(_orderSettings.OnePageCheckoutEnabled ? "/onepagecheckout" : "/checkout", StringComparison.OrdinalIgnoreCase) == true;
-        if (!isOnePageCheckout)
+         if (!isOnePageCheckout)
         {
             isOnePageCheckout = path?.Equals("/checkoutCustomOrder", StringComparison.OrdinalIgnoreCase) == true;
             if (isOnePageCheckout)

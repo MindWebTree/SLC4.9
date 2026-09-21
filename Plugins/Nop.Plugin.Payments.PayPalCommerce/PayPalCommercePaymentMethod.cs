@@ -283,6 +283,7 @@ public class PayPalCommercePaymentMethod : BasePlugin, IPaymentMethod, IWidgetPl
         {
             PublicWidgetZones.ProductDetailsAddInfo,
             PublicWidgetZones.OrderSummaryContentBefore,
+             PublicWidgetZones.OpcContentBefore,
             PublicWidgetZones.HeaderLinksBefore,
             PublicWidgetZones.Footer,
             PublicWidgetZones.OrderSummaryTotals,

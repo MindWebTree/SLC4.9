@@ -113,8 +113,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Infrastructure.Filters
 
                                 case CaptchaType.ReCaptchaV3:
                                     isValid = response.IsValid &&
-                                              response.Action == context.RouteData.Values["action"].ToString() &&
-                                              response.Score > _captchaSettings.ReCaptchaV3ScoreThreshold;
+                                       response.Score > _captchaSettings.ReCaptchaV3ScoreThreshold;
                                     break;
 
                                 default:
@@ -167,5 +166,5 @@ namespace MWT.Plugin.Misc.MwtStorefront.Infrastructure.Filters
 
         #endregion
     }
- 
+
 }

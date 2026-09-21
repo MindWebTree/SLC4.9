@@ -399,7 +399,7 @@ var Checkout = {
         $.ajax({
             url: "/Common/MailchimpEvents",
             type: 'POST',
-            data: { email: email, fromwhere: segment },
+            data: _formdata,
 
             success: function (response) {
 
@@ -1090,10 +1090,15 @@ var PaymentInfo = {
         if (Checkout.loadWaiting !== false) return;
         $(".paymentmehod-errors").remove();
         Checkout.setLoadWaiting('payment-info');
+        var formData = $(this.form).serialize();
+        var tokenInput = $('input[name=__RequestVerificationToken]');
+        if (tokenInput.length) {
+            formData += "&__RequestVerificationToken=" + tokenInput.val();
+        }
         $.ajax({
             cache: false,
             url: this.saveUrl,
-            data: $(this.form).serialize(),
+            data: formData,
             type: "POST",
             success: this.nextStep,
             complete: this.resetLoadWaiting,
@@ -1151,10 +1156,13 @@ var ConfirmOrder = {
         }
         if (termOfServiceOk) {
             Checkout.setLoadWaiting('confirm-order');
+            var postData = {};
+            addAntiForgeryToken(postData);
             $.ajax({
                 cache: false,
                 url: this.saveUrl,
                 type: "POST",
+                data: postData,
                 success: this.nextStep,
                 complete: this.resetLoadWaiting,
                 error: Checkout.ajaxFailure

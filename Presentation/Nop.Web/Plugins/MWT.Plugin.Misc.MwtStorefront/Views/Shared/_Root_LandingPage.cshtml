@@ -50,6 +50,10 @@
 </script>
 <div class="body-container">
     <div class="landingpage master-wrapper-page">
+        <div class="skip-main-link">
+            <a href="#main" id="skip-to-main" onclick="addTabIndex('main')">Skip to Main Content</a>
+            <a href="#footer" id="skip-to-footer" onclick="addTabIndex('footer')">Skip to Footer</a>
+        </div>
         @await Html.PartialAsync("_DataLayer")
         @await Component.InvokeAsync("AdminHeaderLinks")
         @await Html.PartialAsync("_headerOffer")
@@ -69,6 +73,7 @@
             </script>
             <div class="header-menu">
                 @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.ThemeHeaderMenu })
+                @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.ThemeMobileHeaderMenu })
             </div>
             <!--- seema Mobile Search bar -->
 
@@ -82,8 +87,10 @@
             @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "Marketing.Bar.After.MainNavigation" })
         }
 
-        <section>
+        <section id="main">
+            >
             <div class="master-wrapper-content @(isHome ? "" : "container")">
+            
                 @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ContentBefore })
 
                 @if (IsSectionDefined("Breadcrumb"))
@@ -91,14 +98,15 @@
                     @RenderSection("Breadcrumb")
                 }
                 <div class="master-column-wrapper">
-
+                    <div id="announcer" class="sr-only" role="status"
+                         aria-live="assertive" aria-atomic="true"></div>
                     @RenderBody()
                 </div>
                 @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ContentAfter })
             </div>
 
         </section>
-        @await Component.InvokeAsync("Footer")
+        @await Component.InvokeAsync(typeof(FooterViewComponent))
     </div>
     @await Component.InvokeAsync("EuCookieLaw")
     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.BodyEndHtmlTagBefore })
@@ -140,12 +148,8 @@
         }
     }
 </script>
-<script type="text/javascript" asp-location="Footer">
-    var $zoho = $zoho || {}; $zoho.salesiq = $zoho.salesiq ||
-        { widgetcode: "d7a45c7cc999d48baeeface42056640cd8674d264c63e3ff35cfa95e45e2e90c32b4bb79045915f9e2bd0d14e1e15a2f", values: {}, ready: function () { } };
-    var d = document; s = d.createElement("script"); s.type = "text/javascript"; s.id = "zsiqscript"; s.defer = true;
-    s.src = "https://salesiq.zoho.com/widget"; t = d.getElementsByTagName("script")[0]; t.parentNode.insertBefore(s, t); d.write("<div id='zsiqwidget'></div>");
-</script>
+<script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script>
+<script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siq95a511b77c99c51fda7e87dbdad44b75f7552df171e3f679ffbeb0e8fd0be74d" defer></script>
 
 <script type="text/javascript" asp-location="Footer">
     $('body').on("click", "#chatdiv,.menu_chat,.footer_chat,.chatdiv, #productchatdiv,#search_chatdiv,.footer-chat-link", function (e) {
@@ -156,11 +160,19 @@
         $("#zsiq_agtpic").length > 0 ? $("#zsiq_agtpic").click() : $("#zsiq_float").click()
     });
 </script>
-<script defer src="/Themes/@themeName/Content/js/SalesIqEvents.js?"></script>
+<script defer src="/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/SalesIqEvents.js"></script>
 @if (_customworkContext.IsMobileDevice())
 {
     <script type="text/javascript" asp-location="Footer">
         var lastScrollTop = 0;
+        var isUserScrolling = false;
+        $(window).on("touchstart", function () {
+            isUserScrolling = false;
+        });
+
+        $(window).on("touchmove", function () {
+            isUserScrolling = true;
+        });
         $(window).scroll(function (event) {
             var st = $(this).scrollTop();
             if (st > lastScrollTop) {
@@ -173,19 +185,22 @@
 
 
                 $('.header-message').removeClass('sticky_header_enabled');
-                if(st>($('.master-wrapper-page header')+$('.master-wrapper-page .section-2'))){
-                      $('header .container').addClass('header-ease-out');
-                 $('body').addClass('sticky_header_enable');
+                if (st > ($('.master-wrapper-page header') + $('.master-wrapper-page .section-2'))) {
+                    $('header .container').addClass('header-ease-out');
+                    $('body').addClass('sticky_header_enable');
                 }
                 /* ram || remove fixed search fro mobile*/
-                if (jQuery('body').width() < 992) {
+                if (jQuery('body').width() < 992 && isUserScrolling) {
                     $('.m-search').removeClass('display');
                     $('.m-search').removeClass('fixed');
+                }
+                else {
+                    $('.m-search').css('top', $('.logo-section .row ').height() + $('.logo-section .row ').offset().top);
                 }
                 /* ram || end remove fixed search fro mobile*/
                 $('#sidebar-menu').removeClass('scroll_sidebar');
                 // add his code to handle minus scrolling
-                if (st < st>($('.master-wrapper-page header')+$('.master-wrapper-page .section-2'))) {
+                if (st < st > ($('.master-wrapper-page header') + $('.master-wrapper-page .section-2'))) {
                     $('header .container').removeClass('display_header');
                     $('body').removeClass('sticky_header_enable');
                     //$('header .container').removeClass('header-ease-in');
@@ -212,12 +227,15 @@
                     $('#sidebar-menu').removeClass('scroll_sidebar');
 
                 }
-                 /* ram || remove fixed search fro mobile*/
-                    if (jQuery('body').width() < 992) {
-                        $('.m-search').removeClass('display');
-                        $('.m-search').removeClass('fixed');
-                    }
-                    /* ram || end remove fixed search fro mobile*/
+                /* ram || remove fixed search fro mobile*/
+                if (jQuery('body').width() < 992 && isUserScrolling) {
+                    $('.m-search').removeClass('display');
+                    $('.m-search').removeClass('fixed');
+                }
+                else {
+                    $('.m-search').css('top', $('.logo-section .row ').height() + $('.logo-section .row ').offset().top);
+                }
+                /* ram || end remove fixed search fro mobile*/
 
             }
             lastScrollTop = st;

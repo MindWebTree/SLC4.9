@@ -62,6 +62,7 @@
 } *@
 
 <script asp-location="Footer">
+
     // define global params
     var waitingPayPal = false;
     var isCartPage = @((Model.Placement == ButtonPlacement.Cart).ToString().ToLower());
@@ -105,7 +106,7 @@
         }
 
         var noShippingChange = isPaymentMethodPage || @((!Model.Cart.IsShippable).ToString().ToLower());
-
+   
         //render PayPal buttons
         paypalButtonContainer = paypal.Buttons({
             onInit: initCallback,
@@ -465,6 +466,7 @@
             } else if (isApm) {
                 cancel = false;
             } else {
+                alert("a");
                 paypalButtonContainer = null;
                 $('#@paypalButtonContainer').html('');
 

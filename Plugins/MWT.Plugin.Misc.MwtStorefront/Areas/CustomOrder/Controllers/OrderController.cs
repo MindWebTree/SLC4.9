@@ -1220,6 +1220,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers
                 (var placeOrderResult, var paymentResponse) = await _orderProcessingService.CustomPlaceOrderAsync(processPaymentRequest, order, customerId, orderSummary, saveOrderDetails, refOrderno, chargeFromInitialaOrder);
                 if (placeOrderResult.Success)
                 {
+                    await this._orderProcessingService.SetProcessPaymentRequestAsync(null, customer);
                     var postProcessPaymentRequest = new PostProcessPaymentRequest
                     {
                         Order = placeOrderResult.PlacedOrder
