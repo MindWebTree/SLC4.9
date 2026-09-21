@@ -1421,31 +1421,35 @@ public partial class ShoppingCartController : BasePublicController
         if (loadPicture)
         {
             var pictureId = 0;
-            if (attrid > 0)
+
+
+            if (combination != null)
             {
-                attrValue = await _productAttributeService.GetProductAttributeValueByIdAsync(attrid);
-                var attrValuepictureId = (await _productAttributeService.GetProductAttributeValuePicturesAsync(attrValue.Id)).FirstOrDefault()?.PictureId ?? 0;
-                if (attrValuepictureId > 0)
+                pictureId = (await _productAttributeService.GetProductAttributeCombinationPicturesAsync(combination.Id)).FirstOrDefault()?.PictureId ?? 0;
+            }
+
+            if (pictureId == 0)
+            {
+                if (attrid > 0)
                 {
-                    var attrMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(attrValue.ProductAttributeMappingId);
-                    if (attrMapping.ProductId == productId)
+                    attrValue = await _productAttributeService.GetProductAttributeValueByIdAsync(attrid);
+                    var attrValuepictureId = (await _productAttributeService.GetProductAttributeValuePicturesAsync(attrValue.Id)).FirstOrDefault()?.PictureId ?? 0;
+                    if (attrValuepictureId > 0)
                     {
-                        var attr = await _productAttributeService.GetProductAttributeByIdAsync(attrMapping.ProductAttributeId);
-                        attrName = attr.Name;
-                        //if (attr.Name == await _localizationService.GetResourceAsync("Product.Attr.Size"))
-                        pictureId = attrValuepictureId;
+                        var attrMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(attrValue.ProductAttributeMappingId);
+                        if (attrMapping.ProductId == productId)
+                        {
+                            var attr = await _productAttributeService.GetProductAttributeByIdAsync(attrMapping.ProductAttributeId);
+                            attrName = attr.Name;
+                            //if (attr.Name == await _localizationService.GetResourceAsync("Product.Attr.Size"))
+                            pictureId = attrValuepictureId;
+                        }
                     }
                 }
             }
             //first, try to get product attribute combination picture
-            if (pictureId == 0)
-            {
-                if (combination != null)
-                {
-                    pictureId = (await _productAttributeService.GetProductAttributeCombinationPicturesAsync(combination.Id)).FirstOrDefault()?.PictureId ?? 0;
-                }
-            }
-   
+
+
 
             //then, let's see whether we have attribute values with pictures
             if (pictureId == 0)
@@ -1811,30 +1815,33 @@ public partial class ShoppingCartController : BasePublicController
         if (loadPicture)
         {
             var pictureId = 0;
-            if (attrid > 0)
+
+            if (combination != null)
             {
-                attrValue = await _productAttributeService.GetProductAttributeValueByIdAsync(attrid);
-                var attrValuepictureId = (await _productAttributeService.GetProductAttributeValuePicturesAsync(attrValue.Id)).FirstOrDefault()?.PictureId ?? 0;
-                if (attrValuepictureId > 0 || attrValue.FeaturedPictureId > 0)
+                pictureId = (await _productAttributeService.GetProductAttributeCombinationPicturesAsync(combination.Id)).FirstOrDefault()?.PictureId ?? 0;
+            }
+
+            if (pictureId == 0)
+            {
+                if (attrid > 0)
                 {
-                    var attrMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(attrValue.ProductAttributeMappingId);
-                    if (attrMapping.ProductId == productId)
+                    attrValue = await _productAttributeService.GetProductAttributeValueByIdAsync(attrid);
+                    var attrValuepictureId = (await _productAttributeService.GetProductAttributeValuePicturesAsync(attrValue.Id)).FirstOrDefault()?.PictureId ?? 0;
+                    if (attrValuepictureId > 0 || attrValue.FeaturedPictureId > 0)
                     {
-                        var attr = await _productAttributeService.GetProductAttributeByIdAsync(attrMapping.ProductAttributeId);
-                        attrName = attr.Name;
-                        //if (attr.Name == await _localizationService.GetResourceAsync("Product.Attr.Size"))
-                        pictureId = attrValue.FeaturedPictureId == 0 ? attrValuepictureId : attrValue.FeaturedPictureId;
+                        var attrMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(attrValue.ProductAttributeMappingId);
+                        if (attrMapping.ProductId == productId)
+                        {
+                            var attr = await _productAttributeService.GetProductAttributeByIdAsync(attrMapping.ProductAttributeId);
+                            attrName = attr.Name;
+                            //if (attr.Name == await _localizationService.GetResourceAsync("Product.Attr.Size"))
+                            pictureId = attrValue.FeaturedPictureId == 0 ? attrValuepictureId : attrValue.FeaturedPictureId;
+                        }
                     }
                 }
             }
             //first, try to get product attribute combination picture
-            if (pictureId == 0)
-            {
-                if (combination != null)
-                {
-                    pictureId = (await _productAttributeService.GetProductAttributeCombinationPicturesAsync(combination.Id)).FirstOrDefault()?.PictureId ?? 0;
-                }
-            }
+
             //then, let's see whether we have attribute values with pictures
             if (pictureId == 0)
             {

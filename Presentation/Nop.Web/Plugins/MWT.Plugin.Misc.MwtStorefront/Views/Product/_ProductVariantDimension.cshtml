@@ -148,7 +148,7 @@
 
         }
         var collapseElement = document.getElementById("collapse-dimension");
-
+        if(collapseElement){
         // Attach event listener for after it opens
         collapseElement.addEventListener("shown.bs.collapse", function () {
             var visibleBlock = $(".dimension-block:visible");
@@ -156,4 +156,5 @@
                 initDimensionZoom(visibleBlock.attr("data-id"));
             }
         });
+        }
                     </script>}

@@ -99,7 +99,8 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
             ICustomOrderModelFactory customOrderModelFactory, IGdprService gdprService, GdprSettings gdprSettings,
             ICustomSpecificationAttributeService specificationAttributeService, IProductTagService productTagService,
             IShoppingCartService shoppingCartService, IShippingPluginManager shippingPluginManager, ICustomProductAttributeService productAttributeService,
-            IProductAttributeParser productAttributeParser, ILogger logger) :
+            IProductAttributeParser productAttributeParser, ILogger logger, ICustomProductModelFactory customProductModelFactory
+) :
             base(addressSettings, catalogSettings, addressModelFactory, addressService, countryService, currencyService, customerService, dateTimeHelper, giftCardService, localizationService, orderProcessingService, orderService, orderTotalCalculationService, paymentPluginManager, paymentService, pictureService, priceFormatter, productService, rewardPointService, shipmentService, shortTermCacheManager, stateProvinceService, staticCacheManager, storeContext, urlRecordService, vendorService, webHelper, workContext, mediaSettings, orderSettings, pdfSettings, rewardPointsSettings, shippingSettings, taxSettings, vendorSettings)
         {
             _encryptionService = encryptionService;
@@ -121,6 +122,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
             _productAttributeService = productAttributeService;
             _productAttributeParser = productAttributeParser;
             _logger = logger;
+            _customProductModelFactory = customProductModelFactory;
         }
         #endregion
 
@@ -1346,7 +1348,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
                 }
                 else if (order.PickupAddressId.HasValue && await _addressService.GetAddressByIdAsync(order.PickupAddressId.Value) is Address pickupAddress)
                 {
-                    model.PickupAddress = new AddressModel  
+                    model.PickupAddress = new AddressModel
                     {
                         Address1 = pickupAddress.Address1,
                         City = pickupAddress.City,
