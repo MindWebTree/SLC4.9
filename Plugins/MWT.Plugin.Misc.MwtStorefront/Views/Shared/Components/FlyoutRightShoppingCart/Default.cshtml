@@ -156,11 +156,32 @@
                     <strong>@T("Cart.Popup.Totals.SubTotal")</strong>
                     <span>@T("Cart.Popup.NoOfItems", Model.TotalProducts)</span>
                 </div>
-                <div class="d-flex price">
-                    <p>@T("Cart.Popup.SubTotal.Message")</p>
+                <div class="d-flex price"> 
                     <h4>@Model.SubTotal</h4>
                 </div>
             </div>
+ 
+           @if( !String.IsNullOrEmpty(Model.BuyMoreSaveMoreTotal))
+                {
+                 <div tabindex="0" class="product-add-to-cartbmsm">
+                <div class="cartsubtotal-text"> 
+                    <strong>@T("cart.popup.buymore.savemore.summary.message", buymoreSaveMoreDiscount)</strong>
+                </div>
+                <div class="d-flex price"> 
+                    <h4>@Model.BuyMoreSaveMoreTotal</h4>
+                </div>
+            </div>
+                }
+                 <div tabindex="0" class="product-add-to-carttotal">
+                <div class="cartsubtotal-text">
+                    <strong>@T("Cart.Popup.Totals.Total")</strong> 
+                </div>
+                <div class="d-flex price">
+                    <p>@T("Cart.Popup.SubTotal.Message")</p>
+                    <h4>@Model.Total</h4>
+                </div>
+            </div>
+
             <div class="cartsubtotal-button-setting">
                 <div class="product-add-to-buttons">
                     @{

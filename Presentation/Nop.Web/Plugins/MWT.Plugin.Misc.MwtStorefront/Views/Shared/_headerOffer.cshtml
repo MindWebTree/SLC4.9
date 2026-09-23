@@ -1,4 +1,4 @@
-﻿@inject Nop.Services.Configuration.ISettingService _settingService
+﻿@* @inject Nop.Services.Configuration.ISettingService _settingService
 @inject IThemeContext themeContext
 
 @{
@@ -9,11 +9,12 @@
     var themeName = await themeContext.GetWorkingThemeNameAsync();
 }
 @if (DateTime.Now < endDate  && displayOfferTimer)
-{
+{ *@
   
- @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "header-offer-strip" })
+    @*@await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "header-offer-strip" }) *@
+     @await Component.InvokeAsync("Custom_TopicBlock", new { systemName = "header-scheduled-maintenance-strip" })
   
-        <script>
+   @*      <script>
           var  headerofferintervalId = 0;
         function checkSaleCookieExists(name) {
             const nameEQ = name + "=";
@@ -178,6 +179,6 @@
 
 		
 
-        </script>
+        </script> *@
     
-}
+@* } *@

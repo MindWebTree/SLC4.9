@@ -11,12 +11,14 @@ using System.Threading.Tasks;
 
 namespace MWT.Plugin.Misc.MwtStorefront.Models.ShoppingCart
 {
-    public partial record MiniShoppingCartExtendedModel: MiniShoppingCartModel
+    public partial record MiniShoppingCartExtendedModel : MiniShoppingCartModel
     {
         public string Heading { get; set; }
         public List<int> cartItems { get; set; }
+        public string BuyMoreSaveMoreTotal { get; set; }
+        public string Total { get; set; }
 
-        public new IList<ShoppingCartItemModel> Items =new List<ShoppingCartItemModel>();
+        public new IList<ShoppingCartItemModel> Items = new List<ShoppingCartItemModel>();
         public new partial record ShoppingCartItemModel : MiniShoppingCartModel.ShoppingCartItemModel
         {
             public int ParentGroupedProductId { get; set; }
@@ -24,6 +26,9 @@ namespace MWT.Plugin.Misc.MwtStorefront.Models.ShoppingCart
             public VariantCombination Variant { get; set; }
             public IList<PictureModel> PictureModels { get; set; }
             public bool EnableNewATCLayout { get; set; }
+            public string BuyMoreSaveMoreDiscount { get; set; }
+
+
         }
     }
 }

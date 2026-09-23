@@ -23422,11 +23422,21 @@ form#CustomizationForm .attachment span {
   width: 100%;
 }
 .right-cart-popup .price {
-  text-align: start !important;
-  font-size: 14px !important;
-  padding: 0px 0 22px 0 !important;
-  position: relative;
-  justify-content: space-between;
+    text-align: start !important;
+    font-size: 14px !important;
+    padding: 0px 0 15px 0 !important;
+    position: relative;
+    justify-content: space-between;
+}
+.atc-price-bmsm {
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    gap: 3px;
+}
+button.ssf-share-trigger.a-declarative {
+    background: transparent;
+    border: none;
 }
 .right-cart-popup .product-title a {
   font-family: "Nunito", sans-serif;
@@ -23459,12 +23469,49 @@ form#CustomizationForm .attachment span {
   font-size: 14px;
 }
 .right-cart-popup .product-add-to-cartsubtotal {
-  color: #444 !important;
-  padding: 0 10px;
-  border-top: 1px solid rgba(215, 210, 203, 1) !important;
-  margin-top: 15px;
-  padding: 15px 15px 0 15px;
+    color: #444 !important;
+    padding: 0 10px;
+    border-top: 1px solid rgba(215, 210, 203, 1) !important;
+    margin-top: 15px;
+    padding: 15px 15px 0 15px;
+    display: flex;
+    justify-content: space-between;
 }
+    .product-add-to-cartbmsm {
+        padding: 0 15px 0 15px;
+        display: flex;
+        justify-content: space-between;
+        color: #444;
+    }
+
+        .product-add-to-cartbmsm .d-flex.price {
+            padding-bottom: 0 !important;
+        }
+    .shoppingcart-bmsm {
+        display: flex;
+        gap: 5px;
+    }
+
+        .shoppingcart-bmsm button {
+            background: transparent;
+            border: none;
+        }
+
+        .shoppingcart-bmsm svg {
+            width: 14px !important;
+            position: relative;
+            top: -2px;
+        }
+
+        .shoppingcart-bmsm h4.shoppingcart-bmsm-discount {
+            color: #b80000;
+            font-weight: 400;
+            font-size: 13px;
+        }
+
+    .right-cart-popup .product-add-to-cartsubtotal .d-flex.price h4 {
+        color: #000 !important;
+    }
 .right-cart-popup .complete-style h4.complete-style-heading {
   font-family: "Nunito", sans-serif;
   font-weight: 700;
@@ -23479,9 +23526,6 @@ form#CustomizationForm .attachment span {
 .right-cart-popup .d-flex.complete-images {
   gap: 15px;
   margin-top: 30px;
-}
-.right-cart-popup .quantity.nobr {
-  width: 170px;
 }
 .right-cart-popup .align-items-center {
   float: left;
@@ -23524,6 +23568,16 @@ form#CustomizationForm .attachment span {
 .right-cart-popup .slick-track {
   left: 0px !important;
 }
+.right-cart-popup .product-add-to-carttotal {
+    padding: 0 15px;
+}
+    .right-cart-popup .product-add-to-carttotal .cartsubtotal-text {
+        border-top: 1px solid rgba(215, 210, 203, 1) !important;
+        margin-top: 15px;
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0 0 0;
+    }
 .right-cart-popup .quantity.nobr .quantity-label {
   position: absolute;
   top: -8px;
@@ -33845,9 +33899,6 @@ p.selection {
     font-size: 16px;
     height: 40px;
   }
-  .right-cart-popup .quantity.nobr {
-    width: 0;
-  }
   .right-cart-popup .deatail-add-to-cart h4 {
     font-size: 12px;
   }
@@ -33882,7 +33933,6 @@ p.selection {
   }
   .right-cart-popup h4.shoppingcart-unitprice {
     font-size: 14px;
-    color: #B80000;
   }
   .right-cart-popup .product-add-to-cartsubtotal {
     margin-top: 20px;
