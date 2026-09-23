@@ -158,6 +158,8 @@ var AjaxCart = {
 
                 $("[data-wishlist='" + url_add.split("/")[3] + "']").removeClass("active");
                 $("[data-wishlist='" + url_add.split("/")[3] + "']").removeAttr("data-wishlist");
+                $("[data-wishlistid='" + url_add.split("/")[3] + "']").attr("aria-label", "Add to your wishlist");
+                $("[data-wishlistid='" + url_add.split("/")[3] + "']").attr("data-bs-original-title", "Add to your wishlist");
 
                 //Write code here to show notification in case item removed from wislist
                 AjaxCart.wishlistMotification(response.updatetopwishlistsectionhtml);
@@ -166,12 +168,16 @@ var AjaxCart = {
 
                 $("[data-wishlistid='" + url_add.split("/")[3] + "']").removeClass("active");
                 $("[data-wishlistid='" + url_add.split("/")[3] + "']").removeAttr("data-wishlist");
+                $("[data-wishlistid='" + url_add.split("/")[3] + "']").attr("aria-label", "Add to your wishlist");
+                $("[data-wishlistid='" + url_add.split("/")[3] + "']").attr("data-bs-original-title", "Add to your wishlist");
                 AjaxCart.wishlistMotification(response.updatetopwishlistsectionhtml);
             }
             else {
                 if (typeof response.Id !== "undefined") {
                     $("[data-wishlistid='" + url_add.split("/")[3] + "']").addClass("active");
                     $("[data-wishlistid='" + url_add.split("/")[3] + "']").attr("data-wishlist", response.Id);
+                    $("[data-wishlistid='" + url_add.split("/")[3] + "']").attr("aria-label", "Product in your wishlist");
+                    $("[data-wishlistid='" + url_add.split("/")[3] + "']").attr("data-bs-original-title", "Product in your wishlist");
                 }
             }
         }

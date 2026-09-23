@@ -42,9 +42,11 @@
             </div>
         </div>
     </div>
-    <div id="quickViewModal" class="mwt-modal-overlay d-none" onclick="closeQuickView(event)">
+    <div id="quickViewModal"  role="dialog"
+     aria-modal="true"
+     aria-labelledby="qv-title" class="mwt-modal-overlay d-none" onclick="closeQuickView(event)">
         <div class="mwt-modal-content" onclick="event.stopPropagation()">
-            <button type="button" class="mwt-close-btn" onclick="closeQuickView(event)">&times;</button>
+            <button type="button" class="mwt-close-btn"    aria-label="Close" onclick="closeQuickView(event)">&times;</button>
             <div class="row g-0">
                 <div class="col-md-6 p-4">
                     <div class="product-image-popup">
@@ -59,8 +61,8 @@
                         <span class="modal-spec-value"></span>
                     </div>
                     <div>
-                        <h4 id="qv-price" class="fw-bold d-inline-block mb-0"></h4>
-                        <span id="qv-old-price" class="text-decoration-line-through ms-2"></span>
+                        @* <h4 id="qv-price" class="fw-bold d-inline-block mb-0"></h4> *@
+                        <span id="qv-old-price" class=" bundle-item-price-old ms-2"></span>
                     </div>
                     <div class="text-end view-more-content">
                         <a id="more-link" target="_blank" href="javascript:void(0)" class="view-more-modal-link">View More</a>
@@ -919,8 +921,10 @@
        //        toast.classList.add('d-none');
        //    }
        //}
+           var quickViewPreviousFocus = null;
        function openQuickView(event, name, img, price, oldPrice, productId, sename, prdVariantId, isdiscounted,variantId) {
            event.preventDefault();
+           quickViewPreviousFocus = event.currentTarget;
            let description = '';
            let dimension = '';
            if (activeBundleConfig && Array.isArray(activeBundleConfig.metadata)) {
@@ -933,26 +937,35 @@
 
            document.getElementById('qv-title').innerText = name;
            document.getElementById('qv-image').src = img;
-           document.getElementById('qv-price').innerText = price;
-           if (isdiscounted == true) {
-               document.getElementById('qv-old-price').innerText = oldPrice || '';
-           }
-           else {
-               document.getElementById('qv-old-price').innerText = '';
-           }
+           //document.getElementById('qv-price').innerText = price;
+           // if (isdiscounted == true) {
+           //     document.getElementById('qv-old-price').innerText = oldPrice || '';
+           // }
+           // else {
+               document.getElementById('qv-old-price').innerText = oldPrice || price ;
+           //}
           /* document.getElementById('qv-description').innerHTML = description;*/
            document.getElementById('more-link').href = `/product/${prdVariantId}/${sename}`;
            document.getElementById('quickViewModal').classList.remove('d-none');
            dimension= (dimension || '').toString().trim();
            document.querySelector('.modal-spec-value').innerHTML  = dimension;
            document.querySelector('.qv-dimension').classList.toggle('d-none', dimension === '');
+          
+    document.querySelector('#quickViewModal .mwt-close-btn').focus();
        }
 
        function closeQuickView(event) {
            // Prevent closing if clicking inside the content box
            if (event) event.stopPropagation();
            document.getElementById('quickViewModal').classList.add('d-none');
-       }
+             if (quickViewPreviousFocus && document.contains(quickViewPreviousFocus)) {
+            quickViewPreviousFocus.focus();
+             }
+         
+    quickViewPreviousFocus = null;
+    }
+
+       
 
        function getbBundleSelectedShadeName() {
            var $bundlePrdShadeRow = $('#product-details-form .attributes .shade-section, #product-details-form .attributes tr[class*="stain-attrname"]');
@@ -1088,9 +1101,7 @@
                            <div class="dynamic-attributes-container">${attrsHtml}</div>
 
                            <div class="price-row d-flex align-items-center gap-2">
-                               <span class="price-current">${item.price}</span>
-                               <span class="price-old ${item.discountPct > 0 ? '' : 'd-none'}">${item.oldPrice}</span>
-                               <span class="badge-save ${item.discountPct > 0 ? '' : 'd-none'}">Save ${item.discountPct}%</span>
+                                    <span class="bundle-item-price-old">${item.oldPrice || item.price}</span>
                            </div>
                        </div>
 

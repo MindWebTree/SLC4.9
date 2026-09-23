@@ -565,7 +565,7 @@ namespace MWT.Plugin.Misc.MwtStorefront.Factories
                 totalPrice = totalOldPrice - totalOldPrice * maxDiscountPercentage / 100;
 
                 variant.Msrp = CustomCommonHelper.RoundToNearest49or99(totalMSRP);
-                variant.OldPrice = totalOldPrice;
+                variant.OldPrice = items.Sum(x => x.OldPrice);
                 variant.Price = totalPrice % 1 >= 0.5m ? Math.Ceiling(totalPrice) : Math.Floor(totalPrice);
 
                 await _productService.UpdateVariant(variant);

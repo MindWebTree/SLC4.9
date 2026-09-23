@@ -152,8 +152,8 @@ else
 
 
     $('#add-products-grid').on('click', 'td.row-expand-toggle', function () {
-            var table = $('#add-products-grid').DataTable();
         var tr = $(this).closest('tr');
+            var table = $('#add-products-grid').DataTable();
         var row = table.row(tr);
         var productId = row.data().ProductId;
         var icon = $(this).find('i');
