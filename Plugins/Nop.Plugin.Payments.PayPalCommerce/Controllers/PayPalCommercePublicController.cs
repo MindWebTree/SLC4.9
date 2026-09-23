@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MWT.Nop.Core.Domain.CustomOrders;
 using MWT.Nop.Core.Services.Customizations.CustomOrders;
 using Nop.Core;
 using Nop.Core.Http;
@@ -45,6 +46,68 @@ public class PayPalCommercePublicController : BasePublicController
 
     #region Checkout
 
+
+    public async Task<IActionResult> PaypalProcessOrder(string token, string liabilityShift, int invoiceId)
+    {
+        var model = await _modelFactory.PrepareOrderApprovedModelAsync(token, liabilityShift, invoiceId);
+        if (model.LoginIsRequired)
+            return Redirect(Url.RouteUrl(NopRouteNames.General.LOGIN, new { returnUrl = Url.RouteUrl(NopRouteNames.General.CART) }));
+
+
+        if (!model.CheckoutIsEnabled && invoiceId == 0)
+            return Redirect(Url.RouteUrl(NopRouteNames.General.CART));
+        else if (!model.CheckoutIsEnabled)
+            return Redirect(Url.RouteUrl(MWT.Nop.Core.Http.NopRouteExtendedNames.Standard.CUSTOMORDER_CHECKOUT, new { orderId = invoiceId, customerid = (await this._customOrderService.GetById(invoiceId))?.CustomerId ?? 0 }));
+
+
+
+        if (!string.IsNullOrEmpty(model.Error))
+        {
+            if (invoiceId == 0)
+                return RedirectToRoute(NopRouteNames.Standard.CHECKOUT_ONE_PAGE);
+            else
+                return Redirect(Url.RouteUrl(MWT.Nop.Core.Http.NopRouteExtendedNames.Standard.CUSTOMORDER_CHECKOUT, new { orderId = invoiceId, customerid = (await this._customOrderService.GetById(invoiceId))?.CustomerId ?? 0 }));
+        }
+
+        //order is approved but the customer must confirm it before (if not yet completed)
+        if (!model.PayNow)
+        {
+
+            if (invoiceId == 0)
+                return Redirect(Url.RouteUrl(PayPalCommerceDefaults.Route.ConfirmOrder, new { orderId = model.OrderId, liabilityShift = liabilityShift }));
+            else
+                return Redirect(Url.RouteUrl(MWT.Nop.Core.Http.NopRouteExtendedNames.Standard.CUSTOMORDER_CHECKOUT, new
+                {
+                    orderId = invoiceId,
+                    customerid =
+                    (await this._customOrderService.GetById(invoiceId))?.CustomerId ?? 0,
+                    paypalorderId = model.OrderId,
+                    liabilityShift = liabilityShift
+                }));
+
+
+        }
+
+        //or pay it right now
+        var completedModel = await _modelFactory.PrepareOrderCompletedModelAsync(token, liabilityShift, invoiceId);
+        if (!string.IsNullOrEmpty(completedModel.Error))
+            if (!string.IsNullOrEmpty(model.Error))
+            {
+                if (invoiceId == 0)
+                    return RedirectToRoute(NopRouteNames.Standard.CHECKOUT_ONE_PAGE);
+                else
+                    return Redirect(Url.RouteUrl(MWT.Nop.Core.Http.NopRouteExtendedNames.Standard.CUSTOMORDER_CHECKOUT, new { orderId = invoiceId, customerid = (await this._customOrderService.GetById(invoiceId))?.CustomerId ?? 0 }));
+            }
+
+
+        if (invoiceId == 0)
+            return Redirect(Url.RouteUrl(NopRouteNames.Standard.CHECKOUT_COMPLETED, new { orderId = completedModel.OrderId }));
+        else
+            return Redirect(Url.RouteUrl(MWT.Nop.Core.Http.NopRouteExtendedNames.Standard.CUSTOMORDER_CHECKOUT, new { orderId = invoiceId, customerid = (await this._customOrderService.GetById(invoiceId))?.CustomerId ?? 0 }));
+
+
+
+    }
     public async Task<IActionResult> PluginPaymentInfo()
     {
         var model = await _modelFactory.PrepareCheckoutPaymentInfoModelAsync();
@@ -106,7 +169,7 @@ public class PayPalCommercePublicController : BasePublicController
 
     [HttpPost]
     public async Task<IActionResult> ApproveOrder(string orderId, string liabilityShift, int invoiceId)
-        {
+    {
         var model = await _modelFactory.PrepareOrderApprovedModelAsync(orderId, liabilityShift, invoiceId);
         if (model.LoginIsRequired)
             return Json(new { redirect = Url.RouteUrl(NopRouteNames.General.LOGIN, new { returnUrl = Url.RouteUrl(NopRouteNames.General.CART) }) });
@@ -311,7 +374,7 @@ public class PayPalCommercePublicController : BasePublicController
     }
 
     [HttpPost]
-    public async Task<IActionResult> CheckGoogleShipping(int placement, int? productId,int invoiceId)
+    public async Task<IActionResult> CheckGoogleShipping(int placement, int? productId, int invoiceId)
     {
         var (shippingIsRequired, error) = await _modelFactory.CheckShippingIsRequiredAsync(productId, invoiceId);
         if (!string.IsNullOrEmpty(error))
@@ -366,7 +429,7 @@ public class PayPalCommercePublicController : BasePublicController
         if (model.LoginIsRequired)
             return Json(new { redirect = Url.RouteUrl(NopRouteNames.General.LOGIN, new { returnUrl = Url.RouteUrl(NopRouteNames.General.CART) }) });
 
-        if (!model.CheckoutIsEnabled )
+        if (!model.CheckoutIsEnabled)
             return Json(new { redirect = Url.RouteUrl(NopRouteNames.General.CART) });
 
         if (!string.IsNullOrEmpty(model.Error))

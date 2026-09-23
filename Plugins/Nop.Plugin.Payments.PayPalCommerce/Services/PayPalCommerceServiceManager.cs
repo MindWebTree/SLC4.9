@@ -492,12 +492,12 @@ public class PayPalCommerceServiceManager
                 _ => null
             },
             ReturnUrl =
-            customOrder == null ? _nopUrlHelper.RouteUrl(NopRouteNames.Standard.CHECKOUT_ONE_PAGE, new { token = orderGuid, approve = true }, protocol) :
-               _nopUrlHelper.RouteUrl(MWT.Nop.Core.Http.NopRouteExtendedNames.Standard.CUSTOMORDER_CHECKOUT, new
+            customOrder == null ? _nopUrlHelper.RouteUrl(PayPalCommerceDefaults.Route.PaypalProcessOrder, new { orderGuid = orderGuid, approve = true }, protocol) :
+               _nopUrlHelper.RouteUrl(PayPalCommerceDefaults.Route.PaypalProcessOrder, new
                {
-                   orderid = customOrder.Id,
+                   invoiceid = customOrder.Id,
                    customerid = customOrder.CustomerId,
-                   token = orderGuid,
+                   orderGuid = orderGuid,
                    approve = true
                }, protocol),
             PaymentMethodPreference = settings.ImmediatePaymentRequired

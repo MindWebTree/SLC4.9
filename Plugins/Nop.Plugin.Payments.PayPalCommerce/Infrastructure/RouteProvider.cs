@@ -47,6 +47,11 @@ public class RouteProvider : BaseRouteProvider, IRouteProvider
             pattern: $"{lang}/customer/paypal-payment-methods",
             defaults: new { controller = "PayPalCommercePublic", action = "PaymentTokens" });
 
+
+        endpointRouteBuilder.MapControllerRoute(name: PayPalCommerceDefaults.Route.PaypalProcessOrder,
+         pattern: $"{lang}/paypal/process-order",
+         defaults: new { controller = "PayPalCommercePublic", action = "PaypalProcessOrder" });
+
     }
 
     /// <summary>
