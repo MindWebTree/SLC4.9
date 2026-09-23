@@ -31,7 +31,7 @@
                             @if (!string.IsNullOrWhiteSpace(variant.Name))
                             {
                                 <div class="variant-name">
-                                    <a href="@(Url.RouteUrl("Product", new { id=variant.Id, SeName=variant.SeName }))" aria-label="@variant.DefaultPictureModel.Title">
+                                    <a href="@(Url.RouteUrl("Product", new { id=variant.Id, SeName=variant.SeName }))" >
 
                                         <h2>  @variant.Name</h2>
                                     </a>
@@ -124,13 +124,13 @@
             <h2 id="Main.Heading.Collection">@T("Products.BuyCompleteCollection.Heading")</h2>
             <div class="row" data-main-catid="@await _specificationAttributeService.GetMainCategoryOfProduct(mainCollectionProduct.Id)">
                 <div class="col-md-3">
-                    <a href="@Url.RouteUrl("Product", new {id=mainCollectionProduct.Id,SeName = mainCollectionProduct.SeName})" alt="@mainCollectionProduct.Name" >
-                        <img width="840" height="840" style="width:100%; height:auto;" data-src="@mainCollectionProduct.DefaultPictureModel.ImageUrl" src="/images/pixel.png" alt="@mainCollectionProduct.DefaultPictureModel.AlternateText" class="w-100 lazy" />
+                    <a href="@Url.RouteUrl("Product", new {id=mainCollectionProduct.Id,SeName = mainCollectionProduct.SeName})" aria-label="@mainCollectionProduct.Name" >
+                        <img width="840" height="840" style="width:100%; height:auto;" data-src="@mainCollectionProduct.DefaultPictureModel.ImageUrl" src="/images/pixel.png" alt="" class="w-100 lazy" />
                     </a>
                 </div>
                 <div class="col-md-9">
                     <div class="completecollection-box">
-                        <a href="@Url.RouteUrl("Product", new {id=mainCollectionProduct.Id,SeName = mainCollectionProduct.SeName})" alt="@mainCollectionProduct.Name" >
+                        <a href="@Url.RouteUrl("Product", new {id=mainCollectionProduct.Id,SeName = mainCollectionProduct.SeName})" >
                             <h2>@mainCollectionProduct.Name</h2>
                         </a>
                         @if (!string.IsNullOrEmpty(mainCollectionProduct.CollectionMessage))
@@ -147,7 +147,7 @@
 
                         <h3>@string.Format(T("products.buycompletecollection.price.text").Value, mainCollectionProduct.ProductPrice.Price)</h3>
 
-                        <a class="explore-btn" href="@Url.RouteUrl("Product", new {id=mainCollectionProduct.Id,SeName = mainCollectionProduct.SeName})" alt="@mainCollectionProduct.Name" >explore this collection</a>
+                        <a class="explore-btn" href="@Url.RouteUrl("Product", new {id=mainCollectionProduct.Id,SeName = mainCollectionProduct.SeName})" aria-label="@mainCollectionProduct.Name" >explore this collection</a>
                     </div>
                 </div>
             </div>

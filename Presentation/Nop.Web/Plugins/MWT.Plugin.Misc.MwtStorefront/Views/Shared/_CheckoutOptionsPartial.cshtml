@@ -22,15 +22,16 @@
                 </button>
             </div>
             <div class="modal-body">
-                <h3 class="modal-title" id="GuestCheckoutModalLabel">@T("Checkout.Guest.Heading")</h3>
-                <p>@T("Checkout.Guest.Info")</p>
-                <form id="guest-checkout" class="guest-checkout">
+                <h3 class="modal-title"  id="GuestCheckoutModalLabel">@T("Checkout.Guest.Heading")</h3>
+                <p id="checkout-guest-info" >@T("Checkout.Guest.Info")</p>
+                <form id="guest-checkout" aria-labelledby="GuestCheckoutModalLabel checkout-guest-info" class="guest-checkout">
                     <input type="hidden" name="checkout-as-guest" value="true" />
                     <div class="form-group" bis_skin_checked="1">
-                        <input placeholder="Email" class="form-control" asp-for="Email" type="email" id="GuestCheckout-Email" required />
+                        <input placeholder="Email" class="form-control" asp-for="Email" type="email" id="GuestCheckout-Email" required
+                        />
                         <div class="checkout-label" bis_skin_checked="1">
                             <label for="GuestCheckout-Email">Email Address</label>
-                            <span class="required">*</span>
+                            <span aria-hidden="true" class="required">*</span>
                         </div>
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
