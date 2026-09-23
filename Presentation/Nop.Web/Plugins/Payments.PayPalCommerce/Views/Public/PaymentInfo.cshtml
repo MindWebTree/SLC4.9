@@ -3,8 +3,9 @@
 }
 
 @model PaymentInfoModel
-
+@inject PayPalCommerceSettings _settings
 @{
+    var checkoutUrl = _settings.UseSandbox ? "https://www.sandbox.paypal.com/checkoutnow?token=" : "https://www.paypal.com/checkoutnow?token=";
     //container names
     var paypalButtonContainer = $"paypal-button-container-{Model.ProductId}".TrimEnd('-');
     var paypalApmContainer = "paypal-apm-container";
@@ -62,7 +63,6 @@
 } *@
 
 <script asp-location="Footer">
-
     // define global params
     var waitingPayPal = false;
     var isCartPage = @((Model.Placement == ButtonPlacement.Cart).ToString().ToLower());
@@ -73,7 +73,7 @@
     var applePayConfig = null;
     var googlePayClient = null;
     var googlePayConfig = null;
-
+    var checkoutUrl='@checkoutUrl';
     $(function () {
 
 
@@ -106,7 +106,29 @@
         }
 
         var noShippingChange = isPaymentMethodPage || @((!Model.Cart.IsShippable).ToString().ToLower());
-   
+         var isAndroid = /Android/i.test(navigator.userAgent);
+
+    if (isAndroid) {
+        //bypass SDK popup entirely on Android — use a manual redirect flow instead
+        $('#@paypalButtonContainer').html(
+            '<button type="button" id="paypal-android-redirect-btn" class="button-1 paypal-button">' +
+            '@T("Plugins.Payments.PayPalCommerce.PayWithPayPal")' +
+            '</button>'
+        );
+
+        $('#paypal-android-redirect-btn').on('click', function () {
+       
+            if (waitingPayPal !== false)
+                return;
+
+            var newOrderId = createOrderCallback({ paymentSource: 'paypal' });
+
+            if (newOrderId) {
+                window.location.href = checkoutUrl+newOrderId;
+            }
+        });
+    }
+    else{
         //render PayPal buttons
         paypalButtonContainer = paypal.Buttons({
             onInit: initCallback,
@@ -125,7 +147,8 @@
                 tagline: '@(Model.Placement == ButtonPlacement.Product || settings.StyleLayout == "horizontal" ? settings.StyleTagline : string.Empty)'
             }
         });
-        paypalButtonContainer.render('#@paypalButtonContainer')
+        paypalButtonContainer.render('#@paypalButtonContainer');
+        }
 
         //render Card Fields (if available)
     //     if ($('#@paypalCardContainer').length > 0) {
@@ -466,7 +489,6 @@
             } else if (isApm) {
                 cancel = false;
             } else {
-                alert("a");
                 paypalButtonContainer = null;
                 $('#@paypalButtonContainer').html('');
 

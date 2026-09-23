@@ -147,6 +147,9 @@ public class PayPalCommerceDefaults
         /// Gets the payment tokens route name
         /// </summary>
         public static string PaymentTokens => "Plugin.Payments.PayPalCommerce.PaymentTokens";
+
+        public static string PaypalProcessOrder => "Plugin.Payments.PayPalCommerce.PaypalProcessOrder";
+
     }
 
     #endregion
