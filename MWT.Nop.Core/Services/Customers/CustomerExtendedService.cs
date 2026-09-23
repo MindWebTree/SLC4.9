@@ -444,6 +444,7 @@ namespace MWT.Nop.Core.Services.Customers
                                        order == null && blogComment == null && newsComment == null && productReview == null && productReviewHelpfulness == null &&
                                        pollVotingRecord == null && forumTopic == null && forumPost == null &&
                                        !guest.IsSystemAccount
+                                      && guest.CreatedOnUtc<=DateTime.Now.AddMonths(-3)
                                  orderby guest.Id // Added: ensures we delete the oldest guest records first 
                                  select new { CustomerId = guest.Id }).Take(noOfCustomerTodelete);
 

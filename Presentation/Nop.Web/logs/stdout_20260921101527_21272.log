@@ -1,0 +1,1050 @@
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 398.1654ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 396.0766ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 395.058ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 399.2332ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 392.0106ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 401.4813ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 469.6153ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 469.5024ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 469.6427ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 470.7234ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 470.6291ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 471.5713ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 437.7421ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 498.4193ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 482.9138ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 533.9406ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 491.2836ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 495.4167ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 553.6294ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 557.6098ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 541.0733ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 606.2871ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 522.1213ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 563.4279ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 566.6339ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 618.2707ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 551.7816ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 629.096ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 585.9916ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 669.0767ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 431.2831ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 467.4081ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 416.9842ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 497.0606ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 243.3447ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 282.6684ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 274.8433ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 284.6212ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 293.9833ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 308.1045ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 295.5761ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 306.7605ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 317.7982ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 308.7745ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 363.3906ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 374.5444ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 356.7783ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 338.6588ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 297.1715ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 388.3739ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 331.094ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 352.5781ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 301.517ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 315.3809ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 321.303ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 341.5016ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 314.8166ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 367.5101ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 299.8378ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 288.7145ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 294.1597ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 330.3854ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 295.6423ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 313.8634ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 277.6154ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 385.3177ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 294.2952ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 425.2745ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 240.6168ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 231.2945ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 266.7885ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 225.0833ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 246.4554ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 264.2352ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 105.4875ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 132.4998ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 141.2792ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 146.5598ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 281.0256ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 308.4328ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 169.5171ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 209.6316ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 350.355ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 395.901ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 277.4674ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 281.8145ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 273.015ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 155.6817ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 282.973ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 119.2372ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 128.9933ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 191.4919ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 167.9835ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 225.712ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 126.3921ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 288.6619ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 133.2239ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 261.8759ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 298.9715ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 310.6374ms - 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/CustomOrder/Order/OrderDetails/28350 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/ - - -
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.HomeController.Index (Nop.Web)'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.OrderDetails (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {area = "CustomOrder", action = "OrderDetails", controller = "Order"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] OrderDetails(Int32) on controller MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController (MWT.Plugin.Misc.MwtStorefront).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "Index", controller = "Home", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller Nop.Web.Controllers.HomeController (Nop.Web).
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[1]
+      Executing ViewResult, running view Index.
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[1]
+      Executing ViewResult, running view OrderDetails.
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request GET https://api.zip-tax.com/request/v40?*
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request GET https://api.zip-tax.com/request/v40?*
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 1378.771ms - 200
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 1415.0621ms - 200
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request GET https://api.zip-tax.com/request/v40?*
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request GET https://api.zip-tax.com/request/v40?*
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 244.7184ms - 200
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 249.0132ms - 200
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[4]
+      Executed ViewResult - view OrderDetails executed in 15758.3291ms.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.OrderDetails (MWT.Plugin.Misc.MwtStorefront) in 16393.1633ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.OrderDetails (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/.well-known/appspecific/com.chrome.devtools.json - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/CustomOrder/Order/OrderDetails/28350 - 200 - text/html;+charset=utf-8 17700.6829ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0390391_peoria-solid-wood-square-dining-table-set_415.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/_vs/browserLink - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/_framework/aspnetcore-browser-refresh.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/_framework/aspnetcore-browser-refresh.js - 200 16499 application/javascript;+charset=utf-8 282.2595ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/css/Customizations/Areas/CustomOrder/images/1 navdropdown.png width='4' height='5' viewBox='0 0 4 5'><path fill='#343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg> - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/css/Customizations/Areas/CustomOrder/bootstrap.min.css.map - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/.well-known/appspecific/com.chrome.devtools.json - 404 - - 1352.2820ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/.well-known/appspecific/com.chrome.devtools.json, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0390391_peoria-solid-wood-square-dining-table-set_415.jpeg - 404 - - 1184.0372ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/thumbs/0390391_peoria-solid-wood-square-dining-table-set_415.jpeg, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/css/Customizations/Areas/CustomOrder/bootstrap.min.css.map - 404 - - 828.1162ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/css/Customizations/Areas/CustomOrder/bootstrap.min.css.map, Response status code: 404
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.CommonController.FallbackRedirect (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/css/Customizations/Areas/fonts/TT Norms Pro Regular.woff - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/_vs/browserLink - 200 - text/javascript;+charset=UTF-8 1505.4034ms
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "FallbackRedirect", controller = "Common", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult FallbackRedirect() on controller Nop.Web.Controllers.CommonController (Nop.Web).
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/css/Customizations/Areas/fonts/TT Norms Pro Regular.woff - 404 - - 231.5784ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/css/Customizations/Areas/fonts/TT%20Norms%20Pro%20Regular.woff, Response status code: 404
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.CommonController.FallbackRedirect (Nop.Web) in 15.5925ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.CommonController.FallbackRedirect (Nop.Web)'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.CommonController.PageNotFound (Nop.Web)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "PageNotFound", controller = "Common", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult PageNotFound() on controller Nop.Web.Controllers.CommonController (Nop.Web).
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[1]
+      Executing ViewResult, running view PageNotFound.
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[4]
+      Executed ViewResult - view PageNotFound executed in 8093.6292ms.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.CommonController.PageNotFound (Nop.Web) in 8136.1892ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.CommonController.PageNotFound (Nop.Web)'
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[4]
+      Executed ViewResult - view Index executed in 26193.169ms.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.HomeController.Index (Nop.Web) in 26470.099ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.HomeController.Index (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/css/Customizations/Areas/CustomOrder/images/1 navdropdown.png width='4' height='5' viewBox='0 0 4 5'><path fill='#343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg> - 404 - text/html;+charset=utf-8 9495.2518ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/ - 200 - text/html;+charset=utf-8 27755.8254ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0430231_gimli-rustic-freestanding-kitchen-pantry-cabinet-with-drawers_100.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/pixel.png - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff2 - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0430231_gimli-rustic-freestanding-kitchen-pantry-cabinet-with-drawers_100.jpeg - 404 - - 582.8331ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff2 - 404 - - 351.6007ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/thumbs/0430231_gimli-rustic-freestanding-kitchen-pantry-cabinet-with-drawers_100.jpeg, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff2, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/icons/hand-holding-dollar-solid.svg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff - - -
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GenericUrl", controller = "Common", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult GenericUrl() on controller Nop.Web.Controllers.CommonController (Nop.Web).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web) in 76.4129ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/pixel.png - 404 - - 1065.3106ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/_framework/aspnetcore-browser-refresh.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/_framework/aspnetcore-browser-refresh.js - 200 16499 application/javascript;+charset=utf-8 2.4912ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/icons/hand-holding-dollar-solid.svg - 404 - - 468.8337ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/icons/hand-holding-dollar-solid.svg, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff - 404 - - 507.2929ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/poster.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/images/top.png - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/phone.png - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/images/top.png - 404 - - 531.5822ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/Themes/BlackWhiteTheme/Content/images/top.png, Response status code: 404
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GenericUrl", controller = "Common", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult GenericUrl() on controller Nop.Web.Controllers.CommonController (Nop.Web).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GenericUrl", controller = "Common", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult GenericUrl() on controller Nop.Web.Controllers.CommonController (Nop.Web).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web) in 6.8236ms
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web) in 142.9577ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/poster.jpg - 404 - - 824.5573ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/phone.png - 404 - - 804.1318ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/_vs/browserLink - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/_vs/browserLink - 200 - text/javascript;+charset=UTF-8 8.4943ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST https://localhost:44376/CampaignManagement/showPopup - application/x-www-form-urlencoded;+charset=UTF-8 56
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0430231_gimli-rustic-freestanding-kitchen-pantry-cabinet-with-drawers_100.jpeg - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ShowPopup (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0430231_gimli-rustic-freestanding-kitchen-pantry-cabinet-with-drawers_100.jpeg - 404 - - 267.7483ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/thumbs/0430231_gimli-rustic-freestanding-kitchen-pantry-cabinet-with-drawers_100.jpeg, Response status code: 404
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "ShowPopup", controller = "CampaignManagement", area = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ShowPopup(System.String, System.String, Boolean) on controller MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController (MWT.Plugin.Misc.MwtStorefront).
+info: Microsoft.AspNetCore.Mvc.NewtonsoftJson.NewtonsoftJsonResultExecutor[2]
+      Executing JsonResult, writing value of type 'MWT.Plugin.Misc.MwtStorefront.Models.Catalog.Campaign_Management.CampaignPopupResultModel'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ShowPopup (MWT.Plugin.Misc.MwtStorefront) in 140.2935ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ShowPopup (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST https://localhost:44376/CampaignManagement/showPopup - 200 - application/json;+charset=utf-8 466.9744ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST https://localhost:44376/Customorder/order/ProcessPayment/ - application/x-www-form-urlencoded;+charset=UTF-8 789
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/Payments.AuthorizeNetHostedPayment/Images/ajax_loader_large.gif - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.ProcessPayment (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/Payments.AuthorizeNetHostedPayment/Images/ajax_loader_large.gif - 404 - - 552.1640ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/Plugins/Payments.AuthorizeNetHostedPayment/Images/ajax_loader_large.gif, Response status code: 404
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {area = "CustomOrder", action = "ProcessPayment", controller = "Order"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ProcessPayment(System.String, Int32, Microsoft.AspNetCore.Http.IFormCollection) on controller MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController (MWT.Plugin.Misc.MwtStorefront).
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request PUT https://us1.api.mailchimp.com/3.0/lists/05a2f8885a/members/1D777D2F3170C89DF8418725B09FEE0A
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request PUT https://us1.api.mailchimp.com/3.0/lists/05a2f8885a/members/1D777D2F3170C89DF8418725B09FEE0A
+info: System.Net.Http.HttpClient.GoogleAnalyticsHttpClient.LogicalHandler[100]
+      Start processing HTTP request POST https://www.google-analytics.com/mp/collect?*
+info: System.Net.Http.HttpClient.GoogleAnalyticsHttpClient.ClientHandler[100]
+      Sending HTTP request POST https://www.google-analytics.com/mp/collect?*
+info: System.Net.Http.HttpClient.GoogleAnalyticsHttpClient.ClientHandler[101]
+      Received HTTP response headers after 153.7514ms - 204
+info: System.Net.Http.HttpClient.GoogleAnalyticsHttpClient.LogicalHandler[101]
+      End processing HTTP request after 157.6396ms - 204
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://accounts.zoho.com/oauth/v2/token
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://accounts.zoho.com/oauth/v2/token
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 1133.2216ms - 400
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 1137.9211ms - 400
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://us1.api.mailchimp.com/3.0/lists/05a2f8885a/segments/105
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://us1.api.mailchimp.com/3.0/lists/05a2f8885a/segments/105
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 928.5279ms - 200
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 932.3624ms - 200
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 591.1161ms - 400
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 596.0168ms - 400
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://us1.api.mailchimp.com/3.0/lists/05a2f8885a/segments/2289
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://us1.api.mailchimp.com/3.0/lists/05a2f8885a/segments/2289
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://www.zohoapis.com/crm/v2/Potentials
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://www.zohoapis.com/crm/v2/Potentials
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 734.9704ms - 400
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 738.7768ms - 400
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://us1.api.mailchimp.com/3.0/lists/05a2f8885a/segments/2069
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://us1.api.mailchimp.com/3.0/lists/05a2f8885a/segments/2069
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 1034.5488ms - 202
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 1043.337ms - 202
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 2128.3499ms - 400
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 2132.3675ms - 400
+info: Microsoft.AspNetCore.Mvc.NewtonsoftJson.NewtonsoftJsonResultExecutor[2]
+      Executing JsonResult, writing value of type '<>f__AnonymousType9`1[[MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Common.AjaxReponseModel, MWT.Plugin.Misc.MwtStorefront, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.ProcessPayment (MWT.Plugin.Misc.MwtStorefront) in 12006.7732ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.ProcessPayment (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST https://localhost:44376/Customorder/order/ProcessPayment/ - 200 - application/json;+charset=utf-8 12671.1187ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0412591_0412568_test-product-for-live-payment_415.jpeg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/0412591_0412568_test-product-for-live-payment_415.jpeg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\0412591_0412568_test-product-for-live-payment_415.jpeg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0412591_0412568_test-product-for-live-payment_415.jpeg - 200 0 image/jpeg 29.4005ms
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 18.7875ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 32.1144ms - 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/CustomOrder/Order/OrderDetails/28350 - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.OrderDetails (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {area = "CustomOrder", action = "OrderDetails", controller = "Order"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] OrderDetails(Int32) on controller MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController (MWT.Plugin.Misc.MwtStorefront).
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[1]
+      Executing ViewResult, running view OrderDetails.
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[4]
+      Executed ViewResult - view OrderDetails executed in 262.6209ms.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.OrderDetails (MWT.Plugin.Misc.MwtStorefront) in 463.3057ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.OrderDetails (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/CustomOrder/Order/OrderDetails/28350 - 200 - text/html;+charset=utf-8 634.3169ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0390391_peoria-solid-wood-square-dining-table-set_415.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/_vs/browserLink - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/.well-known/appspecific/com.chrome.devtools.json - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/_framework/aspnetcore-browser-refresh.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/_framework/aspnetcore-browser-refresh.js - 200 16499 application/javascript;+charset=utf-8 2.0136ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/css/Customizations/Areas/CustomOrder/bootstrap.min.css.map - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/css/Customizations/Areas/fonts/TT Norms Pro Regular.woff - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0390391_peoria-solid-wood-square-dining-table-set_415.jpeg - 404 - - 971.3692ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/thumbs/0390391_peoria-solid-wood-square-dining-table-set_415.jpeg, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/css/Customizations/Areas/CustomOrder/bootstrap.min.css.map - 404 - - 751.8492ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/css/Customizations/Areas/CustomOrder/bootstrap.min.css.map, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/css/Customizations/Areas/fonts/TT Norms Pro Regular.woff - 404 - - 665.4032ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/_vs/browserLink - 200 - text/javascript;+charset=UTF-8 977.9888ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/css/Customizations/Areas/fonts/TT%20Norms%20Pro%20Regular.woff, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/.well-known/appspecific/com.chrome.devtools.json - 404 - - 957.7218ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/.well-known/appspecific/com.chrome.devtools.json, Response status code: 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 5.5376ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 9.2959ms - 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/CustomOrder/Order/Index - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.Index (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {area = "CustomOrder", action = "Index", controller = "Order"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController (MWT.Plugin.Misc.MwtStorefront).
+info: Microsoft.AspNetCore.Mvc.RedirectToActionResult[1]
+      Executing RedirectResult, redirecting to /CustomOrder/Order/List.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.Index (MWT.Plugin.Misc.MwtStorefront) in 81.8697ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.Index (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/CustomOrder/Order/Index - 302 - - 245.9091ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/CustomOrder/Order/List - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.List (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {area = "CustomOrder", action = "List", controller = "Order"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] List() on controller MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController (MWT.Plugin.Misc.MwtStorefront).
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[1]
+      Executing ViewResult, running view List.
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[4]
+      Executed ViewResult - view List executed in 1141.1027ms.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.List (MWT.Plugin.Misc.MwtStorefront) in 1359.3446ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.List (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/CustomOrder/Order/List - 200 - text/html;+charset=utf-8 1500.4190ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/_vs/browserLink - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/_framework/aspnetcore-browser-refresh.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/_framework/aspnetcore-browser-refresh.js - 200 16499 application/javascript;+charset=utf-8 3.6005ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/.well-known/appspecific/com.chrome.devtools.json - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/_vs/browserLink - 200 - text/javascript;+charset=UTF-8 161.4223ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/css/Customizations/Areas/CustomOrder/bootstrap.min.css.map - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/css/Customizations/Areas/fonts/TT Norms Pro Regular.woff - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST https://localhost:44376/CustomOrder/Order/OrderList - application/x-www-form-urlencoded;+charset=UTF-8 2767
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/.well-known/appspecific/com.chrome.devtools.json - 404 - - 899.8107ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/.well-known/appspecific/com.chrome.devtools.json, Response status code: 404
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.OrderList (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/css/Customizations/Areas/CustomOrder/bootstrap.min.css.map - 404 - - 785.3830ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/css/Customizations/Areas/fonts/TT Norms Pro Regular.woff - 404 - - 766.4184ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/css/Customizations/Areas/CustomOrder/bootstrap.min.css.map, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/css/Customizations/Areas/fonts/TT%20Norms%20Pro%20Regular.woff, Response status code: 404
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {area = "CustomOrder", action = "OrderList", controller = "Order"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] OrderList(MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Orders.CustomOrderSearchModel, Boolean) on controller MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController (MWT.Plugin.Misc.MwtStorefront).
+info: Microsoft.AspNetCore.Mvc.NewtonsoftJson.NewtonsoftJsonResultExecutor[2]
+      Executing JsonResult, writing value of type 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Orders.CustomOrderListModel'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.OrderList (MWT.Plugin.Misc.MwtStorefront) in 377.287ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.OrderList (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST https://localhost:44376/CustomOrder/Order/OrderList - 200 - application/json;+charset=utf-8 1094.7637ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/customorder/Order/CreateOrder - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.CreateOrder (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {area = "CustomOrder", action = "CreateOrder", controller = "Order"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] CreateOrder() on controller MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController (MWT.Plugin.Misc.MwtStorefront).
+info: Microsoft.AspNetCore.Mvc.RedirectToActionResult[1]
+      Executing RedirectResult, redirecting to /CustomOrder/Order/OrderDetails/28351.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.CreateOrder (MWT.Plugin.Misc.MwtStorefront) in 141.2722ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.CreateOrder (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/customorder/Order/CreateOrder - 302 - - 291.4788ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/CustomOrder/Order/OrderDetails/28351 - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.OrderDetails (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {area = "CustomOrder", action = "OrderDetails", controller = "Order"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] OrderDetails(Int32) on controller MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController (MWT.Plugin.Misc.MwtStorefront).
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[1]
+      Executing ViewResult, running view OrderDetails.
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[4]
+      Executed ViewResult - view OrderDetails executed in 33.2669ms.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.OrderDetails (MWT.Plugin.Misc.MwtStorefront) in 218.4233ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.OrderDetails (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/CustomOrder/Order/OrderDetails/28351 - 200 - text/html;+charset=utf-8 366.3440ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/_vs/browserLink - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/_framework/aspnetcore-browser-refresh.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/_framework/aspnetcore-browser-refresh.js - 200 16499 application/javascript;+charset=utf-8 3.1093ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/_vs/browserLink - 200 - text/javascript;+charset=UTF-8 14.9393ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/.well-known/appspecific/com.chrome.devtools.json - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/css/Customizations/Areas/CustomOrder/bootstrap.min.css.map - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/css/Customizations/Areas/CustomOrder/images/1 navdropdown.png width='4' height='5' viewBox='0 0 4 5'><path fill='#343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg> - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/css/Customizations/Areas/fonts/TT Norms Pro Regular.woff - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.CommonController.FallbackRedirect (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/.well-known/appspecific/com.chrome.devtools.json - 404 - - 518.1680ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/.well-known/appspecific/com.chrome.devtools.json, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/css/Customizations/Areas/fonts/TT Norms Pro Regular.woff - 404 - - 368.2230ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/css/Customizations/Areas/fonts/TT%20Norms%20Pro%20Regular.woff, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/css/Customizations/Areas/CustomOrder/bootstrap.min.css.map - 404 - - 551.5594ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/css/Customizations/Areas/CustomOrder/bootstrap.min.css.map, Response status code: 404
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "FallbackRedirect", controller = "Common", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult FallbackRedirect() on controller Nop.Web.Controllers.CommonController (Nop.Web).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.CommonController.FallbackRedirect (Nop.Web) in 6.0488ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.CommonController.FallbackRedirect (Nop.Web)'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.CommonController.PageNotFound (Nop.Web)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "PageNotFound", controller = "Common", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult PageNotFound() on controller Nop.Web.Controllers.CommonController (Nop.Web).
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[1]
+      Executing ViewResult, running view PageNotFound.
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[4]
+      Executed ViewResult - view PageNotFound executed in 296.2014ms.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.CommonController.PageNotFound (Nop.Web) in 298.1018ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.CommonController.PageNotFound (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/css/Customizations/Areas/CustomOrder/images/1 navdropdown.png width='4' height='5' viewBox='0 0 4 5'><path fill='#343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg> - 404 - text/html;+charset=utf-8 1008.9595ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST https://localhost:44376/Customorder/order/UpdateOrderType/ - application/x-www-form-urlencoded;+charset=UTF-8 265
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.UpdateOrderType (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {area = "CustomOrder", action = "UpdateOrderType", controller = "Order"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] UpdateOrderType(Int32, Int32, Int32) on controller MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController (MWT.Plugin.Misc.MwtStorefront).
+info: Microsoft.AspNetCore.Mvc.NewtonsoftJson.NewtonsoftJsonResultExecutor[2]
+      Executing JsonResult, writing value of type '<>f__AnonymousType9`1[[MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Common.AjaxReponseModel, MWT.Plugin.Misc.MwtStorefront, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.UpdateOrderType (MWT.Plugin.Misc.MwtStorefront) in 153.7487ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.UpdateOrderType (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST https://localhost:44376/Customorder/order/UpdateOrderType/ - 200 - application/json;+charset=utf-8 264.2248ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Customorder/order/Searchcustomer/?searchTerm=s - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.Searchcustomer (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {area = "CustomOrder", action = "Searchcustomer", controller = "Order"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Searchcustomer(System.String) on controller MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController (MWT.Plugin.Misc.MwtStorefront).
+info: Microsoft.AspNetCore.Mvc.NewtonsoftJson.NewtonsoftJsonResultExecutor[2]
+      Executing JsonResult, writing value of type '<>f__AnonymousType9`1[[MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Common.AjaxReponseModel, MWT.Plugin.Misc.MwtStorefront, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.Searchcustomer (MWT.Plugin.Misc.MwtStorefront) in 120.9723ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.Searchcustomer (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Customorder/order/Searchcustomer/?searchTerm=s - 200 - application/json;+charset=utf-8 237.1471ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST https://localhost:44376/Customorder/order/UpdateCustomer/ - application/x-www-form-urlencoded;+charset=UTF-8 258
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.UpdateCustomer (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {area = "CustomOrder", action = "UpdateCustomer", controller = "Order"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] UpdateCustomer(Int32, Int32) on controller MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController (MWT.Plugin.Misc.MwtStorefront).
+info: Microsoft.AspNetCore.Mvc.NewtonsoftJson.NewtonsoftJsonResultExecutor[2]
+      Executing JsonResult, writing value of type '<>f__AnonymousType9`1[[MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Common.AjaxReponseModel, MWT.Plugin.Misc.MwtStorefront, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.UpdateCustomer (MWT.Plugin.Misc.MwtStorefront) in 190.2471ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.UpdateCustomer (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST https://localhost:44376/Customorder/order/UpdateCustomer/ - 200 - application/json;+charset=utf-8 320.5121ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Customorder/order/SearchProduts/?searchTerm=s&_=1789985820500 - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.SearchProduts (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {area = "CustomOrder", action = "SearchProduts", controller = "Order"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] SearchProduts(System.String) on controller MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController (MWT.Plugin.Misc.MwtStorefront).
+info: Microsoft.AspNetCore.Mvc.NewtonsoftJson.NewtonsoftJsonResultExecutor[2]
+      Executing JsonResult, writing value of type '<>f__AnonymousType9`1[[MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Common.AjaxReponseModel, MWT.Plugin.Misc.MwtStorefront, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.SearchProduts (MWT.Plugin.Misc.MwtStorefront) in 612.3726ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.SearchProduts (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Customorder/order/SearchProduts/?searchTerm=s&_=1789985820500 - 200 - application/json;+charset=utf-8 731.4593ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0429600_kansas-city-rustic-farmhouse-counter-height-square-dining-set_415.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0390391_peoria-solid-wood-square-dining-table-set_415.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0429828_quebec-glass-door-solid-wood-media-console-cabinet-6582_415.png - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0390391_peoria-solid-wood-square-dining-table-set_415.jpeg - 404 - - 443.9956ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/thumbs/0390391_peoria-solid-wood-square-dining-table-set_415.jpeg, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0429828_quebec-glass-door-solid-wood-media-console-cabinet-6582_415.png - 404 - - 434.9428ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/thumbs/0429828_quebec-glass-door-solid-wood-media-console-cabinet-6582_415.png, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0429600_kansas-city-rustic-farmhouse-counter-height-square-dining-set_415.jpeg - 404 - - 474.3103ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/thumbs/0429600_kansas-city-rustic-farmhouse-counter-height-square-dining-set_415.jpeg, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST https://localhost:44376/Customorder/order/AddUpdateCartItems/ - application/x-www-form-urlencoded;+charset=UTF-8 657
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.AddUpdateCartItems (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {area = "CustomOrder", action = "AddUpdateCartItems", controller = "Order"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] AddUpdateCartItems(System.Collections.Generic.List`1[MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Orders.ItemModel], Microsoft.AspNetCore.Http.IFormCollection) on controller MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController (MWT.Plugin.Misc.MwtStorefront).
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request GET https://api.zip-tax.com/request/v40?*
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request GET https://api.zip-tax.com/request/v40?*
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 764.2397ms - 200
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 768.136ms - 200
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request GET https://api.zip-tax.com/request/v40?*
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request GET https://api.zip-tax.com/request/v40?*
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 249.9024ms - 200
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 256.1314ms - 200
+info: Microsoft.AspNetCore.Mvc.NewtonsoftJson.NewtonsoftJsonResultExecutor[2]
+      Executing JsonResult, writing value of type '<>f__AnonymousType9`1[[MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Common.AjaxReponseModel, MWT.Plugin.Misc.MwtStorefront, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.AddUpdateCartItems (MWT.Plugin.Misc.MwtStorefront) in 1720.0788ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.AddUpdateCartItems (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST https://localhost:44376/Customorder/order/AddUpdateCartItems/ - 200 - application/json;+charset=utf-8 1837.4911ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0390391_peoria-solid-wood-square-dining-table-set_415.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0390391_peoria-solid-wood-square-dining-table-set_415.jpeg - 404 - - 129.3719ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/thumbs/0390391_peoria-solid-wood-square-dining-table-set_415.jpeg, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST https://localhost:44376/Customorder/order/UpdateOrder/ - application/x-www-form-urlencoded;+charset=UTF-8 338
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.UpdateOrder (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {area = "CustomOrder", action = "UpdateOrder", controller = "Order"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] UpdateOrder(MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Orders.CustomOrderModel, System.String) on controller MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController (MWT.Plugin.Misc.MwtStorefront).
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://www.zohoapis.com/crm/v2/Potentials
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://www.zohoapis.com/crm/v2/Potentials
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 1213.1464ms - 202
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 1217.3102ms - 202
+info: Microsoft.AspNetCore.Mvc.NewtonsoftJson.NewtonsoftJsonResultExecutor[2]
+      Executing JsonResult, writing value of type '<>f__AnonymousType9`1[[MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Models.Common.AjaxReponseModel, MWT.Plugin.Misc.MwtStorefront, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.UpdateOrder (MWT.Plugin.Misc.MwtStorefront) in 20680.7569ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Areas.CustomOrder.Controllers.OrderController.UpdateOrder (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST https://localhost:44376/Customorder/order/UpdateOrder/ - 200 - application/json;+charset=utf-8 20876.4845ms
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 6.4774ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 10.3321ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 5.1716ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 9.6774ms - 404
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...

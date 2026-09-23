@@ -747,6 +747,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
 
                 if (!placeOrderResult.Errors.Any())
                 {
+                    await this._orderProcessingService.SetProcessPaymentRequestAsync(null, customer);
                     tempOrder.LiveOrderNumber = placeOrderResult.PlacedOrder.Id;
 
                     tempOrder.Status = RequestStatus.Completed;
@@ -755,6 +756,7 @@ namespace MWT.Nop.Plugin.Payments.Affirm.Controllers
                 }
                 else
                 {
+                
                     await _affirmLogRepository.InsertAsync(new AffirmLog()
                     {
                         CreatedOnUtc = DateTime.UtcNow,

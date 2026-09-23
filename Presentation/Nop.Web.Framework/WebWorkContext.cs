@@ -24,7 +24,7 @@ namespace Nop.Web.Framework;
 /// <summary>
 /// Represents work context for web application
 /// </summary>
-public partial class WebWorkContext : IWorkContext
+public partial class WebWorkContext : IWorkContext  
 {
     #region Fields
 
@@ -151,7 +151,9 @@ public partial class WebWorkContext : IWorkContext
 
         //set new cookie value
         var value = CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(language.LanguageCulture));
-        var options = new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) };
+        #region Custom updates
+        var options = new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1), HttpOnly = true, Secure = _webHelper.IsCurrentConnectionSecured() };
+        #endregion
         _httpContextAccessor.HttpContext.Response.Cookies.Append(cookieName, value, options);
     }
 

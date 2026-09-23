@@ -1,0 +1,1990 @@
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 1853.0572ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 1841.2605ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 1839.6913ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 1577.4393ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 1848.9232ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 1844.7914ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 1920.6331ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 1920.588ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 1922.2998ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 1683.5203ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 1922.3574ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 1924.5212ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 1714.4866ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 1788.2527ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 1576.3562ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 1708.0606ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 1545.2319ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 1790.9547ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 1966.2812ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 2034.8449ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 1630.9142ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 1729.1952ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 1775.4897ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 1620.8309ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 1639.4659ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 1676.3838ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 1739.3808ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 1814.8501ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 1694.0497ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 1850.8298ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 1775.3702ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 1825.5355ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 1918.7966ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 1977.3913ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 318.2041ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 368.0368ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 306.0577ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 346.3465ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 412.9325ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 418.2147ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 374.332ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 425.5832ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 363.5988ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 421.968ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 373.2515ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 429.8707ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 492.4479ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 493.5972ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 423.1351ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 510.5662ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 340ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 442.341ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 418.064ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 470.9861ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 376.0626ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 420.9424ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 412.1545ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 500.8634ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 435.2681ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 266.345ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 441.4669ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 353.2893ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 518.5691ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 640.6586ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 389.6831ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 431.063ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 399.1938ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 447.4765ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 344.9436ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 349.6531ms - 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/ - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/ - - -
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 337.1156ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 349.6147ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 418.0459ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 458.7722ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 469.3903ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 517.3515ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 619.2059ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 524.2367ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 529.8949ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 552.1327ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 483.4991ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 540.4731ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 534.1373ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 599.5033ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 587.8891ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 622.1685ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 522.3917ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 594.7612ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 666.0086ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 553.5043ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 562.8464ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 527.7292ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 570.5116ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 638.5196ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 596.0493ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 558.4209ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 605.6516ms - 404
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 594.0388ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 656.5733ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 620.7771ms - 404
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.HomeController.Index (Nop.Web)'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.HomeController.Index (Nop.Web)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "Index", controller = "Home", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller Nop.Web.Controllers.HomeController (Nop.Web).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "Index", controller = "Home", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller Nop.Web.Controllers.HomeController (Nop.Web).
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[1]
+      Executing ViewResult, running view Index.
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[1]
+      Executing ViewResult, running view Index.
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[4]
+      Executed ViewResult - view Index executed in 33094.4944ms.
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[4]
+      Executed ViewResult - view Index executed in 33094.535ms.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.HomeController.Index (Nop.Web) in 33429.4413ms
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.HomeController.Index (Nop.Web) in 33429.4412ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.HomeController.Index (Nop.Web)'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.HomeController.Index (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/lib_npm/jquery-ui-dist/jquery-ui.min.css - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/slick.css - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/slick.css - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/.well-known/appspecific/com.chrome.devtools.json - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/slick-theme.css - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/lib_npm/jquery-ui-dist/jquery-ui.min.css - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/slick-theme.css - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/ - 200 - text/html;+charset=utf-8 36257.9016ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/ - 200 - text/html;+charset=utf-8 36261.3303ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/.well-known/appspecific/com.chrome.devtools.json - 404 - - 365.8493ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/.well-known/appspecific/com.chrome.devtools.json, Response status code: 404
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/css/slick.css'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\css\slick.css'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/css/slick-theme.css'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\css\slick-theme.css'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/lib_npm/jquery-ui-dist/jquery-ui.min.css'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\lib_npm\jquery-ui-dist\jquery-ui.min.css'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/css/slick-theme.css'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\css\slick-theme.css'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/css/slick.css'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\css\slick.css'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/lib_npm/jquery-ui-dist/jquery-ui.min.css'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\lib_npm\jquery-ui-dist\jquery-ui.min.css'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/lib_npm/jquery-ui-dist/jquery-ui.min.css - 200 32136 text/css 445.1938ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/slick.css - 200 1895 text/css 407.5891ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/lib_npm/jquery-ui-dist/jquery-ui.min.css - 200 32136 text/css 403.9645ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/fontawesome-all.min.css - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/slick.css - 200 1895 text/css 466.9504ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/bootstrap.min.css - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/slick-theme.css - 200 3361 text/css 407.2459ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/bootstrap.min.css - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/fontawesome-all.min.css - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/css/fontawesome-all.min.css'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\css\fontawesome-all.min.css'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/css/fontawesome-all.min.css'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\css\fontawesome-all.min.css'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/root-theme-styles.css?ver=547 - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/css/bootstrap.min.css'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\css\bootstrap.min.css'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/fontawesome-all.min.css - 200 36939 text/css 124.0283ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/css/bootstrap.min.css'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\css\bootstrap.min.css'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/fontawesome-all.min.css - 200 36939 text/css 124.5463ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/slick-theme.css - 200 3361 text/css 558.8628ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Nop.Plugin.MegaMenu/Themes/BlackWhiteTheme/Content/MegaMenuDesktop.css - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/bootstrap.min.css - 200 232116 text/css 154.8873ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/root-theme-styles.css?ver=547 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Nop.Plugin.MegaMenu/Themes/BlackWhiteTheme/Content/MegaMenuDesktop.css - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/AnticDidone-Regular.woff2 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/bootstrap.min.css - 200 232116 text/css 223.1348ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/AnticDidone-Regular.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\anticdidone\AnticDidone-Regular.woff2'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/AnticDidone-Regular.woff2 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/AnticDidone-Regular.woff2 - 200 13360 font/woff2 138.9352ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/AnticDidone-Regular.woff - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Nop.Plugin.MegaMenu/Themes/BlackWhiteTheme/Content/MegaMenuDesktop.css'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\BlackWhiteTheme\Content\MegaMenuDesktop.css'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/AnticDidone-Regular.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\anticdidone\AnticDidone-Regular.woff2'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Nop.Plugin.MegaMenu/Themes/BlackWhiteTheme/Content/MegaMenuDesktop.css - 200 17180 text/css 201.8866ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Bold.woff2 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/AnticDidone-Regular.woff2 - 200 13360 font/woff2 95.1263ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/AnticDidone-Regular.woff - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/AnticDidone-Regular.woff'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\anticdidone\AnticDidone-Regular.woff'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Nop.Plugin.MegaMenu/Themes/BlackWhiteTheme/Content/MegaMenuDesktop.css'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.MegaMenu\Themes\BlackWhiteTheme\Content\MegaMenuDesktop.css'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/AnticDidone-Regular.woff - 200 18852 application/font-woff 156.5056ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/AnticDidone-Regular.woff'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\anticdidone\AnticDidone-Regular.woff'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Nop.Plugin.MegaMenu/Themes/BlackWhiteTheme/Content/MegaMenuDesktop.css - 200 17180 text/css 299.3645ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/AnticDidone-Regular.woff - 200 18852 application/font-woff 62.8455ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Bold.woff - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Bold.woff2 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Bold.woff - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Bold.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\anticdidone\BonaNova-Bold.woff2'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Bold.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\anticdidone\BonaNova-Bold.woff2'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Bold.woff'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\anticdidone\BonaNova-Bold.woff'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Bold.woff'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\anticdidone\BonaNova-Bold.woff'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Italic.woff2 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Bold.woff - 200 195560 application/font-woff 154.5956ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Italic.woff - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Italic.woff2 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Bold.woff2 - 200 139036 font/woff2 311.4191ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Bold.woff2 - 200 139036 font/woff2 93.4650ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Bold.woff - 200 195560 application/font-woff 157.2178ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Italic.woff - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Italic.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\anticdidone\BonaNova-Italic.woff2'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Italic.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\anticdidone\BonaNova-Italic.woff2'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Italic.woff2 - 200 149304 font/woff2 98.4866ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Italic.woff2 - 200 149304 font/woff2 100.0164ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Regular.woff2 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Regular.woff2 - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Italic.woff'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\anticdidone\BonaNova-Italic.woff'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Italic.woff'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\anticdidone\BonaNova-Italic.woff'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/css/root-theme-styles.css'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\css\root-theme-styles.css'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/css/root-theme-styles.css'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\css\root-theme-styles.css'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Italic.woff - 200 214168 application/font-woff 133.7922ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Italic.woff - 200 214168 application/font-woff 166.5334ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Regular.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\anticdidone\BonaNova-Regular.woff2'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Regular.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\anticdidone\BonaNova-Regular.woff2'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/root-theme-styles.css?ver=547 - 200 841033 text/css 775.1844ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/root-theme-styles.css?ver=547 - 200 841033 text/css 683.7145ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Regular.woff2 - 200 139224 font/woff2 109.6987ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Regular.woff - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-300.woff2 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Regular.woff - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-regular.woff2 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-300.woff2 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Regular.woff2 - 200 139224 font/woff2 139.5787ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-regular.woff2 - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-regular.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\Nunito\nunito-v26-latin-regular.woff2'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-regular.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\Nunito\nunito-v26-latin-regular.woff2'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-300.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\Nunito\nunito-v26-latin-300.woff2'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-regular.woff2 - 200 16292 font/woff2 124.4772ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-300.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\Nunito\nunito-v26-latin-300.woff2'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-300.woff2 - 200 16068 font/woff2 127.8674ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-300.woff2 - 200 16068 font/woff2 160.6727ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-500.woff2 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-regular.woff2 - 200 16292 font/woff2 70.4772ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-600.woff2 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-500.woff2 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-600.woff2 - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-600.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\Nunito\nunito-v26-latin-600.woff2'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-500.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\Nunito\nunito-v26-latin-500.woff2'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-600.woff2 - 200 16540 font/woff2 92.2416ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Regular.woff'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\anticdidone\BonaNova-Regular.woff'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Regular.woff'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\anticdidone\BonaNova-Regular.woff'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-700.woff2 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-500.woff2 - 200 16504 font/woff2 207.2861ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Regular.woff - 200 196840 application/font-woff 372.8763ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/anticdidone/BonaNova-Regular.woff - 200 196840 application/font-woff 374.4631ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-700.woff2 - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-500.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\Nunito\nunito-v26-latin-500.woff2'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-500.woff2 - 200 16504 font/woff2 162.7350ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-800.woff2 - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-700.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\Nunito\nunito-v26-latin-700.woff2'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-700.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\Nunito\nunito-v26-latin-700.woff2'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0433082_0413661_1e162568b9181b5d8de5e5181b5815e118917bab.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/logo.svg?v=1 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-800.woff2 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-700.woff2 - 200 16312 font/woff2 78.8014ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-600.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\Nunito\nunito-v26-latin-600.woff2'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-600.woff2 - 200 16540 font/woff2 202.2707ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-700.woff2 - 200 16312 font/woff2 50.0095ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/logo.svg?v=1 - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-800.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\Nunito\nunito-v26-latin-800.woff2'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0433082_0413661_1e162568b9181b5d8de5e5181b5815e118917bab.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/bootstrap.min.css.map - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/0433082_0413661_1e162568b9181b5d8de5e5181b5815e118917bab.jpeg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\0433082_0413661_1e162568b9181b5d8de5e5181b5815e118917bab.jpeg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/logo.svg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\logo.svg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/logo.svg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\logo.svg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/logo.svg?v=1 - 200 73997 image/svg+xml 137.5034ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/0433082_0413661_1e162568b9181b5d8de5e5181b5815e118917bab.jpeg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\0433082_0413661_1e162568b9181b5d8de5e5181b5815e118917bab.jpeg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0433082_0413661_1e162568b9181b5d8de5e5181b5815e118917bab.jpeg - 200 0 image/jpeg 125.7247ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/lib_npm/jquery/jquery.min.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0424509_Dining 1.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-800.woff2 - 200 16488 font/woff2 207.7610ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-800.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\Nunito\nunito-v26-latin-800.woff2'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/logo.svg?v=1 - 200 73997 image/svg+xml 193.7808ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0433082_0413661_1e162568b9181b5d8de5e5181b5815e118917bab.jpeg - 200 0 image/jpeg 206.5758ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/0424509_Dining 1.jpeg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\0424509_Dining 1.jpeg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0424510_Bed 1.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0424509_Dining 1.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0424509_Dining 1.jpeg - 200 0 image/jpeg 42.2738ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0424510_Bed 1.jpeg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/0424510_Bed 1.jpeg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\0424510_Bed 1.jpeg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/0424509_Dining 1.jpeg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\0424509_Dining 1.jpeg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/lib_npm/jquery/jquery.min.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/Nunito/nunito-v26-latin-800.woff2 - 200 16488 font/woff2 366.9299ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/lib_npm/jquery/jquery.min.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\lib_npm\jquery\jquery.min.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0424509_Dining 1.jpeg - 200 0 image/jpeg 187.8873ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/0424510_Bed 1.jpeg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\0424510_Bed 1.jpeg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0424511_Living 1.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/lib_npm/jquery-validation/jquery.validate.min.js - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/lib_npm/jquery/jquery.min.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\lib_npm\jquery\jquery.min.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/lib_npm/jquery/jquery.min.js - 200 87535 text/javascript 237.9958ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0424510_Bed 1.jpeg - 200 0 image/jpeg 102.7720ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0424511_Living 1.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/lib_npm/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/0424511_Living 1.jpeg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\0424511_Living 1.jpeg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0424511_Living 1.jpeg - 200 0 image/jpeg 99.5702ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0424510_Bed 1.jpeg - 200 0 image/jpeg 332.9390ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/lib_npm/jquery-validation/jquery.validate.min.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/lib_npm/jquery/jquery.min.js - 200 87535 text/javascript 234.6409ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/lib_npm/jquery-validation/jquery.validate.min.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\lib_npm\jquery-validation\jquery.validate.min.js'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/lib_npm/jquery-validation/jquery.validate.min.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\lib_npm\jquery-validation\jquery.validate.min.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/lib_npm/jquery-ui-dist/jquery-ui.min.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/lib_npm/jquery-validation/jquery.validate.min.js - 200 24604 text/javascript 136.3698ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/lib_npm/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/lib_npm/jquery-ui-dist/jquery-ui.min.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/lib_npm/jquery-validation/jquery.validate.min.js - 200 24604 text/javascript 61.4344ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/lib_npm/jquery-migrate/jquery-migrate.min.js - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/lib_npm/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\lib_npm\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/lib_npm/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\lib_npm\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/lib_npm/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js - 200 5831 text/javascript 111.9967ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/lib_npm/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js - 200 5831 text/javascript 204.9917ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/home.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/lib_npm/jquery-migrate/jquery-migrate.min.js - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/0424511_Living 1.jpeg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\0424511_Living 1.jpeg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/lib_npm/jquery-ui-dist/jquery-ui.min.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\lib_npm\jquery-ui-dist\jquery-ui.min.js'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/lib_npm/jquery-ui-dist/jquery-ui.min.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\lib_npm\jquery-ui-dist\jquery-ui.min.js'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/lib_npm/jquery-migrate/jquery-migrate.min.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\lib_npm\jquery-migrate\jquery-migrate.min.js'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/js/home.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\js\home.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/lib_npm/jquery-migrate/jquery-migrate.min.js - 200 13622 text/javascript 153.5133ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/lib_npm/jquery-migrate/jquery-migrate.min.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\lib_npm\jquery-migrate\jquery-migrate.min.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/home.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/campaignassets/js/apicall.js?ver=7 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/home.js - 200 1597 text/javascript 179.4801ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/lib_npm/jquery-ui-dist/jquery-ui.min.js - 200 255089 text/javascript 377.7733ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/campaignassets/js/apicall.js?ver=7 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/lib_npm/jquery-ui-dist/jquery-ui.min.js - 200 255089 text/javascript 374.2980ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/lib_npm/jquery-migrate/jquery-migrate.min.map - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/common.js?ver48 - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/js/home.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\js\home.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/home.js - 200 1597 text/javascript 17.4766ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/lib_npm/jquery-migrate/jquery-migrate.min.map'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\lib_npm\jquery-migrate\jquery-migrate.min.map'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/common.js?ver48 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0424511_Living 1.jpeg - 200 0 image/jpeg 536.2360ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/js/public.common.js?ver=6 - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/campaignassets/js/apicall.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\campaignassets\js\apicall.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/lib_npm/jquery-migrate/jquery-migrate.min.map - 200 15330 text/plain 44.8974ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/campaignassets/js/apicall.js?ver=7 - 200 14801 text/javascript 47.8743ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/public.ajaxcart.js?ver=11 - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/js/common.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\js\common.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/common.js?ver48 - 200 61263 text/javascript 72.9733ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/js/public.common.js?ver=6 - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/js/common.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\js\common.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/lib_npm/jquery-migrate/jquery-migrate.min.js - 200 13622 text/javascript 466.3593ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/js/public.common.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\js\public.common.js'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/js/public.ajaxcart.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\js\public.ajaxcart.js'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/js/public.common.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\js\public.common.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/js/public.common.js?ver=6 - 200 5451 text/javascript 81.9823ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/js/public.common.js?ver=6 - 200 5451 text/javascript 44.8345ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/common.js?ver48 - 200 61263 text/javascript 109.7180ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/public.ajaxcart.js?ver=11 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/js/public.countryselect.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/js/public.countryselect.js - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/js/public.ajaxcart.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\js\public.ajaxcart.js'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/campaignassets/js/apicall.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\campaignassets\js\apicall.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/head.min.js - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/js/public.countryselect.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\js\public.countryselect.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/campaignassets/js/apicall.js?ver=7 - 200 14801 text/javascript 291.1339ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/bootstrap.min.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/js/public.countryselect.js - 200 1884 text/javascript 169.6864ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/js/public.countryselect.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\js\public.countryselect.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/public.ajaxcart.js?ver=11 - 200 11586 text/javascript 186.1165ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/js/public.countryselect.js - 200 1884 text/javascript 130.0911ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/js/head.min.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\js\head.min.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/head.min.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/js/public.menu.js - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/js/bootstrap.min.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\js\bootstrap.min.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/slick.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0424513_Entryway 2 1.jpeg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/0424513_Entryway 2 1.jpeg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\0424513_Entryway 2 1.jpeg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/js/head.min.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\js\head.min.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/head.min.js - 200 9688 text/javascript 53.3750ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/_framework/aspnetcore-browser-refresh.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/_framework/aspnetcore-browser-refresh.js - 200 16499 application/javascript;+charset=utf-8 10.3526ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/public.ajaxcart.js?ver=11 - 200 11586 text/javascript 310.8662ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0420853_0413354_1495-(Pet-furniture-menu-Bar).jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0424514_Outdoor 1.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0424515_Mahogany 1.jpeg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/0420853_0413354_1495-(Pet-furniture-menu-Bar).jpeg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\0420853_0413354_1495-(Pet-furniture-menu-Bar).jpeg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0424513_Entryway 2 1.jpeg - 200 0 image/jpeg 189.3145ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/head.min.js - 200 9688 text/javascript 307.6670ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/0424515_Mahogany 1.jpeg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\0424515_Mahogany 1.jpeg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0424512_Office 1.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0424515_Mahogany 1.jpeg - 200 0 image/jpeg 91.0654ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/0424514_Outdoor 1.jpeg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\0424514_Outdoor 1.jpeg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/Vector01.png - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/icons/hand-holding-dollar-solid.svg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/0424512_Office 1.jpeg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\0424512_Office 1.jpeg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0424514_Outdoor 1.jpeg - 200 0 image/jpeg 175.3415ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img1.jpg?img2 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0420853_0413354_1495-(Pet-furniture-menu-Bar).jpeg - 200 0 image/jpeg 244.4911ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/Vector01.png'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\Vector01.png'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img3.jpg?img1 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/Vector01.png - 200 1233 image/png 92.8801ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0424512_Office 1.jpeg - 200 0 image/jpeg 99.5407ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img4.jpg?img3 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img6.jpg?img4 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img2.jpg?img6 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/pixel.png - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/cyber-monday-img1.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\cyber-monday-img1.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img5.jpg?img5 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/outdoor-img2.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/outdoor-img1.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Nop.Plugin.MegaMenu/Scripts/MegaMenu.min.js - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/cyber-monday-img4.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\cyber-monday-img4.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/poster.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/roomsets-desktop.jpg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Nop.Plugin.MegaMenu/Scripts/MegaMenu.min.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.MegaMenu\Scripts\MegaMenu.min.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Nop.Plugin.MegaMenu/Scripts/MegaMenu.min.js - 200 29997 text/javascript 178.4835ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner1.jpg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/outdoor-img1.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\outdoor-img1.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner1-mobile.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner2-mobile.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner3.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/bootstrap.min.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/outdoor-img3.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/made-for-you-img-desktop.jpg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/js/slick.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\js\slick.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner3-mobile.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/SalesIqEvents.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/images/top.png - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/customization-icon1.svg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/customization-icon3.svg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/customization-icon1.svg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\customization-icon1.svg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/customization-icon1.svg - 200 483 image/svg+xml 65.9852ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/js/public.menu.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\js\public.menu.js'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/customization-icon3.svg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\customization-icon3.svg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/js/SalesIqEvents.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\js\SalesIqEvents.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/SalesIqEvents.js - 200 5453 text/javascript 280.1333ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/js/public.menu.js - 200 470 text/javascript 1342.7815ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/new-arrival-banner2-mobile.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\new-arrival-banner2-mobile.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/customization-icon3.svg - 200 539 image/svg+xml 283.1918ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/new-arrival-banner1-mobile.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\new-arrival-banner1-mobile.jpg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/new-arrival-banner3-mobile.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\new-arrival-banner3-mobile.jpg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/outdoor-img2.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\outdoor-img2.jpg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/cyber-monday-img3.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\cyber-monday-img3.jpg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/outdoor-img3.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\outdoor-img3.jpg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/js/bootstrap.min.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\js\bootstrap.min.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner2.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/_vs/browserLink - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/video-pause-svg.svg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/customization-icon2.svg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/footer-lower-copyright-icon.svg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/video-pause-svg.svg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\video-pause-svg.svg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/roomsets-desktop.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\roomsets-desktop.jpg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/customization-icon2.svg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\customization-icon2.svg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/new-arrival-banner3.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\new-arrival-banner3.jpg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/footer-lower-copyright-icon.svg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\footer-lower-copyright-icon.svg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/test_Spring4.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/customization-icon2.svg - 200 764 image/svg+xml 99.9692ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/outdoor-img4.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/phone.png - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/footer-lower-copyright-icon.svg - 200 981 image/svg+xml 74.9604ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/bootstrap.min.js - 200 80502 text/javascript 1700.3108ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/slick.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff2 - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/new-arrival-banner1.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\new-arrival-banner1.jpg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/new-arrival-banner2.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\new-arrival-banner2.jpg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/cyber-monday-img2.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\cyber-monday-img2.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Nop.Plugin.MegaMenu/Scripts/MegaMenu.min.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/bootstrap.bundle.min.js.map - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img4.jpg?img3 - 200 411529 image/jpeg 1311.2362ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img1.jpg?img2 - 200 308271 image/jpeg 1384.0952ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/video-pause-svg.svg - 200 358 image/svg+xml 357.8151ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Nop.Plugin.MegaMenu/Scripts/MegaMenu.min.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Nop.Plugin.MegaMenu\Scripts\MegaMenu.min.js'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/js/slick.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\js\slick.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/outdoor-img1.jpg - 200 93310 image/jpeg 1164.8934ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/bootstrap.min.css.map - 404 - - 3119.8114ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/cyber-monday-img5.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\cyber-monday-img5.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/slick.js - 200 91966 text/javascript 1878.3669ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/icons/hand-holding-dollar-solid.svg - 404 - - 1596.7822ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/bootstrap.min.css.map, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Nop.Plugin.MegaMenu/Scripts/MegaMenu.min.js - 200 29997 text/javascript 248.7544ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/made-for-you-img-desktop.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\made-for-you-img-desktop.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner1-mobile.jpg - 200 42202 image/jpeg 925.3546ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/images/ajax-loader.gif - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner2-mobile.jpg - 200 30280 image/jpeg 927.4118ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/cyber-monday-img6.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\cyber-monday-img6.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/outdoor-img2.jpg - 200 158672 image/jpeg 1389.6600ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/outdoor-img3.jpg - 200 76306 image/jpeg 1072.2620ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner3-mobile.jpg - 200 35943 image/jpeg 1046.3669ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/icons/hand-holding-dollar-solid.svg, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/slick.woff - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img3.jpg?img1 - 200 355868 image/jpeg 1735.7992ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/images/ajax-loader.gif'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\images\ajax-loader.gif'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/bootstrap.min.js - 200 80502 text/javascript 1093.3623ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff2 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST https://localhost:44376/CampaignManagement/showPopup - application/x-www-form-urlencoded;+charset=UTF-8 56
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/images/ajax-loader.gif - 200 2230 image/gif 236.1748ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/slick.woff'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\slick.woff'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/slick.woff - 200 1380 application/font-woff 513.7211ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner2.jpg - 200 154003 image/jpeg 1193.0454ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/outdoor-img4.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\outdoor-img4.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner1.jpg - 200 266581 image/jpeg 1684.6366ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img5.jpg?img5 - 200 443114 image/jpeg 2117.5810ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/slick.js - 200 91966 text/javascript 1127.9046ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img3.jpg?img1 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/test_Spring4.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/made-for-you-img-desktop.jpg - 200 294843 image/jpeg 1791.1242ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img6.jpg?img4 - 200 522182 image/jpeg 2380.1204ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/roomsets-desktop.jpg - 200 288130 image/jpeg 2264.7029ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner3.jpg - 200 166605 image/jpeg 1941.1033ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/outdoor-img4.jpg - 200 108100 image/jpeg 1374.6599ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img2.jpg?img6 - 200 469971 image/jpeg 2373.7994ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/cyber-monday-img3.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\cyber-monday-img3.jpg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/test_Spring4.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\test_Spring4.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/bootstrap.bundle.min.js.map - 404 - - 1317.8241ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img3.jpg?img1 - 200 355868 image/jpeg 258.4748ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/test_Spring4.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\test_Spring4.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/bootstrap.bundle.min.js.map, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff2 - 404 - - 927.7175ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff2, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/icons/hand-holding-dollar-solid.svg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/test_Spring4.jpg - 200 279459 image/jpeg 1492.9650ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/test_Spring4.jpg - 200 279459 image/jpeg 320.5711ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/Vector01.png - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/images/top.png - 404 - - 2111.7739ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/Themes/BlackWhiteTheme/Content/images/top.png, Response status code: 404
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/Vector01.png'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\Vector01.png'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/Vector01.png - 200 1233 image/png 348.1598ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff2 - 404 - - 1830.3111ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff2, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/_framework/aspnetcore-browser-refresh.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/js/public.menu.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/js/public.menu.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\js\public.menu.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/_framework/aspnetcore-browser-refresh.js - 200 16499 application/javascript;+charset=utf-8 163.7074ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/js/public.menu.js - 200 470 text/javascript 163.3511ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/icons/hand-holding-dollar-solid.svg - 404 - - 701.8137ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0424512_Office 1.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/icons/hand-holding-dollar-solid.svg, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff - 404 - - 645.8397ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0420853_0413354_1495-(Pet-furniture-menu-Bar).jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0424513_Entryway 2 1.jpeg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/0420853_0413354_1495-(Pet-furniture-menu-Bar).jpeg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\0420853_0413354_1495-(Pet-furniture-menu-Bar).jpeg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0420853_0413354_1495-(Pet-furniture-menu-Bar).jpeg - 200 0 image/jpeg 63.0046ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/0424513_Entryway 2 1.jpeg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\0424513_Entryway 2 1.jpeg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/0424512_Office 1.jpeg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\0424512_Office 1.jpeg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0424514_Outdoor 1.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0424513_Entryway 2 1.jpeg - 200 0 image/jpeg 73.7605ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0424512_Office 1.jpeg - 200 0 image/jpeg 168.8722ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0424515_Mahogany 1.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img1.jpg?img2 - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/0424515_Mahogany 1.jpeg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\0424515_Mahogany 1.jpeg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/0424514_Outdoor 1.jpeg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\0424514_Outdoor 1.jpeg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0424514_Outdoor 1.jpeg - 200 0 image/jpeg 93.4829ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0424515_Mahogany 1.jpeg - 200 0 image/jpeg 10.3601ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img4.jpg?img3 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img6.jpg?img4 - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/cyber-monday-img1.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\cyber-monday-img1.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff - 404 - - 564.7237ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff, Response status code: 404
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ShowPopup (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img1.jpg?img2 - 200 308271 image/jpeg 198.6249ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/cyber-monday-img4.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\cyber-monday-img4.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img5.jpg?img5 - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img4.jpg?img3 - 200 411529 image/jpeg 175.9239ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/cyber-monday-img6.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\cyber-monday-img6.jpg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/cyber-monday-img5.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\cyber-monday-img5.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img6.jpg?img4 - 200 522182 image/jpeg 197.8385ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img2.jpg?img6 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/pixel.png - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/outdoor-img1.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img5.jpg?img5 - 200 443114 image/jpeg 92.0798ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/outdoor-img1.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\outdoor-img1.jpg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/cyber-monday-img2.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\cyber-monday-img2.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/outdoor-img1.jpg - 200 93310 image/jpeg 573.6252ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/outdoor-img2.jpg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/outdoor-img2.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\outdoor-img2.jpg'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/outdoor-img3.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/cyber-monday-img2.jpg?img6 - 200 469971 image/jpeg 643.9354ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/outdoor-img2.jpg - 200 158672 image/jpeg 86.5666ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/outdoor-img4.jpg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/outdoor-img3.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\outdoor-img3.jpg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/outdoor-img4.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\outdoor-img4.jpg'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/outdoor-img3.jpg - 200 76306 image/jpeg 201.2359ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/poster.jpg - - -
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GenericUrl", controller = "Common", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult GenericUrl() on controller Nop.Web.Controllers.CommonController (Nop.Web).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GenericUrl", controller = "Common", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult GenericUrl() on controller Nop.Web.Controllers.CommonController (Nop.Web).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GenericUrl", controller = "Common", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult GenericUrl() on controller Nop.Web.Controllers.CommonController (Nop.Web).
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/outdoor-img4.jpg - 200 108100 image/jpeg 256.5765ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/roomsets-desktop.jpg - - -
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GenericUrl", controller = "Common", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult GenericUrl() on controller Nop.Web.Controllers.CommonController (Nop.Web).
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/roomsets-desktop.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\roomsets-desktop.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/roomsets-desktop.jpg - 200 288130 image/jpeg 230.2716ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner1.jpg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/new-arrival-banner1.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\new-arrival-banner1.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner1.jpg - 200 266581 image/jpeg 32.5244ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GenericUrl", controller = "Common", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult GenericUrl() on controller Nop.Web.Controllers.CommonController (Nop.Web).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "ShowPopup", controller = "CampaignManagement", area = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ShowPopup(System.String, System.String, Boolean) on controller MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController (MWT.Plugin.Misc.MwtStorefront).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web) in 613.4257ms
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web) in 639.1981ms
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web) in 289.0296ms
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web) in 571.6697ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web) in 45.9602ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/pixel.png - 404 - - 1556.1552ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/phone.png - 404 - - 4193.3988ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner1-mobile.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/poster.jpg - 404 - - 722.0333ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/pixel.png - 404 - - 5193.3984ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner2.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner2-mobile.jpg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/new-arrival-banner1-mobile.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\new-arrival-banner1-mobile.jpg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/new-arrival-banner2-mobile.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\new-arrival-banner2-mobile.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner1-mobile.jpg - 200 42202 image/jpeg 97.9716ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/poster.jpg - 404 - - 5245.1355ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner3.jpg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/new-arrival-banner2.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\new-arrival-banner2.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner2-mobile.jpg - 200 30280 image/jpeg 94.9990ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner3-mobile.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/made-for-you-img-desktop.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner2.jpg - 200 154003 image/jpeg 126.1670ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/new-arrival-banner3-mobile.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\new-arrival-banner3-mobile.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner3-mobile.jpg - 200 35943 image/jpeg 63.3695ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/customization-icon1.svg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/new-arrival-banner3.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\new-arrival-banner3.jpg'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/made-for-you-img-desktop.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\made-for-you-img-desktop.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/new-arrival-banner3.jpg - 200 166605 image/jpeg 192.3029ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/customization-icon1.svg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\customization-icon1.svg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/customization-icon1.svg - 200 483 image/svg+xml 83.5323ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/customization-icon2.svg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/customization-icon2.svg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\customization-icon2.svg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/customization-icon3.svg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/customization-icon2.svg - 200 764 image/svg+xml 10.2627ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/made-for-you-img-desktop.jpg - 200 294843 image/jpeg 165.3127ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/phone.png - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/icons/icons_0/favicon-16x16.ico - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/customization-icon3.svg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\customization-icon3.svg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/_vs/browserLink - 200 - text/javascript;+charset=UTF-8 4700.8066ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/customization-icon3.svg - 200 539 image/svg+xml 116.3640ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/images/top.png - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/images/top.png - 404 - - 356.7702ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/icons/icons_0/favicon-16x16.ico - 404 - - 503.7367ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/Themes/BlackWhiteTheme/Content/images/top.png, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/icons/icons_0/favicon-16x16.ico, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/SalesIqEvents.js - - -
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GenericUrl", controller = "Common", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult GenericUrl() on controller Nop.Web.Controllers.CommonController (Nop.Web).
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/js/SalesIqEvents.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\js\SalesIqEvents.js'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web) in 3.3123ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/SalesIqEvents.js - 200 5453 text/javascript 82.5312ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/_vs/browserLink - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/phone.png - 404 - - 757.7701ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/_vs/browserLink - 200 - text/javascript;+charset=UTF-8 45.8702ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/video-pause-svg.svg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/video-pause-svg.svg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\video-pause-svg.svg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/video-pause-svg.svg - 200 358 image/svg+xml 4.1249ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/footer-lower-copyright-icon.svg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/footer-lower-copyright-icon.svg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\footer-lower-copyright-icon.svg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/footer-lower-copyright-icon.svg - 200 981 image/svg+xml 3.7715ms
+info: Microsoft.AspNetCore.Mvc.NewtonsoftJson.NewtonsoftJsonResultExecutor[2]
+      Executing JsonResult, writing value of type 'MWT.Plugin.Misc.MwtStorefront.Models.Catalog.Campaign_Management.CampaignPopupResultModel'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ShowPopup (MWT.Plugin.Misc.MwtStorefront) in 1381.657ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ShowPopup (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST https://localhost:44376/CampaignManagement/showPopup - 200 - application/json;+charset=utf-8 5003.3329ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/images/ajax-loader.gif - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/images/ajax-loader.gif'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\images\ajax-loader.gif'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/images/ajax-loader.gif - 200 2230 image/gif 3.8627ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST https://localhost:44376/CampaignManagement/showPopup - application/x-www-form-urlencoded;+charset=UTF-8 56
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/slick.woff - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/slick.woff'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\slick.woff'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/slick.woff - 200 1380 application/font-woff 68.8629ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ShowPopup (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "ShowPopup", controller = "CampaignManagement", area = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ShowPopup(System.String, System.String, Boolean) on controller MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController (MWT.Plugin.Misc.MwtStorefront).
+info: Microsoft.AspNetCore.Mvc.NewtonsoftJson.NewtonsoftJsonResultExecutor[2]
+      Executing JsonResult, writing value of type 'MWT.Plugin.Misc.MwtStorefront.Models.Catalog.Campaign_Management.CampaignPopupResultModel'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ShowPopup (MWT.Plugin.Misc.MwtStorefront) in 9.5749ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ShowPopup (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST https://localhost:44376/CampaignManagement/showPopup - 200 - application/json;+charset=utf-8 177.5602ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST https://localhost:44376/CampaignManagement/ImpressionPopup - application/x-www-form-urlencoded;+charset=UTF-8 93
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/Weekend-Super-Sale_POPUP-2.png - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ImpressionPopup (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/Weekend-Super-Sale_POPUP-2.png'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\Weekend-Super-Sale_POPUP-2.png'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/Weekend-Super-Sale_POPUP-2.png - 200 388053 image/png 107.9169ms
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "ImpressionPopup", controller = "CampaignManagement", area = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ImpressionPopup(Int32, System.String, System.String, System.String, System.String, Int32, Boolean) on controller MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController (MWT.Plugin.Misc.MwtStorefront).
+info: Microsoft.AspNetCore.Mvc.NewtonsoftJson.NewtonsoftJsonResultExecutor[2]
+      Executing JsonResult, writing value of type '<>f__AnonymousType30`1[[System.Net.HttpStatusCode, System.Net.Primitives, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ImpressionPopup (MWT.Plugin.Misc.MwtStorefront) in 129.6738ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ImpressionPopup (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST https://localhost:44376/CampaignManagement/ImpressionPopup - 200 - application/json;+charset=utf-8 336.2944ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST https://localhost:44376/CampaignManagement/ImpressionPopup - application/x-www-form-urlencoded;+charset=UTF-8 93
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/Weekend-Super-Sale_POPUP-2.png - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/Weekend-Super-Sale_POPUP-2.png'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\Weekend-Super-Sale_POPUP-2.png'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/Weekend-Super-Sale_POPUP-2.png - 200 388053 image/png 18.0114ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ImpressionPopup (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "ImpressionPopup", controller = "CampaignManagement", area = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ImpressionPopup(Int32, System.String, System.String, System.String, System.String, Int32, Boolean) on controller MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController (MWT.Plugin.Misc.MwtStorefront).
+info: Microsoft.AspNetCore.Mvc.NewtonsoftJson.NewtonsoftJsonResultExecutor[2]
+      Executing JsonResult, writing value of type '<>f__AnonymousType30`1[[System.Net.HttpStatusCode, System.Net.Primitives, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ImpressionPopup (MWT.Plugin.Misc.MwtStorefront) in 80.3716ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ImpressionPopup (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST https://localhost:44376/CampaignManagement/ImpressionPopup - 200 - application/json;+charset=utf-8 245.2524ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST https://localhost:44376/CampaignManagement/ExitPopup - application/x-www-form-urlencoded;+charset=UTF-8 54
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ExitPopup (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "ExitPopup", controller = "CampaignManagement", area = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ExitPopup(Int32, System.String, System.String, System.String, System.String) on controller MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController (MWT.Plugin.Misc.MwtStorefront).
+info: Microsoft.AspNetCore.Mvc.NewtonsoftJson.NewtonsoftJsonResultExecutor[2]
+      Executing JsonResult, writing value of type '<>f__AnonymousType30`1[[System.Net.HttpStatusCode, System.Net.Primitives, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ExitPopup (MWT.Plugin.Misc.MwtStorefront) in 91.8467ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ExitPopup (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST https://localhost:44376/CampaignManagement/ExitPopup - 200 - application/json;+charset=utf-8 282.4001ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/sub-close.svg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/sub-close.svg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\sub-close.svg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/sub-close.svg - 200 359 image/svg+xml 11.3931ms
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 10.4619ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 17.3152ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 11.3179ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 22.3574ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 20.1126ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 30.5184ms - 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/category/126/dining-table-sets - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Controllers.CatalogController.CustomCategory (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "CustomCategory", controller = "Catalog", area = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] CustomCategory(Int32, System.String, MWT.Plugin.Misc.MwtStorefront.Models.Catalog.CustomCatalogProductsCommand) on controller MWT.Plugin.Misc.MwtStorefront.Controllers.CatalogController (MWT.Plugin.Misc.MwtStorefront).
+info: Microsoft.AspNetCore.Mvc.RedirectToRouteResult[1]
+      Executing RedirectToRouteResult, redirecting to /category/126/dining-table-and-chair-sets from route Category.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Controllers.CatalogController.CustomCategory (MWT.Plugin.Misc.MwtStorefront) in 49.5082ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Controllers.CatalogController.CustomCategory (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/category/126/dining-table-sets - 301 - - 412.6964ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/category/126/dining-table-and-chair-sets - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Controllers.CatalogController.CustomCategory (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "CustomCategory", controller = "Catalog", area = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] CustomCategory(Int32, System.String, MWT.Plugin.Misc.MwtStorefront.Models.Catalog.CustomCatalogProductsCommand) on controller MWT.Plugin.Misc.MwtStorefront.Controllers.CatalogController (MWT.Plugin.Misc.MwtStorefront).
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[1]
+      Executing ViewResult, running view LazyLoad-CategoryTemplate-FilterOnTop-3x3.
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[4]
+      Executed ViewResult - view LazyLoad-CategoryTemplate-FilterOnTop-3x3 executed in 5147.9919ms.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Controllers.CatalogController.CustomCategory (MWT.Plugin.Misc.MwtStorefront) in 7620.6217ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Controllers.CatalogController.CustomCategory (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/category/126/dining-table-and-chair-sets - 200 - text/html;+charset=utf-8 7833.3252ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/icons/hand-holding-dollar-solid.svg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/shades/Squareimage/No. 102 Natural.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/pixel.png - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/shades/Squareimage/No. 202 Dark Natural.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/shades/Squareimage/No. 304 Medium Espresso.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/shades/Squareimage/No. 303 Black.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/shades/Squareimage/No. 101 No Stain Natural.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/breadcrumb-vector.svg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/breadcrumb-vector.svg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\breadcrumb-vector.svg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/breadcrumb-vector.svg - 200 190 image/svg+xml 198.7863ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/images/vector.svg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/heart-image-1.svg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0416527_paradise-modern-rustic-platform-2-tone-alaskan-king-bedroom-set.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/.well-known/appspecific/com.chrome.devtools.json - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/0416527_paradise-modern-rustic-platform-2-tone-alaskan-king-bedroom-set.jpeg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\0416527_paradise-modern-rustic-platform-2-tone-alaskan-king-bedroom-set.jpeg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/bootstrap.min.css.map - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0416527_paradise-modern-rustic-platform-2-tone-alaskan-king-bedroom-set.jpeg - 200 0 image/jpeg 64.6339ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/phone.png - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/fa-solid-900.woff2 - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/images/vector.svg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\images\vector.svg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/images/vector.svg - 200 519 image/svg+xml 240.1050ms
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/heart-image-1.svg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\heart-image-1.svg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/heart-image-1.svg - 200 668 image/svg+xml 452.6465ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/images/top.png - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/fa-regular-400.woff2 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/_vs/browserLink - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/shades/Squareimage/No. 101 No Stain Natural.jpg - 404 - - 1839.0222ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/_framework/aspnetcore-browser-refresh.js - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/_framework/aspnetcore-browser-refresh.js - 200 16499 application/javascript;+charset=utf-8 95.0927ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/shades/Squareimage/No.%20101%20No%20Stain%20Natural.jpg, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/public.catalogproducts.js?version=37 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/bootstrap.bundle.min.js.map - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/fa-solid-900.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\fa-solid-900.woff2'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/js/public.catalogproducts.js'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\js\public.catalogproducts.js'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/bootstrap.min.css.map - 404 - - 1146.6590ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/bootstrap.min.css.map, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/shades/Squareimage/No. 102 Natural.jpg - 404 - - 2543.3987ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/shades/Squareimage/No.%20102%20Natural.jpg, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/shades/Squareimage/No. 304 Medium Espresso.jpg - 404 - - 2502.6565ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/down-sort-icon.svg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/shades/Squareimage/No.%20304%20Medium%20Espresso.jpg, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/shades/Squareimage/No. 202 Dark Natural.jpg - 404 - - 2613.0706ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/shades/Squareimage/No. 303 Black.jpg - 404 - - 2517.0968ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/shades/Squareimage/No.%20303%20Black.jpg, Response status code: 404
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/MWT.Plugin.Misc.MwtStorefront/Content/fonts/fa-regular-400.woff2'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\Plugins\MWT.Plugin.Misc.MwtStorefront\Content\fonts\fa-regular-400.woff2'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/_vs/browserLink - 200 - text/javascript;+charset=UTF-8 763.9486ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/shades/Squareimage/No.%20202%20Dark%20Natural.jpg, Response status code: 404
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GenericUrl", controller = "Common", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult GenericUrl() on controller Nop.Web.Controllers.CommonController (Nop.Web).
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/public.catalogproducts.js?version=37 - 200 28452 text/javascript 566.9720ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST https://localhost:44376/CampaignManagement/showPopup - application/x-www-form-urlencoded;+charset=UTF-8 100
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/default-image_415.png - - -
+info: System.Net.Http.HttpClient.default.LogicalHandler[100]
+      Start processing HTTP request POST https://localhost:44399/scheduletask/runtask
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: System.Net.Http.HttpClient.default.ClientHandler[100]
+      Sending HTTP request POST https://localhost:44399/scheduletask/runtask
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/icons/hand-holding-dollar-solid.svg - 404 - - 3035.4427ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/.well-known/appspecific/com.chrome.devtools.json - 404 - - 1668.0100ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/fa-regular-400.woff2 - 200 12224 font/woff2 1195.3250ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/bootstrap.bundle.min.js.map - 404 - - 952.1494ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ShowPopup (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/icons/hand-holding-dollar-solid.svg, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/.well-known/appspecific/com.chrome.devtools.json, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/bootstrap.bundle.min.js.map, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/fonts/fa-solid-900.woff2 - 200 44004 font/woff2 1842.7489ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/images/top.png - 404 - - 1499.9851ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/Themes/BlackWhiteTheme/Content/images/top.png, Response status code: 404
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/default-image_415.png'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\default-image_415.png'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/default-image_415.png - 200 16311 image/png 516.9206ms
+info: System.Net.Http.HttpClient.default.ClientHandler[101]
+      Received HTTP response headers after 507.0252ms - 404
+info: System.Net.Http.HttpClient.default.LogicalHandler[101]
+      End processing HTTP request after 616.9537ms - 404
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/down-sort-icon.svg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\down-sort-icon.svg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/uploaded/down-sort-icon.svg - 200 251 image/svg+xml 892.3369ms
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GenericUrl", controller = "Common", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult GenericUrl() on controller Nop.Web.Controllers.CommonController (Nop.Web).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "ShowPopup", controller = "CampaignManagement", area = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ShowPopup(System.String, System.String, Boolean) on controller MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController (MWT.Plugin.Misc.MwtStorefront).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web) in 650.7241ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/pixel.png - 404 - - 3672.6573ms
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web) in 47.0933ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Mvc.NewtonsoftJson.NewtonsoftJsonResultExecutor[2]
+      Executing JsonResult, writing value of type 'MWT.Plugin.Misc.MwtStorefront.Models.Catalog.Campaign_Management.CampaignPopupResultModel'.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/phone.png - 404 - - 2287.7590ms
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ShowPopup (MWT.Plugin.Misc.MwtStorefront) in 27.8005ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ShowPopup (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST https://localhost:44376/CampaignManagement/showPopup - 200 - application/json;+charset=utf-8 925.6183ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/ - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.HomeController.Index (Nop.Web)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "Index", controller = "Home", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller Nop.Web.Controllers.HomeController (Nop.Web).
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[1]
+      Executing ViewResult, running view Index.
+info: Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor[4]
+      Executed ViewResult - view Index executed in 277.2031ms.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.HomeController.Index (Nop.Web) in 285.542ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.HomeController.Index (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/ - 200 - text/html;+charset=utf-8 531.4925ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/pixel.png - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/icons/hand-holding-dollar-solid.svg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/images/top.png - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/poster.jpg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/.well-known/appspecific/com.chrome.devtools.json - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/phone.png - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/bootstrap.min.css.map - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff2 - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/bootstrap.bundle.min.js.map - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/_vs/browserLink - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/_framework/aspnetcore-browser-refresh.js - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/.well-known/appspecific/com.chrome.devtools.json - 404 - - 1363.7574ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/images/top.png - 404 - - 1682.2709ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/Themes/BlackWhiteTheme/Content/images/top.png, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/_framework/aspnetcore-browser-refresh.js - 200 16499 application/javascript;+charset=utf-8 65.0794ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/icons/hand-holding-dollar-solid.svg - 404 - - 1866.5959ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/icons/hand-holding-dollar-solid.svg, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/.well-known/appspecific/com.chrome.devtools.json, Response status code: 404
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/bootstrap.bundle.min.js.map - 404 - - 700.5997ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/js/bootstrap.bundle.min.js.map, Response status code: 404
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/_vs/browserLink - 200 - text/javascript;+charset=UTF-8 229.4613ms
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GenericUrl", controller = "Common", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult GenericUrl() on controller Nop.Web.Controllers.CommonController (Nop.Web).
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST https://localhost:44376/CampaignManagement/showPopup - application/x-www-form-urlencoded;+charset=UTF-8 56
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/bootstrap.min.css.map - 404 - - 1091.6942ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/Plugins/MWT.Plugin.Misc.MwtStorefront/Content/css/bootstrap.min.css.map, Response status code: 404
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GenericUrl", controller = "Common", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult GenericUrl() on controller Nop.Web.Controllers.CommonController (Nop.Web).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GenericUrl", controller = "Common", area = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult GenericUrl() on controller Nop.Web.Controllers.CommonController (Nop.Web).
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff2 - 404 - - 1545.4542ms
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web) in 611.9029ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ShowPopup (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff2, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/poster.jpg - 404 - - 2603.7207ms
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web) in 337.9371ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web) in 366.6833ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'Nop.Web.Controllers.CommonController.GenericUrl (Nop.Web)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/phone.png - 404 - - 2346.5240ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/pixel.png - 404 - - 3007.8498ms
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "ShowPopup", controller = "CampaignManagement", area = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ShowPopup(System.String, System.String, Boolean) on controller MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController (MWT.Plugin.Misc.MwtStorefront).
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff - 404 - - 538.2891ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/Themes/BlackWhiteTheme/Content/fonts/anticdidone/BonaNova-Regular.woff, Response status code: 404
+info: Microsoft.AspNetCore.Mvc.NewtonsoftJson.NewtonsoftJsonResultExecutor[2]
+      Executing JsonResult, writing value of type 'MWT.Plugin.Misc.MwtStorefront.Models.Catalog.Campaign_Management.CampaignPopupResultModel'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ShowPopup (MWT.Plugin.Misc.MwtStorefront) in 13.3288ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'MWT.Plugin.Misc.MwtStorefront.Controllers.CampaignManagementController.ShowPopup (MWT.Plugin.Misc.MwtStorefront)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST https://localhost:44376/CampaignManagement/showPopup - 200 - application/json;+charset=utf-8 1059.6578ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/default-image_450.png - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0192621_dining-kitchen-furniture_450.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0268217_living-room-benches_450.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0268215_bedside-storage-chests_450.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0372499_bar-tables_450.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0192630_home-decor_450.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0372498_home-bar-set_450.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0416529_paradise-modern-rustic-platform-2-tone-alaskan-king-bedroom-set_450.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/uploaded/summer-light-img-desktop1.jpg - - -
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/thumbs/default-image_450.png'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\thumbs\default-image_450.png'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 GET https://localhost:44376/images/thumbs/0268216_dining-room-sets_450.jpeg - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/default-image_450.png - 200 17873 image/png 1178.5941ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0372498_home-bar-set_450.jpeg - 404 - - 1149.5145ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/thumbs/0372498_home-bar-set_450.jpeg, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0372499_bar-tables_450.jpeg - 404 - - 1295.6681ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0192621_dining-kitchen-furniture_450.jpeg - 404 - - 1299.5897ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0268217_living-room-benches_450.jpeg - 404 - - 1297.5187ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/thumbs/0192621_dining-kitchen-furniture_450.jpeg, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/thumbs/0268217_living-room-benches_450.jpeg, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/thumbs/0372499_bar-tables_450.jpeg, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0416529_paradise-modern-rustic-platform-2-tone-alaskan-king-bedroom-set_450.jpeg - 404 - - 1204.2757ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/thumbs/0416529_paradise-modern-rustic-platform-2-tone-alaskan-king-bedroom-set_450.jpeg, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0192630_home-decor_450.jpeg - 404 - - 1416.4250ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/thumbs/0192630_home-decor_450.jpeg, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0268215_bedside-storage-chests_450.jpeg - 404 - - 1502.9976ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/thumbs/0268215_bedside-storage-chests_450.jpeg, Response status code: 404
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/images/thumbs/0268216_dining-room-sets_450.jpeg - 404 - - 343.2261ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:44376/images/thumbs/0268216_dining-room-sets_450.jpeg, Response status code: 404
+info: Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware[2]
+      Sending file. Request path: '/images/uploaded/summer-light-img-desktop1.jpg'. Physical path: 'D:\Mind web Tree\Slc4.9\Source Code\Presentation\Nop.Web\wwwroot\images\uploaded\summer-light-img-desktop1.jpg'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 GET https://localhost:44376/image

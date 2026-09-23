@@ -62,7 +62,6 @@ namespace MWT.Plugin.Misc.MwtStorefront.Controllers
         #region MailChimp Events
 
         [HttpPost]
-        [IgnoreAntiforgeryToken]
         public async Task<IActionResult> MailchimpEvents(string email, string fromwhere)
         {
             string name = string.Empty;
